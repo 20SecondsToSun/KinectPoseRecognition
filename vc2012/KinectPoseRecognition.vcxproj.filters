@@ -1,0 +1,176 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hpp;hxx;hm;inl;inc;xsd</Extensions>
+    </Filter>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav</Extensions>
+    </Filter>
+    <Filter Include="Source Files\1dollar">
+      <UniqueIdentifier>{fac6e5c5-7456-497c-9e6e-47383b572d34}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="blocks">
+      <UniqueIdentifier>{dfa2c9b1-464c-4d52-8bca-3acf3e90dc86}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="blocks\Cinder-KCB">
+      <UniqueIdentifier>{47cc64a8-b010-4cb4-bd90-5c0e6d85c530}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="blocks\Cinder-KCB\lib">
+      <UniqueIdentifier>{821b68ee-5b0c-4d43-a85c-29c010945083}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\gestures">
+      <UniqueIdentifier>{bee753f5-1d0d-4db3-b819-56244bbb45d9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\locations">
+      <UniqueIdentifier>{c1dce514-979b-4a8f-b1e2-79ca58762eba}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\locations\engine">
+      <UniqueIdentifier>{de1a19c1-5389-46c2-a692-935c424619a4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\locations\screens">
+      <UniqueIdentifier>{2e876fca-e632-42b5-8191-99cdfabde1cf}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\controllers">
+      <UniqueIdentifier>{d185e687-4c42-413c-b71b-1331d9c2ad2f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\controllers\kinectAdapter">
+      <UniqueIdentifier>{60d39534-aabf-45ef-bd78-75d93c8f73a9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\controllers\assets">
+      <UniqueIdentifier>{9d6a8ed2-d656-4849-b44e-c42a9ca589d8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\controllers\screenshots">
+      <UniqueIdentifier>{ed708e06-1ef0-4b20-9705-e1501ebbe35f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\data">
+      <UniqueIdentifier>{15cf0a73-aca3-4f44-abc3-adbd0fff3dbe}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\tools">
+      <UniqueIdentifier>{0e08f232-8988-4573-8d47-d73ae7b56586}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\controllers\fonts">
+      <UniqueIdentifier>{f5d64b4e-a353-4cf7-b30f-20ce53496deb}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\src\KinectPoseRecognitionApp.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\KinectPoseRecognitionApp.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClInclude Include="..\include\Resources.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClCompile Include="..\src\1dollar\Dollar.cpp">
+      <Filter>Source Files\1dollar</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\kinect\KinectAdapter.cpp">
+      <Filter>Source Files\controllers\kinectAdapter</Filter>
+    </ClCompile>
+    <ClCompile Include="..\blocks\Cinder-KCB\src\Kinect.cpp">
+      <Filter>blocks\Cinder-KCB</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\locations\Location.cpp">
+      <Filter>Source Files\locations\engine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\locations\LocationEngine.cpp">
+      <Filter>Source Files\locations\engine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\locations\AssetsManager.cpp">
+      <Filter>Source Files\controllers\assets</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\locations\IntroScreen.cpp">
+      <Filter>Source Files\locations\screens</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\locations\MainGameScreen.cpp">
+      <Filter>Source Files\locations\screens</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\locations\ResultScreen.cpp">
+      <Filter>Source Files\locations\screens</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\controllers\ScreenshotHolder.cpp">
+      <Filter>Source Files\controllers\screenshots</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\data\PlayerData.cpp">
+      <Filter>Source Files\data</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\Utils.cpp">
+      <Filter>Source Files\tools</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\tools\Params.cpp">
+      <Filter>Source Files\tools</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\controllers\fonts\FontStore.cpp">
+      <Filter>Source Files\controllers\fonts</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\tools\Button.cpp">
+      <Filter>Source Files\tools</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\include\Resources.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\1dollar\Dollar.h">
+      <Filter>Source Files\1dollar</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\kinect\KinectAdapter.h">
+      <Filter>Source Files\controllers\kinectAdapter</Filter>
+    </ClInclude>
+    <ClInclude Include="..\blocks\Cinder-KCB\lib\KinectCommonBridgeLib.h">
+      <Filter>blocks\Cinder-KCB\lib</Filter>
+    </ClInclude>
+    <ClInclude Include="..\blocks\Cinder-KCB\src\Kinect.h">
+      <Filter>blocks\Cinder-KCB</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\locations\Location.h">
+      <Filter>Source Files\locations\engine</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\locations\LocationEngine.h">
+      <Filter>Source Files\locations\engine</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\locations\AssetsManager.h">
+      <Filter>Source Files\controllers\assets</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\locations\IntroScreen.h">
+      <Filter>Source Files\locations\screens</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\locations\MainGameScreen.h">
+      <Filter>Source Files\locations\screens</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\locations\ResultScreen.h">
+      <Filter>Source Files\locations\screens</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\controllers\ScreenshotHolder.h">
+      <Filter>Source Files\controllers\screenshots</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\data\PlayerData.h">
+      <Filter>Source Files\data</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\Utils.h">
+      <Filter>Source Files\tools</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\tools\Params.h">
+      <Filter>Source Files\tools</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\controllers\fonts\FontStore.h">
+      <Filter>Source Files\controllers\fonts</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\tools\Button.h">
+      <Filter>Source Files\tools</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="Resources.rc">
+      <Filter>Resource Files</Filter>
+    </ResourceCompile>
+  </ItemGroup>
+</Project>
