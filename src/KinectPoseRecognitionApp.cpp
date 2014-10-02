@@ -46,13 +46,13 @@ void KinectPoseRecognitionApp::setup()
 	hintFont = ci::Font( loadFile(getAssetPath("fonts/Helvetica Neue Bold.ttf")), 46 );
 	state    = "ChooseMode";
 
-	KinectAdapter::Instance()->Setup();
-	KinectAdapter::Instance()->loadPoseBase();
+	//KinectAdapter::Instance()->Setup();
+	//KinectAdapter::Instance()->loadPoseBase();
 
    #ifndef recording
 	
 	IntroScreen::Instance()->setup();
-	MainGameScreen::Instance()->setup();
+	//MainGameScreen::Instance()->setup();
 	ResultScreen::Instance()->setup();
 
 	game.init("init", getWindow());
@@ -124,10 +124,12 @@ void KinectPoseRecognitionApp::draw()
 		gl::enableAlphaBlending();	
 	#else
 		game.draw();
+
 	#endif	
 
 	#ifdef debug
 		mParams->draw();
+
 	#endif
 }
 
@@ -174,7 +176,7 @@ void KinectPoseRecognitionApp::keyDown( KeyEvent event )
 
 void KinectPoseRecognitionApp::shutdown( )
 {
-	KinectAdapter::Instance()->Shutdown();
+	//KinectAdapter::Instance()->Shutdown();
 }
 
 CINDER_APP_NATIVE( KinectPoseRecognitionApp, RendererGl )
