@@ -1,6 +1,4 @@
 #include "IntroScreen.h"
-#include "AssetsManager.h"
-#include "KinectAdapter.h"
 
 using namespace ci;
 using namespace ci::app;
@@ -14,11 +12,18 @@ void IntroScreen::setup()
 	playImage  = *AssetManager::getInstance()->getTexture( "images/play.jpg" );
 	instructionImage  = *AssetManager::getInstance()->getTexture( "images/instruction.jpg" );
 
-	startInstructionBtn.setup(Rectf(1200,700,1400, 800), Color(1,0,0));
-	startInstructionBtn.addEventListener(getWindow());
 
-	startGameBtn.setup(Rectf(1200,700,1400, 800), Color(1,0,0));
-	startGameBtn.addEventListener(getWindow());	
+	startInstructionBtn = new ButtonColor(Rectf(1000,700,1600, 800), Color(1,0,0),
+							fonts().getFont("Helvetica Neue", 46),
+							"ÏÎÈÃĞÀÉ ÑÎ ÌÍÎÉ");
+
+	startGameBtn = new ButtonColor(Rectf(1200,700,1600, 800), Color(1,0,0),
+							fonts().getFont("Helvetica Neue", 46),
+							"ÍÀ×ÀÒÜ ÈÃĞÓ");
+	
+								  
+	startInstructionBtn->setup(getWindow());
+	startGameBtn->setup(getWindow());
 }
 
 void IntroScreen::startInstructionBtnDown()
@@ -29,7 +34,8 @@ void IntroScreen::startInstructionBtnDown()
 
 void IntroScreen::startGameBtnDown()
 {
-	
+	nextState = START_GAME;			
+	changeState();	
 }
 
 void IntroScreen::init( LocationEngine* game)
@@ -42,7 +48,9 @@ void IntroScreen::init( LocationEngine* game)
 
 void IntroScreen::cleanup()
 {
-	
+	startInstructionBtn->removeConnect(MouseEvents::MOUSE_DOWN);
+	startGameBtn->removeConnect(MouseEvents::MOUSE_DOWN);
+	returnTimer.stop();
 }
 
 void IntroScreen::pause()
@@ -65,7 +73,7 @@ void IntroScreen::mouseEvents()
 	{
 		if(state == INIT)
 		{
-			nextState = SHOW_INVITE;
+			nextState = SHOW_INVITE;			
 			changeState();	
 		}
 		returnTimer.start();
@@ -108,7 +116,7 @@ void IntroScreen::update()
 		case INIT:
 			if (isPeopleInFrame)
 			{
-				nextState = SHOW_INVITE;
+				nextState = SHOW_INVITE;				
 				changeState();
 			}			
 		break;
@@ -129,67 +137,85 @@ void IntroScreen::draw()
 	gl::color( ColorA(1.0f, 1.0f, 1.0f, 1.0f) );
 	Rectf centeredRect = Rectf( 0,0, getWindowWidth(), getWindowHeight() ).getCenteredFit( getWindowBounds(),true );
 
+	
+
 	switch (state)
 	{
 		case INIT:			
-			gl::draw( introImage, centeredRect);			
-			Utils::textFieldDraw("ÇÀÑÒÀÂÎ×ÊÀ", 
-								 fonts().getFont("Helvetica Neue", 46), 
-								 Vec2f(600.f, getWindowHeight()*0.5f), 
-								 ColorA(1, 1, 1, 1));
+			drawInitElements();
 		break;
 
 		case SHOW_INVITE:
-
 			gl::draw( playImage, centeredRect);	
-			startInstructionBtn.draw();
-
+			startInstructionBtn->draw();
 		break;
 
 		case SHOW_INSTRUCTION:
 			gl::draw( instructionImage, centeredRect);	
-			startInstructionBtn.draw();
+			startGameBtn->draw();
 		break;
 
 		case START_GAME:			
 		
 		break;
-	}	
+	}
 
 	#ifdef debug
 		Utils::textFieldDraw(debugString,  fonts().getFont("Helvetica Neue", 46), Vec2f(40.f, 40.0f), ColorA(1.f, 0.f, 0.f, 1.f));
 	#endif
+
+	if(isChangingStateNow)
+	{
+		gl::color(ColorA(0, 0, 0, alphaAnimate));
+		gl::drawSolidRect(Rectf(0,0, getWindowWidth(), getWindowHeight()));
+		gl::color(Color::white());
+	}
 }
+
+void IntroScreen::drawInitElements() 
+{
+	Rectf centeredRect = Rectf( 0,0, getWindowWidth(), getWindowHeight() ).getCenteredFit( getWindowBounds(),true );
+	gl::draw( introImage, centeredRect);			
+			Utils::textFieldDraw("ÇÀÑÒÀÂÎ×ÊÀ", 
+			fonts().getFont("Helvetica Neue", 46), 
+			Vec2f(600.f, getWindowHeight()*0.5f), 
+			ColorA(1, 1, 1, 1));
+}
+
 
 void IntroScreen::changeState() 
 {
-	//isChangingStateNow = true;
+	isChangingStateNow = true;
+	timeline().apply( &alphaAnimate, 0.0f, 1.0f, 0.9f, EaseOutCubic() ).finishFn( bind( &IntroScreen::animationFinished, this ) );	
+}
+
+void IntroScreen::animationFinished() 
+{
+	isChangingStateNow = false;
 	state = nextState;
 	switch (state)
 	{
 		case INIT:			
-			startInstructionBtn.removeEventListener();
-			startGameBtn.removeEventListener();
+			startInstructionBtn->removeConnect(MouseEvents::MOUSE_DOWN);
+			startGameBtn->removeConnect(MouseEvents::MOUSE_DOWN);
 		break;
 
-		case SHOW_INVITE:		
-			startInstructionBtn.mouseDownSignal.connect	( 
-				boost::bind(&IntroScreen::startInstructionBtnDown, this) 
-			);
+		case SHOW_INVITE:	
+			startInstructionBtn->mouseDownEvent->connect(boost::bind(&IntroScreen::startInstructionBtnDown, this));
+
 		break;
 
 		case SHOW_INSTRUCTION:			
-			startGameBtn.mouseDownSignal.connect( 
-				boost::bind(&IntroScreen::startGameBtnDown, this) 
-			);
-			startInstructionBtn.removeEventListener();
+			startGameBtn->mouseDownEvent->connect( boost::bind(&IntroScreen::startGameBtnDown, this));
+			startInstructionBtn->removeConnect(MouseEvents::MOUSE_DOWN);
 		break;
 
 		case START_GAME:			
-		
+				_game->changeState(MainGameScreen::Instance());
 		break;
 	}	
 }
+
 
 void IntroScreen::checkReturnTimer() 
 {
@@ -206,13 +232,10 @@ void IntroScreen::checkReturnTimer()
 			changeState();
 		}
 	}
-	else
+	else if (isPeopleInFrame == false)
 	{
-		if (isPeopleInFrame == false)
-		{
-			returnTimer.start();
-		}
-	}
+		returnTimer.start();
+	}	
 
 	#ifdef debug
 		if (returnTimer.isStopped())
@@ -228,16 +251,13 @@ void IntroScreen::checkReturnTimer()
 
 void IntroScreen::checkReturnTimer2() 
 {
-	if (!returnTimer.isStopped())
+	if (!returnTimer.isStopped() && (returnTimer.getSeconds() >= Params::comeBackHomeTime))
 	{
-		if(returnTimer.getSeconds() >= Params::comeBackHomeTime)
-		{
-			returnTimer.stop();
-			nextState = INIT;			
-			changeState();
-		}
+		returnTimer.stop();
+		nextState = INIT;			
+		changeState();		
 	}
-	else
+	else if(returnTimer.isStopped())
 	{		
 		returnTimer.start();		
 	}
@@ -245,14 +265,4 @@ void IntroScreen::checkReturnTimer2()
 	#ifdef debug
 		debugString = "Âîçâğàùåíèå íà ãëàâíûé ıêğàí ïğîèçîéäåò ÷åğåç : "+to_string((int)(Params::comeBackHomeTime - returnTimer.getSeconds()));	
 	#endif
-}
-
-void IntroScreen::animationInitFinish() 
-{
-	
-}
-
-void IntroScreen::animationFadeOutFinish() 
-{
-	
 }

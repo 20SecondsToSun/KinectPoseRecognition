@@ -121,6 +121,8 @@
     <ClCompile Include="..\src\locations\MainGameScreen.cpp" />
     <ClCompile Include="..\src\locations\ResultScreen.cpp" />
     <ClCompile Include="..\src\tools\Button.cpp" />
+    <ClCompile Include="..\src\tools\ButtonColor.cpp" />
+    <ClCompile Include="..\src\tools\ButtonTexture.cpp" />
     <ClCompile Include="..\src\tools\Params.cpp" />
     <ClCompile Include="..\src\Utils.cpp" />
   </ItemGroup>
@@ -140,6 +142,8 @@
     <ClInclude Include="..\src\locations\MainGameScreen.h" />
     <ClInclude Include="..\src\locations\ResultScreen.h" />
     <ClInclude Include="..\src\tools\Button.h" />
+    <ClInclude Include="..\src\tools\ButtonColor.h" />
+    <ClInclude Include="..\src\tools\ButtonTexture.h" />
     <ClInclude Include="..\src\tools\Params.h" />
     <ClInclude Include="..\src\Utils.h" />
   </ItemGroup>

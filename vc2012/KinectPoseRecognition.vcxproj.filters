@@ -58,6 +58,9 @@
     <Filter Include="Source Files\controllers\fonts">
       <UniqueIdentifier>{f5d64b4e-a353-4cf7-b30f-20ce53496deb}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\buttons">
+      <UniqueIdentifier>{ba2ff3d6-bf45-457a-b6c7-a91c450d253d}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\src\KinectPoseRecognitionApp.cpp">
@@ -112,7 +115,13 @@
       <Filter>Source Files\controllers\fonts</Filter>
     </ClCompile>
     <ClCompile Include="..\src\tools\Button.cpp">
-      <Filter>Source Files\tools</Filter>
+      <Filter>Source Files\buttons</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\tools\ButtonColor.cpp">
+      <Filter>Source Files\buttons</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\tools\ButtonTexture.cpp">
+      <Filter>Source Files\buttons</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -165,7 +174,13 @@
       <Filter>Source Files\controllers\fonts</Filter>
     </ClInclude>
     <ClInclude Include="..\src\tools\Button.h">
-      <Filter>Source Files\tools</Filter>
+      <Filter>Source Files\buttons</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\tools\ButtonColor.h">
+      <Filter>Source Files\buttons</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\tools\ButtonTexture.h">
+      <Filter>Source Files\buttons</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

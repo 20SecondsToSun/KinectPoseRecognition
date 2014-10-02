@@ -9,7 +9,10 @@
 #include "Location.h"
 #include "Utils.h"
 #include "FontStore.h"
-#include "Button.h"
+#include "ButtonColor.h"
+#include "AssetsManager.h"
+#include "KinectAdapter.h"
+#include "MainGameScreen.h"
 
 using namespace ci;
 using namespace ci::app;
@@ -21,7 +24,8 @@ namespace instructionDefaults
 	enum states {INIT, 
 				 SHOW_INVITE,  
 				 SHOW_INSTRUCTION,
-				 START_GAME };
+				 START_GAME,
+				 ANIMATE_TO_SHOW_INVITE};
 }
 
 class IntroScreen : public Location
@@ -51,17 +55,11 @@ protected:
 private:	
 
 	LocationEngine*			_game;
-	static IntroScreen		IntroScreenState;
+	static IntroScreen		IntroScreenState;	
 
+	void					animationFinished();
+	ci::Anim<float>			alphaAnimate;
 	
-
-	void					animationInitFinish() ;
-	void					animationFadeOutFinish() ;
-	void					animationFinish();
-	ci::Anim<float>			alphaFade;
-
-
-
 
 	int						state, nextState;
 	ci::gl::Texture			introImage, playImage, instructionImage;
@@ -79,10 +77,10 @@ private:
 
 	std::string				debugString;
 
-	Button					startInstructionBtn, startGameBtn;
+	ButtonColor				*startInstructionBtn, *startGameBtn;
 
 
 	void					startInstructionBtnDown();
 	void					startGameBtnDown();
-	
+	void					drawInitElements() ;
 };

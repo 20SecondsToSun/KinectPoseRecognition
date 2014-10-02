@@ -3,68 +3,41 @@
 using namespace ci;
 using namespace ci::app;
 using namespace std;
+using namespace MouseEvents;
 
-
-
-void Button::setup(Rectf rect, Color color)
+void Button::createTextField()
 {
-	field = rect;
-	isText = false;
-	maincolor = color;
-	overColor = Color::white();
-}
-
-
-
-void Button::setup(ci::gl::Texture _tex, string _char)
-{
-	texture = _tex;	
-	isText = false;
-	code = _char;
-
-	overColor = Color::white();
-}
-
-void Button::setup(ci::gl::Texture _tex, Font _font, string _char, bool _isText)
-{
-	texture = _tex;
-	text = _char;
-	font = _font;
-	isText = _isText;
-	code = _char;
-
-	overColor = Color::white();
-
-	if (isText == false) return;
-
 	TextLayout simple;
-	simple.setFont( font );
-	simple.setColor( Color::black());
-	simple.addLine(_char);	
+	simple.setFont( *textFont );	
+	simple.setColor( Color::white());
+	simple.addLine(Utils::cp1251_to_utf8(label.c_str()));		
 	textTexture = gl::Texture( simple.render( true, false ) );	
 }
 
-void Button::addEventListener( ci::app::WindowRef window)
+void Button::setup(ci::app::WindowRef window)
 {
 	MouseDownCon   = window->getSignalMouseDown().connect( std::bind( &Button::MouseDown, this, std::placeholders::_1 ) );
+	mouseDownEvent = new ButtonSignal();
 }
 
 void Button::MouseDown( MouseEvent &event )
-{
+{	
 	if( contains(event.getPos()))
-		mouseDownSignal();
+	{		
+		(*mouseDownEvent)();
+	}
 }
 
-void Button::removeEventListener()
+void Button::removeConnect(int type)
 {
-	if (!MouseDownCon.connected())
-		MouseDownCon.disconnect();
+	switch (type)
+	{
+		case MOUSE_DOWN:
+			if (!MouseDownCon.connected())
+				MouseDownCon.disconnect();
+		break;
+	}	
 }
-
-
-
-
-
 
 void Button::setScreenField(Vec2f vec)
 {
@@ -85,34 +58,6 @@ void Button::draw()
 {
 	gl::enableAlphaBlending();
 	gl::color(Color::white());
-
-	if (texture)
-	{
-		gl::pushMatrices();
-			gl::translate(field.x1, field.y1);	
-			gl::color(overColor);
-			gl::draw(texture);	
-			gl::color(Color::black());
-
-			if (isText)
-			{
-				gl::pushMatrices();
-				gl::translate((texture.getWidth()-textTexture.getWidth())*0.5f,(texture.getHeight()-textTexture.getHeight())*0.5f - 5.0f);
-				gl::draw(textTexture);
-				gl::popMatrices();
-			}
-
-		gl::popMatrices();
-	}
-	else
-	{
-		gl::pushMatrices();
-
-			//gl::translate(field.x1, field.y1);	
-			gl::color(maincolor);
-			gl::drawSolidRect(field);
-		gl::popMatrices();
-	}
 }
 
 bool Button::contains(Vec2f mousePoint)
@@ -124,6 +69,7 @@ float Button::getY()
 {
 	return field.y1;
 }
+
 float Button::getHeight()
 {
 	return field.y2-field.y1;
@@ -136,13 +82,13 @@ string  Button::getBtnId()
 
 void  Button::setBtnId(string value)
 {
-	if (isText == false) return;
-
-	code = value;
-
-	TextLayout simple;
-	simple.setFont( font );
-	simple.setColor( Color::black());
-	simple.addLine(value);	
-	textTexture = gl::Texture( simple.render( true, false ) );
+	if (isTextField ) 
+	{
+		code = value;
+		TextLayout simple;
+		simple.setFont( font );
+		simple.setColor( Color::black());
+		simple.addLine(value);	
+		textTexture = gl::Texture( simple.render( true, false ) );
+	}
 }
