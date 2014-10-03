@@ -4,24 +4,36 @@ using namespace ci;
 using namespace ci::app;
 using namespace ReadyScreenDefaults;
 
-
-
 ResultScreen ResultScreen::ResultScreenState;
 
 void ResultScreen::setup()
 {
-	hintFont = ci::Font( loadFile(getAssetPath("fonts/Helvetica Neue Bold.ttf")), 46 );
+	mailBtn = new ButtonColor(Rectf(100,700,500, 800), Color(1,0,0),
+							fonts().getFont("Helvetica Neue", 46),
+							"E-mail");
+
+	facebookBtn = new ButtonColor(Rectf(700,700,1100, 800), Color(1,0,0),
+							fonts().getFont("Helvetica Neue", 46),
+							"Facebook");
+
+	vkontakteBtn = new ButtonColor(Rectf(1300,700,1700, 800), Color(1,0,0),
+							fonts().getFont("Helvetica Neue", 46),
+							"Vkontakte");
+
+
+	createComeBackButton();
+
 }
 
 void ResultScreen::init( LocationEngine* game)
 {
-	
 	_game = game;
 
+	isChangingStateNow = false;
 
-	oneWidth  = getWindowWidth() / 3;//PlayerData::score;
-
-	//timeline().apply( &alphaFlash, 1.0f, 0.0f, 0.7f, EaseOutExpo() ).delay(0.2f).finishFn( bind( &ReadyScreen::animationFlashFinish, this )  );	
+	oneWidth  = getWindowWidth() / 3;
+	comeBackBtn->addEventListener(MouseEvents::MOUSE_DOWN);
+	comeBackTimerStart();	
 }
 
 void ResultScreen::shutdown()
@@ -32,6 +44,8 @@ void ResultScreen::shutdown()
 void ResultScreen::cleanup()
 {
 	//serverSignalCon.disconnect();
+	comeBackTimerStop();
+	comeBackBtn->removeConnect(MouseEvents::MOUSE_DOWN);
 }
 
 void ResultScreen::pause()
@@ -49,18 +63,10 @@ void ResultScreen::mouseEvents( )
 
 	if(_game->isAnimationRunning()) return;		
 
-	#ifdef DEBUG
-
 	if (event.isLeftDown())
-	{
-		if (backToStart.isDown(event.getPos()))
-		{
-			game->ChangeState(ScanFace::Instance());
-		}
-		else game->ChangeState(MainGame::Instance());
+	{	
+		comeBackTimerStart();
 	}
-
-	#endif
 }
 
 void ResultScreen::keyEvents()
@@ -74,7 +80,12 @@ void ResultScreen::handleEvents(  )
 
 void ResultScreen::update() 
 {
-	
+	if (isChangingStateNow) return;
+
+	if (isComeBackTimerTouchFired())
+	{
+		gotoFirstScreen();
+	}
 }
 
 void ResultScreen::draw() 
@@ -99,11 +110,32 @@ void ResultScreen::draw()
 			startX += oneWidth;
 		}
 	}
+	
+	Utils::textFieldDraw("ÔÈÍÀËÜÍÛÉ ÝÊÐÀÍ | ÓÑÏÅØÍÎ: "+ to_string(PlayerData::score) +" èç 3", 
+		fonts().getFont("Helvetica Neue", 46), 
+		Vec2f(400.f, 400.0f),
+		ColorA(1.f, 1.f, 1.f, 1.f));
+
+	mailBtn->draw();
+	facebookBtn->draw();
+	vkontakteBtn->draw();
+
+	drawComeBackButton();
+
+	#ifdef debug
+		string debugString = "Âîçâðàùåíèå íà ãëàâíûé ýêðàí ïðîèçîéäåò ÷åðåç : "+to_string(getSecondsToComeBack());	
+		Utils::textFieldDraw(debugString,  fonts().getFont("Helvetica Neue", 46), Vec2f(40.f, 40.0f), ColorA(1.f, 0.f, 0.f, 1.f));
+	#endif
 
 	
-	Utils::textFieldDraw("ÔÈÍÀËÜÍÛÉ ÝÊÐÀÍ | ÓÑÏÅØÍÎ: "+ to_string(PlayerData::score) +" èç 3", &hintFont, Vec2f(400.f, 400.0f), ColorA(1.f, 1.f, 1.f, 1.f));
+	if(isChangingStateNow)
+	{
+		gl::color(ColorA(0, 0, 0, alphaAnimate));
+		gl::drawSolidRect(Rectf(0,0, getWindowWidth(), getWindowHeight()));
+		gl::color(Color::white());
+	}
 
-	gl::disableAlphaBlending();
+	gl::disableAlphaBlending();	
 }
 
 void ResultScreen::animationFlashFinish() 
@@ -142,4 +174,16 @@ void ResultScreen::serverSignal()
 void ResultScreen::animationOutFinish()
 {
 	//_game->ChangeState(gotoLocation);
+}
+
+void ResultScreen::gotoFirstScreen() 
+{
+	isChangingStateNow = true;
+	timeline().apply( &alphaAnimate, 0.0f, 1.0f, 0.9f, EaseOutCubic() ).finishFn( bind( &ResultScreen::animationFinished, this ) );	
+}
+
+void ResultScreen::animationFinished() 
+{
+	isChangingStateNow = false;
+	_game->changeState(IntroScreen::Instance());
 }

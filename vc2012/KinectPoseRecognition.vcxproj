@@ -117,6 +117,7 @@
     <ClCompile Include="..\src\locations\AssetsManager.cpp" />
     <ClCompile Include="..\src\locations\IntroScreen.cpp" />
     <ClCompile Include="..\src\locations\Location.cpp" />
+    <ClCompile Include="..\src\locations\LocationBase.cpp" />
     <ClCompile Include="..\src\locations\LocationEngine.cpp" />
     <ClCompile Include="..\src\locations\MainGameScreen.cpp" />
     <ClCompile Include="..\src\locations\ResultScreen.cpp" />
@@ -138,6 +139,7 @@
     <ClInclude Include="..\src\locations\AssetsManager.h" />
     <ClInclude Include="..\src\locations\IntroScreen.h" />
     <ClInclude Include="..\src\locations\Location.h" />
+    <ClInclude Include="..\src\locations\LocationBase.h" />
     <ClInclude Include="..\src\locations\LocationEngine.h" />
     <ClInclude Include="..\src\locations\MainGameScreen.h" />
     <ClInclude Include="..\src\locations\ResultScreen.h" />

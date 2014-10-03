@@ -25,6 +25,25 @@ ButtonColor::ButtonColor(ci::Rectf rect, ci::Color color, ci::Font* font, string
 	createTextField();	
 }
 
+ButtonColor::ButtonColor(ci::app::WindowRef window, ci::Rectf rect, ci::Color color, ci::Font* font, string _label)
+{
+	field = rect;	
+	maincolor = color;
+	overColor = Color::white();
+	isTextField = true;
+	textFont = font;
+	label = _label;
+
+	createTextField();	
+
+	windowref = window;
+	MouseDownCon   = window->getSignalMouseDown().connect( std::bind( &Button::MouseDown, this, std::placeholders::_1 ) );
+	mouseDownEvent = new ButtonSignal();
+}
+
+
+
+
 void ButtonColor::draw()
 {	
 	gl::pushMatrices();

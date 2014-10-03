@@ -3,7 +3,7 @@
 
 #include "LocationEngine.h"
 #include "cinder/app/AppNative.h"
-
+#include "ButtonColor.h"
 
 class Location
 {
@@ -26,8 +26,26 @@ public:
 		game->changeState(state);
 	}
 
+	int		getSecondsToComeBack();
+	void	comeBackTimerStart();
+	void	comeBackTimerStop();
+	virtual void	gotoFirstScreen();
+
 protected:
 	Location() { }
+
+	bool	isComeBackTimerTouchFired();
+	bool    isComeBackTimerKinectFired();
+	bool	isPeopleInFrame;
+
+	void	createComeBackButton();
+	void	drawComeBackButton();
+	ButtonColor	*comeBackBtn;
+
+private:
+	ci::Timer	returnTimer;
+
+	
 };
 
 #endif

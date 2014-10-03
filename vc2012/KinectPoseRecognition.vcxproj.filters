@@ -61,6 +61,9 @@
     <Filter Include="Source Files\buttons">
       <UniqueIdentifier>{ba2ff3d6-bf45-457a-b6c7-a91c450d253d}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\controllers\timer">
+      <UniqueIdentifier>{ded768c4-53f8-4181-9369-bf28d57384ab}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\src\KinectPoseRecognitionApp.cpp">
@@ -123,6 +126,9 @@
     <ClCompile Include="..\src\tools\ButtonTexture.cpp">
       <Filter>Source Files\buttons</Filter>
     </ClCompile>
+    <ClCompile Include="..\src\locations\LocationBase.cpp">
+      <Filter>Source Files\locations\screens</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\include\Resources.h">
@@ -181,6 +187,9 @@
     </ClInclude>
     <ClInclude Include="..\src\tools\ButtonTexture.h">
       <Filter>Source Files\buttons</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\locations\LocationBase.h">
+      <Filter>Source Files\locations\screens</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

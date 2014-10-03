@@ -2,10 +2,12 @@
 #include "cinder/app/AppBasic.h"
 #include "cinder/gl/gl.h"
 #include "cinder/ip/Resize.h"
+#include "Utils.h"
+#include "FontStore.h"
+#include "AssetsManager.h"
 
 //#define kinectInUse
 //#define   recording		true
-
 #define debug		
 
 

@@ -1,16 +1,12 @@
 #pragma once
 
-#include "cinder/app/AppNative.h"
+#include "Params.h"
 #include "cinder/Timeline.h"
 #include "cinder/gl/Texture.h"
-//#include "cinder/Text.h"
 #include "cinder/Timer.h"
 
 #include "Location.h"
-#include "Utils.h"
-#include "FontStore.h"
 #include "ButtonColor.h"
-#include "AssetsManager.h"
 #include "KinectAdapter.h"
 #include "MainGameScreen.h"
 
@@ -49,6 +45,8 @@ public:
 		return &IntroScreenState;
 	}
 
+	void	gotoFirstScreen();
+
 protected:
 	IntroScreen() { };
 
@@ -64,21 +62,14 @@ private:
 	int						state, nextState;
 	ci::gl::Texture			introImage, playImage, instructionImage;
 
-	bool					isPeopleInFrame;
+	
 
 	void					changeState();
-	bool					isChangingStateNow;
-
-
-	ci::Timer				returnTimer;
-
-	void					checkReturnTimer();
-	void					checkReturnTimer2();
-
+	bool					isChangingStateNow;	
+	
 	std::string				debugString;
 
 	ButtonColor				*startInstructionBtn, *startGameBtn;
-
 
 	void					startInstructionBtnDown();
 	void					startGameBtnDown();

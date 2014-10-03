@@ -13,17 +13,18 @@ void IntroScreen::setup()
 	instructionImage  = *AssetManager::getInstance()->getTexture( "images/instruction.jpg" );
 
 
-	startInstructionBtn = new ButtonColor(Rectf(1000,700,1600, 800), Color(1,0,0),
+	startInstructionBtn = new ButtonColor(getWindow(), Rectf(1000,700,1600, 800), Color(1,0,0),
 							fonts().getFont("Helvetica Neue", 46),
 							"ПОИГРАЙ СО МНОЙ");
 
-	startGameBtn = new ButtonColor(Rectf(1200,700,1600, 800), Color(1,0,0),
+	startGameBtn = new ButtonColor(getWindow(), Rectf(1200,700,1600, 800), Color(1,0,0),
 							fonts().getFont("Helvetica Neue", 46),
-							"НАЧАТЬ ИГРУ");
-	
-								  
-	startInstructionBtn->setup(getWindow());
-	startGameBtn->setup(getWindow());
+							"НАЧАТЬ ИГРУ");		
+
+	startInstructionBtn->mouseDownEvent->connect(boost::bind(&IntroScreen::startInstructionBtnDown, this));
+	startGameBtn->mouseDownEvent->connect( boost::bind(&IntroScreen::startGameBtnDown, this));
+
+	createComeBackButton();
 }
 
 void IntroScreen::startInstructionBtnDown()
@@ -44,13 +45,16 @@ void IntroScreen::init( LocationEngine* game)
 	state = INIT;	
 
 	isChangingStateNow = false;
+	isPeopleInFrame = false;
+	comeBackBtn->addEventListener(MouseEvents::MOUSE_DOWN);
 }
 
 void IntroScreen::cleanup()
 {
 	startInstructionBtn->removeConnect(MouseEvents::MOUSE_DOWN);
 	startGameBtn->removeConnect(MouseEvents::MOUSE_DOWN);
-	returnTimer.stop();
+	comeBackBtn->removeConnect(MouseEvents::MOUSE_DOWN);
+	comeBackTimerStop();
 }
 
 void IntroScreen::pause()
@@ -76,7 +80,7 @@ void IntroScreen::mouseEvents()
 			nextState = SHOW_INVITE;			
 			changeState();	
 		}
-		returnTimer.start();
+		comeBackTimerStart();
 	}
 }
 
@@ -118,15 +122,39 @@ void IntroScreen::update()
 			{
 				nextState = SHOW_INVITE;				
 				changeState();
-			}			
+			}	
+			#ifdef debug
+				debugString = "";
+			#endif
 		break;
 
 		case SHOW_INVITE:			
-			checkReturnTimer();
+			if (isComeBackTimerKinectFired())
+			{
+				nextState = INIT;
+				changeState();
+			}
+			#ifdef debug
+				if (isPeopleInFrame)
+				{
+					debugString = "Есть кто-то в зоне  ";//+to_string(kinect().getSkeletsInFrame());
+				}
+				else
+				{
+					debugString = "Людей нет с зоне, \nвозвращение на главный экран произойдет через : "+to_string(getSecondsToComeBack());
+				}
+			#endif
 		break;
 
 		case SHOW_INSTRUCTION:			
-			checkReturnTimer2();
+			if (isComeBackTimerTouchFired())
+			{
+				nextState = INIT;			
+				changeState();	
+			}
+			#ifdef debug
+				debugString = "Возвращение на главный экран произойдет через : "+to_string(getSecondsToComeBack());	
+			#endif
 		break;
 	}	
 }
@@ -135,9 +163,7 @@ void IntroScreen::draw()
 {
 	gl::enableAlphaBlending();	
 	gl::color( ColorA(1.0f, 1.0f, 1.0f, 1.0f) );
-	Rectf centeredRect = Rectf( 0,0, getWindowWidth(), getWindowHeight() ).getCenteredFit( getWindowBounds(),true );
-
-	
+	Rectf centeredRect = Rectf( 0,0, getWindowWidth(), getWindowHeight() ).getCenteredFit( getWindowBounds(),true );	
 
 	switch (state)
 	{
@@ -148,11 +174,13 @@ void IntroScreen::draw()
 		case SHOW_INVITE:
 			gl::draw( playImage, centeredRect);	
 			startInstructionBtn->draw();
+			drawComeBackButton();
 		break;
 
 		case SHOW_INSTRUCTION:
 			gl::draw( instructionImage, centeredRect);	
 			startGameBtn->draw();
+			drawComeBackButton();
 		break;
 
 		case START_GAME:			
@@ -163,13 +191,15 @@ void IntroScreen::draw()
 	#ifdef debug
 		Utils::textFieldDraw(debugString,  fonts().getFont("Helvetica Neue", 46), Vec2f(40.f, 40.0f), ColorA(1.f, 0.f, 0.f, 1.f));
 	#endif
+	
+	
 
 	if(isChangingStateNow)
 	{
 		gl::color(ColorA(0, 0, 0, alphaAnimate));
 		gl::drawSolidRect(Rectf(0,0, getWindowWidth(), getWindowHeight()));
 		gl::color(Color::white());
-	}
+	}	
 }
 
 void IntroScreen::drawInitElements() 
@@ -193,76 +223,36 @@ void IntroScreen::animationFinished()
 {
 	isChangingStateNow = false;
 	state = nextState;
+	
 	switch (state)
 	{
-		case INIT:			
+		case INIT:				
 			startInstructionBtn->removeConnect(MouseEvents::MOUSE_DOWN);
-			startGameBtn->removeConnect(MouseEvents::MOUSE_DOWN);
+			startGameBtn->removeConnect(MouseEvents::MOUSE_DOWN);			
 		break;
 
 		case SHOW_INVITE:	
-			startInstructionBtn->mouseDownEvent->connect(boost::bind(&IntroScreen::startInstructionBtnDown, this));
-
+			startInstructionBtn->addEventListener(MouseEvents::MOUSE_DOWN);
+			startGameBtn->removeConnect(MouseEvents::MOUSE_DOWN);		
 		break;
 
 		case SHOW_INSTRUCTION:			
-			startGameBtn->mouseDownEvent->connect( boost::bind(&IntroScreen::startGameBtnDown, this));
+			startGameBtn->addEventListener(MouseEvents::MOUSE_DOWN);
 			startInstructionBtn->removeConnect(MouseEvents::MOUSE_DOWN);
 		break;
 
-		case START_GAME:			
-				_game->changeState(MainGameScreen::Instance());
+		case START_GAME:		
+			_game->changeState(ResultScreen::Instance());
 		break;
 	}	
 }
 
-
-void IntroScreen::checkReturnTimer() 
+void IntroScreen::gotoFirstScreen() 
 {
-	if (!returnTimer.isStopped())
+	if (state!= INIT)
 	{
-		if (isPeopleInFrame == true)
-		{
-			returnTimer.stop();
-		}
-		else if(returnTimer.getSeconds() >= Params::comeBackHomeTime)
-		{
-			returnTimer.stop();
-			nextState = INIT;
-			changeState();
-		}
-	}
-	else if (isPeopleInFrame == false)
-	{
-		returnTimer.start();
-	}	
-
-	#ifdef debug
-		if (returnTimer.isStopped())
-		{
-			debugString = "Есть кто-то в зоне  ";//+to_string(kinect().getSkeletsInFrame());
-		}
-		else
-		{
-			debugString = "Людей нет с зоне, \nвозвращение на главный экран произойдет через : "+to_string((int)(Params::comeBackHomeTime - returnTimer.getSeconds()));
-		}
-	#endif
-}
-
-void IntroScreen::checkReturnTimer2() 
-{
-	if (!returnTimer.isStopped() && (returnTimer.getSeconds() >= Params::comeBackHomeTime))
-	{
-		returnTimer.stop();
-		nextState = INIT;			
+		nextState = INIT;		
 		changeState();		
+		comeBackTimerStop();	
 	}
-	else if(returnTimer.isStopped())
-	{		
-		returnTimer.start();		
-	}
-
-	#ifdef debug
-		debugString = "Возвращение на главный экран произойдет через : "+to_string((int)(Params::comeBackHomeTime - returnTimer.getSeconds()));	
-	#endif
 }

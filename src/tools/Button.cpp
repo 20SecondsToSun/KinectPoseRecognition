@@ -16,6 +16,7 @@ void Button::createTextField()
 
 void Button::setup(ci::app::WindowRef window)
 {
+	windowref = window;
 	MouseDownCon   = window->getSignalMouseDown().connect( std::bind( &Button::MouseDown, this, std::placeholders::_1 ) );
 	mouseDownEvent = new ButtonSignal();
 }
@@ -23,8 +24,10 @@ void Button::setup(ci::app::WindowRef window)
 void Button::MouseDown( MouseEvent &event )
 {	
 	if( contains(event.getPos()))
-	{		
+	{
+		event.setHandled(true);	
 		(*mouseDownEvent)();
+		//
 	}
 }
 
@@ -33,11 +36,24 @@ void Button::removeConnect(int type)
 	switch (type)
 	{
 		case MOUSE_DOWN:
-			if (!MouseDownCon.connected())
+			if (MouseDownCon.connected())
 				MouseDownCon.disconnect();
 		break;
 	}	
 }
+
+void Button::addEventListener(int type)
+{
+	switch (type)
+	{
+		case MOUSE_DOWN:
+			if (!MouseDownCon.connected())
+				MouseDownCon   = windowref->getSignalMouseDown().connect( std::bind( &Button::MouseDown, this, std::placeholders::_1 ) );
+		break;
+	}	
+}
+
+
 
 void Button::setScreenField(Vec2f vec)
 {

@@ -61,9 +61,10 @@ class Button
 		//boost::signals2::signal<void(void)>	mouseUp_Event;
 		
 		void removeConnect(int type);
+		void addEventListener(int type);
 		ci::signals::connection KeyDownCon, MouseDownCon, MouseUpCon;
 		void			MouseDown( ci::app::MouseEvent &event );
-
+		ci::app::WindowRef windowref;
 	protected:
 		ci::Font*		textFont;
 		std::string		label;
