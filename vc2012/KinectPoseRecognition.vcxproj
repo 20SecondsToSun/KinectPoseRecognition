@@ -76,7 +76,7 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
-      <AdditionalIncludeDirectories>..\include;..\..\..\\include;..\..\..\\boost;..\blocks\Cinder-KCB\src;..\blocks\Cinder-KCB\lib;$(KINECT_TOOLKIT_DIR)inc;$(KINECTSDK10_DIR)\inc;..\src;..\src\kinect;..\src\locations;..\src\controllers;..\src\data;..\src\tools;..\src\controllers\fonts</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\include;..\..\..\\include;..\..\..\\boost;..\blocks\Cinder-KCB\src;..\blocks\Cinder-KCB\lib;$(KINECT_TOOLKIT_DIR)inc;$(KINECTSDK10_DIR)\inc;..\src;..\src\kinect;..\src\locations;..\src\controllers;..\src\data;..\src\tools;..\src\controllers\fonts;..\src\controllers\saver</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;NOMINMAX;_WIN32_WINNT=0x0502;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <PrecompiledHeader />
@@ -110,14 +110,14 @@
     <ClCompile Include="..\blocks\Cinder-KCB\src\Kinect.cpp" />
     <ClCompile Include="..\src\1dollar\Dollar.cpp" />
     <ClCompile Include="..\src\controllers\fonts\FontStore.cpp" />
-    <ClCompile Include="..\src\controllers\ScreenshotHolder.cpp" />
+    <ClCompile Include="..\src\controllers\saver\Saver.cpp" />
     <ClCompile Include="..\src\data\PlayerData.cpp" />
     <ClCompile Include="..\src\KinectPoseRecognitionApp.cpp" />
     <ClCompile Include="..\src\kinect\KinectAdapter.cpp" />
+    <ClCompile Include="..\src\kinect\KinectBase.cpp" />
     <ClCompile Include="..\src\locations\AssetsManager.cpp" />
     <ClCompile Include="..\src\locations\IntroScreen.cpp" />
     <ClCompile Include="..\src\locations\Location.cpp" />
-    <ClCompile Include="..\src\locations\LocationBase.cpp" />
     <ClCompile Include="..\src\locations\LocationEngine.cpp" />
     <ClCompile Include="..\src\locations\MainGameScreen.cpp" />
     <ClCompile Include="..\src\locations\ResultScreen.cpp" />
@@ -133,9 +133,11 @@
     <ClInclude Include="..\include\Resources.h" />
     <ClInclude Include="..\src\1dollar\Dollar.h" />
     <ClInclude Include="..\src\controllers\fonts\FontStore.h" />
-    <ClInclude Include="..\src\controllers\ScreenshotHolder.h" />
+    <ClInclude Include="..\src\controllers\Pose.h" />
+    <ClInclude Include="..\src\controllers\saver\Saver.h" />
     <ClInclude Include="..\src\data\PlayerData.h" />
     <ClInclude Include="..\src\kinect\KinectAdapter.h" />
+    <ClInclude Include="..\src\kinect\KinectBase.h" />
     <ClInclude Include="..\src\locations\AssetsManager.h" />
     <ClInclude Include="..\src\locations\IntroScreen.h" />
     <ClInclude Include="..\src\locations\Location.h" />

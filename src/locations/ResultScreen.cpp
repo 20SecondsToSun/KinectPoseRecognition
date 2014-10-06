@@ -22,8 +22,8 @@ void ResultScreen::setup()
 
 
 	createComeBackButton();
-
 }
+
 
 void ResultScreen::init( LocationEngine* game)
 {
@@ -149,9 +149,7 @@ void ResultScreen::animationFlashFinish()
 
 void ResultScreen::animationLastFinish() 
 {
-	#ifndef DEBUG
-		//server.sendPhoto();
-	#endif
+
 }
 /*
 void ResultScreen::serverSignal()

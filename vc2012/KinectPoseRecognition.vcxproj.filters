@@ -46,9 +46,6 @@
     <Filter Include="Source Files\controllers\assets">
       <UniqueIdentifier>{9d6a8ed2-d656-4849-b44e-c42a9ca589d8}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\controllers\screenshots">
-      <UniqueIdentifier>{ed708e06-1ef0-4b20-9705-e1501ebbe35f}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Source Files\data">
       <UniqueIdentifier>{15cf0a73-aca3-4f44-abc3-adbd0fff3dbe}</UniqueIdentifier>
     </Filter>
@@ -61,7 +58,7 @@
     <Filter Include="Source Files\buttons">
       <UniqueIdentifier>{ba2ff3d6-bf45-457a-b6c7-a91c450d253d}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\controllers\timer">
+    <Filter Include="Source Files\controllers\saver">
       <UniqueIdentifier>{ded768c4-53f8-4181-9369-bf28d57384ab}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
@@ -102,9 +99,6 @@
     <ClCompile Include="..\src\locations\ResultScreen.cpp">
       <Filter>Source Files\locations\screens</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\controllers\ScreenshotHolder.cpp">
-      <Filter>Source Files\controllers\screenshots</Filter>
-    </ClCompile>
     <ClCompile Include="..\src\data\PlayerData.cpp">
       <Filter>Source Files\data</Filter>
     </ClCompile>
@@ -126,8 +120,11 @@
     <ClCompile Include="..\src\tools\ButtonTexture.cpp">
       <Filter>Source Files\buttons</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\locations\LocationBase.cpp">
-      <Filter>Source Files\locations\screens</Filter>
+    <ClCompile Include="..\src\controllers\saver\Saver.cpp">
+      <Filter>Source Files\controllers\saver</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\kinect\KinectBase.cpp">
+      <Filter>Source Files\controllers\kinectAdapter</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -164,9 +161,6 @@
     <ClInclude Include="..\src\locations\ResultScreen.h">
       <Filter>Source Files\locations\screens</Filter>
     </ClInclude>
-    <ClInclude Include="..\src\controllers\ScreenshotHolder.h">
-      <Filter>Source Files\controllers\screenshots</Filter>
-    </ClInclude>
     <ClInclude Include="..\src\data\PlayerData.h">
       <Filter>Source Files\data</Filter>
     </ClInclude>
@@ -190,6 +184,15 @@
     </ClInclude>
     <ClInclude Include="..\src\locations\LocationBase.h">
       <Filter>Source Files\locations\screens</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\controllers\saver\Saver.h">
+      <Filter>Source Files\controllers\saver</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\controllers\Pose.h">
+      <Filter>Source Files\controllers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\kinect\KinectBase.h">
+      <Filter>Source Files\controllers\kinectAdapter</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

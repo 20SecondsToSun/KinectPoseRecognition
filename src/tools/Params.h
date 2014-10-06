@@ -7,9 +7,13 @@
 #include "AssetsManager.h"
 
 //#define kinectInUse
-//#define   recording		true
-#define debug		
+//#define   recording
+#define debug	
 
+namespace poseParams
+{
+	const float	  BOX_SCALE							= 250.f;
+}
 
 class Params
 {
@@ -19,7 +23,7 @@ class Params
 		static float	boxMaxErrorY;
 		static float	maxErrorBetweenJoints;//1000
 		static float	percentForMatching;
-		static bool		recording;
+		//static bool		recording;
 
 		static float	comeBackHomeTime;
 };

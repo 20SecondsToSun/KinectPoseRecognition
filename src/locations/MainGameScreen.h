@@ -54,7 +54,7 @@ class MainGameScreen : public Location
 		}
 
 	protected:
-		MainGameScreen() { }
+		MainGameScreen() { };
 
 	private:
 

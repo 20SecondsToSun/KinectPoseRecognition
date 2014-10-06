@@ -71,9 +71,7 @@ void IntroScreen::mouseEvents()
 {	
 	MouseEvent event = _game->getMouseEvent();	
 
-	if(_game->isAnimationRunning()) return;	
-	
-	if (event.isLeftDown())
+	if (!_game->isAnimationRunning() && event.isLeftDown())
 	{
 		if(state == INIT)
 		{
@@ -162,8 +160,8 @@ void IntroScreen::update()
 void IntroScreen::draw() 
 {
 	gl::enableAlphaBlending();	
-	gl::color( ColorA(1.0f, 1.0f, 1.0f, 1.0f) );
-	Rectf centeredRect = Rectf( 0,0, getWindowWidth(), getWindowHeight() ).getCenteredFit( getWindowBounds(),true );	
+	gl::color( Color::white());
+	Rectf centeredRect = Rectf( 0.0f, 0.0f, getWindowWidth(), getWindowHeight() ).getCenteredFit( getWindowBounds(),true );	
 
 	switch (state)
 	{
@@ -190,28 +188,25 @@ void IntroScreen::draw()
 
 	#ifdef debug
 		Utils::textFieldDraw(debugString,  fonts().getFont("Helvetica Neue", 46), Vec2f(40.f, 40.0f), ColorA(1.f, 0.f, 0.f, 1.f));
-	#endif
-	
-	
+	#endif	
 
 	if(isChangingStateNow)
 	{
 		gl::color(ColorA(0, 0, 0, alphaAnimate));
-		gl::drawSolidRect(Rectf(0,0, getWindowWidth(), getWindowHeight()));
+		gl::drawSolidRect(Rectf( 0.0f, 0.0f, getWindowWidth(), getWindowHeight()));
 		gl::color(Color::white());
 	}	
 }
 
 void IntroScreen::drawInitElements() 
 {
-	Rectf centeredRect = Rectf( 0,0, getWindowWidth(), getWindowHeight() ).getCenteredFit( getWindowBounds(),true );
+	Rectf centeredRect = Rectf( 0.0f, 0.0f, getWindowWidth(), getWindowHeight() ).getCenteredFit( getWindowBounds(),true );
 	gl::draw( introImage, centeredRect);			
 			Utils::textFieldDraw("ÇÀÑÒÀÂÎ×ÊÀ", 
 			fonts().getFont("Helvetica Neue", 46), 
 			Vec2f(600.f, getWindowHeight()*0.5f), 
 			ColorA(1, 1, 1, 1));
 }
-
 
 void IntroScreen::changeState() 
 {
@@ -242,7 +237,7 @@ void IntroScreen::animationFinished()
 		break;
 
 		case START_GAME:		
-			_game->changeState(ResultScreen::Instance());
+			_game->changeState(MainGameScreen::Instance());
 		break;
 	}	
 }

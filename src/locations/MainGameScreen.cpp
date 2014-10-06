@@ -9,11 +9,8 @@ KinectAdapter* MainGameScreen::kinect	= KinectAdapter::Instance();
 
 void MainGameScreen::setup()
 {	
-	debugFont26 = ci::Font( loadFile(getAssetPath("fonts/Helvetica Neue Bold.ttf")), 26 );
-
-	debugFont46 = ci::Font( loadFile(getAssetPath("fonts/Helvetica Neue Bold.ttf")), 66 );
-
-	//fonts().loadFont(loadFile(getAssetPath("fonts/Helvetica Neue Bold.ttf")));// loadAsset("fonts/Helvetica Neue Bold.ttf") ); 
+	debugFont26 = *fonts().getFont("Helvetica Neue", 26);
+	debugFont46 = *fonts().getFont("Helvetica Neue", 66);
 
 	stateMemoMap[SHOW_FIRST_MESSAGE] = "Отойдите подальше";
 	stateMemoMap[PRE_GAME_INTRO]	 = "Приготовьтесь к котопозе";
@@ -21,14 +18,11 @@ void MainGameScreen::setup()
 	stateMemoMap[SHOW_GAME_RESULT]	 = "Результат кривляний";
 	stateMemoMap[NONE]				 = "Пустое состояние";
 
-	failImage 	= *AssetManager::getInstance()->getTexture( "images/fail.jpg" );	
-
+	failImage 	= *AssetManager::getInstance()->getTexture( "images/fail.jpg" );
 
 	comics1_godzilla = *AssetManager::getInstance()->getTexture( "images/comics1/godzilla.png" );	
-
 	comics2_cat = *AssetManager::getInstance()->getTexture( "images/comics2/crazy.jpg" );
 	comics3_uni = *AssetManager::getInstance()->getTexture( "images/comics3/unicorn.png" );
-
 }
 
 void MainGameScreen::init( LocationEngine* game)
@@ -39,13 +33,9 @@ void MainGameScreen::init( LocationEngine* game)
 
 	peopleCount = 1;
 	distanceToPlayer = 0.0f;
-
 	currentPose = 1;
 
-	kinect->gameMode = "MatchingGame";
-
 	PlayerData::initData();
-
 	_preWaitingTimer.start();
 }
 
@@ -77,25 +67,10 @@ void MainGameScreen::mouseEvents( )
 {
 	MouseEvent event = _game->getMouseEvent();	
 
-	if(_game->isAnimationRunning()) return;	
-
-	#ifdef DEBUG
-
-	if (event.isLeftDown())
+	if(!_game->isAnimationRunning() && event.isLeftDown()) 
 	{
-		if (drawChangeModeButton.isDown(event.getPos()))
-		{
-			changeState();
-			changeGameMode();
-		}
-		else
-		{
-			//gameMode->changeItem();
-			makeScreenShotAndGo = true;
-		}
-	}
 
-	#endif
+	}
 }
 
 void MainGameScreen::handleEvents()
@@ -193,7 +168,6 @@ void MainGameScreen::checkPersonMissed()
 	}
 	else if (!_missedTimer.isStopped())
 			_missedTimer.stop();
-	
 }
 
 void MainGameScreen::gotoIntroState() 
@@ -240,8 +214,7 @@ void MainGameScreen::checkPersonPose()
 		PlayerData::score++;
 		PlayerData::screenshot[currentPose-1]  = surface;
 		PlayerData::isSuccess[currentPose-1]	 = true;
-		//PlayerData::storyCode[currentPose]	 = 
-		
+		//PlayerData::storyCode[currentPose]	 = 		
 		
 	}
 }
@@ -275,7 +248,6 @@ void MainGameScreen::draw()
 	gl::enableAlphaBlending();
 
 	drawCameraImage();
-
 	
 	gl::enableAlphaBlending();
 	switch(state)
@@ -297,7 +269,9 @@ void MainGameScreen::draw()
 		break;
 	}	
 	
-	drawDebugMessage();
+	#ifdef debug
+		//drawDebugMessage();
+	#endif	
 
 	gl::disableAlphaBlending();
 }
@@ -322,10 +296,22 @@ void MainGameScreen::drawPreReadyCounterBox()
 void MainGameScreen::drawPoseSilhouette()
 {
 	kinect->drawLoadedPoses();
+	kinect->drawSkeletJoints();
 	gl::disableAlphaBlending();
+	gl::color(Color::white());
 	Utils::textFieldDraw("ДО КОНЦА ПОПЫТКИ ОСТАЛОСЬ  "+to_string(ONE_POSE_TIME - (int)_onePoseTimer.getSeconds()), &debugFont26, Vec2f(200.f, 700.0f), ColorA(1.f, 0.f, 0.f, 1.f));
-	Utils::textFieldDraw("MATCHING  " + to_string((int)kinect->getPoseProgress())+" %", &debugFont46, Vec2f(200.f, 790.0f), ColorA(1.f, 0.f, 0.f, 1.f));
+
+	Utils::textFieldDraw("MATCHING  " + to_string((int)kinect->getMatchPercent())+" %", &debugFont46, Vec2f(200.f, 790.0f), ColorA(1.f, 0.f, 0.f, 1.f));
 	gl::enableAlphaBlending();
+
+	gl::pushMatrices();	
+	gl::translate(Vec2f(200.f, 900.0f));
+	gl::color(ColorA(1,1,1,1));
+	gl::drawSolidRect(Rectf(0, 0, 300, 50));
+	gl::color(ColorA(1,0,0,1));
+	gl::scale(kinect->getPoseProgress()/100.0f, 1.0f);
+	gl::drawSolidRect(Rectf(0, 0, 300, 50));
+	gl::popMatrices();
 }
 
 void MainGameScreen::drawGameResult()
@@ -351,7 +337,6 @@ void MainGameScreen::drawGameResult()
 
 void MainGameScreen::drawPoseComics()
 {
-	//console()<<" draw pose :: "<<currentPose<<endl;
 	gl::pushMatrices();
 	gl::translate(kinect->viewShiftX, kinect->viewShiftY);	
 	gl::scale(kinect->headScale, kinect->headScale);
@@ -362,7 +347,7 @@ void MainGameScreen::drawPoseComics()
 	{
 		gl::pushMatrices();
 
-		gl::translate(getWindowWidth() - 360, getWindowHeight() - 512);		
+		gl::translate(getWindowWidth() - 360.0, getWindowHeight() - 512.0);		
 		gl::draw(comics1_godzilla);
 		gl::popMatrices();
 	}

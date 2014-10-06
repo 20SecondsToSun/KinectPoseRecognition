@@ -55,23 +55,20 @@ private:
 	LocationEngine*			_game;
 	static IntroScreen		IntroScreenState;	
 
-	void					animationFinished();
-	ci::Anim<float>			alphaAnimate;
-	
-
 	int						state, nextState;
-	ci::gl::Texture			introImage, playImage, instructionImage;
-
-	
-
-	void					changeState();
+	std::string				debugString;		
 	bool					isChangingStateNow;	
-	
-	std::string				debugString;
 
+	ci::gl::Texture			introImage, playImage, instructionImage;
+	
 	ButtonColor				*startInstructionBtn, *startGameBtn;
+
+	ci::Anim<float>			alphaAnimate;	
 
 	void					startInstructionBtnDown();
 	void					startGameBtnDown();
-	void					drawInitElements() ;
+	void					drawInitElements();
+	void					animationFinished();
+	void					changeState();
+
 };
