@@ -38,7 +38,7 @@ class KinectPoseRecognitionApp : public AppNative {
 
 void KinectPoseRecognitionApp::setup()
 {
-	setWindowSize(1600, 1000);
+	setWindowSize(1920, 1000);
 
 	fonts().loadFont( loadFile(getAssetPath("fonts/Helvetica Neue Bold.ttf")), 46);
 	fonts().loadFont( loadFile(getAssetPath("fonts/Helvetica Neue Bold.ttf")), 26);
@@ -82,6 +82,7 @@ void KinectPoseRecognitionApp::update()
 {
 	 #ifdef recording	
 		kinect().update();
+		cameraCanon().update();
 
 		 if (state == "RecordingPose")
 		{
@@ -102,8 +103,10 @@ void KinectPoseRecognitionApp::draw()
 {
 	gl::clear( Color( 0, 0, 0 ) ); 
 	
-	#ifdef recording	
+	#ifdef recording
+	    cameraCanon().draw();
 		kinect().draw();
+
 
 		ColorA colorZhint = ColorA(1, 1, 1, 1);
 		gl::disableAlphaBlending();

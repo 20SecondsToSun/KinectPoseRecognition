@@ -24,6 +24,20 @@ class Pose
 		{ 
 			rawPoints = _rawPoints;
 		};
+
+		void	setPointColor(int i, Color color)
+		{ 
+			colors[i] = color;
+		};
+
+		void	initColors()
+		{ 
+			colors.clear();
+			for (int i = 0; i < rawPoints.size(); i++)
+			{
+				colors.push_back( Color(0, 0, 1));
+			}			
+		};		
 		
 		std::string	getName()  
 		{
@@ -33,6 +47,11 @@ class Pose
 		std::vector<ci::Vec3f>	getPoints()
 		{ 
 			return rawPoints; 
+		};
+
+		std::vector<ci::Vec3f>	getNormalizePoints()
+		{ 
+			return normalizePoints; 
 		};
 		
 		ci::Surface16u	getImage() 
@@ -70,7 +89,8 @@ class Pose
 		{ 
 			for (size_t j = 0; j < rawPoints.size(); j++)
 			{
-				gl::pushMatrices();			
+				gl::pushMatrices();	
+				gl::color(colors[j]);
 				gl::drawSolidCircle( Vec2f(rawPoints[j].x, rawPoints[j].y), 3);	
 				gl::popMatrices();
 			}
@@ -112,6 +132,8 @@ class Pose
 
 		void	createNormalizePoints()
 		{
+			normalizePoints.clear();
+
 			scaleTo();
 			translateTo();
 		}
@@ -121,10 +143,10 @@ class Pose
 
 			for (size_t i = 0; i < rawPoints.size(); i++)
 			{
-				Vec3f v;
+				Vec3f v;				
 				v.x = rawPoints[i].x * (BOX_SCALE/(/*rect.x -*/ boundingBox.w));
 				v.y = rawPoints[i].y * (BOX_SCALE/(/*rect.y -*/ boundingBox.h));	
-				v.z = rawPoints[i].z * (BOX_SCALE/(/*rect.z -*/ boundingBox.d));
+				//v.z = rawPoints[i].z * (BOX_SCALE/(/*rect.z -*/ boundingBox.d));
 				normalizePoints.push_back(v);
 			}
 		}
@@ -133,32 +155,20 @@ class Pose
 		{
 			Vec3f centroid = calculateCentroid();
 
-			for (size_t i = 0; i < rawPoints.size(); i++)
-			{			
-				normalizePoints[i].x = normalizePoints[i].x - centroid.x + BOX_SCALE*0.5;
-				normalizePoints[i].y = normalizePoints[i].y - centroid.y + BOX_SCALE*0.5;
-				normalizePoints[i].z = normalizePoints[i].z - centroid.z + BOX_SCALE*0.5;
-			}
+			for (size_t i = 0; i < rawPoints.size(); i++)				
+				normalizePoints[i]   +=  -centroid + Vec3f::one()*BOX_SCALE*0.5;					
 		}
 
 		ci::Vec3f calculateCentroid()
-		{
-			double x = 0;
-			double y = 0;
-			double z = 0;
+		{			
+			Vec3f xyz = Vec3f::zero();
 
-			for (size_t i = 0; i < rawPoints.size(); i++)
-			{
-				x += rawPoints[i].x;
-				y += rawPoints[i].y;
-				z += rawPoints[i].z;
-			}
+			for (size_t i = 0; i < rawPoints.size(); i++)			
+				xyz += rawPoints[i];				
 
-			x /= rawPoints.size();
-			y /= rawPoints.size();
-			z /= rawPoints.size();
+			xyz/= rawPoints.size();		
 	
-			return Vec3f(x, y, z);	
+			return xyz;
 		}
 
 		void setKinectTilt(int32_t _tiltDegrees)
@@ -175,6 +185,8 @@ class Pose
 		std::string				name;
 		std::vector<ci::Vec3f>	rawPoints;
 		std::vector<ci::Vec3f>	normalizePoints;
+		std::vector<ci::Color>	colors;
+		
 	
 		ci::Surface16u		_image;
 		ci::gl::Texture     _imageTex;

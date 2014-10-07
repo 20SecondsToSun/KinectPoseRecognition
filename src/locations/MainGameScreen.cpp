@@ -5,7 +5,7 @@ using namespace ci::app;
 using namespace MainGameDefaults;
 
 MainGameScreen MainGameScreen::MainGameScreenState;
-KinectAdapter* MainGameScreen::kinect	= KinectAdapter::Instance();
+//KinectAdapter* MainGameScreen::kinect	= KinectAdapter::Instance();
 
 void MainGameScreen::setup()
 {	
@@ -23,6 +23,8 @@ void MainGameScreen::setup()
 	comics1_godzilla = *AssetManager::getInstance()->getTexture( "images/comics1/godzilla.png" );	
 	comics2_cat = *AssetManager::getInstance()->getTexture( "images/comics2/crazy.jpg" );
 	comics3_uni = *AssetManager::getInstance()->getTexture( "images/comics3/unicorn.png" );
+
+	cameraCanon().live();
 }
 
 void MainGameScreen::init( LocationEngine* game)
@@ -37,6 +39,10 @@ void MainGameScreen::init( LocationEngine* game)
 
 	PlayerData::initData();
 	_preWaitingTimer.start();
+
+	cameraCanon().userPhotoIsDownloaded		= false;
+	cameraCanon().tryToTakePhoto				= false;
+	cameraCanon().photoCameraErrorMsg			= "NONE";
 }
 
 void MainGameScreen::shutdown()
@@ -97,6 +103,7 @@ void MainGameScreen::keyEvents()
 void MainGameScreen::update() 
 {
 	//checkPersonMissed();
+	cameraCanon().update();	
 	
 	switch(state)
 	{
@@ -114,8 +121,8 @@ void MainGameScreen::update()
 			{
 				_preGameTimer.stop();
 				_onePoseTimer.start();
-				kinect->isPoseDetecting = false;
-				kinect->isGameRunning   = true;
+				kinect().isPoseDetecting = false;
+				kinect().isGameRunning   = true;
 				state = MAIN_GAME;
 			}
 		break;
@@ -125,7 +132,7 @@ void MainGameScreen::update()
 			if (mainTimerIsFinished())
 			{				
 				stopPersonChecking();
-				kinect->isPoseDetecting = false;
+				kinect().isPoseDetecting = false;
 			}
 			else
 				checkPersonPose();
@@ -155,7 +162,7 @@ void MainGameScreen::update()
 
 void MainGameScreen::checkPersonMissed() 
 {
-	peopleCount = kinect->getSkeletsInFrame();
+	peopleCount = kinect().getSkeletsInFrame();
 
 	if (peopleCount == 0)
 	{
@@ -202,20 +209,19 @@ bool MainGameScreen::showGameResultTimeIsFinished()
 
 void MainGameScreen::checkPersonPose() 
 {
-	kinect->update();
+	kinect().update();
 
-	if ( kinect->getPoseProgress() >= MATCHING_MAX_VALUE)
+	if ( kinect().getPoseProgress() >= MATCHING_MAX_VALUE)
 	{
-		kinect->poseComplete();
+		kinect().poseComplete();
 		stopPersonChecking();
 
-		Surface surface(kinect->getColorTex());
+		Surface surface(kinect().getColorTex());
 
 		PlayerData::score++;
 		PlayerData::screenshot[currentPose-1]  = surface;
 		PlayerData::isSuccess[currentPose-1]	 = true;
-		//PlayerData::storyCode[currentPose]	 = 		
-		
+		//PlayerData::storyCode[currentPose]	 = 				
 	}
 }
 
@@ -223,7 +229,7 @@ void MainGameScreen::stopPersonChecking()
 {
 	_onePoseTimer.stop();
 	_resultTimer.start();
-	kinect->isGameRunning = false;
+	kinect().isGameRunning = false;
 	state = SHOW_GAME_RESULT;
 }
 
@@ -240,15 +246,18 @@ void MainGameScreen::gotoResultScreen()
 void MainGameScreen::nextPose() 
 {
 	currentPose++;
-	kinect->nextPose();
+	kinect().nextPose();
 }
 
 void MainGameScreen::draw() 
 {
-	gl::enableAlphaBlending();
+	gl::enableAlphaBlending();	
+	
+	//cameraCanon().draw();
 
 	drawCameraImage();
 	
+
 	gl::enableAlphaBlending();
 	switch(state)
 	{
@@ -278,7 +287,7 @@ void MainGameScreen::draw()
 
 void MainGameScreen::drawCameraImage()
 {
-	kinect->drawKinectCameraColorSurface();
+	kinect().drawKinectCameraColorSurface();
 }
 
 void MainGameScreen::drawFirstMessageBox()
@@ -295,21 +304,21 @@ void MainGameScreen::drawPreReadyCounterBox()
 
 void MainGameScreen::drawPoseSilhouette()
 {
-	kinect->drawLoadedPoses();
-	kinect->drawSkeletJoints();
+	kinect().drawLoadedPoses();
+	kinect().drawSkeletJoints();
 	gl::disableAlphaBlending();
 	gl::color(Color::white());
-	Utils::textFieldDraw("ÄÎ ÊÎÍÖÀ ÏÎÏÛÒÊÈ ÎÑÒÀËÎÑÜ  "+to_string(ONE_POSE_TIME - (int)_onePoseTimer.getSeconds()), &debugFont26, Vec2f(200.f, 700.0f), ColorA(1.f, 0.f, 0.f, 1.f));
+	Utils::textFieldDraw("ÄÎ ÊÎÍÖÀ ÏÎÏÛÒÊÈ ÎÑÒÀËÎÑÜ  "+to_string(ONE_POSE_TIME - (int)_onePoseTimer.getSeconds()), &debugFont26, Vec2f(1300.f, 10.0f), ColorA(1.f, 0.f, 0.f, 1.f));
 
-	Utils::textFieldDraw("MATCHING  " + to_string((int)kinect->getMatchPercent())+" %", &debugFont46, Vec2f(200.f, 790.0f), ColorA(1.f, 0.f, 0.f, 1.f));
+	Utils::textFieldDraw("MATCHING  " + to_string((int)kinect().getMatchPercent())+" %", &debugFont46, Vec2f(1300.f, 100.0f), ColorA(1.f, 0.f, 0.f, 1.f));
 	gl::enableAlphaBlending();
 
 	gl::pushMatrices();	
-	gl::translate(Vec2f(200.f, 900.0f));
+	gl::translate(Vec2f(1300.f, 200.0f));
 	gl::color(ColorA(1,1,1,1));
 	gl::drawSolidRect(Rectf(0, 0, 300, 50));
 	gl::color(ColorA(1,0,0,1));
-	gl::scale(kinect->getPoseProgress()/100.0f, 1.0f);
+	gl::scale(kinect().getPoseProgress()/100.0f, 1.0f);
 	gl::drawSolidRect(Rectf(0, 0, 300, 50));
 	gl::popMatrices();
 }
@@ -318,7 +327,7 @@ void MainGameScreen::drawGameResult()
 {
 	Rectf centeredRect = Rectf( 0,0, getWindowWidth(), getWindowHeight() ).getCenteredFit( getWindowBounds(),true );
 
-	if (kinect->isPoseDetecting)
+	if (kinect().isPoseDetecting)
 	{		
 		drawPoseComics();
 		gl::disableAlphaBlending();
@@ -338,8 +347,8 @@ void MainGameScreen::drawGameResult()
 void MainGameScreen::drawPoseComics()
 {
 	gl::pushMatrices();
-	gl::translate(kinect->viewShiftX, kinect->viewShiftY);	
-	gl::scale(kinect->headScale, kinect->headScale);
+	gl::translate(kinect().viewShiftX, kinect().viewShiftY);	
+	gl::scale(kinect().headScale, kinect().headScale);
 	gl::draw(PlayerData::screenshot[currentPose-1]);
 	gl::popMatrices();
 

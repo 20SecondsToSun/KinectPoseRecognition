@@ -76,7 +76,7 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
-      <AdditionalIncludeDirectories>..\include;..\..\..\\include;..\..\..\\boost;..\blocks\Cinder-KCB\src;..\blocks\Cinder-KCB\lib;$(KINECT_TOOLKIT_DIR)inc;$(KINECTSDK10_DIR)\inc;..\src;..\src\kinect;..\src\locations;..\src\controllers;..\src\data;..\src\tools;..\src\controllers\fonts;..\src\controllers\saver</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\include;..\..\..\\include;..\..\..\\boost;..\blocks\Cinder-KCB\src;..\blocks\Cinder-KCB\lib;$(KINECT_TOOLKIT_DIR)inc;$(KINECTSDK10_DIR)\inc;..\src;..\src\kinect;..\src\locations;..\src\controllers;..\src\data;..\src\tools;..\src\controllers\fonts;..\src\controllers\saver;..\src\camera;..\blocks\Cinder-CanonSdk\include;..\blocks\Cinder-CanonSdk\src;..\blocks\Cinder-CanonSdk\lib\EDSDK\Header</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;NOMINMAX;_WIN32_WINNT=0x0502;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <PrecompiledHeader />
@@ -91,7 +91,7 @@
       <AdditionalIncludeDirectories>"..\..\..\\include";..\include</AdditionalIncludeDirectories>
     </ResourceCompile>
     <Link>
-      <AdditionalDependencies>cinder-$(PlatformToolset).lib;Kinect10.lib;KinectCommonBridge.lib;FaceTrackLib.lib;OpenGL32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>cinder-$(PlatformToolset).lib;Kinect10.lib;KinectCommonBridge.lib;FaceTrackLib.lib;OpenGL32.lib;..\blocks\Cinder-CanonSdk\lib\EDSDK\Library\EDSDK.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <GenerateDebugInformation>false</GenerateDebugInformation>
       <GenerateMapFile>true</GenerateMapFile>
       <SubSystem>Windows</SubSystem>
@@ -100,15 +100,18 @@
       <RandomizedBaseAddress>false</RandomizedBaseAddress>
       <DataExecutionPrevention />
       <TargetMachine>MachineX86</TargetMachine>
-      <AdditionalLibraryDirectories>..\..\..\\lib\msw\$(PlatformTarget);$(KINECT_TOOLKIT_DIR)Lib\x86;$(KINECTSDK10_DIR)\lib\x86;..\blocks\Cinder-KCB\lib\$(PlatformTarget)\lib\$(Configuration)\$(PlatformToolset);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>..\..\..\\lib\msw\$(PlatformTarget);$(KINECT_TOOLKIT_DIR)Lib\x86;$(KINECTSDK10_DIR)\lib\x86;..\blocks\Cinder-KCB\lib\$(PlatformTarget)\lib\$(Configuration)\$(PlatformToolset);..\blocks\Cinder-CanonSdk\lib\EDSDK\Library\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ResourceCompile Include="Resources.rc" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\blocks\Cinder-CanonSdk\src\CanonCamera.cpp" />
+    <ClCompile Include="..\blocks\Cinder-CanonSdk\src\CinderCanon.cpp" />
     <ClCompile Include="..\blocks\Cinder-KCB\src\Kinect.cpp" />
     <ClCompile Include="..\src\1dollar\Dollar.cpp" />
+    <ClCompile Include="..\src\camera\CameraAdapter.cpp" />
     <ClCompile Include="..\src\controllers\fonts\FontStore.cpp" />
     <ClCompile Include="..\src\controllers\saver\Saver.cpp" />
     <ClCompile Include="..\src\data\PlayerData.cpp" />
@@ -128,10 +131,14 @@
     <ClCompile Include="..\src\Utils.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\blocks\Cinder-CanonSdk\include\CanonCamera.h" />
+    <ClInclude Include="..\blocks\Cinder-CanonSdk\include\CanonDebug.h" />
+    <ClInclude Include="..\blocks\Cinder-CanonSdk\include\CinderCanon.h" />
     <ClInclude Include="..\blocks\Cinder-KCB\lib\KinectCommonBridgeLib.h" />
     <ClInclude Include="..\blocks\Cinder-KCB\src\Kinect.h" />
     <ClInclude Include="..\include\Resources.h" />
     <ClInclude Include="..\src\1dollar\Dollar.h" />
+    <ClInclude Include="..\src\camera\CameraAdapter.h" />
     <ClInclude Include="..\src\controllers\fonts\FontStore.h" />
     <ClInclude Include="..\src\controllers\Pose.h" />
     <ClInclude Include="..\src\controllers\saver\Saver.h" />

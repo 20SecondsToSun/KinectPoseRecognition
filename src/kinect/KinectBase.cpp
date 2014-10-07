@@ -106,7 +106,7 @@ Rectf KinectBase::getColorResolutionRectf()
 
 void KinectBase::drawKinectCameraColorSurface()
 {
-	gl::clear();
+	//gl::clear();
 	gl::setMatricesWindow( getWindowSize());
 
 	Texture colorRef =  getColorTex();
@@ -120,6 +120,9 @@ void KinectBase::drawKinectCameraColorSurface()
 		gl::pushMatrices();
 			gl::translate(viewShiftX, viewShiftY);
 			gl::scale(headScale, headScale);
+			//gl::translate(320,0);
+			//gl::scale(0.5, 0.5);
+
 			gl::draw( colorRef);//, colorRef.getBounds(), Rectf(0, 0, float(viewWidth),float(viewHeight)));	
 		gl::popMatrices();		
 

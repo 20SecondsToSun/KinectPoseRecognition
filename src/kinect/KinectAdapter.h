@@ -66,8 +66,14 @@ protected:
 		int							levelCompletion;
 		void						setActiveJoints();
 		
-		bool						isAnchorPointsMath(Pose pose1, Pose pose2);
+		bool						isAnchorPointsMatch(Pose pose1, Pose pose2);
+		bool						isPointsSizeEqual(Pose pose1, Pose pose2);
 		double						calculateDistanceBetweenPoints(ci::Vec3f vec1, ci::Vec3f vec2);
+
+		Pose						currentPose;
+
+		void						computeMistakeWay1();
+		void						computeMistakeWay2();
 };
 
 inline KinectAdapter&	kinect() { return *KinectAdapter::Instance(); };

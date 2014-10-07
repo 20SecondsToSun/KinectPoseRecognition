@@ -61,6 +61,12 @@
     <Filter Include="Source Files\controllers\saver">
       <UniqueIdentifier>{ded768c4-53f8-4181-9369-bf28d57384ab}</UniqueIdentifier>
     </Filter>
+    <Filter Include="blocks\Canon-SDK">
+      <UniqueIdentifier>{2097e27a-2c65-41c4-b64e-ea8cdea9f564}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\controllers\camera">
+      <UniqueIdentifier>{b9e56feb-815a-4c30-8690-e8bd2c4aada5}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\src\KinectPoseRecognitionApp.cpp">
@@ -125,6 +131,15 @@
     </ClCompile>
     <ClCompile Include="..\src\kinect\KinectBase.cpp">
       <Filter>Source Files\controllers\kinectAdapter</Filter>
+    </ClCompile>
+    <ClCompile Include="..\blocks\Cinder-CanonSdk\src\CanonCamera.cpp">
+      <Filter>blocks\Canon-SDK</Filter>
+    </ClCompile>
+    <ClCompile Include="..\blocks\Cinder-CanonSdk\src\CinderCanon.cpp">
+      <Filter>blocks\Canon-SDK</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\camera\CameraAdapter.cpp">
+      <Filter>Source Files\controllers\camera</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -193,6 +208,18 @@
     </ClInclude>
     <ClInclude Include="..\src\kinect\KinectBase.h">
       <Filter>Source Files\controllers\kinectAdapter</Filter>
+    </ClInclude>
+    <ClInclude Include="..\blocks\Cinder-CanonSdk\include\CanonCamera.h">
+      <Filter>blocks\Canon-SDK</Filter>
+    </ClInclude>
+    <ClInclude Include="..\blocks\Cinder-CanonSdk\include\CanonDebug.h">
+      <Filter>blocks\Canon-SDK</Filter>
+    </ClInclude>
+    <ClInclude Include="..\blocks\Cinder-CanonSdk\include\CinderCanon.h">
+      <Filter>blocks\Canon-SDK</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\camera\CameraAdapter.h">
+      <Filter>Source Files\controllers\camera</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

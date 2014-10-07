@@ -54,7 +54,7 @@ void Dollar::draw()
 		drawDataBaseGestures();
 
 	gl::color(Color::white());
-	for (int i = 0; i < rawData.size(); i++)
+	for (size_t i = 0; i < rawData.size(); i++)
 	{
 		gl::drawSolidCircle(Vec2f(rawData[i].x, rawData[i].y), 5);
 	}

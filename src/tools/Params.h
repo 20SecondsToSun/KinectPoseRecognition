@@ -26,4 +26,6 @@ class Params
 		//static bool		recording;
 
 		static float	comeBackHomeTime;
+		static fs::path	getPhotosStorageDirectory();
+
 };

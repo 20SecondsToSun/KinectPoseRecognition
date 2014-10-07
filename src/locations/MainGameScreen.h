@@ -14,6 +14,7 @@
 #include "AssetsManager.h"
 #include "ScreenshotHolder.h"
 #include "PlayerData.h"
+#include "CameraAdapter.h"
 
 using namespace ci;
 using namespace ci::app;
@@ -105,7 +106,7 @@ class MainGameScreen : public Location
 		void					stopPersonChecking();
 		
 	
-		static KinectAdapter*	kinect;
+	//	static KinectAdapter*	kinect;
 
 		static const int		MATCHING_MAX_VALUE = 100;
 
