@@ -332,3 +332,11 @@ float Utils::map(float value,
                               float ostop) {
     return ostart + (ostop - ostart) * ((value - istart) / (istop - istart));
 }
+
+Surface Utils::resizeScreenshot(Surface screenshot, int32_t width, int32_t height)
+{
+	Surface screenshot_r = Surface( width, height, false ); 
+	ci::ip::resize( screenshot, screenshot.getBounds(), &screenshot_r, screenshot_r.getBounds(), FilterBox() );
+	return screenshot_r;
+}
+

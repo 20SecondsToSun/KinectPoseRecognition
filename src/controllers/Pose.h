@@ -33,7 +33,7 @@ class Pose
 		void	initColors()
 		{ 
 			colors.clear();
-			for (int i = 0; i < rawPoints.size(); i++)
+			for (size_t i = 0; i < rawPoints.size(); i++)
 			{
 				colors.push_back( Color(0, 0, 1));
 			}			
@@ -78,12 +78,24 @@ class Pose
 		{ 
 			gl::color(ColorA(1.0f, 0.0f, 0.0f, 0.8f));
 			gl::draw(_imageTex);
-			gl::color(ColorA(0.0f, 1.0f, 0.0f, 0.8f));			
-			gl::drawStrokedRect(Rectf(boundingBox.x, boundingBox.y, boundingBox.x+boundingBox.w,  boundingBox.y+boundingBox.h));			
-			gl::color(ColorA(0.0f, 0.0f, 1.0f, 0.8f));
-			//drawPoints();
-			gl::drawSolidCircle(anchorPoint, 3, 16);
-		};		
+
+			drawBox()	;
+
+			drawAnchor();
+
+		};
+
+		void	setComicsImage(ci::gl::Texture _comics)  
+		{
+			comics = _comics;
+		}
+
+		ci::gl::Texture		getComicsImage()  
+		{
+			return comics;
+		}
+
+		
 
 		void	drawPoints()
 		{ 
@@ -95,6 +107,19 @@ class Pose
 				gl::popMatrices();
 			}
 		};
+
+		void	drawBox()
+		{
+			gl::color(ColorA(0.0f, 1.0f, 0.0f, 0.8f));			
+			gl::drawStrokedRect(Rectf(boundingBox.x, boundingBox.y, boundingBox.x+boundingBox.w,  boundingBox.y+boundingBox.h));	
+		}
+
+		void	drawAnchor()
+		{
+			gl::color(ColorA(0.0f, 0.0f, 1.0f, 0.8f));		
+			gl::drawSolidCircle(anchorPoint, 3, 16);
+		}
+
 
 		void	drawLabel() {};		
 
@@ -194,4 +219,6 @@ class Pose
 
 		int32_t				tiltDegrees;
 		ci::Vec2f			anchorPoint;
+
+		ci::gl::Texture		comics;
 };

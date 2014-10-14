@@ -1,3 +1,6 @@
+#pragma warning(push)
+#pragma warning(disable: 4244)
+
 #include "cinder/app/AppNative.h"
 #include "cinder/gl/gl.h"
 #include "KinectAdapter.h"
@@ -38,7 +41,7 @@ class KinectPoseRecognitionApp : public AppNative {
 
 void KinectPoseRecognitionApp::setup()
 {
-	setWindowSize(1920, 1000);
+	setWindowSize(1920, 1080);
 
 	fonts().loadFont( loadFile(getAssetPath("fonts/Helvetica Neue Bold.ttf")), 46);
 	fonts().loadFont( loadFile(getAssetPath("fonts/Helvetica Neue Bold.ttf")), 26);
@@ -49,6 +52,9 @@ void KinectPoseRecognitionApp::setup()
 	state    = "ChooseMode";
 
 	kinect().Setup();	
+
+	cameraCanon().setup();
+	cameraCanon().live();
 
    #ifndef recording
 	
@@ -192,5 +198,5 @@ void KinectPoseRecognitionApp::shutdown( )
 {
 	kinect().Shutdown();
 }
-
 CINDER_APP_NATIVE( KinectPoseRecognitionApp, RendererGl )
+#pragma warning(pop)

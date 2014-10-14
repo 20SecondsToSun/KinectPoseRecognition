@@ -5,7 +5,6 @@ using namespace ci::app;
 using namespace MainGameDefaults;
 
 MainGameScreen MainGameScreen::MainGameScreenState;
-//KinectAdapter* MainGameScreen::kinect	= KinectAdapter::Instance();
 
 void MainGameScreen::setup()
 {	
@@ -18,31 +17,49 @@ void MainGameScreen::setup()
 	stateMemoMap[SHOW_GAME_RESULT]	 = "Результат кривляний";
 	stateMemoMap[NONE]				 = "Пустое состояние";
 
-	failImage 	= *AssetManager::getInstance()->getTexture( "images/fail.jpg" );
+	failImage 		 = *AssetManager::getInstance()->getTexture( "images/fail.jpg" );
 
-	comics1_godzilla = *AssetManager::getInstance()->getTexture( "images/comics1/godzilla.png" );	
-	comics2_cat = *AssetManager::getInstance()->getTexture( "images/comics2/crazy.jpg" );
-	comics3_uni = *AssetManager::getInstance()->getTexture( "images/comics3/unicorn.png" );
+	cameraCanon().cameraConnectedEvent.connect( 
+		boost::bind(&MainGameScreen::cameraIsConnectedNow, this) 
+		);	
 
-	cameraCanon().live();
+	comeBackBtn = new ButtonColor(getWindow(), Rectf(1200,300, 1600, 400), Color(1,0,0),
+							fonts().getFont("Helvetica Neue", 46),
+							"НАЗАД");
+}
+
+void MainGameScreen::cameraIsConnectedNow( )
+{
+	_game->changeState(IntroScreen::Instance());
 }
 
 void MainGameScreen::init( LocationEngine* game)
 {		
 	_game = game;
-
 	state = SHOW_FIRST_MESSAGE;
 
-	peopleCount = 1;
+	#ifdef debug
+		peopleCount = 1;
+	#else
+		peopleCount = 0;
+	#endif
+
 	distanceToPlayer = 0.0f;
-	currentPose = 1;
+
+
+	kinect().startPoseGame();
+	
+	currentPose = 1;//
+	poseCode = kinect().getPoseCode();
 
 	PlayerData::initData();
 	_preWaitingTimer.start();
 
-	cameraCanon().userPhotoIsDownloaded		= false;
-	cameraCanon().tryToTakePhoto				= false;
+	cameraCanon().userPhotoIsDownloaded			= false;	
 	cameraCanon().photoCameraErrorMsg			= "NONE";
+
+	comeBackBtn->mouseDownEvent.connect(boost::bind(&MainGameScreen::gotoFirstScreen, this));
+	comeBackBtn->addEventListener(MouseEvents::MOUSE_DOWN);
 }
 
 void MainGameScreen::shutdown()
@@ -52,11 +69,8 @@ void MainGameScreen::shutdown()
 
 void MainGameScreen::cleanup()
 {	
-	_preWaitingTimer.stop();
-	_preGameTimer.stop();
-	_onePoseTimer.stop();
-	_resultTimer.stop();
-	_missedTimer.stop();
+	stopAllTimersIfNeed();
+	comeBackBtn->removeConnect(MouseEvents::MOUSE_DOWN);
 }
 
 void MainGameScreen::pause()
@@ -102,62 +116,148 @@ void MainGameScreen::keyEvents()
 
 void MainGameScreen::update() 
 {
-	//checkPersonMissed();
+	#ifndef debug
+		//checkPersonMissed();	
+	#endif
+
 	cameraCanon().update();	
-	
+
+	if( !cameraCanon().isConnected)
+		return;
+		
 	switch(state)
 	{
 		case SHOW_FIRST_MESSAGE:
-			if (preWaitingTimerIsFinished() && personisFound())
-			{
-				_preWaitingTimer.stop();
-				_preGameTimer.start();
-				state = PRE_GAME_INTRO;				
-			}
+			updateFirstMessage();
 		break;
 
 		case PRE_GAME_INTRO:
-			if (preGameTimerIsFinished())
-			{
-				_preGameTimer.stop();
-				_onePoseTimer.start();
-				kinect().isPoseDetecting = false;
-				kinect().isGameRunning   = true;
-				state = MAIN_GAME;
-			}
+			updatePreGameIntro();
 		break;
 
-		case MAIN_GAME:
-			
-			if (mainTimerIsFinished())
-			{				
-				stopPersonChecking();
-				kinect().isPoseDetecting = false;
-			}
-			else
-				checkPersonPose();
+		case MAIN_GAME:			
+			updateMainGame();
 		break;
 
 		case SHOW_GAME_RESULT:
-			if(showGameResultTimeIsFinished())
-			{
-				_resultTimer.stop();
-
-				if (allPoseDone())
-				{
-					nextPose();
-					gotoResultScreen();
-					state = NONE;
-				}
-				else
-				{
-					nextPose();
-					_preGameTimer.start();
-					state = PRE_GAME_INTRO;
-				}
-			}
+			updateGameResult();
 		 break;
+
+		case PHOTO_MAKING_WAIT:		
+			updatePhotoMaking();
+		break;
+
+		case WIN_ANIMATION_FINISH_WAIT:
+			updateAnimationWait();
+		break;
+
+		case MAKE_SCREENSHOOT:			
+			makeScreenShootUpdtae();
+		break;
 	}	
+}
+
+void MainGameScreen::updateFirstMessage() 
+{
+	if (preWaitingTimerIsFinished() )//&& personisFound())
+	{
+		_preWaitingTimer.stop();
+		_preGameTimer.start();
+		state = PRE_GAME_INTRO;				
+	}
+}
+
+void MainGameScreen::updatePreGameIntro() 
+{
+	if (preGameTimerIsFinished())
+	{
+		_preGameTimer.stop();
+		_onePoseTimer.start();
+		kinect().isPoseDetecting = false;
+		kinect().isGameRunning   = true;
+		state = MAIN_GAME;
+	}
+}
+
+void MainGameScreen::updateMainGame() 
+{
+	if (mainTimerIsFinished())
+	{				
+		stopPersonChecking();
+		kinect().isPoseDetecting = false;
+	}
+	else
+	{
+		checkPersonPose();
+	}
+}
+
+void MainGameScreen::updateGameResult() 
+{
+	if(showGameResultTimeIsFinished())
+	{
+		_resultTimer.stop();
+		state = MAKE_SCREENSHOOT;			
+	}
+}
+
+void MainGameScreen::updatePhotoMaking() 
+{
+	if (cameraCanon().checkIfDownloaded())
+	{
+		setPlayerOnePoseGuess(cameraCanon().getpathToDownloadedPhoto());			
+		checkAnimationFinished();
+	}
+	else if (cameraCanon().checkIfError())
+	{
+		setPlayerOnePoseGuess();
+		checkAnimationFinished();
+	}
+}
+
+void MainGameScreen::setPlayerOnePoseGuess(std::string pathToHiRes) 
+{
+	PlayerData::score++;
+	PlayerData::playerData[currentPose - 1].isFocusError = false;
+	PlayerData::playerData[currentPose - 1].isSuccess	 = true;
+	PlayerData::playerData[currentPose - 1].pathHiRes	 =  pathToHiRes;
+	PlayerData::playerData[currentPose - 1].screenshot	 = cameraCanon().getSurface();
+	PlayerData::playerData[currentPose - 1].storyCode	 = poseCode;	
+
+}
+
+void MainGameScreen::checkAnimationFinished() 
+{
+	if (winAnimationFinished == false)
+	{					
+		state = WIN_ANIMATION_FINISH_WAIT;					
+	}
+	else state = SHOW_GAME_RESULT;
+}
+
+
+void MainGameScreen::updateAnimationWait() 
+{
+	if (winAnimationFinished )
+	{
+		state = SHOW_GAME_RESULT;
+	}
+}
+
+void MainGameScreen::makeScreenShootUpdtae() 
+{
+	if (allPoseDone())
+	{
+		nextPose();
+		gotoResultScreen();
+		state = NONE;
+	}
+	else
+	{
+		nextPose();
+		_preGameTimer.start();
+		state = PRE_GAME_INTRO;
+	}
 }
 
 void MainGameScreen::checkPersonMissed() 
@@ -187,45 +287,32 @@ bool MainGameScreen::personisFound()
 	return peopleCount !=0;
 }
 
-bool MainGameScreen::preWaitingTimerIsFinished() 
-{
-	return  (!_preWaitingTimer.isStopped() &&  _preWaitingTimer.getSeconds() > PREWAITING_TIME);
-}
-
-bool MainGameScreen::preGameTimerIsFinished() 
-{	
-	return  (!_preGameTimer.isStopped()	  &&  _preGameTimer.getSeconds() > PREGAME_TIME);
-}
-
-bool MainGameScreen::mainTimerIsFinished() 
-{
-	return  (!_onePoseTimer.isStopped() &&  _onePoseTimer.getSeconds() > ONE_POSE_TIME);
-}
-
-bool MainGameScreen::showGameResultTimeIsFinished() 
-{
-	return  (!_resultTimer.isStopped() &&  _resultTimer.getSeconds() > RESULT_TIME);
-}
-
 void MainGameScreen::checkPersonPose() 
 {
 	kinect().update();
 
-	if ( kinect().getPoseProgress() >= MATCHING_MAX_VALUE)
+	if (1)// kinect().getPoseProgress() >= MATCHING_MAX_VALUE)
 	{
 		kinect().poseComplete();
 		stopPersonChecking();
+		_onePoseTimer.stop();		
+		kinect().isGameRunning = false;
+		winAnimationFinished = false;	
 
-		Surface surface(kinect().getColorTex());
+		state = PHOTO_MAKING_WAIT;	
+		timeline().apply(&alphaFlashAnim, 1.0f,  0.0f, 1.5f , EaseInCubic()).finishFn( bind( &MainGameScreen::animationFinished, this ) ).delay(1.5);			
 
-		PlayerData::score++;
-		PlayerData::screenshot[currentPose-1]  = surface;
-		PlayerData::isSuccess[currentPose-1]	 = true;
-		//PlayerData::storyCode[currentPose]	 = 				
+		cameraCanon().takePhoto();
 	}
 }
 
-void MainGameScreen::stopPersonChecking() 
+void MainGameScreen::animationFinished() 
+{
+	winAnimationFinished = true;
+	_resultTimer.start();	
+}
+
+void 	MainGameScreen::stopPersonChecking() 
 {
 	_onePoseTimer.stop();
 	_resultTimer.start();
@@ -235,7 +322,7 @@ void MainGameScreen::stopPersonChecking()
 
 bool MainGameScreen::allPoseDone() 
 {
-	return currentPose >= ALL_POSES_COUNT;
+	return currentPose >= POSE_IN_GAME_TOTAL;
 }
 
 void MainGameScreen::gotoResultScreen() 
@@ -246,17 +333,22 @@ void MainGameScreen::gotoResultScreen()
 void MainGameScreen::nextPose() 
 {
 	currentPose++;
-	kinect().nextPose();
+	poseCode = kinect().nextPose();	
 }
 
 void MainGameScreen::draw() 
 {
 	gl::enableAlphaBlending();	
-	
-	//cameraCanon().draw();
 
-	drawCameraImage();
+	if (cameraCanon().isConnected == false)
+	{
+		drawCameraLostImage();
+		stopAllTimersIfNeed();
+		return;
+	}
 	
+	cameraCanon().draw();
+	//drawCameraImage();	
 
 	gl::enableAlphaBlending();
 	switch(state)
@@ -273,14 +365,35 @@ void MainGameScreen::draw()
 			drawPoseSilhouette();
 		break;
 
-		case SHOW_GAME_RESULT:			
-			drawGameResult();
+		case SHOW_GAME_RESULT:				
+			drawGameResult();			
+		break;
+
+		case MAKE_SCREENSHOOT:
+			drawGameResultWithoutTimer();
+		break;
+
+		case PHOTO_MAKING_WAIT:
+			drawPoseSilhouette();
+			drawPhotoFlash();
+		break;
+
+		case WIN_ANIMATION_FINISH_WAIT:
+			drawPoseSilhouette();
+			drawPhotoFlash();
 		break;
 	}	
 	
 	#ifdef debug
 		//drawDebugMessage();
 	#endif	
+
+	if (personisFound() == false)
+	{
+		Utils::textFieldDraw("Игрок покинул нас. возврат через  "+to_string((int)(Params::comeBackHomeTime - _missedTimer.getSeconds())), &debugFont26, Vec2f(0.f, 900.0f), ColorA(1.f, 0.f, 0.f, 1.f));
+	}
+
+	comeBackBtn->draw();
 
 	gl::disableAlphaBlending();
 }
@@ -344,15 +457,39 @@ void MainGameScreen::drawGameResult()
 	}
 }
 
+void MainGameScreen::drawGameResultWithoutTimer()
+{
+	Rectf centeredRect = Rectf( 0,0, getWindowWidth(), getWindowHeight() ).getCenteredFit( getWindowBounds(),true );
+
+	if (kinect().isPoseDetecting)
+	{		
+		drawPoseComics();		
+		
+	}
+	else
+	{
+		gl::draw(failImage, centeredRect);	
+	}
+}
+
 void MainGameScreen::drawPoseComics()
 {
 	gl::pushMatrices();
-	gl::translate(kinect().viewShiftX, kinect().viewShiftY);	
-	gl::scale(kinect().headScale, kinect().headScale);
-	gl::draw(PlayerData::screenshot[currentPose-1]);
+	//gl::translate(kinect().viewShiftX, kinect().viewShiftY);	
+	//gl::scale(kinect().headScale, kinect().headScale);
+	gl::translate(cameraCanon().getSurfaceTranslate());
+	gl::scale(-cameraCanon().scaleFactor, cameraCanon().scaleFactor);
+	gl::draw(PlayerData::playerData[currentPose-1].screenshot);
 	gl::popMatrices();
 
-	if (currentPose == 1)
+
+	gl::pushMatrices();
+		gl::translate(getWindowWidth() - 360.0, getWindowHeight() - 512.0);		
+		gl::draw(kinect().getPoseImage());
+	gl::popMatrices();
+
+
+	/*if (poseCode == 1)
 	{
 		gl::pushMatrices();
 
@@ -360,7 +497,7 @@ void MainGameScreen::drawPoseComics()
 		gl::draw(comics1_godzilla);
 		gl::popMatrices();
 	}
-	else if (currentPose == 2)
+	else if (poseCode == 2)
 	{
 		gl::pushMatrices();
 		gl::translate(getWindowWidth() - comics2_cat.getWidth(), getWindowHeight() - comics2_cat.getHeight());
@@ -368,13 +505,20 @@ void MainGameScreen::drawPoseComics()
 		gl::popMatrices();
 
 	}
-	else if (currentPose == 3)
+	else if (poseCode == 3)
 	{
 		gl::pushMatrices();
 		gl::translate(getWindowWidth() - comics3_uni.getWidth(), getWindowHeight() - comics3_uni.getHeight());
 		gl::draw(comics3_uni);
 		gl::popMatrices();
-	}
+	}*/
+}
+
+void MainGameScreen::drawPhotoFlash()
+{
+	gl::color(ColorA(1, 1, 1, alphaFlashAnim));
+	gl::drawSolidRect(Rectf(0, 0, getWindowWidth(), getWindowHeight()));
+	gl::color(Color::white());
 }
 
 void MainGameScreen::drawDebugMessage()
@@ -396,4 +540,45 @@ void MainGameScreen::drawDebugMessage()
 		" \n| Таймер показа результата "+  to_string((int)_resultTimer.getSeconds());
 
 	Utils::textFieldDraw(outString3, &debugFont26, Vec2f(10.f, 100.0f), ColorA(1.f, 1.f, 1.f, 1.f));
+}
+
+void MainGameScreen::drawCameraLostImage()
+{
+	Utils::textFieldDraw("КАМЕРА ВЫКЛЮЧЕНА", &debugFont26, Vec2f(10.f, 10.0f), ColorA(1.f, 1.f, 1.f, 1.f));
+}
+
+void MainGameScreen::stopAllTimersIfNeed()
+{
+	if(!_preWaitingTimer.isStopped()) _preWaitingTimer.stop();
+	if(!_preGameTimer.isStopped()) _preGameTimer.stop();
+	if(!_onePoseTimer.isStopped()) _onePoseTimer.stop();
+	if(!_resultTimer.isStopped()) _resultTimer.stop();
+	if(!_missedTimer.isStopped()) _missedTimer.stop();
+}
+
+bool MainGameScreen::preWaitingTimerIsFinished() 
+{
+	return  (!_preWaitingTimer.isStopped() &&  _preWaitingTimer.getSeconds() > PREWAITING_TIME);
+}
+
+bool MainGameScreen::preGameTimerIsFinished() 
+{	
+	return  (!_preGameTimer.isStopped()	  &&  _preGameTimer.getSeconds() > PREGAME_TIME);
+}
+
+bool MainGameScreen::mainTimerIsFinished() 
+{
+	return  (!_onePoseTimer.isStopped() &&  _onePoseTimer.getSeconds() > ONE_POSE_TIME);
+}
+
+bool MainGameScreen::showGameResultTimeIsFinished() 
+{
+	return  (!_resultTimer.isStopped() &&  _resultTimer.getSeconds() > RESULT_TIME);
+}
+
+void MainGameScreen::gotoFirstScreen() 
+{
+	//isChangingStateNow = true;
+	//timeline().apply( &alphaAnimate, 0.0f, 1.0f, 0.9f, EaseOutCubic() ).finishFn( bind( &MainGameScreen::animationFinished, this ) );	
+	_game->changeState(IntroScreen::Instance());
 }

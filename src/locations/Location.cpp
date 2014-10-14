@@ -37,6 +37,7 @@ bool Location::isComeBackTimerKinectFired()
 
 	return false;
 }
+
 int Location::getSecondsToComeBack()
 {
 	return (int)(Params::comeBackHomeTime - returnTimer.getSeconds());
@@ -51,24 +52,3 @@ void Location::comeBackTimerStop()
 {
 	returnTimer.stop();
 }
-
-void Location::createComeBackButton()
-{
-	comeBackBtn = new ButtonColor(getWindow(), Rectf(1200,300, 1600, 400), Color(1,0,0),
-							fonts().getFont("Helvetica Neue", 46),
-							"ÍÀÇÀÄ");								  
-   
-	comeBackBtn->mouseDownEvent->connect(boost::bind(&Location::gotoFirstScreen, this));
-	
-}
-
-void Location::gotoFirstScreen()
-{
-	
-}
-
-void Location::drawComeBackButton()
-{
-	comeBackBtn->draw();
-}
-

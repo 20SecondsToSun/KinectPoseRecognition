@@ -8,8 +8,8 @@ IntroScreen IntroScreen::IntroScreenState;
 
 void IntroScreen::setup()
 {	
-	introImage = *AssetManager::getInstance()->getTexture( "images/intro.png" );
-	playImage  = *AssetManager::getInstance()->getTexture( "images/play.jpg" );
+	introImage		  = *AssetManager::getInstance()->getTexture( "images/intro.png" );
+	playImage		  = *AssetManager::getInstance()->getTexture( "images/play.jpg" );
 	instructionImage  = *AssetManager::getInstance()->getTexture( "images/instruction.jpg" );
 
 
@@ -19,12 +19,11 @@ void IntroScreen::setup()
 
 	startGameBtn = new ButtonColor(getWindow(), Rectf(1200,700,1600, 800), Color(1,0,0),
 							fonts().getFont("Helvetica Neue", 46),
-							"ÍÀ×ÀÒÜ ÈÃÐÓ");		
+							"ÍÀ×ÀÒÜ ÈÃÐÓ");	
 
-	startInstructionBtn->mouseDownEvent->connect(boost::bind(&IntroScreen::startInstructionBtnDown, this));
-	startGameBtn->mouseDownEvent->connect( boost::bind(&IntroScreen::startGameBtnDown, this));
-
-	createComeBackButton();
+	comeBackBtn = new ButtonColor(getWindow(), Rectf(1200,300, 1600, 400), Color(1,0,0),
+							fonts().getFont("Helvetica Neue", 46),
+							"ÍÀÇÀÄ");
 }
 
 void IntroScreen::startInstructionBtnDown()
@@ -46,7 +45,10 @@ void IntroScreen::init( LocationEngine* game)
 
 	isChangingStateNow = false;
 	isPeopleInFrame = false;
-	comeBackBtn->addEventListener(MouseEvents::MOUSE_DOWN);
+
+	startInstructionBtn->mouseDownEvent.connect(boost::bind(&IntroScreen::startInstructionBtnDown, this));
+	startGameBtn->mouseDownEvent.connect(boost::bind(&IntroScreen::startGameBtnDown, this));		
+	comeBackBtn->mouseDownEvent.connect(boost::bind(&IntroScreen::gotoFirstScreen, this));
 }
 
 void IntroScreen::cleanup()
@@ -78,7 +80,7 @@ void IntroScreen::mouseEvents()
 			nextState = SHOW_INVITE;			
 			changeState();	
 		}
-		comeBackTimerStart();
+		else comeBackTimerStart();
 	}
 }
 
@@ -172,13 +174,13 @@ void IntroScreen::draw()
 		case SHOW_INVITE:
 			gl::draw( playImage, centeredRect);	
 			startInstructionBtn->draw();
-			drawComeBackButton();
+			comeBackBtn->draw();
 		break;
 
 		case SHOW_INSTRUCTION:
 			gl::draw( instructionImage, centeredRect);	
 			startGameBtn->draw();
-			drawComeBackButton();
+			comeBackBtn->draw();
 		break;
 
 		case START_GAME:			
@@ -223,11 +225,13 @@ void IntroScreen::animationFinished()
 	{
 		case INIT:				
 			startInstructionBtn->removeConnect(MouseEvents::MOUSE_DOWN);
+			comeBackBtn->removeConnect(MouseEvents::MOUSE_DOWN);
 			startGameBtn->removeConnect(MouseEvents::MOUSE_DOWN);			
 		break;
 
 		case SHOW_INVITE:	
 			startInstructionBtn->addEventListener(MouseEvents::MOUSE_DOWN);
+			comeBackBtn->addEventListener(MouseEvents::MOUSE_DOWN);
 			startGameBtn->removeConnect(MouseEvents::MOUSE_DOWN);		
 		break;
 

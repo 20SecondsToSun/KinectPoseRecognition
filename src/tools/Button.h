@@ -32,19 +32,10 @@ class Button
 		Button(){};
 
 		void			setup(ci::app::WindowRef window);
-
-
 		void			draw();
 		void			down();
 		void			up();
 		bool			contains(ci::Vec2f mousePoint);
-		
-
-
-
-
-
-
 
 
 		std::string		getBtnId();
@@ -57,7 +48,7 @@ class Button
 		void			setBtnId(string value);
 
 		
-		ButtonSignal* mouseDownEvent;
+		ButtonSignal	 mouseDownEvent;
 		//boost::signals2::signal<void(void)>	mouseUp_Event;
 		
 		void removeConnect(int type);

@@ -53,7 +53,17 @@ class CameraAdapter :public canon::PhotoHandler
 		static CameraAdapter* Instance() 
 		{
 			return &CameraAdapterState;
-		}		
+		}	
+
+		bool		isConnected;
+
+		boost::signals2::signal<void(void)>		cameraConnectedEvent;
+
+		ci::Surface8u		getSurface();
+
+		ci::Vec2f			getSurfaceTranslate();
+		double				scaleFactor;
+		ci::Vec2f			translateSurface;
 	
 	protected:
 		CameraAdapter() { }
@@ -65,7 +75,7 @@ class CameraAdapter :public canon::PhotoHandler
 		fs::path                    mPhotoDownloadFolder;
 
 		Timer restartLiveViewTimer, reconnectTimer;
-		bool isConnected;
+		
 		string  userPhotoFileName, pathToDownloadedPhoto;	
 
 		Surface8u lastFrame;
@@ -73,9 +83,11 @@ class CameraAdapter :public canon::PhotoHandler
 		 std::string photoDownloadDirectory();
 		 std::string photoCameraReadyLiveView();
 
-		 double			viewShiftX, viewShiftY, scaleFactor;
+		 double			viewShiftX, viewShiftY;
 		 bool			isAspectsCompute;
 
+		 void			takePhotoThread();
+		 std::shared_ptr<std::thread>				tkphThread;
 		
 		/////////////////////////
 

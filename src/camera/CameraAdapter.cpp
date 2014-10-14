@@ -22,7 +22,10 @@ void CameraAdapter::setup()
     isConnected = mCamera.setup(this);
 
 	if (isConnected)
+	{
 	   mCamera.startLiveView();
+	   cameraConnectedEvent();
+	}
 }
 
 void CameraAdapter::update()
@@ -55,7 +58,9 @@ void CameraAdapter::update()
 			}
 	
 			viewShiftX =float( 0.5 * (getWindowWidth()  - viewWidth));
-			viewShiftY= float( 0.5 * (getWindowHeight() - viewHeight));		
+			viewShiftY= float( 0.5 * (getWindowHeight() - viewHeight));
+
+			translateSurface = Vec2f(viewShiftX + mCamera.getLiveSurface().getWidth()*scaleFactor, viewShiftY);
 		}
 	}
 	else
@@ -66,14 +71,32 @@ void CameraAdapter::update()
 	}
 }
 
+Vec2f CameraAdapter::getSurfaceTranslate()
+{
+	return translateSurface;
+}
+
 void CameraAdapter::takePhoto()
 {
+
 	tryToTakePhoto = true;
 	userPhotoIsDownloaded = false;
 	photoCameraErrorMsg = "NONE";
 
 	mCamera.endLiveView();
-    mCamera.takePicture(this);		
+    mCamera.takePicture(this);	
+	//tkphThread = shared_ptr<thread>( new thread( bind( &CameraAdapter::takePhotoThread, this ) ) );	
+	
+}
+
+void CameraAdapter::takePhotoThread()
+{
+	ci::ThreadSetup threadSetup; // instantiate this if you're talking to Cinder from a secondary thread	
+
+	
+	
+
+	tkphThread->detach();
 }
 
 void CameraAdapter::live()
@@ -129,17 +152,27 @@ void CameraAdapter::draw()
 
 		if (mCamera.isLiveViewing())//tryToTakePhoto == false)	
 		{	
-			gl::translate(viewShiftX + mCamera.getLiveSurface().getWidth()*scaleFactor, viewShiftY);
+			gl::translate(translateSurface);
 			gl::scale(-scaleFactor, scaleFactor);
 			gl::color(Color::white());
 			gl::draw( gl::Texture( mCamera.getLiveSurface() ));				
-			lastFrame = mCamera.getLiveSurface();
+			lastFrame = mCamera.getLiveSurface();			
 		}
 		else 
+		{
+			gl::translate(translateSurface);
+			gl::scale(-scaleFactor, scaleFactor);
+			gl::color(Color::white());
 			gl::draw(lastFrame);
+		}
 
 	gl::popMatrices();
 	//mShaderColor.unbind();		
+}
+
+Surface8u CameraAdapter::getSurface()
+{
+	return mCamera.getLiveSurface();	
 }
 
 void CameraAdapter::drawDesaturate()
@@ -176,6 +209,7 @@ void CameraAdapter::shutdown()
 
 
 //-----------------------------------------------------------------------------------
+
 void CameraAdapter::photoCameraError( EdsError err)
 {
 	//string temp = (c_str, strnlen(c_str, max_length));
@@ -208,9 +242,9 @@ std::string CameraAdapter::photoCameraReadyLiveView()
 	if (isConnected == false)	 return "ERROR";
 	if (mCamera.isLiveViewing()) return "START";
 
-	console()<<"START LIVE VIEW!!!!!!"<<std::endl;
-
-	console()<<"isBusy? "<<mCamera.isBusy()<<std::endl;
+	//console()<<"START LIVE VIEW!!!!!!"<<std::endl;
+//
+	//console()<<"isBusy? "<<mCamera.isBusy()<<std::endl;
 
 	if (mCamera.isBusy())
 	{
@@ -228,7 +262,7 @@ std::string CameraAdapter::photoCameraReadyLiveView()
 	{
 		restartLiveViewTimer.stop();
 	}
-	console()<<"isBusy? "<<mCamera.isBusy()<<std::endl;
+	//console()<<"isBusy? "<<mCamera.isBusy()<<std::endl;
 	
 	console()<<"START LIVE VIEW??  "<< CanonErrorToString(err)<<std::endl;
 
@@ -236,11 +270,11 @@ std::string CameraAdapter::photoCameraReadyLiveView()
 }
 void CameraAdapter::handleStateEvent(EdsUInt32 inEvent)
 {
-	console()<<"STSWITCH OFF??  "<< std::endl;
+	//console()<<"STSWITCH OFF??  "<< std::endl;
 
 	if (kEdsStateEvent_Shutdown == inEvent)
 	{
-		 mCamera.endLiveView();
+		mCamera.endLiveView();
 		isConnected = false;
 	}	
 }

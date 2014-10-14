@@ -38,7 +38,9 @@ ButtonColor::ButtonColor(ci::app::WindowRef window, ci::Rectf rect, ci::Color co
 
 	windowref = window;
 	MouseDownCon   = window->getSignalMouseDown().connect( std::bind( &Button::MouseDown, this, std::placeholders::_1 ) );
-	mouseDownEvent = new ButtonSignal();
+	//mouseDownEvent = new ButtonSignal();
+
+	//console()<<" setup btton ::::::::::: "<<endl;
 }
 
 

@@ -12,9 +12,12 @@
 #include "ResultScreen.h"
 #include "KinectAdapter.h"
 #include "AssetsManager.h"
-#include "ScreenshotHolder.h"
 #include "PlayerData.h"
 #include "CameraAdapter.h"
+#include "cinder/Timeline.h"
+
+
+
 
 using namespace ci;
 using namespace ci::app;
@@ -28,7 +31,10 @@ namespace MainGameDefaults
 				 SHOW_FIRST_MESSAGE,
 				 PRE_GAME_INTRO,
 				 MAIN_GAME, 
-				 SHOW_GAME_RESULT
+				 SHOW_GAME_RESULT,
+				 PHOTO_MAKING_WAIT,
+				 WIN_ANIMATION_FINISH_WAIT,
+				 MAKE_SCREENSHOOT
 	};
 }
 
@@ -53,6 +59,7 @@ class MainGameScreen : public Location
 		static MainGameScreen* Instance() {
 			return &MainGameScreenState;
 		}
+			
 
 	protected:
 		MainGameScreen() { };
@@ -104,12 +111,46 @@ class MainGameScreen : public Location
 		void					drawGameResult();
 		void					drawPoseComics();
 		void					stopPersonChecking();
-		
+		void					drawGameResultWithoutTimer();
+
+		void					drawCameraLostImage();
+		void					drawPhotoFlash();
+		void					stopAllTimersIfNeed();
+
+		void					cameraIsConnectedNow( );
+
+
+		bool					winAnimationFinished, needToSaveFocusOutPhoto;
+
+		Anim<float>				 alphaFlashAnim;
 	
 	//	static KinectAdapter*	kinect;
 
 		static const int		MATCHING_MAX_VALUE = 100;
 
-		ci::gl::Texture failImage, comics1_godzilla, comics2_cat, comics3_uni;
+		ci::gl::Texture			failImage;
+
+		void					animationFinished() ;
+
+
+
+		
+		void					updateFirstMessage();		
+		void					updatePreGameIntro();
+		void					updateMainGame();
+		void					updateGameResult();
+		void					updatePhotoMaking();
+		void					updateAnimationWait();
+		void					makeScreenShootUpdtae();
+
+		void					setPlayerOnePoseGuess(std::string pathToHiRes = "");
+		void					checkAnimationFinished();
+
+		ButtonColor				*comeBackBtn;
+
+		void					gotoFirstScreen() ;
+
+
+		int						poseCode;
 	
 };

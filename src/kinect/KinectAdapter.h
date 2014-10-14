@@ -33,12 +33,18 @@ class KinectAdapter: public KinectBase
 		std::vector<Pose*>			poses;		
 	
 		void						startPoseGame();
-		void						nextPose();
+
+		int							nextPose();
+		int							generatePoseNum();
+		ci::gl::Texture				getPoseImage();
+		int							getPoseCode();
+
 		std::string					getPoseIndex();
 		void						drawPoseComics();
 		void						poseComplete();
 		float						getPoseProgress();	
 		void						drawLoadedPoses();
+		ci::gl::Texture				getPoseImageById(int id);
 
 		int							getSkeletsInFrame();		
 		void						drawSkeletJoints();
@@ -74,6 +80,8 @@ protected:
 
 		void						computeMistakeWay1();
 		void						computeMistakeWay2();
+
+		int							level;
 };
 
 inline KinectAdapter&	kinect() { return *KinectAdapter::Instance(); };

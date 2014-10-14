@@ -7,7 +7,7 @@
 #include "cinder/ImageIo.h"
 #include "cinder/Base64.h"
 #include "cinder/Text.h"
-
+#include "cinder/ip/Resize.h"
 
 using namespace std;
 using namespace ci;
@@ -46,4 +46,6 @@ class Utils
                               float istop, 
                               float ostart, 
                               float ostop);
+
+		static ci::Surface Utils::resizeScreenshot(ci::Surface screenshot, int32_t width, int32_t height);
 };

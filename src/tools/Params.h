@@ -13,6 +13,7 @@
 namespace poseParams
 {
 	const float	  BOX_SCALE							= 250.f;
+	const int	  POSE_IN_GAME_TOTAL				= 3;
 }
 
 class Params
@@ -27,5 +28,9 @@ class Params
 
 		static float	comeBackHomeTime;
 		static fs::path	getPhotosStorageDirectory();
+		static fs::path	getTempStorageDirectory();		
+		static fs::path	getFinalImageStoragePath();
+
+		static bool		isNetConnected;
 
 };

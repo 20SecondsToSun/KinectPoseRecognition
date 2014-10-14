@@ -7,7 +7,6 @@ using namespace SaverDefaults;
 
 std::vector<Pose*> Saver::loadPoseBase()
 {
-
 	std::vector<Pose*>  posesVector;		
 
 	string path = getAppPath().string() + JSON_STORAGE_FOLDER;
@@ -60,9 +59,21 @@ std::vector<Pose*> Saver::loadPoseBase()
 				catch(...)
 				{
 					continue;
-				}
+				}		
 
 				newPose->setImage(tex);
+
+				name =  pose->getChild( "comics" ).getValue<string>();
+				try{
+					tex = loadImage(getAppPath() /JSON_STORAGE_FOLDER/(name +".png"));			
+				}
+				catch(...)
+				{
+					continue;
+				}	
+
+				newPose->setComicsImage(tex);
+
 				posesVector.push_back(newPose);
 			}	
 		}
@@ -104,4 +115,81 @@ void Saver::savePoseIntoBase(Pose* pose)
 	
 	string genericName = poseName + ".png";	
 	writeImage( getAppPath() /JSON_STORAGE_FOLDER/ genericName, pose->getImage());
+}
+
+bool Saver::saveImageIntoBase(string mails,  ci::Surface  image)
+{
+	time_t     now = time(0);
+	struct tm  tstruct;
+	tstruct = *localtime(&now);
+
+	string dateName = to_string(1900+tstruct.tm_year) + to_string(tstruct.tm_mon+1)+ to_string(tstruct.tm_mday);
+	string dirname = "photo\\" +dateName;
+	string fileName = dateName + ".csv";
+	fs::path dir_path = getAppPath()/dirname;
+	fs::path file_path = getAppPath()/dirname/fileName;
+
+	fs::path image_path  ="";
+
+	string hours =  to_string(tstruct.tm_hour)+":"+to_string(tstruct.tm_min)+":"+to_string(tstruct.tm_sec);
+	string saveString = hours+";"+mails+"\n";
+
+	if(fs::is_directory(dir_path))
+	{
+		console()<<"dir exist"<<endl;
+		if (checkFile(file_path, saveString))
+		{
+			image_path = getAppPath()/dirname/(to_string(getImagesInDir(dir_path))+".jpg");
+			console()<<"image path:: "<<image_path<<endl;
+			writeImage( image_path, image);
+		}		
+	}
+	else
+	{
+		console()<<"dir not exist"<<endl;
+
+		if(fs::create_directory(dir_path))
+		{			
+			console()<<"dir created "<<endl;
+			if (checkFile(file_path, saveString))
+			{
+				image_path = getAppPath()/dirname/(to_string(getImagesInDir(dir_path))+".jpg");
+				console()<<"image path:: "<<image_path<<endl;
+				writeImage( image_path, image);
+			}
+		}
+		else
+		{
+			console()<<"dir not created error!!!! "<<endl;
+		}		
+	}
+
+	return true;
+}
+
+bool Saver::checkFile(fs::path filepath, string mails)
+{
+	FILE* file= fopen(filepath.string().c_str(), "a");
+	
+	if (file!=NULL)
+	{
+		fputs ((mails).c_str(),file);
+		fclose (file);
+		return true;
+	}
+
+	return false;
+}
+
+int Saver::getImagesInDir(fs::path dir_path)
+{			
+	int count = 0;
+
+	for (fs::directory_iterator it(dir_path); it != fs::directory_iterator(); ++it)
+	{
+		if (fs::is_regular_file(*it))
+			count++;	
+	}
+
+	return count;
 }

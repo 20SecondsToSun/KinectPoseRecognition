@@ -61,7 +61,7 @@ private:
 
 	ci::gl::Texture			introImage, playImage, instructionImage;
 	
-	ButtonColor				*startInstructionBtn, *startGameBtn;
+	ButtonColor				*startInstructionBtn, *startGameBtn, *comeBackBtn;
 
 	ci::Anim<float>			alphaAnimate;	
 
@@ -70,5 +70,4 @@ private:
 	void					drawInitElements();
 	void					animationFinished();
 	void					changeState();
-
 };

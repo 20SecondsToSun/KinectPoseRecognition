@@ -144,18 +144,9 @@ void KinectAdapter::drawSkeletJoints()
 	gl::pushMatrices();
 		gl::translate(viewShiftX, viewShiftY);
 		gl::scale(headScale, headScale);
-
 		currentPose.drawPoints();
-		//for (size_t i = 0; i < currentPose.getPoints().size(); i++)		
-		//{
-		//	double x = currentPose.getPoints()[i].x;
-		//	double y =  currentPose.getPoints()[i].y;
-		//	currentPose
-		//	gl::drawSolidCircle( Vec2f(x, y), 8.0f/headScale, 16 );
-		//}
-	//	for (size_t i = 0; i < currentSkelet.size(); i++)		
-		//	gl::drawSolidCircle( Vec2f(currentSkelet[i].x, currentSkelet[i].y), 8.0f/headScale, 16 );		
-			
+		currentPose.drawBox();
+		currentPose.drawAnchor();
 	gl::popMatrices();
 }
 
@@ -181,19 +172,47 @@ void KinectAdapter::drawPoseComics()
 
 void KinectAdapter::startPoseGame()
 {
-	currentPoseInGame = 0;
+	level = 0;
+	currentPoseInGame = generatePoseNum();
 }
 
-void KinectAdapter::nextPose()
+int KinectAdapter::nextPose()
 {	
-	currentPoseInGame++;
+	level++;
+	currentPoseInGame = generatePoseNum();	
 
-	if (currentPoseInGame >= poses.size())
+	if (level >= POSE_IN_GAME_TOTAL)
 	{
-		currentPoseInGame = 0;
+		level = 0;
+		currentPoseInGame = generatePoseNum();
 		gameOverEvent();
 	}
+
+	return currentPoseInGame;
 }
+
+
+int KinectAdapter::getPoseCode()
+{
+	return currentPoseInGame;
+}
+
+int KinectAdapter::generatePoseNum()
+{
+	return level;
+}
+
+ci::gl::Texture KinectAdapter::getPoseImage()
+{
+	return poses[currentPoseInGame]->getComicsImage();
+}
+
+ci::gl::Texture KinectAdapter::getPoseImageById(int id)
+{
+	return poses[id]->getComicsImage();
+}
+
+
 
 string KinectAdapter::getPoseIndex()
 {

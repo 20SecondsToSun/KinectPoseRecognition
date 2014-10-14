@@ -29,7 +29,7 @@ public:
 	int		getSecondsToComeBack();
 	void	comeBackTimerStart();
 	void	comeBackTimerStop();
-	virtual void	gotoFirstScreen();
+	//virtual void	gotoFirstScreen();
 
 protected:
 	Location() { }
@@ -37,10 +37,7 @@ protected:
 	bool	isComeBackTimerTouchFired();
 	bool    isComeBackTimerKinectFired();
 	bool	isPeopleInFrame;
-
-	void	createComeBackButton();
-	void	drawComeBackButton();
-	ButtonColor	*comeBackBtn;
+	
 
 private:
 	ci::Timer	returnTimer;
