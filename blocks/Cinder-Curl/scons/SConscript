@@ -1,0 +1,22 @@
+# TODO: add static libs to the project
+
+import os
+
+Import('env')
+
+_INCLUDES = [Dir('../src').abspath]
+
+_SOURCES = ['Curl.cpp']
+_SOURCES = [File('../src/' + s).abspath for s in _SOURCES]
+
+_LIBS = ['libcurl.a', 'libidn.a', 'libintl.a', 'libiconv.a']
+if env['PLATFORM'] == 'darwin':
+	_LIBS = [File('../lib/macosx/' + s) for s in _LIBS]
+else:
+	_LIBS = []
+
+env.Append(APP_SOURCES = _SOURCES)
+env.Append(CPPPATH = _INCLUDES)
+env.Append(LIBS = _LIBS)
+
+Return('env')

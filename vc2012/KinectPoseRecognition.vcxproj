@@ -76,7 +76,7 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
-      <AdditionalIncludeDirectories>..\include;..\..\..\\include;..\..\..\\boost;..\blocks\Cinder-KCB\src;..\blocks\Cinder-KCB\lib;$(KINECT_TOOLKIT_DIR)inc;$(KINECTSDK10_DIR)\inc;..\src;..\src\kinect;..\src\locations;..\src\controllers;..\src\data;..\src\tools;..\src\controllers\fonts;..\src\controllers\saver;..\src\camera;..\blocks\Cinder-CanonSdk\include;..\blocks\Cinder-CanonSdk\src;..\blocks\Cinder-CanonSdk\lib\EDSDK\Header</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\include;..\..\..\\include;..\..\..\\boost;..\blocks\Cinder-KCB\src;..\blocks\Cinder-KCB\lib;$(KINECT_TOOLKIT_DIR)inc;$(KINECTSDK10_DIR)\inc;..\src;..\src\kinect;..\src\locations;..\src\controllers;..\src\data;..\src\tools;..\src\controllers\fonts;..\src\controllers\saver;..\src\camera;..\blocks\Cinder-CanonSdk\include;..\blocks\Cinder-CanonSdk\src;..\blocks\Cinder-CanonSdk\lib\EDSDK\Header;..\src\controllers\photomaker;..\blocks\Cinder-Curl\src;..\src\locations\popup</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;NOMINMAX;_WIN32_WINNT=0x0502;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <PrecompiledHeader />
@@ -91,7 +91,7 @@
       <AdditionalIncludeDirectories>"..\..\..\\include";..\include</AdditionalIncludeDirectories>
     </ResourceCompile>
     <Link>
-      <AdditionalDependencies>cinder-$(PlatformToolset).lib;Kinect10.lib;KinectCommonBridge.lib;FaceTrackLib.lib;OpenGL32.lib;..\blocks\Cinder-CanonSdk\lib\EDSDK\Library\EDSDK.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>cinder-$(PlatformToolset).lib;Kinect10.lib;KinectCommonBridge.lib;FaceTrackLib.lib;OpenGL32.lib;..\blocks\Cinder-CanonSdk\lib\EDSDK\Library\EDSDK.lib;..\blocks\Cinder-Curl\lib\msw\libcurl.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <GenerateDebugInformation>false</GenerateDebugInformation>
       <GenerateMapFile>true</GenerateMapFile>
       <SubSystem>Windows</SubSystem>
@@ -100,7 +100,7 @@
       <RandomizedBaseAddress>false</RandomizedBaseAddress>
       <DataExecutionPrevention />
       <TargetMachine>MachineX86</TargetMachine>
-      <AdditionalLibraryDirectories>..\..\..\\lib\msw\$(PlatformTarget);$(KINECT_TOOLKIT_DIR)Lib\x86;$(KINECTSDK10_DIR)\lib\x86;..\blocks\Cinder-KCB\lib\$(PlatformTarget)\lib\$(Configuration)\$(PlatformToolset);..\blocks\Cinder-CanonSdk\lib\EDSDK\Library\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>..\..\..\\lib\msw\$(PlatformTarget);$(KINECT_TOOLKIT_DIR)Lib\x86;$(KINECTSDK10_DIR)\lib\x86;..\blocks\Cinder-KCB\lib\$(PlatformTarget)\lib\$(Configuration)\$(PlatformToolset);..\blocks\Cinder-CanonSdk\lib\EDSDK\Library\;..\blocks\Cinder-Curl\lib\msw\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
@@ -109,11 +109,16 @@
   <ItemGroup>
     <ClCompile Include="..\blocks\Cinder-CanonSdk\src\CanonCamera.cpp" />
     <ClCompile Include="..\blocks\Cinder-CanonSdk\src\CinderCanon.cpp" />
+    <ClCompile Include="..\blocks\Cinder-Curl\src\Curl.cpp" />
+    <ClCompile Include="..\blocks\Cinder-Curl\src\Ftp.cpp" />
+    <ClCompile Include="..\blocks\Cinder-Curl\src\FtpManager.cpp" />
     <ClCompile Include="..\blocks\Cinder-KCB\src\Kinect.cpp" />
     <ClCompile Include="..\src\1dollar\Dollar.cpp" />
     <ClCompile Include="..\src\camera\CameraAdapter.cpp" />
     <ClCompile Include="..\src\controllers\fonts\FontStore.cpp" />
+    <ClCompile Include="..\src\controllers\photomaker\PhotoMaker.cpp" />
     <ClCompile Include="..\src\controllers\saver\Saver.cpp" />
+    <ClCompile Include="..\src\controllers\Server.cpp" />
     <ClCompile Include="..\src\data\PlayerData.cpp" />
     <ClCompile Include="..\src\KinectPoseRecognitionApp.cpp" />
     <ClCompile Include="..\src\kinect\KinectAdapter.cpp" />
@@ -123,39 +128,51 @@
     <ClCompile Include="..\src\locations\Location.cpp" />
     <ClCompile Include="..\src\locations\LocationEngine.cpp" />
     <ClCompile Include="..\src\locations\MainGameScreen.cpp" />
+    <ClCompile Include="..\src\locations\popup\Popup.cpp" />
     <ClCompile Include="..\src\locations\ResultScreen.cpp" />
+    <ClCompile Include="..\src\locations\TextureManager.cpp" />
     <ClCompile Include="..\src\tools\Button.cpp" />
     <ClCompile Include="..\src\tools\ButtonColor.cpp" />
     <ClCompile Include="..\src\tools\ButtonTexture.cpp" />
     <ClCompile Include="..\src\tools\Params.cpp" />
+    <ClCompile Include="..\src\tools\PreloaderCircle.cpp" />
+    <ClCompile Include="..\src\tools\QRcode.cpp" />
     <ClCompile Include="..\src\Utils.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\blocks\Cinder-CanonSdk\include\CanonCamera.h" />
     <ClInclude Include="..\blocks\Cinder-CanonSdk\include\CanonDebug.h" />
     <ClInclude Include="..\blocks\Cinder-CanonSdk\include\CinderCanon.h" />
+    <ClInclude Include="..\blocks\Cinder-Curl\src\Curl.h" />
+    <ClInclude Include="..\blocks\Cinder-Curl\src\Ftp.h" />
+    <ClInclude Include="..\blocks\Cinder-Curl\src\FtpManager.h" />
     <ClInclude Include="..\blocks\Cinder-KCB\lib\KinectCommonBridgeLib.h" />
     <ClInclude Include="..\blocks\Cinder-KCB\src\Kinect.h" />
     <ClInclude Include="..\include\Resources.h" />
     <ClInclude Include="..\src\1dollar\Dollar.h" />
     <ClInclude Include="..\src\camera\CameraAdapter.h" />
     <ClInclude Include="..\src\controllers\fonts\FontStore.h" />
+    <ClInclude Include="..\src\controllers\photomaker\PhotoMaker.h" />
     <ClInclude Include="..\src\controllers\Pose.h" />
     <ClInclude Include="..\src\controllers\saver\Saver.h" />
+    <ClInclude Include="..\src\controllers\Server.h" />
     <ClInclude Include="..\src\data\PlayerData.h" />
     <ClInclude Include="..\src\kinect\KinectAdapter.h" />
     <ClInclude Include="..\src\kinect\KinectBase.h" />
     <ClInclude Include="..\src\locations\AssetsManager.h" />
     <ClInclude Include="..\src\locations\IntroScreen.h" />
     <ClInclude Include="..\src\locations\Location.h" />
-    <ClInclude Include="..\src\locations\LocationBase.h" />
     <ClInclude Include="..\src\locations\LocationEngine.h" />
     <ClInclude Include="..\src\locations\MainGameScreen.h" />
+    <ClInclude Include="..\src\locations\popup\Popup.h" />
     <ClInclude Include="..\src\locations\ResultScreen.h" />
+    <ClInclude Include="..\src\locations\TextureManager.h" />
     <ClInclude Include="..\src\tools\Button.h" />
     <ClInclude Include="..\src\tools\ButtonColor.h" />
     <ClInclude Include="..\src\tools\ButtonTexture.h" />
     <ClInclude Include="..\src\tools\Params.h" />
+    <ClInclude Include="..\src\tools\PreloaderCircle.h" />
+    <ClInclude Include="..\src\tools\QRcode.h" />
     <ClInclude Include="..\src\Utils.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

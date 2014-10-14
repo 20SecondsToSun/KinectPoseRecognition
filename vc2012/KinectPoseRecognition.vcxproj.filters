@@ -67,6 +67,15 @@
     <Filter Include="Source Files\controllers\camera">
       <UniqueIdentifier>{b9e56feb-815a-4c30-8690-e8bd2c4aada5}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\controllers\photomaker">
+      <UniqueIdentifier>{b05b70b6-3eb4-4bb4-bb65-a60d061da595}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="blocks\Curl">
+      <UniqueIdentifier>{ebf896ef-db21-4768-b23a-ea568ea82bf9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\locations\popup">
+      <UniqueIdentifier>{e604a487-2eab-4569-a983-41a4bffe3e04}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\src\KinectPoseRecognitionApp.cpp">
@@ -141,6 +150,33 @@
     <ClCompile Include="..\src\camera\CameraAdapter.cpp">
       <Filter>Source Files\controllers\camera</Filter>
     </ClCompile>
+    <ClCompile Include="..\src\controllers\photomaker\PhotoMaker.cpp">
+      <Filter>Source Files\controllers\photomaker</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\locations\TextureManager.cpp">
+      <Filter>Source Files\controllers\assets</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\controllers\Server.cpp">
+      <Filter>Source Files\controllers</Filter>
+    </ClCompile>
+    <ClCompile Include="..\blocks\Cinder-Curl\src\Curl.cpp">
+      <Filter>blocks\Curl</Filter>
+    </ClCompile>
+    <ClCompile Include="..\blocks\Cinder-Curl\src\Ftp.cpp">
+      <Filter>blocks\Curl</Filter>
+    </ClCompile>
+    <ClCompile Include="..\blocks\Cinder-Curl\src\FtpManager.cpp">
+      <Filter>blocks\Curl</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\tools\PreloaderCircle.cpp">
+      <Filter>Source Files\tools</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\tools\QRcode.cpp">
+      <Filter>Source Files\tools</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\locations\popup\Popup.cpp">
+      <Filter>Source Files\locations\popup</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\include\Resources.h">
@@ -197,9 +233,6 @@
     <ClInclude Include="..\src\tools\ButtonTexture.h">
       <Filter>Source Files\buttons</Filter>
     </ClInclude>
-    <ClInclude Include="..\src\locations\LocationBase.h">
-      <Filter>Source Files\locations\screens</Filter>
-    </ClInclude>
     <ClInclude Include="..\src\controllers\saver\Saver.h">
       <Filter>Source Files\controllers\saver</Filter>
     </ClInclude>
@@ -220,6 +253,33 @@
     </ClInclude>
     <ClInclude Include="..\src\camera\CameraAdapter.h">
       <Filter>Source Files\controllers\camera</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\controllers\photomaker\PhotoMaker.h">
+      <Filter>Source Files\controllers\photomaker</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\locations\TextureManager.h">
+      <Filter>Source Files\controllers\assets</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\controllers\Server.h">
+      <Filter>Source Files\controllers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\blocks\Cinder-Curl\src\Curl.h">
+      <Filter>blocks\Curl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\blocks\Cinder-Curl\src\Ftp.h">
+      <Filter>blocks\Curl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\blocks\Cinder-Curl\src\FtpManager.h">
+      <Filter>blocks\Curl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\tools\PreloaderCircle.h">
+      <Filter>Source Files\tools</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\tools\QRcode.h">
+      <Filter>Source Files\tools</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\locations\popup\Popup.h">
+      <Filter>Source Files\locations\popup</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
