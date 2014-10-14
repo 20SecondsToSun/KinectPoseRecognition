@@ -8,10 +8,10 @@ bool Location::isComeBackTimerTouchFired()
 		returnTimer.stop();
 		return true;	
 	}
-	else if(returnTimer.isStopped())
+	/*else if(returnTimer.isStopped())
 	{		
 		returnTimer.start();		
-	}
+	}*/
 
 	return false;
 }

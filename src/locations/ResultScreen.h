@@ -13,7 +13,11 @@
 #include "Params.h"
 #include "IntroScreen.h"
 #include "Server.h"
-
+#include "QRcode.h"
+#include "Popup.h"
+#include "PhotoMaker.h"
+#include "TextureManager.h"
+#include "Saver.h"
 
 
 using namespace ci;
@@ -35,7 +39,10 @@ namespace ReadyScreenDefaults
 					NET_OFF_LOCATION_READY,
 					CHECKING_NET_CONNECTION,
 					LOADING_TO_SERVER_SUCCESS,
-					LOADING_TO_SERVER_FAIL};
+					LOADING_TO_SERVER_FAIL,
+					EMAIL_POPUP_MODE,
+					FB_POPUP_MODE,
+					VK_POPUP_MODE};
 }
 
 class ResultScreen : public Location
@@ -66,21 +73,13 @@ public:
 	void serverSignal();
 
 protected:
-	ResultScreen() { }
+	ResultScreen() { };
 
 private:
 	LocationEngine*					_game;
 	static ResultScreen				ResultScreenState;
 
 	ButtonColor				*mailBtn, *facebookBtn, *vkontakteBtn, *comeBackBtn;
-
-	
-	void							animationFlashFinish();
-	void							animationLastFinish();
-	void							animationOutFinish();
-
-
-
 	
 	Texture*						logoTexture, *helloTexture;	
 	ci::Anim<float>					alphaFade;
@@ -108,12 +107,15 @@ private:
 
 	void							drawPhotoMakerPreloader();
 	void							drawPhotoLoadingPreloader();
+	void							drawServerPreloader(); 
+	void							drawPopup();
 	void							photoLoaded();
 	void							photoSaved();
 
 
 	Server							server;
-	ci::signals::connection			serverSignalLoadingCheck, serverSignalConnectionCheck, serverSignalLoadingEmailCheck;
+	ci::signals::connection			serverSignalLoadingCheck, serverSignalConnectionCheck, serverSignalLoadingEmailCheck, photoSaveSignal, photoLoadingSignal, closeSignal;
+	ci::signals::connection			comeBackSignal, fbSignal, vkSignal, mailSignal;
 
 	void							serverSignalConnectionCheckHandler();
 
@@ -130,13 +132,30 @@ private:
 	void							serverLoadingEmailHandler();
 
 
-	ci::Anim<float>					alphaAnimate;
+	ci::Anim<float>					alphaAnimate, alphaFinAnimate;
 	ci::Anim<float>					alphaAnimateComics[3];
-	bool							isControlsBlocked, canShowResultImages, isButtonsInit;
+	bool							isControlsBlocked, canShowResultImages, isButtonsInit, goingOut;
 
 	void							animationPhotoLoadedFinished();
 	void							animationPhotoSavedFinished();
 	void							animationStartFinished();
 	void							animationStart2Finished();
+	void							animationStart2ServerLoadFinished();
+
+
+	void							disconnectListeners();
+
+	QRcode							qrCode;
+
+
+	void							drawResultImagesIfAllow();
+	void							drawQRCodeIfAllow();
+	void							drawButtonsIfAllow();
+	void							drawFadeOutIfAllow();
+
+	void							disconnectButtons();
+
+	void							initPopup();
+	void							closePopup();
 	
 };

@@ -47,8 +47,7 @@ void Button::addEventListener(int type)
 {
 	switch (type)
 	{
-		case MOUSE_DOWN:
-			console()<<" MouseDownCon.connected()  "<<MouseDownCon.connected()<<endl;
+		case MOUSE_DOWN:			
 			if (!MouseDownCon.connected())
 				MouseDownCon   = windowref->getSignalMouseDown().connect( std::bind( &Button::MouseDown, this, std::placeholders::_1 ) );
 		break;

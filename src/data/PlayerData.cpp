@@ -20,7 +20,7 @@ void PlayerData::initData()
 
 std::string PlayerData::getTexPath(int i)
 {
-	console()<<"pathHiRes  "<<playerData[i].pathHiRes<<endl;
+	//console()<<"pathHiRes  "<<playerData[i].pathHiRes<<endl;
 	return /*Params::getPhotosStorageDirectory().string()+*/ playerData[i].pathHiRes;
 }
 
