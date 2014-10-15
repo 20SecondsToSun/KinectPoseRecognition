@@ -1,5 +1,6 @@
 #include "KinectBase.h"
 
+
 using namespace kinectDefaults;
 
 void KinectBase::setDevice()
@@ -111,24 +112,120 @@ void KinectBase::drawKinectCameraColorSurface()
 
 	Texture colorRef =  getColorTex();
 
+	//Surface	  surf = Surface(colorRef);
+	//Surface	  surf1 = Surface(colorRef);
+
+	//Surface nsurf =Surface( colorRef.getWidth()*0.5, colorRef.getHeight()*0.5, true);
+	//Surface nsurf1 =Surface( colorRef.getWidth()*0.5, colorRef.getHeight()*0.5, true);
+
+	//nsurf.copyFrom(surf,Area(0,0,colorRef.getWidth()*0.5, colorRef.getHeight()*0.5));
+
+	//Vec2f vec = Vec2f(colorRef.getWidth()*0.5, colorRef.getHeight()*0.5);
+	////nsurf1.copyFrom(surf, Area(colorRef.getWidth()*0.5, colorRef.getHeight()*0.5, colorRef.getWidth(), colorRef.getHeight()), -vec );
+	////nsurf1.copyFrom(surf1, Area(0, 0,surf1.getWidth(), surf1.getHeight()) );
+	//nsurf1.copyFrom(surf1,Area(0,0,colorRef.getWidth()*0.5, colorRef.getHeight()*0.5));
+
+	
+	//console()<<"tex------------------ "<<tex1.getWidth()<<endl;
+Texture tex1  ;
+Texture tex2  ;
 	if (colorRef)
+	{	gl::Fbo fbo1					= gl::Fbo( getWindowWidth()*0.5, getWindowHeight()*0.5);
+	gl::Fbo fbo2					= gl::Fbo( getWindowWidth()*0.5, getWindowHeight()*0.5);
+
+	drawToFBO1(colorRef, fbo1, Vec2f(0,0));
+	drawToFBO1(colorRef, fbo2, Vec2f(getWindowWidth()*0.5, getWindowHeight()*0.5));
+	//fbo1.getTexture().setFlipped(true);
+	//fbo2.getTexture().setFlipped(true);
+
+	 tex1  = fbo1.getTexture();
+ tex2  = fbo2.getTexture();
+	
+	
+		gl::enable( GL_TEXTURE_2D );	
+
+		gl::color( ColorAf::white() );
+		
+		gl::pushMatrices();
+			gl::translate(viewShiftX, viewShiftY);			
+			gl::scale(headScale, headScale);
+
+			//gl::draw(colorRef);
+		gl::popMatrices();	
+
+
+		gl::disable( GL_TEXTURE_2D );
+	}
+
+
+	if (tex1)
 	{		
 		gl::enable( GL_TEXTURE_2D );	
 
 		gl::color( ColorAf::white() );
 		
 		gl::pushMatrices();
-			gl::translate(viewShiftX, viewShiftY);
-			gl::scale(headScale, headScale);
-			//gl::translate(320,0);
-			//gl::scale(0.5, 0.5);
+			//gl::translate(viewShiftX, viewShiftY);			
+			//gl::scale(headScale, headScale);		
+			//gl::translate(getWindowWidth()*0.5, 0);	
+		//gl::color(ColorA(1,1,1,0.8));
+		gl::draw(tex1);
 
-			gl::draw( colorRef);//, colorRef.getBounds(), Rectf(0, 0, float(viewWidth),float(viewHeight)));	
-		gl::popMatrices();		
+			
+		gl::popMatrices();	
+
+
+		gl::disable( GL_TEXTURE_2D );
+	}	
+
+	if (tex2)
+	{		
+		gl::enable( GL_TEXTURE_2D );	
+
+		gl::color( ColorAf::white() );
+		
+		gl::pushMatrices();
+
+			gl::translate(getWindowWidth()*0.5, getWindowHeight()*0.5);			
+			//gl::scale(headScale, headScale);
+		//gl::color(ColorA(1,1,1,0.8));	
+		gl::draw(tex2);
+
+			
+		gl::popMatrices();	
+
 
 		gl::disable( GL_TEXTURE_2D );
 	}	
 }
+
+void KinectBase::drawToFBO1( ci::gl::Texture tex, ci::gl::Fbo& mFbo, Vec2f vec)
+{
+      gl::SaveFramebufferBinding bindingSaver;
+      mFbo.bindFramebuffer();
+	  Area saveView = getViewport();
+      gl::setViewport(mFbo.getBounds() );
+	  gl::pushMatrices();
+      gl::setMatricesWindow( mFbo.getSize(), false );
+      gl::clear( Color( 0, 0, 0 ) );
+	  gl::enableAlphaBlending();  
+
+	  gl::translate(viewShiftX, viewShiftY);
+	  gl::translate(-vec);	
+
+	  gl::scale(headScale, headScale);
+
+	 // gl::translate(-vec*headScale);	
+	  console()<<"--------  "<<-vec*headScale<<endl;
+
+	 // gl::translate(vec);	 
+	  gl::draw( tex );		 
+	  gl::popMatrices();	
+	  gl::setViewport(saveView);
+}
+
+
+
 
 void KinectBase::calculateAspects()
 {

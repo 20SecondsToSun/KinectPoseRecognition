@@ -11,17 +11,16 @@ class QRcode
 {
 	public:
 		void		setup();
-		void		init();
+		void		reset();
 		void		draw();
 		void		initAnim();
 		void        drawError();
 
 		bool isReady, isRender;		
-		void setTextureString(std::string str);
-		void setLink(std::string link);
 
 
 		bool		isError;
+		void		setData(std::string str, std::string link);
 private:
 		ci::Font						qrCodeFont ;
 		ci::Anim<ci::Vec2f>				startQRCodeHolderXY;
@@ -30,7 +29,10 @@ private:
 		PreloaderCircle					preloader;
 
 		std::string				url;
-		std::string				stringQrcode;		
+		std::string				stringQrcode;
 
 		gl::Texture				loadImageFromString(std::string value);
+
+		void setTextureString(std::string str);
+		void setLink(std::string link);
 };

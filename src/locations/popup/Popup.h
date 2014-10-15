@@ -8,6 +8,7 @@
 #include "cinder/gl/Texture.h"
 #include "ButtonColor.h"
 #include "FontStore.h"
+#include "Params.h"
 
 #include <boost/thread.hpp>
 #include <boost/functional/hash.hpp>
@@ -21,23 +22,25 @@ public:
 
 
 	void			draw();
-	std::string		type;
-	void			start();
+	void			reset();
+	
+	void			start(int);
 	void			setup();
 	bool			isDrawing;
 
 	ci::gl::Texture		screenShot;
 
-	boost::signals2::signal<void(void )> closeEvent;
-	ci::signals::connection	closeBtnSignal;
+	boost::signals2::signal<void(void )> closeEvent, sendEvent;
+	ci::signals::connection	closeBtnSignal, sendBtnSignal;
 
-	ButtonColor			*closeBtn;
+	ButtonColor			*closeBtn, *sendBtn;
 
 private:
 	void	closeHandled();
-
+	void	sendBtnHandled();
+	void	cleanPopup();
+	int		type;
 
 };
 
-// helper function(s) for easier access 
 inline PopupBase&	popup() { return PopupBase::getInstance(); };

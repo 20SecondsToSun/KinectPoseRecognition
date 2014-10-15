@@ -4,23 +4,30 @@ using namespace mndl::curl;
 using namespace std;
 using namespace ci;
 
-void   Server::sendPhoto(fs::path _path)
+void   Server::reset()
 {
-	photoPath =_path;
-	serverThread = shared_ptr<thread>( new thread( bind( &Server::sendToServerImage, this ) ) );	
+	isPhotoLoaded = false;	
+	isPhotoSendingToServer = false;	
 }
 
-void Server::sendToServerImage( )
-{	
-	ci::ThreadSetup threadSetup; // instantiate this if you're talking to Cinder from a secondary thread	
+void   Server::sendPhoto(fs::path _path)
+{
+	serverWaitingTimer.start();	
+	photoPath =_path;
+	sendPhotoThread = std::shared_ptr< boost::thread>( new  boost::thread( bind( &Server::sendPhotoThreadHandler, this ) ) );
+}
 
-	//writeImage( getAppPath() /FaceController::FACE_STORAGE_FOLDER/serverParams::savePhotoName, ScreenshotHolder::screenshotSmall );
-	DataSourceRef urlRequest =	loadFile( photoPath);//getAppPath()/FaceController::FACE_STORAGE_FOLDER/ fs::path( serverParams::savePhotoName ));	
+void Server::sendPhotoThreadHandler()
+{	
+	isPhotoSendingToServer = true;	
+	DataSourceRef urlRequest =	loadFile( photoPath);
 	string loadingString =  toBase64(Buffer(urlRequest)) + to_string(638) +",1";
 
 	ci::app::console()<<".............  "<<loadingString<<endl;
 
 	string jSonstr			 =  Curl::postImage(  serverParams::serverURL, loadingString);
+	//	try { boost::this_thread::interruption_point(); }
+	//			catch(boost::thread_interrupted) { break; }
 	
 	 if (jSonstr.length()>=1)
 	 {
@@ -38,12 +45,12 @@ void Server::sendToServerImage( )
 
 				sessionId = jTree.getChild("id").getValue();
 				
-				isLoading = true;
-				serverThread->detach();
+				isPhotoLoaded = true;
+				isPhotoSendingToServer = false;
 				serverLoadingPhotoEvent();
 				return;
 			}
-			else  isLoading = false;
+			else  isPhotoLoaded = false;
 
 		}
 		catch (...)
@@ -53,37 +60,72 @@ void Server::sendToServerImage( )
 	 }
 
 	 ci::app::console()<<"==========================  SERVER ERROR SORRY.....===============================  "<<jSonstr<<std::endl;
-	 isLoading = false;
-	 serverThread->detach();
-	 serverLoadingPhotoEvent();
+	 isPhotoLoaded = false;	
+	 isPhotoSendingToServer = false;
+	 serverLoadingPhotoEvent();	
+}
+
+void Server::stopTimeout( )
+{
+	serverWaitingTimer.stop();
+}
+
+bool Server::timerIsRunning( )
+{
+	return !serverWaitingTimer.isStopped();
+}
+
+int Server::getTimeoutSeconds( )
+{
+	return serverParams::SERVER_WAITING_TIME - (int)serverWaitingTimer.getSeconds();
+}
+
+void Server::abortLoading()
+{
+	serverWaitingTimer.stop();
+	isPhotoLoaded = false;
+
+	if (isPhotoSendingToServer)
+	{
+		isPhotoSendingToServer = false;
+		sendPhotoThread->interrupt();
+		sendPhotoThread->join();
+	}
+
+	if (isCheckingConnection)
+	{
+		isCheckingConnection = false;
+		checkConnectionThread->interrupt();
+		checkConnectionThread->join();
+	}
+
+	if (isMailSending)
+	{
+		isMailSending = false;
+	}
 }
 
 void Server::checkConnection( )
-{
-	serverThread = shared_ptr<thread>( new thread( bind( &Server::checkConnectionThread, this ) ) );	
+{	
+	checkConnectionThread = std::shared_ptr<boost::thread>( new boost::thread( bind( &Server::checkConnectionThreadHandler, this ) ) );	
 }
 
-void Server::checkConnectionThread( )
+void Server::checkConnectionThreadHandler( )
 {
-	ci::ThreadSetup threadSetup;
-
-	string status = Curl::get("http://google.com");
-	
-	isConnected = (status != "ERROR");	
-
-	serverThread->detach();
+	isCheckingConnection = true;
+	string status = Curl::get("http://google.com");	
+	isConnected = (status != "ERROR");		
 	serverCheckConnectionEvent();
+	isCheckingConnection = false;
 }
 
 void Server::sendToMail()
 {
-	serverThread = shared_ptr<thread>( new thread( bind( &Server::sendToMailThread, this ) ) );	
+	sendToMailThread = std::shared_ptr<boost::thread>( new boost::thread( bind( &Server::sendToMailThreadHandler, this ) ) );	
 }
 
-void Server::sendToMailThread()
-{
-	ci::ThreadSetup threadSetup; // instantiate this if you're talking to Cinder from a secondary thread		
-
+void Server::sendToMailThreadHandler()
+{	
 	string allEmails = "yurikblech@gmail.com";
 
 	/*for (size_t i = 0; i < emailVector.size(); i++)
@@ -115,9 +157,6 @@ void Server::sendToMailThread()
 	{	
 		isEmailSent = false;
 	}
-	
-	
-	serverThread->detach();
 
-	serverLoadingEmailEvent();
+	sendToMailEvent();
 }

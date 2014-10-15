@@ -3,22 +3,19 @@
 using namespace ci;
 using namespace ci::app;
 using namespace std;
-using namespace SaverDefaults;
 
 std::vector<Pose*> Saver::loadPoseBase()
 {
-	std::vector<Pose*>  posesVector;		
+	std::vector<Pose*>  posesVector;
+	fs::path basePath = Params::getBaseStoragePath();
 
-	string path = getAppPath().string() + JSON_STORAGE_FOLDER;
-	fs::path p(path);	
-
-	for (fs::directory_iterator it(p); it != fs::directory_iterator(); ++it)
+	for (fs::directory_iterator it(basePath); it != fs::directory_iterator(); ++it)
 	{
 		if (fs::is_regular_file(*it))
 		{
 			JsonTree doc;
 			try{
-				 doc = JsonTree(loadFile(getAppPath() / JSON_STORAGE_FOLDER / it->path().filename().string()));
+				 doc = JsonTree(loadFile(basePath / it->path().filename().string()));
 			}
 			catch(...)
 			{
@@ -54,7 +51,7 @@ std::vector<Pose*> Saver::loadPoseBase()
 
 				gl::Texture tex;
 				try{
-					tex = loadImage(getAppPath() /JSON_STORAGE_FOLDER/(name +".png"));			
+					tex = loadImage(basePath /(name +".png"));			
 				}
 				catch(...)
 				{
@@ -65,7 +62,7 @@ std::vector<Pose*> Saver::loadPoseBase()
 
 				name =  pose->getChild( "comics" ).getValue<string>();
 				try{
-					tex = loadImage(getAppPath() /JSON_STORAGE_FOLDER/(name +".png"));			
+					tex = loadImage(basePath / (name +".png"));			
 				}
 				catch(...)
 				{
@@ -84,6 +81,8 @@ std::vector<Pose*> Saver::loadPoseBase()
 
 void Saver::savePoseIntoBase(Pose* pose)
 {
+	fs::path basePath = Params::getBaseStoragePath();
+
 	JsonTree doc;
 	JsonTree posesJson = JsonTree::makeArray( "poses" );
 
@@ -111,10 +110,10 @@ void Saver::savePoseIntoBase(Pose* pose)
 	doc.pushBack( posesJson );
 
 	string jsonName = poseName + ".json";	
-	doc.write( writeFile( getAppPath() / JSON_STORAGE_FOLDER / jsonName ), JsonTree::WriteOptions() );
+	doc.write( writeFile( basePath / jsonName ), JsonTree::WriteOptions() );
 	
 	string genericName = poseName + ".png";	
-	writeImage( getAppPath() /JSON_STORAGE_FOLDER/ genericName, pose->getImage());
+	writeImage(  basePath / genericName, pose->getImage());
 }
 
 bool Saver::saveImageIntoBase(string mails,  ci::Surface  image)
@@ -136,31 +135,31 @@ bool Saver::saveImageIntoBase(string mails,  ci::Surface  image)
 
 	if(fs::is_directory(dir_path))
 	{
-		console()<<"dir exist"<<endl;
+		//console()<<"dir exist"<<endl;
 		if (checkFile(file_path, saveString))
 		{
 			image_path = getAppPath()/dirname/(to_string(getImagesInDir(dir_path))+".jpg");
-			console()<<"image path:: "<<image_path<<endl;
+			//console()<<"image path:: "<<image_path<<endl;
 			writeImage( image_path, image);
 		}		
 	}
 	else
 	{
-		console()<<"dir not exist"<<endl;
+		//console()<<"dir not exist"<<endl;
 
 		if(fs::create_directory(dir_path))
 		{			
-			console()<<"dir created "<<endl;
+			//console()<<"dir created "<<endl;
 			if (checkFile(file_path, saveString))
 			{
 				image_path = getAppPath()/dirname/(to_string(getImagesInDir(dir_path))+".jpg");
-				console()<<"image path:: "<<image_path<<endl;
+				//console()<<"image path:: "<<image_path<<endl;
 				writeImage( image_path, image);
 			}
 		}
 		else
 		{
-			console()<<"dir not created error!!!! "<<endl;
+			//console()<<"dir not created error!!!! "<<endl;
 		}		
 	}
 
@@ -192,4 +191,24 @@ int Saver::getImagesInDir(fs::path dir_path)
 	}
 
 	return count;
+}
+
+void Saver::loadConfigData()
+{
+	fs::path filepath = Params::getConfigStoragePath();
+
+	JsonTree doc;
+
+	try{
+		 doc = JsonTree(loadFile(filepath));
+		 Params::standID =  doc.getChild( "standID" ).getValue<string>() ;
+		 Params::isNetConnected =  doc.getChild( "netConnection" ).getValue<bool>() ;
+
+		 console()<<"PARAMS :: "<<Params::standID<<"  "<< Params::isNetConnected <<std::endl;
+	}
+	catch(...)
+	{
+		
+	}
+
 }

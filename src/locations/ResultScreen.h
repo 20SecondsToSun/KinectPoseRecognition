@@ -6,7 +6,6 @@
 #include "cinder/Timeline.h"
 #include "cinder/Rand.h"
 
-
 #include "ButtonColor.h"
 #include "PlayerData.h"
 #include "Location.h"
@@ -18,7 +17,6 @@
 #include "PhotoMaker.h"
 #include "TextureManager.h"
 #include "Saver.h"
-
 
 using namespace ci;
 using namespace ci::app;
@@ -40,9 +38,8 @@ namespace ReadyScreenDefaults
 					CHECKING_NET_CONNECTION,
 					LOADING_TO_SERVER_SUCCESS,
 					LOADING_TO_SERVER_FAIL,
-					EMAIL_POPUP_MODE,
-					FB_POPUP_MODE,
-					VK_POPUP_MODE};
+					POPUP_MODE
+					};
 }
 
 class ResultScreen : public Location
@@ -52,10 +49,8 @@ public:
 	void setup();
 	void init( LocationEngine* game);
 	void cleanup();
-
 	void pause();
 	void resume();
-
 	void shutdown();
 
 	void handleEvents();
@@ -69,8 +64,7 @@ public:
 	}
 
 	void gotoFirstScreen();
-
-	void serverSignal();
+	void serverSignal();	
 
 protected:
 	ResultScreen() { };
@@ -79,25 +73,8 @@ private:
 	LocationEngine*					_game;
 	static ResultScreen				ResultScreenState;
 
-	ButtonColor				*mailBtn, *facebookBtn, *vkontakteBtn, *comeBackBtn;
+	ButtonColor						*mailBtn, *facebookBtn, *vkontakteBtn, *comeBackBtn;
 	
-	Texture*						logoTexture, *helloTexture;	
-	ci::Anim<float>					alphaFade;
-	std::vector< ci::gl::Texture*>  fonImgVector;
-	int								currentFon;
-
-	ci::Surface						screnshot;
-
-	//ReadyScreenDefaults::states		state;
-
-	ci::Anim<float>					alphaFlash;
-	ci::Anim<ci::Vec2f>				startPhotoScale, startPhotoXY;
-
-
-
-	float							oneWidth;
-
-	void							changeState();
 	bool							isChangingStateNow;	
 
 	void							animationFinished();
@@ -107,21 +84,22 @@ private:
 
 	void							drawPhotoMakerPreloader();
 	void							drawPhotoLoadingPreloader();
+	void							drawUpsetScreen();
 	void							drawServerPreloader(); 
 	void							drawPopup();
 	void							photoLoaded();
 	void							photoSaved();
 
 
-	Server							server;
+	
 	ci::signals::connection			serverSignalLoadingCheck, serverSignalConnectionCheck, serverSignalLoadingEmailCheck, photoSaveSignal, photoLoadingSignal, closeSignal;
-	ci::signals::connection			comeBackSignal, fbSignal, vkSignal, mailSignal;
+	ci::signals::connection			comeBackSignal, fbSignal, vkSignal, mailSignal, serverTimeoutCheck, sendToMailSignal;
 
 	void							serverSignalConnectionCheckHandler();
+	void							sendToMailHandler();
 
 	void							serverLoadingPhotoHandler();
 
-	bool							isServer, isNetConnection;
 	void							initButtons();
 
 	
@@ -134,7 +112,7 @@ private:
 
 	ci::Anim<float>					alphaAnimate, alphaFinAnimate;
 	ci::Anim<float>					alphaAnimateComics[3];
-	bool							isControlsBlocked, canShowResultImages, isButtonsInit, goingOut;
+	bool							canShowResultImages, isButtonsInit, goingOut;
 
 	void							animationPhotoLoadedFinished();
 	void							animationPhotoSavedFinished();
@@ -153,9 +131,12 @@ private:
 	void							drawButtonsIfAllow();
 	void							drawFadeOutIfAllow();
 
+
 	void							disconnectButtons();
 
-	void							initPopup();
+	void							initPopup(int);
 	void							closePopup();
+
+	void							serverTimeoutHandler();
 	
 };

@@ -1,6 +1,5 @@
 #include "ResultScreen.h"
 
-
 using namespace ci;
 using namespace ci::app;
 using namespace ReadyScreenDefaults;
@@ -33,15 +32,14 @@ void ResultScreen::init( LocationEngine* game)
 {
 	_game = game;	
 
-	isChangingStateNow = false;
-	isControlsBlocked = true;
+	isChangingStateNow = false;	
 	canShowResultImages = false;
 	isButtonsInit = false;
-	goingOut	= false;
-	isServer = false;
+	goingOut	= false;	
 
-	qrCode.init();
-	popup().isDrawing  = false;
+	qrCode.reset();
+	popup().reset();
+	server().reset();	
 
 	alphaFinAnimate = 0;
 	
@@ -64,7 +62,11 @@ void ResultScreen::init( LocationEngine* game)
 		timeline().apply( &alphaAnimate, 0.0f, 1.0f, 0.9f, EaseOutCubic() ).finishFn( bind( &ResultScreen::animationStartFinished, this ) );		
 	}
 	else
+	{
 		state = SORRY_GO_HOME;	
+		comeBackSignal = comeBackBtn->mouseDownEvent.connect(boost::bind(&ResultScreen::gotoFirstScreen, this));
+		comeBackTimerStart();
+	}
 }
 
 void ResultScreen::animationStartFinished()
@@ -112,8 +114,7 @@ void ResultScreen::animationPhotoSavedFinished()
 	
 	if (Params::isNetConnected == false)
 	{
-		state = NET_OFF_LOCATION_READY;
-		isNetConnection = false;	
+		state = NET_OFF_LOCATION_READY;		
 		isChangingStateNow = false;	
 		initButtons();
 		comeBackTimerStart();	
@@ -122,20 +123,19 @@ void ResultScreen::animationPhotoSavedFinished()
 	{
 		isChangingStateNow = true;	
 		state = CHECKING_NET_CONNECTION;
-		serverSignalConnectionCheck = server.serverCheckConnectionEvent.connect( 
+		serverSignalConnectionCheck = server().serverCheckConnectionEvent.connect( 
 			boost::bind(&ResultScreen::serverSignalConnectionCheckHandler, this) 
 		);
 
-		server.checkConnection();
+		server().checkConnection();
 	}
 }
 
 void ResultScreen::serverSignalConnectionCheckHandler()
-{
-	isNetConnection = server.isConnected;
+{	
 	serverSignalConnectionCheck.disconnect();
 
-	if(isNetConnection == false)
+	if(server().isConnected == false)
 	{
 		isChangingStateNow = false;	
 		state = NET_OFF_LOCATION_READY;		
@@ -151,36 +151,40 @@ void ResultScreen::serverSignalConnectionCheckHandler()
 }
 
 void ResultScreen::animationStart2ServerLoadFinished()
-{
-	serverSignalLoadingCheck = server.serverLoadingPhotoEvent.connect( 
+{	
+	serverSignalLoadingCheck = server().serverLoadingPhotoEvent.connect( 
 			boost::bind(&ResultScreen::serverLoadingPhotoHandler, this) 
 		);
-		server.sendPhoto(Params::getFinalImageStoragePath());
-
-	// start timer to control timeout
+	server().sendPhoto(Params::getFinalImageStoragePath());
 }
 
 void ResultScreen::serverLoadingPhotoHandler()
 {
 	serverSignalLoadingCheck.disconnect();
+	server().stopTimeout();
 	isChangingStateNow = false;
 	
-	if (server.isLoading)
+	if (server().isPhotoLoaded)
 	{
-		state = LOADING_TO_SERVER_SUCCESS;
-		isServer = true;
-		
-		qrCode.setTextureString(server.getBuffer());
-		qrCode.setLink(server.getLink());	
-		qrCode.isReady = true;
+		state = LOADING_TO_SERVER_SUCCESS;		
+		qrCode.setData(server().getBuffer(), server().getLink());		
 	}
 	else
 	{
-		state = LOADING_TO_SERVER_FAIL;
-		isServer = false;		
+		state = LOADING_TO_SERVER_FAIL;			
 	}
 
-//	isServerFinishHisWork = true;
+	initButtons();
+	comeBackTimerStart();	
+}
+
+void ResultScreen::serverTimeoutHandler()
+{
+	serverSignalLoadingCheck.disconnect();	
+	server().abortLoading();
+
+	isChangingStateNow = false;		
+	state = LOADING_TO_SERVER_FAIL;	
 
 	initButtons();
 	comeBackTimerStart();	
@@ -188,7 +192,7 @@ void ResultScreen::serverLoadingPhotoHandler()
 
 void ResultScreen::initButtons()
 {
-	if(isNetConnection )
+	if(server().isConnected)
 	{
 		fbSignal =facebookBtn->mouseDownEvent.connect(boost::bind(&ResultScreen::facebookHandled, this));
 		vkSignal =vkontakteBtn->mouseDownEvent.connect(boost::bind(&ResultScreen::vkHandled, this));		
@@ -198,74 +202,65 @@ void ResultScreen::initButtons()
 	comeBackSignal = comeBackBtn->mouseDownEvent.connect(boost::bind(&ResultScreen::gotoFirstScreen, this));
 
 	isButtonsInit = true;
-	console()<<"buttons init"<<endl;	
+	console()<<"BUTTONS INIT ::::::::::::::::: "<<endl;	
 }
 
-void ResultScreen::disconnectListeners()
+void ResultScreen::initPopup(int type)
 {
-	serverSignalLoadingCheck.disconnect();
-	serverSignalConnectionCheck.disconnect();
-
-	comeBackTimerStop();
-	
-	disconnectButtons();
-
-	ph::clearTexture();
-}
-
-void ResultScreen::disconnectButtons()
-{
-	comeBackSignal.disconnect();
-	fbSignal.disconnect();
-	vkSignal.disconnect();
-	mailSignal.disconnect();
-}
-
-void ResultScreen::initPopup()
-{
-	popup().start();	
+	state = POPUP_MODE;	
+	popup().start(type);	
 	disconnectButtons();
 	closeSignal = popup().closeEvent.connect(boost::bind(&ResultScreen::closePopup, this));
+
+	if (type == popupTypes::EMAIL)
+	{
+		sendToMailSignal = popup().sendEvent.connect(boost::bind(&ResultScreen::sendToMailHandler, this));
+	}
 }
+
+void ResultScreen::sendToMailHandler()
+{
+	sendToMailSignal.disconnect();
+	closeSignal.disconnect();
+	//
+	console()<<" BASE SAAAAAAAAAAAAAAVE  "<<server().isPhotoLoaded<<endl;		
+
+	//
+	initButtons();	
+}
+
 
 void ResultScreen::closePopup()
 {	
 	closeSignal.disconnect();
+	sendToMailSignal.disconnect();
 	initButtons();	
 }
 
 void ResultScreen::facebookHandled()
-{
-	popup().type = "FB";
-	state = FB_POPUP_MODE;
-
-	initPopup();
+{	
+	initPopup(popupTypes::FACEBOOK);
 }
 
 void ResultScreen::vkHandled()
 {
-	popup().type = "VK";
-	state = VK_POPUP_MODE;
-
-	initPopup();
+	initPopup(popupTypes::VKONTAKTE);	
 }
 
 void ResultScreen::mailHandled()
 {	
-	state = EMAIL_POPUP_MODE;
-	popup().type = "EMAIL";
+	initPopup(popupTypes::EMAIL);	
 
-	initPopup();
 	//localPhotoSaveToBase();
 
 	return;
-	if (isNetConnection && isServer)
+	if (server().isConnected  )
 	{
-		serverSignalLoadingEmailCheck = server.serverLoadingEmailEvent.connect( 
+		serverSignalLoadingEmailCheck = server().sendToMailEvent.connect( 
 			boost::bind(&ResultScreen::serverLoadingEmailHandler, this) 
 		);
 		
-		server.sendToMail();
+		server().sendToMail();
 	}
 	else
 	{
@@ -284,8 +279,7 @@ void ResultScreen::localPhotoSaveToBase()
 }
 
 void ResultScreen::gotoFirstScreen() 
-{
-	console()<<"BACK!!!!!!!!!!!!!!"<<endl;
+{	
 	if(!goingOut)
 	{
 		disconnectListeners();
@@ -325,6 +319,11 @@ void ResultScreen::update()
 		case PHOTO_LOADING_FROM_DIRECTORY:
 			photoMaker().loadFinalImages();			
 		break;
+
+		case PHOTO_LOADING_TO_SERVER:
+			if (server().timerIsRunning() && server().getTimeoutSeconds()<= 0)
+				serverTimeoutHandler();
+		break;	
 	}
 }
 
@@ -346,30 +345,15 @@ void ResultScreen::draw()
 
 		case PHOTO_LOADING_TO_SERVER:			
 			drawServerPreloader();
-		break;
+		break;		
 
-		case EMAIL_POPUP_MODE:
+		case POPUP_MODE:
 			drawPopup();			
 			break;
-
-		case FB_POPUP_MODE:
-			drawPopup();
-			break;
-
-		case VK_POPUP_MODE:
-			drawPopup();			
-			break;
-
-		case SERVER_EMAIL_ERROR:
-			//drawPhotoMakerPreloader();
-		break;
-
-		case SERVER_INTERNET_ERROR:
-			//drawPhotoMakerPreloader();
-		break;
 
 		case SORRY_GO_HOME:
-			//drawPhotoMakerPreloader();
+			drawUpsetScreen();
+			comeBackBtn->draw();
 		break;		
 
 		default:
@@ -384,6 +368,14 @@ void ResultScreen::draw()
 	}
 
 	drawFadeOutIfAllow();
+
+	if (!returnTimer.isStopped())
+	{
+		#ifdef debug
+			string debugString = "Возвращение на главный экран произойдет через : "+to_string(getSecondsToComeBack());	
+			Utils::textFieldDraw(debugString,  fonts().getFont("Helvetica Neue", 46), Vec2f(40.f, 940.0f), ColorA(1.f, 0.f, 0.f, 1.f));
+		#endif
+	}
 
 	gl::disableAlphaBlending();	
 		
@@ -420,29 +412,22 @@ void ResultScreen::drawResultImagesIfAllow()
 
 void ResultScreen::drawQRCodeIfAllow() 
 {
-	if (isServer)
-	{
-		qrCode.draw();
-	}
+	if (server().isPhotoLoaded)	
+		qrCode.draw();	
 }
 
 void ResultScreen::drawButtonsIfAllow() 
 {
 	if(isButtonsInit)
 	{
-		if(isNetConnection)
+		if(server().isConnected)
 		{
 			facebookBtn->draw();
 			vkontakteBtn->draw();
 		}
 
 		mailBtn->draw();	
-		comeBackBtn->draw();
-
-		#ifdef debug
-			string debugString = "Возвращение на главный экран произойдет через : "+to_string(getSecondsToComeBack());	
-			Utils::textFieldDraw(debugString,  fonts().getFont("Helvetica Neue", 46), Vec2f(40.f, 940.0f), ColorA(1.f, 0.f, 0.f, 1.f));
-		#endif
+		comeBackBtn->draw();		
 	}
 }
 
@@ -472,9 +457,45 @@ void ResultScreen::drawPhotoMakerPreloader()
 
 void ResultScreen::drawServerPreloader() 
 {
-	gl::color(ColorA(1, 1, 1, alphaAnimate));
-	Utils::textFieldDraw("Ожидаю сервер...",  fonts().getFont("Helvetica Neue", 46), Vec2f(40.f, 40.0f), ColorA(1.f, 0.f, 0.f, 1.f));
+	gl::color(ColorA(1, 1, 1, alphaAnimate));	
+	Utils::textFieldDraw("Ожидаю сервер... " + to_string(server().getTimeoutSeconds()),  fonts().getFont("Helvetica Neue", 46), Vec2f(40.f, 40.0f), ColorA(1.f, 0.f, 0.f, 1.f));
 	gl::color(ColorA(1, 1, 1, 1));
+}
+
+void ResultScreen::drawUpsetScreen() 
+{
+	//gl::color(ColorA(1, 1, 1, alphaAnimate));
+	Utils::textFieldDraw("Вы не угадали ни одной позы...(((",  fonts().getFont("Helvetica Neue", 46), Vec2f(40.f, 40.0f), ColorA(1.f, 0.f, 0.f, 1.f));
+	//gl::color(ColorA(1, 1, 1, 1));
+}
+
+void ResultScreen::disconnectListeners()
+{
+	serverSignalLoadingCheck.disconnect();
+	serverSignalConnectionCheck.disconnect();	
+
+	photoLoadingSignal.disconnect();
+	photoSaveSignal.disconnect();
+
+	closeSignal.disconnect();
+	sendToMailSignal.disconnect();
+
+	comeBackTimerStop();
+	disconnectButtons();	
+
+	server().abortLoading();	
+
+	ph::clearTexture();
+
+	console()<<"FINISHED!!!!!!!!!!!!!!!"<<endl;
+}
+
+void ResultScreen::disconnectButtons()
+{
+	comeBackSignal.disconnect();
+	fbSignal.disconnect();
+	vkSignal.disconnect();
+	mailSignal.disconnect();
 }
 
 void ResultScreen::shutdown()
@@ -484,7 +505,7 @@ void ResultScreen::shutdown()
 
 void ResultScreen::cleanup()
 {
-	
+	disconnectListeners();
 }
 
 void ResultScreen::pause()

@@ -51,13 +51,17 @@ void KinectPoseRecognitionApp::setup()
 	hintFont = *fonts().getFont("Helvetica Neue", 46);
 	state    = "ChooseMode";
 
+	#ifdef kinectUsed
 	kinect().Setup();	
+	#endif
 
 	cameraCanon().setup();
 	cameraCanon().live();
 
    #ifndef recording
 	
+	saver().loadConfigData();
+
 	IntroScreen::Instance()->setup();
 	MainGameScreen::Instance()->setup();
 	ResultScreen::Instance()->setup();
@@ -88,7 +92,7 @@ void KinectPoseRecognitionApp::update()
 {
 	 #ifdef recording	
 		kinect().update();
-		cameraCanon().update();
+		//cameraCanon().update();
 
 		 if (state == "RecordingPose")
 		{
@@ -110,7 +114,7 @@ void KinectPoseRecognitionApp::draw()
 	gl::clear( Color( 0, 0, 0 ) ); 
 	
 	#ifdef recording
-	    cameraCanon().draw();
+	   // cameraCanon().draw();
 		kinect().draw();
 
 
@@ -143,7 +147,7 @@ void KinectPoseRecognitionApp::draw()
 }
 
 void KinectPoseRecognitionApp::keyDown( KeyEvent event )
-{
+{int32_t angle;
 	#ifdef recording	
 	   switch (event.getChar())
 		{ 
@@ -164,10 +168,18 @@ void KinectPoseRecognitionApp::keyDown( KeyEvent event )
 				state = "ChooseMode";	
 				kinect().startTracking();
 			break;
+			case '0':
+				angle = kinect().getTilt() + 1;
+				kinect().setTilt(angle);
+			break;
+			case '9':
+				angle = kinect().getTilt() - 1;
+				kinect().setTilt(angle);
+			break;
 		}	
 	#else
 
-	int32_t angle;
+	
 
 		switch (event.getChar())
 		{ 
@@ -181,14 +193,7 @@ void KinectPoseRecognitionApp::keyDown( KeyEvent event )
 				game.changeState(ResultScreen::Instance());
 			break;
 
-			case '0':
-				angle = kinect().getTilt() + 5;
-				kinect().setTilt(angle);
-			break;
-			case '9':
-				angle = kinect().getTilt() - 5;
-				kinect().setTilt(angle);
-			break;
+			
 		}
 	#endif
 	
@@ -196,7 +201,9 @@ void KinectPoseRecognitionApp::keyDown( KeyEvent event )
 
 void KinectPoseRecognitionApp::shutdown( )
 {
-	kinect().Shutdown();
+	#ifdef kinectUsed
+		kinect().Shutdown();
+	#endif
 }
 CINDER_APP_NATIVE( KinectPoseRecognitionApp, RendererGl )
 #pragma warning(pop)

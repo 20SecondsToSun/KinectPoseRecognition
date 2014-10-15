@@ -5,12 +5,6 @@
 #include "cinder/Json.h"
 #include <map>
 
-namespace SaverDefaults
-{
-	static const std::string  DATA_BASE_NAME		= "poses.json";
-	static const std::string  JSON_STORAGE_FOLDER	= "poses";
-}
-
 class Saver
 {
 	private:
@@ -27,11 +21,11 @@ class Saver
 		};
 
 		void savePoseIntoBase(Pose* pose);
+		void loadConfigData();
 		std::vector<Pose*> Saver::loadPoseBase();
 
 		bool	saveImageIntoBase(std::string mails,  ci::Surface  image);
 
 };
 
-// helper function(s) for easier access 
 inline Saver&	saver() { return Saver::getInstance(); };

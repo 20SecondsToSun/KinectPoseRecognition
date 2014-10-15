@@ -118,12 +118,16 @@ int KinectAdapter::getSkeletsInFrame()
 void KinectAdapter::draw()
 {
 	gl::color(Color::white());
-	drawKinectCameraColorSurface();
+	
 
-	#ifdef recording		
+	#ifdef recording	
+		//gl::color(ColorA(1,1,1,0.5));
+		drawKinectCameraColorSurface();
+		//gl::color(ColorA(1,1,1, 1));
 		drawUserMask();
 		drawSkeletJoints();	
 	#else 	
+		drawKinectCameraColorSurface();
 		drawLoadedPoses();
 		drawSkeletJoints();
 	#endif

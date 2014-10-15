@@ -44,7 +44,7 @@ public:
 
 	void						drawToFBO(ci::Surface img, ci::gl::Texture comicsImage);
 
-	Fbo					mFbo;
+	ci::gl::Fbo					mFbo;
 
 	
 

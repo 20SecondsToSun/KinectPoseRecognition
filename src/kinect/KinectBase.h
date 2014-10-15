@@ -9,6 +9,7 @@
 #include "Kinect.h"
 #include "Params.h"
 #include "Pose.h"
+#include "cinder/gl/Fbo.h"
 
 using namespace ci;
 using namespace ci::app;
@@ -71,9 +72,13 @@ class KinectBase
 		int							viewWidth, viewHeight;
 		float						viewShiftX, viewShiftY; 
 		bool						isTracking;	
+		void						drawToFBO1( ci::gl::Texture tex, ci::gl::Fbo& fbo, ci::Vec2f vec);
+
+		
 
 	private:
 		
 		
 		int32_t						currentKinectTiltInDegrees;
+		
 };

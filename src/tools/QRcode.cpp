@@ -6,7 +6,7 @@ void QRcode::setup()
 	preloader.setup();
 }
 
-void QRcode::init()
+void QRcode::reset()
 {
 	isError = false;
 	isReady = false;
@@ -92,6 +92,15 @@ void QRcode::setLink(std::string link)
 	url =  link;
 	url = url.substr(7);
 }
+
+void QRcode::setData(std::string str, std::string link)
+{
+	setTextureString(str);
+	setLink(link);
+	isReady = true;
+}
+
+
 
 void QRcode::initAnim()
 {

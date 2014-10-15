@@ -5,45 +5,53 @@
 #include "Curl.h"
 #include "cinder/ImageIo.h"
 #include "cinder/Base64.h"
-
-namespace  serverParams 
-{
-	const std::string    serverURL		 =  "http://catpos.familyagency.ru/utils/upload/";
-	const std::string    mailURL		 =  "http://catpos.familyagency.ru/utils/send2mail";
-	
-}
+#include <boost/thread.hpp>
+#include "Params.h"
 
 class Server
 {
-	public:
-		void										sendPhoto(ci::fs::path path);
-		//void										sendToServerImage();
-		void										sendToServerImage( );
-		std::shared_ptr<std::thread>				serverThread;
-
-		bool										CONNECTION_PROBLEM;
-
-		boost::signals2::signal<void(void)>			serverLoadingPhotoEvent, serverCheckConnectionEvent, serverLoadingEmailEvent;
-
-		std::string									getBuffer(){return buffer;};
-		std::string									getLink(){return link;};
-		bool										isResponseOK(){return !CONNECTION_PROBLEM;};
+	public:	
+		static Server& getInstance() { static Server _server; return _server; };
 
 		void										checkConnection();
-		void										checkConnectionThread();
-
-
-		bool										isConnected, isLoading;
-
+		void										sendPhoto(ci::fs::path path);
 		void										sendToMail();
+
+		void										reset();
+		std::string									getBuffer(){return buffer;};
+		std::string									getLink(){return link;};			
+
+		bool										isConnected, isPhotoLoaded;
 		bool										isEmailSent;
+
+		void										stopTimeout();
+		int											getTimeoutSeconds();
+		bool										timerIsRunning();
+		void										abortLoading();
+
+		boost::signals2::signal<void(void)>			serverLoadingPhotoEvent;
+		boost::signals2::signal<void(void)>			serverCheckConnectionEvent;
+		boost::signals2::signal<void(void)>			sendToMailEvent;
+
 	private:
+
+		std::shared_ptr<boost::thread>				sendPhotoThread;
+		void										sendPhotoThreadHandler( );		
+	
+		std::shared_ptr<boost::thread>				checkConnectionThread;
+		void										checkConnectionThreadHandler();
+		
+
+		std::shared_ptr<boost::thread>				sendToMailThread;
+		void										sendToMailThreadHandler();
+		
+
 		std::string									buffer, link;
 		ci::fs::path								photoPath;
-
-		void										sendToMailThread();
-
-
 		std::string									sessionId;
 
+		ci::Timer									serverWaitingTimer;
+		bool										isPhotoSendingToServer, isCheckingConnection, isMailSending;
 };
+
+inline Server&	server() { return Server::getInstance(); };
