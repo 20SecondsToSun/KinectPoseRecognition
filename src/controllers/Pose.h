@@ -181,7 +181,7 @@ class Pose
 			Vec3f centroid = calculateCentroid();
 
 			for (size_t i = 0; i < rawPoints.size(); i++)				
-				normalizePoints[i]   +=  -centroid + Vec3f::one()*BOX_SCALE*0.5;					
+				normalizePoints[i]   +=  -centroid + Vec3f::one()*BOX_SCALE*0.5f;					
 		}
 
 		ci::Vec3f calculateCentroid()

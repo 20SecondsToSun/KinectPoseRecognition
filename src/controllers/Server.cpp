@@ -87,19 +87,15 @@ void Server::abortLoading()
 
 	if (isPhotoSendingToServer)
 	{
-		isPhotoSendingToServer = false;
-		sendPhotoThread->interrupt();
+		isPhotoSendingToServer = false;			
 		sendPhotoThread->join();
 	}
-
-	if (isCheckingConnection)
+	else if (isCheckingConnection)
 	{
-		isCheckingConnection = false;
-		checkConnectionThread->interrupt();
+		isCheckingConnection = false;		
 		checkConnectionThread->join();
 	}
-
-	if (isMailSending)
+	else if (isMailSending)
 	{
 		isMailSending = false;
 	}

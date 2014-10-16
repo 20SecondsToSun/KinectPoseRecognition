@@ -30,6 +30,8 @@ public:
 	static std::string get ( const std::string &url );
 	static bool       ftpUpload( const std::string &ftpUrl, const std::string &userName, const std::string &password, const ci::fs::path &path );
 	
+	static CURL * curl; 
+	static void clean ();
 
 protected:
 	static int writer( char *data, size_t size, size_t nmemb, std::string *buffer );

@@ -33,9 +33,8 @@ public:
 
 	void						loadFinalImages();
 	void						resizeFinalImages();
-	void						saveFinalImages();
 
-	photoCreateSignal			photoLoadEvent, photoSaveEvent;
+	photoCreateSignal			photoLoadEvent;
 
 	bool						isReady;
 

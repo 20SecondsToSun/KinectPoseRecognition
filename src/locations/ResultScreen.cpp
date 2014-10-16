@@ -23,7 +23,7 @@ void ResultScreen::setup()
 
 	comeBackBtn = new ButtonColor(getWindow(), Rectf(1200,300, 1600, 400), Color(1,0,0),
 							fonts().getFont("Helvetica Neue", 46),
-							"ÍÀÇÀÄ");	
+							"ÍÀÇÀÄ");
 
 	popup().setup();
 }
@@ -35,7 +35,7 @@ void ResultScreen::init( LocationEngine* game)
 	isChangingStateNow = false;	
 	canShowResultImages = false;
 	isButtonsInit = false;
-	goingOut	= false;	
+	isLeaveAnimation	= false;	
 
 	qrCode.reset();
 	popup().reset();
@@ -58,49 +58,41 @@ void ResultScreen::init( LocationEngine* game)
 	if(PlayerData::score != 0)
 	{
 		state = INIT_STATE;
-		photoLoadingSignal = photoMaker().photoLoadEvent.connect(boost::bind(&ResultScreen::photoLoaded, this));		
+		photoLoadingSignal = photoMaker().photoLoadEvent.connect(boost::bind(&ResultScreen::photoLoadedFromDirHandler, this));		
 		timeline().apply( &alphaAnimate, 0.0f, 1.0f, 0.9f, EaseOutCubic() ).finishFn( bind( &ResultScreen::animationStartFinished, this ) );		
 	}
 	else
 	{
 		state = SORRY_GO_HOME;	
-		comeBackSignal = comeBackBtn->mouseDownEvent.connect(boost::bind(&ResultScreen::gotoFirstScreen, this));
+		comeBackSignal = comeBackBtn->mouseDownEvent.connect(boost::bind(&ResultScreen::closeScreenHandler, this));
 		comeBackTimerStart();
 	}
 }
 
 void ResultScreen::animationStartFinished()
 {
-	state = PHOTO_LOADING_FROM_DIRECTORY;
+	state = PHOTO_LOADING_FROM_DIRECTORY;	
 }
 
-void ResultScreen::photoLoaded()
+void ResultScreen::photoLoadedFromDirHandler()
 {
-	photoLoadingSignal.disconnect();
 	isChangingStateNow = true;
-	timeline().apply( &alphaAnimate, 1.0f, 0.0f, 0.9f, EaseOutCubic() ).finishFn( bind( &ResultScreen::animationPhotoLoadedFinished, this ) );
-}
-
-void ResultScreen::animationPhotoLoadedFinished()
-{
-	state = PHOTO_CREATE_COMICS;
-	timeline().apply( &alphaAnimate, 0.0f, 1.0f, 0.9f, EaseOutCubic() ).finishFn( bind( &ResultScreen::animationStart2Finished, this ) );	
-}
-
-void ResultScreen::animationStart2Finished()
-{
-	photoSaveSignal =	photoMaker().photoSaveEvent.connect(boost::bind(&ResultScreen::photoSaved, this));
-	isChangingStateNow = false;	
+	photoLoadingSignal.disconnect();	
 	photoMaker().resizeFinalImages();
-	photoMaker().saveFinalImages();
+	timeline().apply( &alphaAnimate, 1.0f, 0.0f, 0.9f, EaseOutCubic() ).finishFn( bind( &ResultScreen::animationPhotoSavedFinished, this ) );
 }
 
-void ResultScreen::photoSaved()
-{
-	photoSaveSignal.disconnect();
-	isChangingStateNow = true;	
-	timeline().apply( &alphaAnimate, 1.0f,  0.0f, 0.9f, EaseOutCubic() ).finishFn( bind( &ResultScreen::animationPhotoSavedFinished, this ) ).delay(0.3f);	
-}
+//void ResultScreen::animationPhotoLoadedFinished()
+//{	
+//	state = PHOTO_CREATE_COMICS;
+//	timeline().apply( &alphaAnimate, 0.0f, 1.0f, 0.9f, EaseOutCubic() ).finishFn( bind( &ResultScreen::animationStart2Finished, this ) );	
+//}
+//
+//void ResultScreen::animationStart2Finished()
+//{	
+//	photoMaker().resizeFinalImages();	
+//	timeline().apply( &alphaAnimate, 0.0f, 0.9f, EaseOutCubic() ).finishFn( bind( &ResultScreen::animationPhotoSavedFinished, this ) ).delay(0.6f);		
+//}
 
 void ResultScreen::animationPhotoSavedFinished()
 {
@@ -116,37 +108,36 @@ void ResultScreen::animationPhotoSavedFinished()
 	{
 		state = NET_OFF_LOCATION_READY;		
 		isChangingStateNow = false;	
-		initButtons();
+		connectButtons();
 		comeBackTimerStart();	
 	}
 	else
-	{
+	{	
 		isChangingStateNow = true;	
 		state = CHECKING_NET_CONNECTION;
-		serverSignalConnectionCheck = server().serverCheckConnectionEvent.connect( 
-			boost::bind(&ResultScreen::serverSignalConnectionCheckHandler, this) 
-		);
-
+		serverSignalConnectionCheck = server().serverCheckConnectionEvent.connect(
+			boost::bind(&ResultScreen::serverSignalConnectionCheckHandler, this)
+			);
 		server().checkConnection();
 	}
 }
 
 void ResultScreen::serverSignalConnectionCheckHandler()
-{	
+{
 	serverSignalConnectionCheck.disconnect();
 
 	if(server().isConnected == false)
 	{
 		isChangingStateNow = false;	
-		state = NET_OFF_LOCATION_READY;		
-		initButtons();
+		state = NET_OFF_LOCATION_READY;	
+		connectButtons();
 		comeBackTimerStart();	
 	}
 	else
 	{
 		isChangingStateNow = true;	
-		state = PHOTO_LOADING_TO_SERVER;			
-		timeline().apply( &alphaAnimate, 0.0f,  1.0f, 0.9f, EaseOutCubic() ).finishFn( bind( &ResultScreen::animationStart2ServerLoadFinished, this ) );		
+		state = PHOTO_LOADING_TO_SERVER;	
+		timeline().apply( &alphaAnimate, 0.0f, 1.0f, 0.9f, EaseOutCubic() ).finishFn( bind( &ResultScreen::animationStart2ServerLoadFinished, this ) );	
 	}
 }
 
@@ -174,7 +165,7 @@ void ResultScreen::serverLoadingPhotoHandler()
 		state = LOADING_TO_SERVER_FAIL;			
 	}
 
-	initButtons();
+	connectButtons();
 	comeBackTimerStart();	
 }
 
@@ -186,23 +177,38 @@ void ResultScreen::serverTimeoutHandler()
 	isChangingStateNow = false;		
 	state = LOADING_TO_SERVER_FAIL;	
 
-	initButtons();
+	connectButtons();
 	comeBackTimerStart();	
 }
 
-void ResultScreen::initButtons()
+void ResultScreen::connectButtons()
 {
 	if(server().isConnected)
 	{
-		fbSignal =facebookBtn->mouseDownEvent.connect(boost::bind(&ResultScreen::facebookHandled, this));
-		vkSignal =vkontakteBtn->mouseDownEvent.connect(boost::bind(&ResultScreen::vkHandled, this));		
+		fbSignal =facebookBtn->mouseDownEvent.connect(boost::bind(&ResultScreen::facebookBtnHandler, this));
+		vkSignal =vkontakteBtn->mouseDownEvent.connect(boost::bind(&ResultScreen::vkBtnHandler, this));		
 	}
 
-	mailSignal =  mailBtn->mouseDownEvent.connect(boost::bind(&ResultScreen::mailHandled, this));
-	comeBackSignal = comeBackBtn->mouseDownEvent.connect(boost::bind(&ResultScreen::gotoFirstScreen, this));
+	mailSignal =  mailBtn->mouseDownEvent.connect(boost::bind(&ResultScreen::openEmailBtnHandler, this));
+	comeBackSignal = comeBackBtn->mouseDownEvent.connect(boost::bind(&ResultScreen::closeScreenHandler, this));
 
 	isButtonsInit = true;
-	console()<<"BUTTONS INIT ::::::::::::::::: "<<endl;	
+	console()<<"BUTTONS INIT ............. "<<endl;	
+}
+
+void ResultScreen::facebookBtnHandler()
+{	
+	initPopup(popupTypes::FACEBOOK);
+}
+
+void ResultScreen::vkBtnHandler()
+{
+	initPopup(popupTypes::VKONTAKTE);	
+}
+
+void ResultScreen::openEmailBtnHandler()
+{	
+	initPopup(popupTypes::EMAIL);	
 }
 
 void ResultScreen::initPopup(int type)
@@ -210,86 +216,89 @@ void ResultScreen::initPopup(int type)
 	state = POPUP_MODE;	
 	popup().start(type);	
 	disconnectButtons();
-	closeSignal = popup().closeEvent.connect(boost::bind(&ResultScreen::closePopup, this));
+	closePopupSignal = popup().closeEvent.connect(boost::bind(&ResultScreen::closePopup, this));
 
 	if (type == popupTypes::EMAIL)
 	{
-		sendToMailSignal = popup().sendEvent.connect(boost::bind(&ResultScreen::sendToMailHandler, this));
+		sendToMailSignal = popup().sendEvent.connect(boost::bind(&ResultScreen::sendToEmailBtnHandler, this));
 	}
 }
 
-void ResultScreen::sendToMailHandler()
+void ResultScreen::sendToEmailBtnHandler()
 {
 	sendToMailSignal.disconnect();
-	closeSignal.disconnect();
-	//
-	console()<<" BASE SAAAAAAAAAAAAAAVE  "<<server().isPhotoLoaded<<endl;		
+	closePopupSignal.disconnect();
 
-	//
-	initButtons();	
-}
-
-
-void ResultScreen::closePopup()
-{	
-	closeSignal.disconnect();
-	sendToMailSignal.disconnect();
-	initButtons();	
-}
-
-void ResultScreen::facebookHandled()
-{	
-	initPopup(popupTypes::FACEBOOK);
-}
-
-void ResultScreen::vkHandled()
-{
-	initPopup(popupTypes::VKONTAKTE);	
-}
-
-void ResultScreen::mailHandled()
-{	
-	initPopup(popupTypes::EMAIL);	
-
-	//localPhotoSaveToBase();
-
-	return;
-	if (server().isConnected  )
+	console()<<"TRY TO SAVE PHOTOS.......... "<< server().isPhotoLoaded <<endl;
+	if (server().isPhotoLoaded)
 	{
-		serverSignalLoadingEmailCheck = server().sendToMailEvent.connect( 
-			boost::bind(&ResultScreen::serverLoadingEmailHandler, this) 
-		);
-		
-		server().sendToMail();
+		sendPhotoToEmail();
 	}
 	else
 	{
-		localPhotoSaveToBase();
+		savePhotoToLocalBase();
+		connectButtons();	
 	}
+}
+
+void ResultScreen::sendPhotoToEmail() 
+{	
+	state = PHOTO_SENDING_TO_MAIL;
+	timeline().apply( &alphaAnimate, 0.0f, 1.0f, 0.9f, EaseOutCubic() ).finishFn( bind( &ResultScreen::animationShowSendingToMailText, this ) );		
+}
+
+void ResultScreen::animationShowSendingToMailText() 
+{	
+	serverSignalLoadingEmailCheck = server().sendToMailEvent.connect( 
+			boost::bind(&ResultScreen::serverLoadingEmailHandler, this) 
+		);	
+
+	server().sendToMail();
 }
 
 void ResultScreen::serverLoadingEmailHandler()
 {
-	serverSignalLoadingEmailCheck.disconnect();
+	if (server().isEmailSent == false)
+	{
+		console()<<"SERVER ERROR. SAVE LOCALLY "<<endl;
+		savePhotoToLocalBase();
+	}
+
+	timeline().apply( &alphaAnimate, 1.0f, 0.9f, EaseOutCubic() ).finishFn( bind( &ResultScreen::animationShowSendingToMailTextOut, this ) );	
 }
 
-void ResultScreen::localPhotoSaveToBase() 
+void ResultScreen::animationShowSendingToMailTextOut() 
 {
+	serverSignalLoadingEmailCheck.disconnect();
+	connectButtons();
+	comeBackTimerStart();
+	state = LOADING_TO_SERVER_SUCCESS;	
+}
+
+void ResultScreen::savePhotoToLocalBase() 
+{	
 	bool status = saver().saveImageIntoBase("yurikblech@gmail.com,up@mail.com", PlayerData::finalImageSurface);
 }
 
-void ResultScreen::gotoFirstScreen() 
+void ResultScreen::closePopup()
 {	
-	if(!goingOut)
+	closePopupSignal.disconnect();
+	sendToMailSignal.disconnect();
+	connectButtons();	
+}
+
+void ResultScreen::closeScreenHandler() 
+{	
+	if(!isLeaveAnimation)
 	{
 		disconnectListeners();
 		isChangingStateNow = true;
-		goingOut = true;
-		timeline().apply( &alphaFinAnimate, 0.0f, 1.0f, 0.9f, EaseOutCubic() ).finishFn( bind( &ResultScreen::animationFinished, this ) );
+		isLeaveAnimation = true;
+		timeline().apply( &alphaFinAnimate, 0.0f, 1.0f, 0.9f, EaseOutCubic() ).finishFn( bind( &ResultScreen::animationLeaveLocationFinished, this ) );
 	}
 }
 
-void ResultScreen::animationFinished() 
+void ResultScreen::animationLeaveLocationFinished() 
 {
 	_game->changeState(IntroScreen::Instance());
 }
@@ -310,7 +319,7 @@ void ResultScreen::update()
 {	
 	if (isComeBackTimerTouchFired() && isChangingStateNow == false)
 	{		
-		gotoFirstScreen();
+		closeScreenHandler();
 		return;
 	}
 
@@ -345,7 +354,11 @@ void ResultScreen::draw()
 
 		case PHOTO_LOADING_TO_SERVER:			
 			drawServerPreloader();
-		break;		
+		break;	
+
+		case PHOTO_SENDING_TO_MAIL:			
+			drawSendingToMailPreloader();
+		break;			
 
 		case POPUP_MODE:
 			drawPopup();			
@@ -433,7 +446,7 @@ void ResultScreen::drawButtonsIfAllow()
 
 void ResultScreen::drawFadeOutIfAllow() 
 {
-	if (goingOut)
+	if (isLeaveAnimation)
 	{
 		gl::color(ColorA(0, 0, 0, alphaFinAnimate));	
 		gl::drawSolidRect(getWindowBounds());
@@ -462,6 +475,13 @@ void ResultScreen::drawServerPreloader()
 	gl::color(ColorA(1, 1, 1, 1));
 }
 
+void ResultScreen::drawSendingToMailPreloader() 
+{
+	gl::color(ColorA(1, 1, 1, alphaAnimate));	
+	Utils::textFieldDraw("Îòïðàâëÿþ íà ïî÷òó... " + to_string(server().getTimeoutSeconds()),  fonts().getFont("Helvetica Neue", 46), Vec2f(40.f, 40.0f), ColorA(1.f, 0.f, 0.f, 1.f));
+	gl::color(ColorA(1, 1, 1, 1));
+}
+
 void ResultScreen::drawUpsetScreen() 
 {
 	//gl::color(ColorA(1, 1, 1, alphaAnimate));
@@ -471,19 +491,19 @@ void ResultScreen::drawUpsetScreen()
 
 void ResultScreen::disconnectListeners()
 {
+	serverSignalConnectionCheck.disconnect();
 	serverSignalLoadingCheck.disconnect();
-	serverSignalConnectionCheck.disconnect();	
+	serverSignalLoadingEmailCheck.disconnect();
+	server().abortLoading();	
 
-	photoLoadingSignal.disconnect();
-	photoSaveSignal.disconnect();
+	photoLoadingSignal.disconnect();	
 
-	closeSignal.disconnect();
+	closePopupSignal.disconnect();
 	sendToMailSignal.disconnect();
+	
 
 	comeBackTimerStop();
 	disconnectButtons();	
-
-	server().abortLoading();	
 
 	ph::clearTexture();
 

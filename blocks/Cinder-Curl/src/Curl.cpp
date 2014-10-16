@@ -8,7 +8,7 @@
 using namespace std;
 
 namespace mndl { namespace curl {
-
+CURL * Curl::curl; 
 string Curl::post( const string &url, vector<string> &m )
 {
 	bool   usePost    = true;
@@ -61,8 +61,8 @@ string Curl::postUploadFB( const string &url, const string &  ACCESSTOKEN, const
 
 	errorBuffer[0] = 0;
 
-	CURL * easyhandle;  
-	easyhandle = curl_easy_init();  
+	 
+	CURL * easyhandle = curl_easy_init();  
 
 	if( ! easyhandle ) return "";
 
@@ -283,6 +283,12 @@ int Curl::writer( char *data, size_t size, size_t nmemb, string *buffer )
 	return result;
 }
 
+void Curl::clean( )
+{
+	console()<<"  CURL:::::::::::::::::   "<<curl<<endl;
+	curl_easy_cleanup( curl );	
+}
+
 string Curl::easyCurl( const string &url, bool post, const string &postParamString)
 {
 	string buffer = "";
@@ -290,7 +296,7 @@ string Curl::easyCurl( const string &url, bool post, const string &postParamStri
 
 	errorBuffer[0] = 0;
 
-	CURL *curl = curl_easy_init();
+	curl = curl_easy_init();
 	CURLcode result;
 
 	if( ! curl )
@@ -302,6 +308,8 @@ string Curl::easyCurl( const string &url, bool post, const string &postParamStri
 	curl_easy_setopt( curl, CURLOPT_FOLLOWLOCATION, 1           );
 	curl_easy_setopt( curl, CURLOPT_WRITEFUNCTION , writer      );
 	curl_easy_setopt( curl, CURLOPT_WRITEDATA     , &buffer     );
+	curl_easy_setopt( curl, CURLOPT_TIMEOUT       , serverParams::SERVER_WAITING_TIME   );
+
 	if( post )
 	{
 		curl_easy_setopt( curl, CURLOPT_POST      , 1                      );
@@ -328,7 +336,7 @@ string Curl::easyCurl( const string &url, bool post, const string &postParamStri
 
 	curl_easy_cleanup( curl );	
 
-	console() << "result  :" << result << endl;
+	//console() << "result  :" << result << endl;
 	
 	if( result == CURLE_OK )
 	{

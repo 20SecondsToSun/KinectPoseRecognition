@@ -58,6 +58,7 @@ void KinectBase::setTilt(int32_t angleInDegrees)
 {
 	currentKinectTiltInDegrees = angleInDegrees;	
 	mDevice->setTilt(currentKinectTiltInDegrees);
+	console()<<"currentKinectTiltInDegrees:::::::::::::::::::::::::::  "<<mDevice->getTilt()<<endl;
 }
 
 int32_t KinectBase::getTilt()
@@ -216,7 +217,7 @@ void KinectBase::drawToFBO1( ci::gl::Texture tex, ci::gl::Fbo& mFbo, Vec2f vec)
 	  gl::scale(headScale, headScale);
 
 	 // gl::translate(-vec*headScale);	
-	  console()<<"--------  "<<-vec*headScale<<endl;
+	 // console()<<"--------  "<<-vec*headScale<<endl;
 
 	 // gl::translate(vec);	 
 	  gl::draw( tex );		 

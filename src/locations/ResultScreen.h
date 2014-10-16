@@ -1,5 +1,4 @@
 #pragma once
-
 #include "cinder/Timeline.h"
 #include "cinder/gl/Texture.h"
 #include "cinder/Timer.h"
@@ -25,12 +24,10 @@ using namespace std;
 
 namespace ReadyScreenDefaults
 {
-	//nst int  FONS_SCREENS_NUM					    = 6;
 	enum states {	INIT_STATE,
 					PHOTO_LOADING_TO_SERVER,
 					PHOTO_CREATE_COMICS, 
-					PHOTO_LOADING_FROM_DIRECTORY,
-					PHOTO_LOADING,
+					PHOTO_LOADING_FROM_DIRECTORY,					
 					SERVER_EMAIL_ERROR,
 					SERVER_INTERNET_ERROR,
 					SORRY_GO_HOME,
@@ -38,7 +35,8 @@ namespace ReadyScreenDefaults
 					CHECKING_NET_CONNECTION,
 					LOADING_TO_SERVER_SUCCESS,
 					LOADING_TO_SERVER_FAIL,
-					POPUP_MODE
+					POPUP_MODE,
+					PHOTO_SENDING_TO_MAIL
 					};
 }
 
@@ -61,82 +59,84 @@ public:
 
 	static ResultScreen* Instance() {
 		return &ResultScreenState;
-	}
-
-	void gotoFirstScreen();
-	void serverSignal();	
+	}	
 
 protected:
 	ResultScreen() { };
 
 private:
-	LocationEngine*					_game;
-	static ResultScreen				ResultScreenState;
+	LocationEngine* _game;
+	static ResultScreen ResultScreenState;
 
-	ButtonColor						*mailBtn, *facebookBtn, *vkontakteBtn, *comeBackBtn;
+	int		state;
+	bool	isChangingStateNow;	
+
+	void	animationLeaveLocationFinished();
+	//void	animationPhotoLoadedFinished();
+	void	animationPhotoSavedFinished();
+	void	animationStartFinished();
+	//void	animationStart2Finished();
+	void	animationStart2ServerLoadFinished();
+	void	animationShowSendingToMailText();
+	void    animationShowSendingToMailTextOut();
 	
-	bool							isChangingStateNow;	
 
-	void							animationFinished();
+	void	drawPhotoMakerPreloader();
+	void	drawPhotoLoadingPreloader();
+	void	drawUpsetScreen();
+	void	drawServerPreloader(); 
+	void	drawPopup();
+	void	drawSendingToMailPreloader();
+
+	void	drawResultImagesIfAllow();
+	void	drawQRCodeIfAllow();
+	void	drawButtonsIfAllow();
+	void	drawFadeOutIfAllow();
+
+	void	photoLoadedFromDirHandler();
+	void	serverSignalConnectionCheckHandler();
+	void	serverLoadingPhotoHandler();	
+	void	serverLoadingEmailHandler();	
+
+	void	serverTimeoutHandler();
+
+	void	connectButtons();
+	void	disconnectButtons();
+	void	disconnectListeners();
+
+	void	initPopup(int);
+	void	closePopup();
+
+	ButtonColor	*mailBtn;
+	ButtonColor *facebookBtn;
+	ButtonColor *vkontakteBtn;
+	ButtonColor *comeBackBtn;	
+
+	void	facebookBtnHandler();
+	void	vkBtnHandler();
+	void	openEmailBtnHandler();
+	void	closeScreenHandler();
+	void	sendToEmailBtnHandler();
 	
+	ci::signals::connection serverSignalLoadingCheck;
+	ci::signals::connection serverSignalLoadingEmailCheck;
+	ci::signals::connection photoLoadingSignal;
+	ci::signals::connection closePopupSignal;
 
-	int								state;
+	ci::signals::connection	comeBackSignal;
+	ci::signals::connection	fbSignal;
+	ci::signals::connection vkSignal;
+	ci::signals::connection mailSignal;
+	ci::signals::connection serverTimeoutCheck;
+	ci::signals::connection sendToMailSignal;
+	ci::signals::connection serverSignalConnectionCheck;
 
-	void							drawPhotoMakerPreloader();
-	void							drawPhotoLoadingPreloader();
-	void							drawUpsetScreen();
-	void							drawServerPreloader(); 
-	void							drawPopup();
-	void							photoLoaded();
-	void							photoSaved();
+	ci::Anim<float> alphaAnimate, alphaFinAnimate;
+	ci::Anim<float> alphaAnimateComics[3];
+	bool canShowResultImages, isButtonsInit, isLeaveAnimation;
 
+	QRcode qrCode;	
 
-	
-	ci::signals::connection			serverSignalLoadingCheck, serverSignalConnectionCheck, serverSignalLoadingEmailCheck, photoSaveSignal, photoLoadingSignal, closeSignal;
-	ci::signals::connection			comeBackSignal, fbSignal, vkSignal, mailSignal, serverTimeoutCheck, sendToMailSignal;
-
-	void							serverSignalConnectionCheckHandler();
-	void							sendToMailHandler();
-
-	void							serverLoadingPhotoHandler();
-
-	void							initButtons();
-
-	
-	void							facebookHandled();
-	void							vkHandled();
-	void							mailHandled();
-	void							localPhotoSaveToBase();
-	void							serverLoadingEmailHandler();
-
-
-	ci::Anim<float>					alphaAnimate, alphaFinAnimate;
-	ci::Anim<float>					alphaAnimateComics[3];
-	bool							canShowResultImages, isButtonsInit, goingOut;
-
-	void							animationPhotoLoadedFinished();
-	void							animationPhotoSavedFinished();
-	void							animationStartFinished();
-	void							animationStart2Finished();
-	void							animationStart2ServerLoadFinished();
-
-
-	void							disconnectListeners();
-
-	QRcode							qrCode;
-
-
-	void							drawResultImagesIfAllow();
-	void							drawQRCodeIfAllow();
-	void							drawButtonsIfAllow();
-	void							drawFadeOutIfAllow();
-
-
-	void							disconnectButtons();
-
-	void							initPopup(int);
-	void							closePopup();
-
-	void							serverTimeoutHandler();
-	
+	void	savePhotoToLocalBase();
+	void	sendPhotoToEmail();
 };

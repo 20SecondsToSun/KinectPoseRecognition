@@ -82,8 +82,6 @@ void PhotoMaker::resizeFinalImages()
 
 	fs::path path = Params::getFinalImageStoragePath();
 	writeImage( path, finalImage);
-
-	photoSaveEvent();
 }
 
 void PhotoMaker::drawToFBO(Surface img, ci::gl::Texture comicsImage)
@@ -103,8 +101,4 @@ void PhotoMaker::drawToFBO(Surface img, ci::gl::Texture comicsImage)
 
 	  gl::popMatrices();	
 	  gl::setViewport(saveView);
-}
-
-void PhotoMaker::saveFinalImages()
-{
 }

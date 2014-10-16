@@ -123,7 +123,7 @@ bool Saver::saveImageIntoBase(string mails,  ci::Surface  image)
 	tstruct = *localtime(&now);
 
 	string dateName = to_string(1900+tstruct.tm_year) + to_string(tstruct.tm_mon+1)+ to_string(tstruct.tm_mday);
-	string dirname = "photo\\" +dateName;
+	string dirname = "data\\photo\\" +dateName;
 	string fileName = dateName + ".csv";
 	fs::path dir_path = getAppPath()/dirname;
 	fs::path file_path = getAppPath()/dirname/fileName;
@@ -132,10 +132,9 @@ bool Saver::saveImageIntoBase(string mails,  ci::Surface  image)
 
 	string hours =  to_string(tstruct.tm_hour)+":"+to_string(tstruct.tm_min)+":"+to_string(tstruct.tm_sec);
 	string saveString = hours+";"+mails+"\n";
-
+	
 	if(fs::is_directory(dir_path))
 	{
-		//console()<<"dir exist"<<endl;
 		if (checkFile(file_path, saveString))
 		{
 			image_path = getAppPath()/dirname/(to_string(getImagesInDir(dir_path))+".jpg");
@@ -144,12 +143,9 @@ bool Saver::saveImageIntoBase(string mails,  ci::Surface  image)
 		}		
 	}
 	else
-	{
-		//console()<<"dir not exist"<<endl;
-
+	{		
 		if(fs::create_directory(dir_path))
 		{			
-			//console()<<"dir created "<<endl;
 			if (checkFile(file_path, saveString))
 			{
 				image_path = getAppPath()/dirname/(to_string(getImagesInDir(dir_path))+".jpg");

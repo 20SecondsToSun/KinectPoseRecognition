@@ -14,8 +14,8 @@ namespace poseParams
 {
 	const float				  BOX_SCALE							= 250.f;
 	const int				  POSE_IN_GAME_TOTAL				= 3;
-	static const std::string  DATA_BASE_NAME		= "poses.json";
-	static const std::string  JSON_STORAGE_FOLDER	= "poses";
+	static const std::string  DATA_BASE_NAME					= "poses.json";
+	static const std::string  JSON_STORAGE_FOLDER				= "poses";
 }
 
 namespace popupTypes
@@ -29,7 +29,7 @@ namespace serverParams
 {
 	static const int	 SERVER_WAITING_TIME	 = 10;
 	const std::string    serverURL			 =  "http://catpos.familyagency.ru/utils/upload/";
-	const std::string    mailURL			 =  "http://catpos.familyagency.ru/utils/send2mail";
+	const std::string    mailURL			 =  "http://catpos.familyagency.ru/utils/upload1/";//  "http://catpos.familyagency.ru/utils/send2mail";
 }
 
 class Params

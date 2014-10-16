@@ -122,8 +122,9 @@ void KinectAdapter::draw()
 
 	#ifdef recording	
 		//gl::color(ColorA(1,1,1,0.5));
-		drawKinectCameraColorSurface();
+		//drawKinectCameraColorSurface();
 		//gl::color(ColorA(1,1,1, 1));
+		
 		drawUserMask();
 		drawSkeletJoints();	
 	#else 	
@@ -164,6 +165,7 @@ void KinectAdapter::drawUserMask()
 		gl::pushMatrices();
 			gl::translate(viewShiftX, viewShiftY);
 			gl::scale(headScale, headScale);
+			//if(mDepthChannel16u) gl::draw(mTextureDepth);
 			gl::draw(Texture(savePoseDepth));
 		gl::popMatrices();
 	}
