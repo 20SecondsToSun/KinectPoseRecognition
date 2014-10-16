@@ -75,11 +75,28 @@ void KinectPoseRecognitionApp::setup()
 
 
 	#ifdef debug
-		mParams = params::InterfaceGl::create( getWindow(), "App parameters", toPixels( Vec2i( 200, 400 ) ) );
+		PlayerData::score = 3;
+		mParams = params::InterfaceGl::create( getWindow(), "App parameters", toPixels( Vec2i( 500, 400 ) ) );
 		mParams->addParam( "boxMaxErrorX", &Params::boxMaxErrorX ).min( 5.f ).max( 50.5f ).step( 5.f );
 		mParams->addParam( "boxMaxErrorY", &Params::boxMaxErrorY ).min( 5.f ).max( 50.5f ).step( 5.f );
 		mParams->addParam( "maxErrorBetweenJoints", &Params::maxErrorBetweenJoints ).min( 10.f ).max( 200.0f ).step( 10.f );
 		mParams->addParam( "percentForMatching", &Params::percentForMatching ).min( 0.1f ).max( 0.9f ).step( .1f );
+		mParams->addSeparator();
+		mParams->addParam( "isConnected", &Params::isNetConnected );
+		mParams->addParam( "Player Score", &PlayerData::score ).min( 0 ).max( 3 ).step( 1 );
+		mParams->addSeparator();
+		mParams->addParam( "Imitate_PhotofromDirError", &Params::photoFromDirError );
+		mParams->addSeparator();
+		mParams->addParam( "Imitate_serverConnectionCheckError", &Params::serverConnectionCheckError );
+		mParams->addParam( "Imitate_serverConnectionCheckTimeout", &Params::serverConnectionCheckTimeout );
+		mParams->addSeparator();
+		mParams->addParam( "Imitate_serverPhotoLoadError", &Params::serverPhotoLoadError );
+		mParams->addParam( "Imitate_serverPhotoLoadTimeout", &Params::serverPhotoLoadTimeout );		
+		mParams->addSeparator();
+		mParams->addParam( "Imitate_serverEmailSendError", &Params::serverEmailSendError );
+		mParams->addParam( "Imitate_serverEmailSendTimeout", &Params::serverEmailSendTimeout );
+
+
 		//mParams->addParam( "recordingMode", &Params::recording );			
 	#endif
 
@@ -143,10 +160,10 @@ void KinectPoseRecognitionApp::draw()
 
 	#endif	
 
-	/*#ifdef debug
+	#ifdef debug
 		mParams->draw();
 
-	#endif*/
+	#endif
 }
 
 void KinectPoseRecognitionApp::keyDown( KeyEvent event )

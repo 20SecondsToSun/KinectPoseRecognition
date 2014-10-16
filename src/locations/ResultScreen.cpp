@@ -42,23 +42,35 @@ void ResultScreen::init( LocationEngine* game)
 	server().reset();	
 
 	alphaFinAnimate = 0;
+
+
+	#ifdef debug
+		PlayerData::playerData[0].pathHiRes = "IMG_0003.jpg";
+		PlayerData::playerData[1].pathHiRes = "IMG_0001.jpg";
+		PlayerData::playerData[2].pathHiRes = "IMG_0002.jpg";
+
+		if (Params::photoFromDirError)
+			PlayerData::playerData[0].pathHiRes = "IMG_00.jpg";
+
+		for (size_t  i = 0; i < POSE_IN_GAME_TOTAL; i++)
+		{
+			PlayerData::playerData[i].isSuccess = false;	
+			PlayerData::playerData[i].storyCode = 0;	
+		}
+
+		for (size_t  i = 0; i < PlayerData::score; i++)
+		{
+			PlayerData::playerData[i].isSuccess = true;	
+			PlayerData::playerData[i].storyCode = i;	
+		}
+	#endif
 	
-	PlayerData::playerData[0].pathHiRes = "IMG_0003.jpg";
-	PlayerData::playerData[1].pathHiRes = "IMG_0001.jpg";
-	PlayerData::playerData[2].pathHiRes = "IMG_0002.jpg";
-
-	for (size_t  i = 0; i < POSE_IN_GAME_TOTAL; i++)
-	{
-		PlayerData::playerData[i].isSuccess = true;	
-		PlayerData::playerData[i].storyCode = i;	
-	}
-
-	PlayerData::score = 3;
 
 	if(PlayerData::score != 0)
 	{
 		state = INIT_STATE;
-		photoLoadingSignal = photoMaker().photoLoadEvent.connect(boost::bind(&ResultScreen::photoLoadedFromDirHandler, this));		
+		photoLoadingFromDirSignal = photoMaker().photoLoadEvent.connect(boost::bind(&ResultScreen::photoLoadedFromDirHandler, this));	
+		photoLoadingFromDirErrorSignal = photoMaker().photoLoadErrorEvent.connect(boost::bind(&ResultScreen::photoLoadeFromDirErrorHandler, this));	
 		timeline().apply( &alphaAnimate, 0.0f, 1.0f, 0.9f, EaseOutCubic() ).finishFn( bind( &ResultScreen::animationStartFinished, this ) );		
 	}
 	else
@@ -71,15 +83,28 @@ void ResultScreen::init( LocationEngine* game)
 
 void ResultScreen::animationStartFinished()
 {
-	state = PHOTO_LOADING_FROM_DIRECTORY;	
+	state = PHOTO_LOADING_FROM_DIRECTORY;
+	photoMaker().startTimer();
 }
 
 void ResultScreen::photoLoadedFromDirHandler()
 {
 	isChangingStateNow = true;
-	photoLoadingSignal.disconnect();	
+	photoLoadingFromDirSignal.disconnect();
+	photoLoadingFromDirErrorSignal.disconnect();
+	photoMaker().stopTimer();
 	photoMaker().resizeFinalImages();
-	timeline().apply( &alphaAnimate, 1.0f, 0.0f, 0.9f, EaseOutCubic() ).finishFn( bind( &ResultScreen::animationPhotoSavedFinished, this ) );
+	timeline().apply( &alphaAnimate, 0.0f, 0.9f, EaseOutCubic() ).finishFn( bind( &ResultScreen::animationPhotoSavedFinished, this ) ).delay(0.3f);
+}
+
+void ResultScreen::photoLoadeFromDirErrorHandler()
+{
+	state = ERROR_STATE;
+	photoMaker().stopTimer();
+	photoLoadingFromDirSignal.disconnect();
+	photoLoadingFromDirErrorSignal.disconnect();
+	comeBackSignal = comeBackBtn->mouseDownEvent.connect(boost::bind(&ResultScreen::closeScreenHandler, this));
+	comeBackTimerStart();
 }
 
 //void ResultScreen::animationPhotoLoadedFinished()
@@ -97,11 +122,14 @@ void ResultScreen::photoLoadedFromDirHandler()
 void ResultScreen::animationPhotoSavedFinished()
 {
 	canShowResultImages = true;	
-	
+
 	for (int i = 0; i < POSE_IN_GAME_TOTAL; i++)
 	{
-		alphaAnimateComics[i] = 0;
-		timeline().apply( &alphaAnimateComics[i], 1.0f, 0.7f, EaseOutCubic() ).delay(0.5f*i);		
+		if (PlayerData::playerData[i].isSuccess)
+		{
+			alphaAnimateComics[i] = 0;
+			timeline().apply( &alphaAnimateComics[i], 1.0f, 0.7f, EaseOutCubic() ).delay(0.5f*i);		
+		}
 	}
 	
 	if (Params::isNetConnected == false)
@@ -114,7 +142,8 @@ void ResultScreen::animationPhotoSavedFinished()
 	else
 	{	
 		isChangingStateNow = true;	
-		state = CHECKING_NET_CONNECTION;
+		state = CHECKING_NET_CONNECTION;		
+
 		serverSignalConnectionCheck = server().serverCheckConnectionEvent.connect(
 			boost::bind(&ResultScreen::serverSignalConnectionCheckHandler, this)
 			);
@@ -125,6 +154,7 @@ void ResultScreen::animationPhotoSavedFinished()
 void ResultScreen::serverSignalConnectionCheckHandler()
 {
 	serverSignalConnectionCheck.disconnect();
+	server().stopTimeout();
 
 	if(server().isConnected == false)
 	{
@@ -258,10 +288,15 @@ void ResultScreen::animationShowSendingToMailText()
 
 void ResultScreen::serverLoadingEmailHandler()
 {
+	server().stopTimeout();
+
 	if (server().isEmailSent == false)
-	{
-		console()<<"SERVER ERROR. SAVE LOCALLY "<<endl;
+	{		
 		savePhotoToLocalBase();
+	}
+	else
+	{
+		console()<<"SERVER SAVE MAILS!!!!! "<<endl;
 	}
 
 	timeline().apply( &alphaAnimate, 1.0f, 0.9f, EaseOutCubic() ).finishFn( bind( &ResultScreen::animationShowSendingToMailTextOut, this ) );	
@@ -277,7 +312,8 @@ void ResultScreen::animationShowSendingToMailTextOut()
 
 void ResultScreen::savePhotoToLocalBase() 
 {	
-	bool status = saver().saveImageIntoBase("yurikblech@gmail.com,up@mail.com", PlayerData::finalImageSurface);
+	console()<<"SERVER ERROR. SAVE LOCALLY "<<endl;
+	bool status = saver().saveImageIntoBase("yurikblech@gmail.com, up@mail.com", PlayerData::finalImageSurface);
 }
 
 void ResultScreen::closePopup()
@@ -369,6 +405,11 @@ void ResultScreen::draw()
 			comeBackBtn->draw();
 		break;		
 
+		case ERROR_STATE:
+			drawErrorScreen();
+			comeBackBtn->draw();
+		break;	
+
 		default:
 			break;
 	}	
@@ -410,14 +451,16 @@ void ResultScreen::drawResultImagesIfAllow()
 	{
 		for (size_t  i = 0; i < POSE_IN_GAME_TOTAL; i++)
 		{
-			if(PlayerData::playerData[i].isSuccess == false) continue;
-
-			gl::pushMatrices();
-				gl::translate(505*i, 200 );
-				gl::scale(0.5f, 0.5f);	
-				gl::color(ColorA(1,1,1,alphaAnimateComics[i]));
-				gl::draw( PlayerData::playerData[i].imageTexture);
-			gl::popMatrices();
+			if(PlayerData::playerData[i].isSuccess )
+			{
+				gl::pushMatrices();
+					gl::translate(505*i, 200 );
+					gl::scale(0.5f, 0.5f);	
+					gl::color(ColorA(1,1,1,alphaAnimateComics[i]));					
+					gl::draw( PlayerData::getDisplayingTexture(i));
+				gl::popMatrices();
+			}
+			
 		}
 		gl::color(ColorA(1,1,1,1));
 	}
@@ -457,7 +500,7 @@ void ResultScreen::drawFadeOutIfAllow()
 void ResultScreen::drawPhotoLoadingPreloader() 
 {
 	gl::color(ColorA(1, 1, 1, alphaAnimate));
-	Utils::textFieldDraw("Выгружаю фотографии...",  fonts().getFont("Helvetica Neue", 46), Vec2f(40.f, 40.0f), ColorA(1.f, 0.f, 0.f, 1.f));
+	Utils::textFieldDraw("Выгружаю фотографии... "+ to_string(photoMaker().getElapsedSeconds()),  fonts().getFont("Helvetica Neue", 46), Vec2f(40.f, 40.0f), ColorA(1.f, 0.f, 0.f, 1.f));
 	gl::color(ColorA(1, 1, 1, 1));
 }
 
@@ -470,13 +513,14 @@ void ResultScreen::drawPhotoMakerPreloader()
 
 void ResultScreen::drawServerPreloader() 
 {
+	console()<<"waiting for server "<<endl; 
 	gl::color(ColorA(1, 1, 1, alphaAnimate));	
 	Utils::textFieldDraw("Ожидаю сервер... " + to_string(server().getTimeoutSeconds()),  fonts().getFont("Helvetica Neue", 46), Vec2f(40.f, 40.0f), ColorA(1.f, 0.f, 0.f, 1.f));
 	gl::color(ColorA(1, 1, 1, 1));
 }
 
 void ResultScreen::drawSendingToMailPreloader() 
-{
+{	
 	gl::color(ColorA(1, 1, 1, alphaAnimate));	
 	Utils::textFieldDraw("Отправляю на почту... " + to_string(server().getTimeoutSeconds()),  fonts().getFont("Helvetica Neue", 46), Vec2f(40.f, 40.0f), ColorA(1.f, 0.f, 0.f, 1.f));
 	gl::color(ColorA(1, 1, 1, 1));
@@ -489,14 +533,25 @@ void ResultScreen::drawUpsetScreen()
 	//gl::color(ColorA(1, 1, 1, 1));
 }
 
+void ResultScreen::drawErrorScreen() 
+{
+	//gl::color(ColorA(1, 1, 1, alphaAnimate));
+	Utils::textFieldDraw("Что-то пошло не так...(((",  fonts().getFont("Helvetica Neue", 46), Vec2f(40.f, 40.0f), ColorA(1.f, 0.f, 0.f, 1.f));
+	//gl::color(ColorA(1, 1, 1, 1));
+}
+
 void ResultScreen::disconnectListeners()
 {
+	photoMaker().stopTimer();
+	server().stopTimeout();
+
 	serverSignalConnectionCheck.disconnect();
 	serverSignalLoadingCheck.disconnect();
 	serverSignalLoadingEmailCheck.disconnect();
 	server().abortLoading();	
 
-	photoLoadingSignal.disconnect();	
+	photoLoadingFromDirSignal.disconnect();	
+	photoLoadingFromDirErrorSignal.disconnect();
 
 	closePopupSignal.disconnect();
 	sendToMailSignal.disconnect();

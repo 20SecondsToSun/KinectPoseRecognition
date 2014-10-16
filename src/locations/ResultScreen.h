@@ -36,7 +36,8 @@ namespace ReadyScreenDefaults
 					LOADING_TO_SERVER_SUCCESS,
 					LOADING_TO_SERVER_FAIL,
 					POPUP_MODE,
-					PHOTO_SENDING_TO_MAIL
+					PHOTO_SENDING_TO_MAIL,
+					ERROR_STATE
 					};
 }
 
@@ -84,6 +85,7 @@ private:
 	void	drawPhotoMakerPreloader();
 	void	drawPhotoLoadingPreloader();
 	void	drawUpsetScreen();
+	void	drawErrorScreen();
 	void	drawServerPreloader(); 
 	void	drawPopup();
 	void	drawSendingToMailPreloader();
@@ -94,6 +96,7 @@ private:
 	void	drawFadeOutIfAllow();
 
 	void	photoLoadedFromDirHandler();
+	void	photoLoadeFromDirErrorHandler();
 	void	serverSignalConnectionCheckHandler();
 	void	serverLoadingPhotoHandler();	
 	void	serverLoadingEmailHandler();	
@@ -120,7 +123,8 @@ private:
 	
 	ci::signals::connection serverSignalLoadingCheck;
 	ci::signals::connection serverSignalLoadingEmailCheck;
-	ci::signals::connection photoLoadingSignal;
+	ci::signals::connection photoLoadingFromDirSignal;
+	ci::signals::connection photoLoadingFromDirErrorSignal;
 	ci::signals::connection closePopupSignal;
 
 	ci::signals::connection	comeBackSignal;
@@ -135,7 +139,7 @@ private:
 	ci::Anim<float> alphaAnimateComics[3];
 	bool canShowResultImages, isButtonsInit, isLeaveAnimation;
 
-	QRcode qrCode;	
+	QRcode qrCode;		
 
 	void	savePhotoToLocalBase();
 	void	sendPhotoToEmail();

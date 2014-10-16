@@ -7,48 +7,33 @@
 #include "PlayerData.h"
 #include "cinder/gl/Fbo.h"
 #include "CameraAdapter.h"
-
-namespace photoParams
-{
-	const int   BIG_PHOTO_WIDTH  = 1000;
-	const int   BIG_PHOTO_HEIGHT   = 638;
-}
+#include "TextureManager.h"
 
 class PhotoMaker
 {
 	typedef boost::signals2::signal<void(void )> photoCreateSignal;	
-private:
-	PhotoMaker() {};
-	~PhotoMaker() {};
 
-	 std::shared_ptr<std::thread>				loadaImageThread;
-	 void loadImagesThreadFn();
+	private:
+		ci::gl::Fbo	 mFbo;
+		void drawToFBO(ci::Surface img, ci::gl::Texture comicsImage);
 
-public:
-	// singleton implementation
-	static PhotoMaker& getInstance() { 
-		static PhotoMaker fm; 
-		return fm; 
-	};
+	public:
+		// singleton implementation
+		static PhotoMaker& getInstance() { 
+			static PhotoMaker pht; 
+			return pht; 
+		};
 
-	void						loadFinalImages();
-	void						resizeFinalImages();
+		void startTimer();
+		void stopTimer();
+		int  getElapsedSeconds();
+		void loadFinalImages();
+		void resizeFinalImages();
 
-	photoCreateSignal			photoLoadEvent;
+		photoCreateSignal photoLoadEvent, photoLoadErrorEvent;
 
-	bool						isReady;
-
-
-	ci::Surface					surface;
-
-	void						drawToFBO(ci::Surface img, ci::gl::Texture comicsImage);
-
-	ci::gl::Fbo					mFbo;
-
-	
-
+		ci::Timer	dirUploadTimer;
 
 };
 
-// helper function(s) for easier access 
 inline PhotoMaker&	photoMaker() { return PhotoMaker::getInstance(); };

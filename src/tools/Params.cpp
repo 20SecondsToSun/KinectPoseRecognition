@@ -6,6 +6,18 @@ float	Params::maxErrorBetweenJoints = 40;
 float	Params::percentForMatching = 0.9f;
 float 	Params::comeBackHomeTime = 20;
 bool	Params::isNetConnected = true;
+bool	Params::photoFromDirError = false;
+
+bool	Params::serverPhotoLoadError = false;
+bool	Params::serverPhotoLoadTimeout = false;
+
+bool	Params::serverConnectionCheckError = false;
+bool	Params::serverConnectionCheckTimeout = false;
+
+bool	Params::serverEmailSendError = false;
+bool	Params::serverEmailSendTimeout = false;
+
+
 std::string	Params::standID = "-1";
 
 fs::path		Params::getPhotosStorageDirectory()
@@ -16,6 +28,11 @@ fs::path		Params::getPhotosStorageDirectory()
 fs::path		Params::getTempStorageDirectory()
 {
 	return getAppPath()/"data"/"temp";
+}
+
+fs::path		Params::getTempPhotoSavePath(int i)
+{
+	return Params::getTempStorageDirectory() / fs::path( "level"+to_string(i+1) +".jpg");	
 }
 
 fs::path		Params::getFinalImageStoragePath()

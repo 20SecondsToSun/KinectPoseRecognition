@@ -38,10 +38,7 @@ protected:
 	bool    isComeBackTimerKinectFired();
 	bool	isPeopleInFrame;
 	
-	ci::Timer	returnTimer;
-	
-
-	
+	ci::Timer	returnTimer;	
 };
 
 #endif

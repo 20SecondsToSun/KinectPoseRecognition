@@ -19,7 +19,7 @@ class PlayerData
 		std::string pathHiRes;
 		bool	 isFocusError;
 		ci::gl::Texture imageTexture;
-
+		ci::gl::Texture displayingTexture;
 		ci::ImageSourceRef imageSourceRef;	
 	};
 
@@ -31,6 +31,8 @@ class PlayerData
 
 		static std::string getTexPath(int i);
 		static ci::gl::Texture getComicsImage(int i);
+		static void setDisplayingTexture(int, gl::Texture);
+		static ci::gl::Texture getDisplayingTexture(int i );
 		static ci::Surface finalImageSurface;
 	
 };

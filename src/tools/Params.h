@@ -10,6 +10,17 @@
 //#define   recording
 #define debug	
 
+namespace photoParams
+{
+	const int   BIG_PHOTO_WIDTH    = 1000;
+	const int   BIG_PHOTO_HEIGHT   = 638;
+}
+
+namespace photoMakerParams
+{
+	const int				  MAX_WAITING_FROM_DIR_TIME				= 7;
+}
+
 namespace poseParams
 {
 	const float				  BOX_SCALE							= 250.f;
@@ -27,9 +38,11 @@ namespace popupTypes
 
 namespace serverParams
 {
-	static const int	 SERVER_WAITING_TIME	 = 10;
+	static const int	 SERVER_WAITING_TIME = 10;
+	const std::string    connectionTestURL	 =  "http://google.com";
 	const std::string    serverURL			 =  "http://catpos.familyagency.ru/utils/upload/";
-	const std::string    mailURL			 =  "http://catpos.familyagency.ru/utils/upload1/";//  "http://catpos.familyagency.ru/utils/send2mail";
+	const std::string    mailURL			 =  "http://catpos.familyagency.ru/utils/send2mail";
+	const std::string    badTestURL			 =  "http://catpos.familyagency.ru/utils/upload1/";
 }
 
 class Params
@@ -44,6 +57,7 @@ class Params
 
 		static float	comeBackHomeTime;
 		static fs::path	getPhotosStorageDirectory();
+		static fs::path	getTempPhotoSavePath(int i);
 		static fs::path	getTempStorageDirectory();		
 		static fs::path	getFinalImageStoragePath();
 		static fs::path	getConfigStoragePath();
@@ -51,6 +65,17 @@ class Params
 		
 
 		static bool		isNetConnected;
+		static bool		photoFromDirError;
+
+		static bool		serverPhotoLoadError;
+		static bool		serverPhotoLoadTimeout;
+
+		static bool		serverConnectionCheckError;
+		static bool		serverConnectionCheckTimeout;
+
+		static bool		serverEmailSendError;
+		static bool		serverEmailSendTimeout;
+
 		static std::string	standID;
 
 };
