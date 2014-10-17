@@ -18,8 +18,7 @@ using namespace ci::app;
 using namespace std;
 
 class KinectPoseRecognitionApp : public AppNative {
-  public:
-	void				setup();
+  public:	void				setup();
 	void				keyDown( KeyEvent event );
 	void				update();
 	void				draw();
@@ -52,9 +51,9 @@ void KinectPoseRecognitionApp::setup()
 	hintFont = *fonts().getFont("Helvetica Neue", 46);
 	state    = "ChooseMode";
 
-	#ifdef kinectUsed
+	
 	kinect().Setup();	
-	#endif
+	
 
 	
 
@@ -87,8 +86,8 @@ void KinectPoseRecognitionApp::setup()
 		mParams->addSeparator();
 		mParams->addParam( "Imitate_PhotofromDirError", &Params::photoFromDirError );
 		mParams->addSeparator();
-		mParams->addParam( "Imitate_serverConnectionCheckError", &Params::serverConnectionCheckError );
-		mParams->addParam( "Imitate_serverConnectionCheckTimeout", &Params::serverConnectionCheckTimeout );
+		mParams->addParam( "Imitate_netConnectionCheckError", &Params::serverConnectionCheckError );
+		mParams->addParam( "Imitate_netConnectionCheckTimeout", &Params::serverConnectionCheckTimeout );
 		mParams->addSeparator();
 		mParams->addParam( "Imitate_serverPhotoLoadError", &Params::serverPhotoLoadError );
 		mParams->addParam( "Imitate_serverPhotoLoadTimeout", &Params::serverPhotoLoadTimeout );		

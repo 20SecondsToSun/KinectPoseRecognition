@@ -32,7 +32,7 @@ void ResultScreen::init( LocationEngine* game)
 {
 	_game = game;	
 
-	isChangingStateNow = false;	
+	_game->freezeLocation = false;
 	canShowResultImages = false;
 	isButtonsInit = false;
 	isLeaveAnimation	= false;	
@@ -42,7 +42,6 @@ void ResultScreen::init( LocationEngine* game)
 	server().reset();	
 
 	alphaFinAnimate = 0;
-
 
 	#ifdef debug
 		PlayerData::playerData[0].pathHiRes = "IMG_0003.jpg";
@@ -83,41 +82,27 @@ void ResultScreen::init( LocationEngine* game)
 
 void ResultScreen::animationStartFinished()
 {
-	state = PHOTO_LOADING_FROM_DIRECTORY;
-	photoMaker().startTimer();
+	state = PHOTO_LOADING_FROM_DIRECTORY;	
 }
 
 void ResultScreen::photoLoadedFromDirHandler()
-{
-	isChangingStateNow = true;
+{	
+	_game->freezeLocation = true;
+
 	photoLoadingFromDirSignal.disconnect();
 	photoLoadingFromDirErrorSignal.disconnect();
-	photoMaker().stopTimer();
 	photoMaker().resizeFinalImages();
 	timeline().apply( &alphaAnimate, 0.0f, 0.9f, EaseOutCubic() ).finishFn( bind( &ResultScreen::animationPhotoSavedFinished, this ) ).delay(0.3f);
 }
 
 void ResultScreen::photoLoadeFromDirErrorHandler()
 {
-	state = ERROR_STATE;
-	photoMaker().stopTimer();
+	state = ERROR_STATE;	
 	photoLoadingFromDirSignal.disconnect();
 	photoLoadingFromDirErrorSignal.disconnect();
 	comeBackSignal = comeBackBtn->mouseDownEvent.connect(boost::bind(&ResultScreen::closeScreenHandler, this));
 	comeBackTimerStart();
 }
-
-//void ResultScreen::animationPhotoLoadedFinished()
-//{	
-//	state = PHOTO_CREATE_COMICS;
-//	timeline().apply( &alphaAnimate, 0.0f, 1.0f, 0.9f, EaseOutCubic() ).finishFn( bind( &ResultScreen::animationStart2Finished, this ) );	
-//}
-//
-//void ResultScreen::animationStart2Finished()
-//{	
-//	photoMaker().resizeFinalImages();	
-//	timeline().apply( &alphaAnimate, 0.0f, 0.9f, EaseOutCubic() ).finishFn( bind( &ResultScreen::animationPhotoSavedFinished, this ) ).delay(0.6f);		
-//}
 
 void ResultScreen::animationPhotoSavedFinished()
 {
@@ -135,43 +120,51 @@ void ResultScreen::animationPhotoSavedFinished()
 	if (Params::isNetConnected == false)
 	{
 		state = NET_OFF_LOCATION_READY;		
-		isChangingStateNow = false;	
+		_game->freezeLocation = false;	
 		connectButtons();
 		comeBackTimerStart();	
 	}
 	else
 	{	
-		isChangingStateNow = true;	
-		state = CHECKING_NET_CONNECTION;		
-
-		serverSignalConnectionCheck = server().serverCheckConnectionEvent.connect(
-			boost::bind(&ResultScreen::serverSignalConnectionCheckHandler, this)
-			);
-		server().checkConnection();
+		_game->freezeLocation = true;	
+		state = CHECKING_NET_CONNECTION;	
+		timeline().apply( &alphaAnimate, 0.0f, 1.0f, 0.9f, EaseOutCubic() ).finishFn( bind( &ResultScreen::animationShowChekConnection, this ) );		
 	}
+}
+
+void ResultScreen::animationShowChekConnection()
+{
+	serverSignalConnectionCheck = server().serverCheckConnectionEvent.connect(
+		boost::bind(&ResultScreen::serverSignalConnectionCheckHandler, this)
+	);
+	server().checkConnection();
 }
 
 void ResultScreen::serverSignalConnectionCheckHandler()
 {
-	serverSignalConnectionCheck.disconnect();
 	server().stopTimeout();
+	serverSignalConnectionCheck.disconnect();
+	timeline().apply( &alphaAnimate, 0.0f, 0.9f, EaseOutCubic() ).finishFn( bind( &ResultScreen::animationHideChekConnection, this ) );
+}
 
+void ResultScreen::animationHideChekConnection()
+{
 	if(server().isConnected == false)
 	{
-		isChangingStateNow = false;	
+		_game->freezeLocation = false;	
 		state = NET_OFF_LOCATION_READY;	
 		connectButtons();
 		comeBackTimerStart();	
 	}
 	else
 	{
-		isChangingStateNow = true;	
+		_game->freezeLocation = true;	
 		state = PHOTO_LOADING_TO_SERVER;	
-		timeline().apply( &alphaAnimate, 0.0f, 1.0f, 0.9f, EaseOutCubic() ).finishFn( bind( &ResultScreen::animationStart2ServerLoadFinished, this ) );	
+		timeline().apply( &alphaAnimate, 0.0f, 1.0f, 0.9f, EaseOutCubic() ).finishFn( bind( &ResultScreen::animationShowServerPhotoLoad, this ) );	
 	}
 }
 
-void ResultScreen::animationStart2ServerLoadFinished()
+void ResultScreen::animationShowServerPhotoLoad()
 {	
 	serverSignalLoadingCheck = server().serverLoadingPhotoEvent.connect( 
 			boost::bind(&ResultScreen::serverLoadingPhotoHandler, this) 
@@ -183,7 +176,12 @@ void ResultScreen::serverLoadingPhotoHandler()
 {
 	serverSignalLoadingCheck.disconnect();
 	server().stopTimeout();
-	isChangingStateNow = false;
+	timeline().apply( &alphaAnimate, 0.0f, 0.9f, EaseOutCubic() ).finishFn( bind( &ResultScreen::animationHideServerPhotoLoad, this ) );	
+}
+
+void ResultScreen::animationHideServerPhotoLoad()
+{
+	_game->freezeLocation = false;
 	
 	if (server().isPhotoLoaded)
 	{
@@ -204,7 +202,7 @@ void ResultScreen::serverTimeoutHandler()
 	serverSignalLoadingCheck.disconnect();	
 	server().abortLoading();
 
-	isChangingStateNow = false;		
+	_game->freezeLocation = false;		
 	state = LOADING_TO_SERVER_FAIL;	
 
 	connectButtons();
@@ -328,7 +326,7 @@ void ResultScreen::closeScreenHandler()
 	if(!isLeaveAnimation)
 	{
 		disconnectListeners();
-		isChangingStateNow = true;
+		_game->freezeLocation = true;
 		isLeaveAnimation = true;
 		timeline().apply( &alphaFinAnimate, 0.0f, 1.0f, 0.9f, EaseOutCubic() ).finishFn( bind( &ResultScreen::animationLeaveLocationFinished, this ) );
 	}
@@ -336,14 +334,15 @@ void ResultScreen::closeScreenHandler()
 
 void ResultScreen::animationLeaveLocationFinished() 
 {
+	_game->freezeLocation = false;
 	_game->changeState(IntroScreen::Instance());
 }
 
 void ResultScreen::mouseEvents( )
 {
-	MouseEvent event = _game->getMouseEvent();	
+	if(_game->freezeLocation) return;
 
-	if(_game->isAnimationRunning()) return;		
+	MouseEvent event = _game->getMouseEvent();
 
 	if (event.isLeftDown() && !returnTimer.isStopped())
 	{	
@@ -353,7 +352,7 @@ void ResultScreen::mouseEvents( )
 
 void ResultScreen::update() 
 {	
-	if (isComeBackTimerTouchFired() && isChangingStateNow == false)
+	if (isComeBackTimerTouchFired() && _game->freezeLocation == false)
 	{		
 		closeScreenHandler();
 		return;
@@ -384,13 +383,13 @@ void ResultScreen::draw()
 			drawPhotoLoadingPreloader();
 		break;
 
-		case PHOTO_CREATE_COMICS:
-			drawPhotoMakerPreloader();
-		break;
+		case CHECKING_NET_CONNECTION:
+			drawNetConnectionPreloader();
+		break;		
 
 		case PHOTO_LOADING_TO_SERVER:			
 			drawServerPreloader();
-		break;	
+		break;			
 
 		case PHOTO_SENDING_TO_MAIL:			
 			drawSendingToMailPreloader();
@@ -504,16 +503,15 @@ void ResultScreen::drawPhotoLoadingPreloader()
 	gl::color(ColorA(1, 1, 1, 1));
 }
 
-void ResultScreen::drawPhotoMakerPreloader() 
+void ResultScreen::drawNetConnectionPreloader() 
 {
 	gl::color(ColorA(1, 1, 1, alphaAnimate));
-	Utils::textFieldDraw("Подготавливаю комиксы...",  fonts().getFont("Helvetica Neue", 46), Vec2f(40.f, 40.0f), ColorA(1.f, 0.f, 0.f, 1.f));
+	Utils::textFieldDraw("Проверяю соединение... "+ to_string(server().getTimeoutSeconds()),  fonts().getFont("Helvetica Neue", 46), Vec2f(40.f, 40.0f), ColorA(1.f, 0.f, 0.f, 1.f));
 	gl::color(ColorA(1, 1, 1, 1));
 }
 
 void ResultScreen::drawServerPreloader() 
-{
-	console()<<"waiting for server "<<endl; 
+{	
 	gl::color(ColorA(1, 1, 1, alphaAnimate));	
 	Utils::textFieldDraw("Ожидаю сервер... " + to_string(server().getTimeoutSeconds()),  fonts().getFont("Helvetica Neue", 46), Vec2f(40.f, 40.0f), ColorA(1.f, 0.f, 0.f, 1.f));
 	gl::color(ColorA(1, 1, 1, 1));
@@ -554,15 +552,12 @@ void ResultScreen::disconnectListeners()
 	photoLoadingFromDirErrorSignal.disconnect();
 
 	closePopupSignal.disconnect();
-	sendToMailSignal.disconnect();
-	
+	sendToMailSignal.disconnect();	
 
 	comeBackTimerStop();
 	disconnectButtons();	
 
 	ph::clearTexture();
-
-	console()<<"FINISHED!!!!!!!!!!!!!!!"<<endl;
 }
 
 void ResultScreen::disconnectButtons()

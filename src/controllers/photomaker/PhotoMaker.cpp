@@ -8,6 +8,8 @@ using namespace  photoParams;
 
 void PhotoMaker::loadFinalImages()
 {	
+	startTimer();
+
 	int totalLoaded = 0;
 
 	for (size_t  i = 0; i < POSE_IN_GAME_TOTAL; i++)
@@ -47,11 +49,15 @@ void PhotoMaker::loadFinalImages()
 	if (totalLoaded == PlayerData::score)
 	{
 		photoLoadEvent();
+		stopTimer();
 	}
 	else
 	{
 		if(dirUploadTimer.getSeconds() > photoMakerParams::MAX_WAITING_FROM_DIR_TIME)
+		{
 			photoLoadErrorEvent();
+			stopTimer();
+		}
 		//console()<< "  dirUploadTimer   "<<<<endl;
 	}
 }
@@ -76,8 +82,6 @@ int PhotoMaker::getElapsedSeconds()
 		return photoMakerParams::MAX_WAITING_FROM_DIR_TIME;
 }
 
-
-
 void PhotoMaker::resizeFinalImages()
 {
 	mFbo					= gl::Fbo( BIG_PHOTO_WIDTH, BIG_PHOTO_HEIGHT);
@@ -91,6 +95,7 @@ void PhotoMaker::resizeFinalImages()
 
 	for (size_t  i = 0; i < POSE_IN_GAME_TOTAL; i++)
 	{
+		
 		if (PlayerData::playerData[i].isSuccess)
 		{
 			Texture photoFromCameraTex = PlayerData::playerData[i].imageTexture;
@@ -98,16 +103,12 @@ void PhotoMaker::resizeFinalImages()
 		
 			Surface cadrSurface = Surface(getWindowWidth(),  getWindowHeight(), true);
 			cadrSurface.copyFrom(photoFromCameraSurface, Area(0, 0, getWindowWidth(), getWindowHeight()-trans.y), trans);
-
 			cadrSurface = Utils::resizeScreenshot(cadrSurface, (int32_t)BIG_PHOTO_WIDTH, (int32_t)BIG_PHOTO_HEIGHT);
-
 			drawToFBO(cadrSurface, PlayerData::getComicsImage(i));
 			mFbo.getTexture().setFlipped(true);
-
 			Surface comicsImage = Surface(mFbo.getTexture());
 
 			PlayerData::setDisplayingTexture(i, gl::Texture(comicsImage));	
-				
 			writeImage( Params::getTempPhotoSavePath(i), comicsImage);
 
 			Vec2f offset = Vec2f(0.0f, (float)BIG_PHOTO_HEIGHT*offsetI);

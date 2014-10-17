@@ -16,7 +16,9 @@ void KinectAdapter::Setup()
 
 	calculateAspects();
 
-	kinectConnect();
+	#ifdef kinectUsed
+		kinectConnect();
+	#endif
 
 	poses = saver().loadPoseBase();
 }

@@ -16,7 +16,7 @@ class QRcode
 		void		initAnim();
 		void        drawError();
 
-		bool isReady, isRender;		
+		bool isReady;		
 
 
 		bool		isError;

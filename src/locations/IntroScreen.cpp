@@ -28,22 +28,36 @@ void IntroScreen::setup()
 
 void IntroScreen::startInstructionBtnDown()
 {
+	if(_game->freezeLocation) return;
+
 	nextState = SHOW_INSTRUCTION;		
 	changeState();
 }
 
 void IntroScreen::startGameBtnDown()
 {
+	if(_game->freezeLocation) return;
 	nextState = START_GAME;			
 	changeState();	
 }
+
+void IntroScreen::gotoFirstScreen() 
+{
+	if (state!= INIT && !_game->freezeLocation)
+	{
+		nextState = INIT;		
+		changeState();		
+		comeBackTimerStop();	
+	}
+}
+
 
 void IntroScreen::init( LocationEngine* game)
 {	
 	_game = game;
 	state = INIT;	
 
-	isChangingStateNow = false;
+	_game->freezeLocation = false;
 	isPeopleInFrame = false;
 
 	startInstructionBtn->mouseDownEvent.connect(boost::bind(&IntroScreen::startInstructionBtnDown, this));
@@ -73,7 +87,7 @@ void IntroScreen::mouseEvents()
 {	
 	MouseEvent event = _game->getMouseEvent();	
 
-	if (!_game->isAnimationRunning() && event.isLeftDown())
+	if (!_game->freezeLocation && event.isLeftDown())
 	{
 		if(state == INIT)
 		{
@@ -113,7 +127,7 @@ void IntroScreen::update()
 		isPeopleInFrame = kinect().getSkeletsInFrame()!=0;
 	#endif	
 
-	if(isChangingStateNow) return;
+	if(_game->freezeLocation) return;
 
 	switch (state)
 	{
@@ -192,7 +206,7 @@ void IntroScreen::draw()
 		Utils::textFieldDraw(debugString,  fonts().getFont("Helvetica Neue", 46), Vec2f(40.f, 40.0f), ColorA(1.f, 0.f, 0.f, 1.f));
 	#endif	
 
-	if(isChangingStateNow)
+	if(_game->freezeLocation)
 	{
 		gl::color(ColorA(0, 0, 0, alphaAnimate));
 		gl::drawSolidRect(Rectf( 0.0f, 0.0f, getWindowWidth(), getWindowHeight()));
@@ -212,13 +226,13 @@ void IntroScreen::drawInitElements()
 
 void IntroScreen::changeState() 
 {
-	isChangingStateNow = true;
+	_game->freezeLocation = true;
 	timeline().apply( &alphaAnimate, 0.0f, 1.0f, 0.9f, EaseOutCubic() ).finishFn( bind( &IntroScreen::animationFinished, this ) );	
 }
 
 void IntroScreen::animationFinished() 
 {
-	isChangingStateNow = false;
+	_game->freezeLocation = false;
 	state = nextState;
 	
 	switch (state)
@@ -246,12 +260,3 @@ void IntroScreen::animationFinished()
 	}	
 }
 
-void IntroScreen::gotoFirstScreen() 
-{
-	if (state!= INIT)
-	{
-		nextState = INIT;		
-		changeState();		
-		comeBackTimerStop();	
-	}
-}

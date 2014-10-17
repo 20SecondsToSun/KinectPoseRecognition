@@ -31,11 +31,11 @@ public:
 
 	bool running() { return m_running; }
 	void quit() { m_running = false; }
-
-	void animationRunning(bool value){isAnimation = value;}
-	bool isAnimationRunning(){ return isAnimation;}
+	
 	ci::app::MouseEvent	getMouseEvent(){ return mouseEvent; }
 	ci::app::KeyEvent	getKeyEvent(){ return keyEvent; }
+
+	bool	freezeLocation;
 
 private:
 	// the stack of states
@@ -43,13 +43,12 @@ private:
 
 	bool m_running;
 	bool m_fullscreen;
-	bool isAnimation;
 
 	ci::app::WindowRef				mainWindow;
 	ci::signals::scoped_connection	l_MouseDown, l_KeyDown;//, mCbMouseDrag;
 
 	ci::app::MouseEvent				mouseEvent;
-	ci::app::KeyEvent				keyEvent;
+	ci::app::KeyEvent				keyEvent;	
 };
 
 #endif

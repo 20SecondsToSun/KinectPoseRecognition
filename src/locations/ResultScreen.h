@@ -70,20 +70,19 @@ private:
 	static ResultScreen ResultScreenState;
 
 	int		state;
-	bool	isChangingStateNow;	
 
-	void	animationLeaveLocationFinished();
-	//void	animationPhotoLoadedFinished();
+	void	animationLeaveLocationFinished();	
 	void	animationPhotoSavedFinished();
 	void	animationStartFinished();
-	//void	animationStart2Finished();
-	void	animationStart2ServerLoadFinished();
+	void	animationShowChekConnection();
+	void	animationHideChekConnection();
+	void	animationShowServerPhotoLoad();
+	void    animationHideServerPhotoLoad();
 	void	animationShowSendingToMailText();
 	void    animationShowSendingToMailTextOut();
 	
-
-	void	drawPhotoMakerPreloader();
 	void	drawPhotoLoadingPreloader();
+	void	drawNetConnectionPreloader();
 	void	drawUpsetScreen();
 	void	drawErrorScreen();
 	void	drawServerPreloader(); 

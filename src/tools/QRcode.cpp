@@ -37,19 +37,12 @@ void QRcode::draw()
 			{
 				if(stringQrcode=="") return;
 
-				
-				//if (isRender == false)
-				//{
-					isRender = true;		
-					qrCodeTexture = loadImageFromString(stringQrcode);
-
-					TextLayout simple;
-					simple.setFont( *fonts().getFont("Helvetica Neue", 46) );
-					simple.setColor( Color( 1, 1, 1 ) );
-					simple.addLine(url);
-					qrCodeTextTexture = gl::Texture( simple.render( true, false ) );
-				//}
-				
+				qrCodeTexture = loadImageFromString(stringQrcode);
+				TextLayout simple;
+				simple.setFont( *fonts().getFont("Helvetica Neue", 26) );
+				simple.setColor( Color( 1, 1, 1 ) );
+				simple.addLine(url);
+				qrCodeTextTexture = gl::Texture( simple.render( true, false ) );
 
 				if(qrCodeTextTexture)
 				{
@@ -81,7 +74,6 @@ void QRcode::drawError()
 	gl::popMatrices();
 }
 
-
 void QRcode::setTextureString(std::string str)
 {
 	stringQrcode = str;
@@ -96,11 +88,10 @@ void QRcode::setLink(std::string link)
 void QRcode::setData(std::string str, std::string link)
 {
 	setTextureString(str);
-	setLink(link);
+	setLink(link);	
+	
 	isReady = true;
 }
-
-
 
 void QRcode::initAnim()
 {

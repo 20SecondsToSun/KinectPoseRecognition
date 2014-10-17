@@ -85,12 +85,7 @@ void MainGameScreen::resume()
 
 void MainGameScreen::mouseEvents( )
 {
-	MouseEvent event = _game->getMouseEvent();	
 
-	if(!_game->isAnimationRunning() && event.isLeftDown()) 
-	{
-
-	}
 }
 
 void MainGameScreen::handleEvents()

@@ -57,8 +57,7 @@ private:
 
 	int						state, nextState;
 	std::string				debugString;		
-	bool					isChangingStateNow;	
-
+	
 	ci::gl::Texture			introImage, playImage, instructionImage;
 	
 	ButtonColor				*startInstructionBtn, *startGameBtn, *comeBackBtn;

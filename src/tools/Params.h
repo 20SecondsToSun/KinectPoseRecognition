@@ -6,7 +6,7 @@
 #include "FontStore.h"
 #include "AssetsManager.h"
 
-#define kinectUsed
+//#define kinectUsed
 //#define   recording
 #define debug	
 

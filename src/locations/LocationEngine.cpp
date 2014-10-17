@@ -5,7 +5,7 @@ void LocationEngine::init(const char* title, ci::app::WindowRef window , int wid
 						 bool fullscreen)
 {
 	mainWindow = window;
-	isAnimation = false;
+	freezeLocation = false;
 
 	l_MouseDown = mainWindow->getSignalMouseDown().connect( std::bind( &LocationEngine::mouseDown, this,std::placeholders::_1) );
 	l_KeyDown   = mainWindow->getSignalKeyDown().connect( std::bind( &LocationEngine::keyDown, this,std::placeholders::_1) );
@@ -16,7 +16,7 @@ void LocationEngine::init(const char* title, ci::app::WindowRef window , int wid
 
 void LocationEngine::mouseDown( MouseEvent &event )
 {	
-	if (isAnimation) return;
+	if (freezeLocation) return;
 	
 	mouseEvent = event;	
 	states.back()->mouseEvents();
@@ -24,7 +24,7 @@ void LocationEngine::mouseDown( MouseEvent &event )
 
 void LocationEngine::keyDown( KeyEvent &event )
 {	
-	if (isAnimation) return;
+	if (freezeLocation) return;
 	
 	keyEvent = event;	
 	states.back()->keyEvents();
@@ -42,6 +42,8 @@ void LocationEngine::cleanup()
 
 void LocationEngine::changeState(Location* state) 
 {
+	if(freezeLocation) return;
+
 	// cleanup the current state
 	if ( !states.empty() ) {
 		states.back()->cleanup();
