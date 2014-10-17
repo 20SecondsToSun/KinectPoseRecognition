@@ -129,6 +129,7 @@
     <ClCompile Include="..\src\locations\Location.cpp" />
     <ClCompile Include="..\src\locations\LocationEngine.cpp" />
     <ClCompile Include="..\src\locations\MainGameScreen.cpp" />
+    <ClCompile Include="..\src\locations\popup\EmailForm.cpp" />
     <ClCompile Include="..\src\locations\popup\Popup.cpp" />
     <ClCompile Include="..\src\locations\ResultScreen.cpp" />
     <ClCompile Include="..\src\locations\TextureManager.cpp" />
@@ -138,6 +139,7 @@
     <ClCompile Include="..\src\tools\Params.cpp" />
     <ClCompile Include="..\src\tools\PreloaderCircle.cpp" />
     <ClCompile Include="..\src\tools\QRcode.cpp" />
+    <ClCompile Include="..\src\tools\VirtualKeyboard.cpp" />
     <ClCompile Include="..\src\Utils.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -165,6 +167,7 @@
     <ClInclude Include="..\src\locations\Location.h" />
     <ClInclude Include="..\src\locations\LocationEngine.h" />
     <ClInclude Include="..\src\locations\MainGameScreen.h" />
+    <ClInclude Include="..\src\locations\popup\EmailForm.h" />
     <ClInclude Include="..\src\locations\popup\Popup.h" />
     <ClInclude Include="..\src\locations\ResultScreen.h" />
     <ClInclude Include="..\src\locations\TextureManager.h" />
@@ -174,6 +177,7 @@
     <ClInclude Include="..\src\tools\Params.h" />
     <ClInclude Include="..\src\tools\PreloaderCircle.h" />
     <ClInclude Include="..\src\tools\QRcode.h" />
+    <ClInclude Include="..\src\tools\VirtualKeyboard.h" />
     <ClInclude Include="..\src\Utils.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

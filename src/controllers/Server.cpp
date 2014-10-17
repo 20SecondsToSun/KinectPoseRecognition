@@ -19,7 +19,6 @@ void   Server::sendPhoto(fs::path _path)
 
 void Server::sendPhotoThreadHandler()
 {	
-
 	isPhotoSendingToServer = true;	
 	DataSourceRef urlRequest =	loadFile( photoPath);
 	string loadingString =  toBase64(Buffer(urlRequest)) + to_string(638) +",1";
@@ -139,24 +138,24 @@ void Server::checkConnectionThreadHandler( )
 	isCheckingConnection = false;
 }
 
-void Server::sendToMail()
+void Server::sendToMail(vector<string> mails)
 {
 	serverWaitingTimer.start();	
-	sendToMailThread = std::shared_ptr<boost::thread>( new boost::thread( bind( &Server::sendToMailThreadHandler, this ) ) );	
+	sendToMailThread = std::shared_ptr<boost::thread>( new boost::thread( bind( &Server::sendToMailThreadHandler, this, mails ) ) );	
 }
 
-void Server::sendToMailThreadHandler()
+void Server::sendToMailThreadHandler(vector<string> emailVector)
 {	
-	string allEmails = "yurikblech@gmail.com";
+	string allEmails = "";
 
-	/*for (size_t i = 0; i < emailVector.size(); i++)
+	for (size_t i = 0; i < emailVector.size(); i++)
 	{
 		if ( i != emailVector.size()-1)
 		{
 			allEmails +=emailVector[i] +",";
 		}
 		else allEmails +=emailVector[i];		
-	}*/
+	}
 
 	ci::app::console()<<"SEND TO EMAILS::  "<<allEmails<<"  sessionId  "<<sessionId<<std::endl;	
 

@@ -19,15 +19,12 @@ void Button::setup(ci::app::WindowRef window)
 	//windowref = window;
 	//MouseDownCon   = window->getSignalMouseDown().connect( std::bind( &Button::MouseDown, this, std::placeholders::_1 ) );
 	//mouseDownEvent = new ButtonSignal();
-	
 }
 
 void Button::MouseDown( MouseEvent &event )
 {	
 	if( contains(event.getPos()))
 	{
-		//console()<<"connect!!!!!!!"<<endl;
-		//event.setHandled(true);		
 		mouseDownEvent();
 	}
 }
@@ -101,9 +98,9 @@ void  Button::setBtnId(string value)
 	{
 		code = value;
 		TextLayout simple;
-		simple.setFont( font );
-		simple.setColor( Color::black());
-		simple.addLine(value);	
-		textTexture = gl::Texture( simple.render( true, false ) );
+		simple.setFont( *textFont );	
+		simple.setColor( Color::white());
+		simple.addLine(Utils::cp1251_to_utf8(value.c_str()));		
+		textTexture = gl::Texture( simple.render( true, false ) );	
 	}
 }

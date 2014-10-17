@@ -12,14 +12,13 @@
 
 #include <boost/thread.hpp>
 #include <boost/functional/hash.hpp>
-
+#include "VirtualKeyboard.h"
 	
 class PopupBase
 {
 public:	
 	// singleton implementation
 	static PopupBase& getInstance() { static PopupBase tm; return tm; };
-
 
 	void			draw();
 	void			reset();
@@ -30,17 +29,15 @@ public:
 
 	ci::gl::Texture		screenShot;
 
-	boost::signals2::signal<void(void )> closeEvent, sendEvent;
-	ci::signals::connection	closeBtnSignal, sendBtnSignal;
+	boost::signals2::signal<void(void )> closeEvent;
+	ci::signals::connection	closeBtnSignal;
 
-	ButtonColor			*closeBtn, *sendBtn;
+	ButtonColor			*closeBtn;
 
 private:
 	void	closeHandled();
-	void	sendBtnHandled();
 	void	cleanPopup();
 	int		type;
-
 };
 
 inline PopupBase&	popup() { return PopupBase::getInstance(); };

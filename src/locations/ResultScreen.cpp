@@ -26,6 +26,7 @@ void ResultScreen::setup()
 							"ÍÀÇÀÄ");
 
 	popup().setup();
+	emailPopup().setup();
 }
 
 void ResultScreen::init( LocationEngine* game)
@@ -62,8 +63,7 @@ void ResultScreen::init( LocationEngine* game)
 			PlayerData::playerData[i].isSuccess = true;	
 			PlayerData::playerData[i].storyCode = i;	
 		}
-	#endif
-	
+	#endif	
 
 	if(PlayerData::score != 0)
 	{
@@ -241,21 +241,38 @@ void ResultScreen::openEmailBtnHandler()
 
 void ResultScreen::initPopup(int type)
 {
-	state = POPUP_MODE;	
-	popup().start(type);	
-	disconnectButtons();
-	closePopupSignal = popup().closeEvent.connect(boost::bind(&ResultScreen::closePopup, this));
-
 	if (type == popupTypes::EMAIL)
 	{
-		sendToMailSignal = popup().sendEvent.connect(boost::bind(&ResultScreen::sendToEmailBtnHandler, this));
+		state = POPUP_EMAIL;	
+		emailPopup().show();
+		closeEmailPopupSignal = emailPopup().closeEvent.connect(boost::bind(&ResultScreen::closeEmailPopup, this));
+		sendToMailSignal = emailPopup().sendEvent.connect(boost::bind(&ResultScreen::sendToEmailBtnHandler, this));
+		disconnectButtons();
 	}
+	else if (type == popupTypes::VKONTAKTE || type == popupTypes::FACEBOOK)
+	{
+		state = POPUP_MODE;	
+		popup().start(type);	
+		disconnectButtons();
+		closeSocialPopupSignal = popup().closeEvent.connect(boost::bind(&ResultScreen::closeSocialPopup, this));
+	}
+}
+
+void ResultScreen::closeEmailPopup()
+{
+	console()<<"CLOSE EMAIL POPUP DONE"<<endl;
+	state = DEFAULT_STATE;		
+	closeEmailPopupSignal.disconnect();
+	sendToMailSignal.disconnect();
+	emailPopup().disconnectAll();
+	connectButtons();	
 }
 
 void ResultScreen::sendToEmailBtnHandler()
 {
 	sendToMailSignal.disconnect();
-	closePopupSignal.disconnect();
+	closeEmailPopupSignal.disconnect();
+	emailPopup().disconnectAll();
 
 	console()<<"TRY TO SAVE PHOTOS.......... "<< server().isPhotoLoaded <<endl;
 	if (server().isPhotoLoaded)
@@ -269,9 +286,17 @@ void ResultScreen::sendToEmailBtnHandler()
 	}
 }
 
+void ResultScreen::closeSocialPopup()
+{
+	state = DEFAULT_STATE;		
+	closeSocialPopupSignal.disconnect();
+	connectButtons();	
+}
+
 void ResultScreen::sendPhotoToEmail() 
 {	
 	state = PHOTO_SENDING_TO_MAIL;
+	_game->freezeLocation = true;	
 	timeline().apply( &alphaAnimate, 0.0f, 1.0f, 0.9f, EaseOutCubic() ).finishFn( bind( &ResultScreen::animationShowSendingToMailText, this ) );		
 }
 
@@ -281,12 +306,13 @@ void ResultScreen::animationShowSendingToMailText()
 			boost::bind(&ResultScreen::serverLoadingEmailHandler, this) 
 		);	
 
-	server().sendToMail();
+	server().sendToMail(emailPopup().getEmails());
 }
 
 void ResultScreen::serverLoadingEmailHandler()
 {
 	server().stopTimeout();
+	_game->freezeLocation = false;	
 
 	if (server().isEmailSent == false)
 	{		
@@ -310,15 +336,9 @@ void ResultScreen::animationShowSendingToMailTextOut()
 
 void ResultScreen::savePhotoToLocalBase() 
 {	
-	console()<<"SERVER ERROR. SAVE LOCALLY "<<endl;
-	bool status = saver().saveImageIntoBase("yurikblech@gmail.com, up@mail.com", PlayerData::finalImageSurface);
-}
-
-void ResultScreen::closePopup()
-{	
-	closePopupSignal.disconnect();
-	sendToMailSignal.disconnect();
-	connectButtons();	
+	state = SAVING_LOCALY_SUCCESS;
+	console()<<"SERVER ERROR. SAVE LOCALY "<<emailPopup().getEmailsInString()<<endl;
+	bool status = saver().saveImageIntoBase(emailPopup().getEmailsInString(), PlayerData::finalImageSurface);
 }
 
 void ResultScreen::closeScreenHandler() 
@@ -395,9 +415,14 @@ void ResultScreen::draw()
 			drawSendingToMailPreloader();
 		break;			
 
-		case POPUP_MODE:
+		case POPUP_EMAIL:	
+			emailPopup().draw();			
+			break;
+
+		case POPUP_MODE:	
 			drawPopup();			
 			break;
+			
 
 		case SORRY_GO_HOME:
 			drawUpsetScreen();
@@ -413,7 +438,7 @@ void ResultScreen::draw()
 			break;
 	}	
 
-	if(popup().isDrawing == false)
+	if(state!= POPUP_EMAIL && state!=POPUP_MODE)
 	{
 		drawResultImagesIfAllow();
 		drawQRCodeIfAllow();	
@@ -551,8 +576,10 @@ void ResultScreen::disconnectListeners()
 	photoLoadingFromDirSignal.disconnect();	
 	photoLoadingFromDirErrorSignal.disconnect();
 
-	closePopupSignal.disconnect();
+	closeSocialPopupSignal.disconnect();
+	closeEmailPopupSignal.disconnect();
 	sendToMailSignal.disconnect();	
+	emailPopup().disconnectAll();
 
 	comeBackTimerStop();
 	disconnectButtons();	
@@ -592,7 +619,7 @@ void ResultScreen::keyEvents()
 
 }
 
-void ResultScreen::handleEvents(  )
+void ResultScreen::handleEvents()
 {
 
 }

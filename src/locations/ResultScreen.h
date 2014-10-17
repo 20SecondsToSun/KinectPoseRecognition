@@ -16,6 +16,8 @@
 #include "PhotoMaker.h"
 #include "TextureManager.h"
 #include "Saver.h"
+#include "EmailForm.h"
+
 
 using namespace ci;
 using namespace ci::app;
@@ -34,10 +36,13 @@ namespace ReadyScreenDefaults
 					NET_OFF_LOCATION_READY,
 					CHECKING_NET_CONNECTION,
 					LOADING_TO_SERVER_SUCCESS,
+					SAVING_LOCALY_SUCCESS,
 					LOADING_TO_SERVER_FAIL,
 					POPUP_MODE,
 					PHOTO_SENDING_TO_MAIL,
-					ERROR_STATE
+					ERROR_STATE,
+					POPUP_EMAIL,
+					DEFAULT_STATE
 					};
 }
 
@@ -107,7 +112,8 @@ private:
 	void	disconnectListeners();
 
 	void	initPopup(int);
-	void	closePopup();
+	void	closeSocialPopup();
+	void	closeEmailPopup();
 
 	ButtonColor	*mailBtn;
 	ButtonColor *facebookBtn;
@@ -124,7 +130,8 @@ private:
 	ci::signals::connection serverSignalLoadingEmailCheck;
 	ci::signals::connection photoLoadingFromDirSignal;
 	ci::signals::connection photoLoadingFromDirErrorSignal;
-	ci::signals::connection closePopupSignal;
+	ci::signals::connection closeEmailPopupSignal;
+	ci::signals::connection closeSocialPopupSignal;
 
 	ci::signals::connection	comeBackSignal;
 	ci::signals::connection	fbSignal;
@@ -141,5 +148,5 @@ private:
 	QRcode qrCode;		
 
 	void	savePhotoToLocalBase();
-	void	sendPhotoToEmail();
+	void	sendPhotoToEmail();	
 };

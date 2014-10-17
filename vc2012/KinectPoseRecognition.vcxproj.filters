@@ -177,6 +177,12 @@
     <ClCompile Include="..\src\locations\popup\Popup.cpp">
       <Filter>Source Files\locations\popup</Filter>
     </ClCompile>
+    <ClCompile Include="..\src\tools\VirtualKeyboard.cpp">
+      <Filter>Source Files\tools</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\locations\popup\EmailForm.cpp">
+      <Filter>Source Files\locations\popup</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\include\Resources.h">
@@ -279,6 +285,12 @@
       <Filter>Source Files\tools</Filter>
     </ClInclude>
     <ClInclude Include="..\src\locations\popup\Popup.h">
+      <Filter>Source Files\locations\popup</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\tools\VirtualKeyboard.h">
+      <Filter>Source Files\tools</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\locations\popup\EmailForm.h">
       <Filter>Source Files\locations\popup</Filter>
     </ClInclude>
   </ItemGroup>

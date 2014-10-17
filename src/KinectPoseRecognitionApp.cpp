@@ -41,11 +41,13 @@ class KinectPoseRecognitionApp : public AppNative {
 void KinectPoseRecognitionApp::setup()
 {
 	setWindowSize(1920, 1080);
+	setFrameRate(60);
 	//setFullScreen(true);
 
 	fonts().loadFont( loadFile(getAssetPath("fonts/Helvetica Neue Bold.ttf")), 46);
 	fonts().loadFont( loadFile(getAssetPath("fonts/Helvetica Neue Bold.ttf")), 26);
 	fonts().loadFont( loadFile(getAssetPath("fonts/Helvetica Neue Bold.ttf")), 66);	
+	fonts().loadFont( loadFile(getAssetPath("fonts/Helvetica Neue Light.ttf")), 32);	
 	fonts().listFonts();
 
 	hintFont = *fonts().getFont("Helvetica Neue", 46);
@@ -67,6 +69,8 @@ void KinectPoseRecognitionApp::setup()
 	IntroScreen::Instance()->setup();
 	MainGameScreen::Instance()->setup();
 	ResultScreen::Instance()->setup();
+
+	//popup().start(popupTypes::EMAIL);	
 
 	game.init("init", getWindow());
 	game.changeState(IntroScreen::Instance());
@@ -155,6 +159,7 @@ void KinectPoseRecognitionApp::draw()
 		gl::enableAlphaBlending();	
 	#else
 		game.draw();
+		//popup().draw();
 		//kinect().draw();
 
 	#endif	

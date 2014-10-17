@@ -19,19 +19,7 @@ void PhotoMaker::loadFinalImages()
 			if (!PlayerData::playerData[i].isFocusError)
 			{
 				string url = PlayerData::getTexPath(i) ;
-				
-				//Texture tex;
-				//try
-				//{ 
-				  Texture tex = ph::fetchTexture(url);
-				//} 
-				//catch(cinder::ImageIoExceptionFailedLoad) 
-				//{
-				///	console()<<"BAAAAAAAAAAAAAAAAAD"<<endl;
-				///}
-				
-
-			
+        		Texture tex = ph::fetchTexture(url);
 
 				if (tex)
 				{
@@ -58,7 +46,6 @@ void PhotoMaker::loadFinalImages()
 			photoLoadErrorEvent();
 			stopTimer();
 		}
-		//console()<< "  dirUploadTimer   "<<<<endl;
 	}
 }
 
