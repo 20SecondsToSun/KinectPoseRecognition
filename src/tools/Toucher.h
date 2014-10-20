@@ -14,7 +14,7 @@ class Toucher
 
 		void	setPosition(ci::Vec2i _position)
 		{
-			gl::enableAlphaBlending();	
+			
 			position = _position;
 			timeline().apply( &_alphaAnimate, 0.7f, 0.0f, 0.5f, EaseOutCubic() );
 			timeline().apply( &sizeAnimate, 10.f, 40.0f, 0.5f, EaseOutCubic() );
@@ -22,6 +22,7 @@ class Toucher
 
 		void draw()
 		{
+			gl::enableAlphaBlending();	
 			gl::color(ColorA(1, 1, 1, _alphaAnimate));
 			gl::drawSolidCircle(position, sizeAnimate, 32);
 			gl::color(ColorA(1, 1, 1, 1));

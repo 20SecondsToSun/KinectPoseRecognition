@@ -58,15 +58,13 @@ void MainGameScreen::init( LocationEngine* game)
 }
 
 void MainGameScreen::cameraIsConnectedNow( )
-{
-	console()<<" cameraIsConnectedNow////////////////////////////////////"<<endl;
+{	
 	if (kinect().isConnected())
 		gotoFirstScreen();
 }
 
 void MainGameScreen::kinectIsConnectedNow()
-{
-	console()<<" kinectIsConnectedNow////////////////////////////////////"<<endl;
+{	
 	if (cameraCanon().isConnected)
 		gotoFirstScreen();
 }
@@ -318,9 +316,7 @@ void MainGameScreen::draw()
 	{
 		drawFadeOutIfAllow();
 		return;
-	}
-	
-	
+	}	
 	
 	switch(state)
 	{
@@ -361,7 +357,8 @@ void MainGameScreen::draw()
 
 	if (personisFound() == false)
 	{
-		Utils::textFieldDraw("Игрок покинул нас. возврат через  "+to_string((int)(Params::comeBackHomeTime - _missedTimer.getSeconds())), &debugFont26, Vec2f(0.f, 900.0f), ColorA(1.f, 0.f, 0.f, 1.f));
+		string msg = "Игрок покинул нас. возврат через  "+to_string((int)(Params::comeBackHomeTime - _missedTimer.getSeconds()));
+		Utils::textFieldDraw(msg, &debugFont26, Vec2f(0.f, 900.0f), RED);
 	}
 
 	comeBackBtn->draw();

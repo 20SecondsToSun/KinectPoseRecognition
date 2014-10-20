@@ -126,7 +126,7 @@ float KinectAdapter::getPoseProgress()
 void KinectAdapter::updateSkeletonData()
 {		
 	currentSkelet.clear();
-	int k = 0;
+	//int k = 0;
 	
 	for ( const auto& skeleton : mFrame.getSkeletons() ) 
 	{	
@@ -200,7 +200,7 @@ void KinectAdapter::drawSkeletJoints()
 
 void KinectAdapter::drawUserMask()
 {
-	if(getDepthChannel16u())
+	if(savePoseDepth)
 	{
 		gl::color(Color::white());
 		gl::enableAlphaBlending();
@@ -266,7 +266,7 @@ string KinectAdapter::getPoseIndex()
 
 void KinectAdapter::saveAsTemplate(string name)
 {
-	if (currentSkelet.size()) 
+	if (currentSkelet.size() && savePoseDepth) 
 	{
 		Pose* pose = new Pose();
 		pose->setName(name);
