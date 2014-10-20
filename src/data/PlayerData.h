@@ -7,8 +7,6 @@
 
 using namespace  poseParams;
 
-
-
 class PlayerData
 {
 	struct OnePlayerPoseData
@@ -33,6 +31,5 @@ class PlayerData
 		static ci::gl::Texture getComicsImage(int i);
 		static void setDisplayingTexture(int, gl::Texture);
 		static ci::gl::Texture getDisplayingTexture(int i );
-		static ci::Surface finalImageSurface;
-	
+		static ci::Surface finalImageSurface;	
 };

@@ -717,18 +717,23 @@ Surface16u depthChannelToSurface( const Channel16u& depth, const DepthProcessOpt
 
 Surface16u greenScreenUsers( const Channel16u& depth,const Surface8u& colorSurf, ImageResolution colorResolution, ImageResolution depthResolution)
 {
-	Surface16u surfaceColor( colorSurf.getWidth(), colorSurf.getHeight(),true);
 	
-	Surface16u surfaceDepth( depth);
-	Surface16u::Iter iter = surfaceDepth.getIter();	
+	Surface16u surfaceColor( colorSurf.getWidth(), colorSurf.getHeight(),true);
 
+	console()<<"here inside surfaceDepth!!!!!!!!!!!!!!"<<depth.getWidth()<<endl;
+
+	Surface16u surfaceDepth( depth);
+	
+	Surface16u::Iter iter = surfaceDepth.getIter();	
+	
 	while ( iter.line() ) 
 	{		
 		while ( iter.pixel() ) 
 		{
+			
 			uint16_t vc	= 0x10000 * ( ( iter.r() & 0xFFF8 ) >> 3 ) / 0x0FFF;
 			uint16_t id = NuiDepthPixelToPlayerIndex( iter.r() );
-
+			
 			if ( id >= 1 && id <= 6 ) 
 			{				
 				Vec2i v = iter.getPos();

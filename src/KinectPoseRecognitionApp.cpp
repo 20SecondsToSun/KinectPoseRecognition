@@ -91,6 +91,9 @@ void KinectPoseRecognitionApp::setup()
 		mParams->addSeparator();
 		mParams->addParam( "Imitate_serverEmailSendError", &Params::serverEmailSendError );
 		mParams->addParam( "Imitate_serverEmailSendTimeout", &Params::serverEmailSendTimeout );
+		mParams->addSeparator();
+		//mParams->addParam( "kinect", &Params::serverEmailSendError );
+		//mParams->addParam( "Imitate_serverEmailSendTimeout", &Params::serverEmailSendTimeout );
 
 
 		//mParams->addParam( "recordingMode", &Params::recording );			

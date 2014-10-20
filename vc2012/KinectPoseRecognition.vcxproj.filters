@@ -25,9 +25,6 @@
     <Filter Include="blocks\Cinder-KCB\lib">
       <UniqueIdentifier>{821b68ee-5b0c-4d43-a85c-29c010945083}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\gestures">
-      <UniqueIdentifier>{bee753f5-1d0d-4db3-b819-56244bbb45d9}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Source Files\locations">
       <UniqueIdentifier>{c1dce514-979b-4a8f-b1e2-79ca58762eba}</UniqueIdentifier>
     </Filter>

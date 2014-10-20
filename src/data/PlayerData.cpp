@@ -19,9 +19,8 @@ void PlayerData::initData()
 }
 
 std::string PlayerData::getTexPath(int i)
-{
-	//console()<<"pathHiRes  "<<playerData[i].pathHiRes<<endl;
-	return /*Params::getPhotosStorageDirectory().string()+*/ playerData[i].pathHiRes;
+{	
+	return playerData[i].pathHiRes;
 }
 
 ci::gl::Texture PlayerData::getComicsImage(int i)

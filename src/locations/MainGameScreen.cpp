@@ -24,7 +24,7 @@ void MainGameScreen::setup()
 
 	kinect().setup();
 
-	comeBackBtn = new ButtonColor(Rectf(1200,300, 1600, 400), RED, &debugFont26,	"BACK");
+	comeBackBtn = new ButtonColor(Rectf(1200,300, 1600, 400), RED, &debugFont26, "BACK");
 }
 
 void MainGameScreen::init( LocationEngine* game)
@@ -39,6 +39,7 @@ void MainGameScreen::init( LocationEngine* game)
 	#endif
 
 	isLeaveAnimation = false;
+	errorOccur = false;
 
 	distanceToPlayer = 0.0f;
 	currentPose = 1;	
@@ -77,7 +78,8 @@ void MainGameScreen::gotoFirstScreen()
 		cleanup();
 		_game->freezeLocation = true;
 		isLeaveAnimation = true;
-		timeline().apply( &alphaFinAnimate, 0.0f, 1.0f, 0.9f, EaseOutCubic() ).finishFn( bind( &MainGameScreen::animationLeaveLocationFinished, this ) );
+		alphaFinAnimate = 0;
+		timeline().apply( &alphaFinAnimate, 0.0f, 1.0f, 0.9f, EaseOutCubic() ).finishFn( bind( &MainGameScreen::animationLeaveLocationFinished, this ) ).delay(3.0);
 	}
 }
 
@@ -90,8 +92,11 @@ void MainGameScreen::update()
 	cameraCanon().update();	
 	kinect().update();
 
-	if( !cameraCanon().isConnected || !kinect().isConnected())
+	if( !cameraCanon().isConnected || !kinect().isConnected() || errorOccur)
+	{
+		errorOccur = true;
 		return;
+	}
 
 	switch(state)
 	{
@@ -255,8 +260,9 @@ bool MainGameScreen::personisFound()
 
 void MainGameScreen::checkPersonPose() 
 {
+	
 	kinect().updateGame();
-
+	
 	if (state == MAIN_GAME)// kinect().getPoseProgress() >= MATCHING_MAX_VALUE)
 	{
 		kinect().poseComplete();
@@ -308,8 +314,11 @@ void MainGameScreen::draw()
 
 	cameraCanon().draw();	
 
-	if (somethingWrongWithDevices()) 
+	if (somethingWrongWithDevices() || errorOccur) 
+	{
+		drawFadeOutIfAllow();
 		return;
+	}
 	
 	
 	

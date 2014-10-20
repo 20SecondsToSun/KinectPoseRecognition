@@ -15,63 +15,59 @@ using namespace ci::app;
 using namespace gl;
 using namespace std;
 
-namespace instructionDefaults
-{
-	enum states {INIT, 
-				 SHOW_INVITE,  
-				 SHOW_INSTRUCTION,
-				 START_GAME,
-				 ANIMATE_TO_SHOW_INVITE};
-}
 
 class IntroScreen : public Location
 {
+	public:
+		void setup();
+		void init( LocationEngine* game);
+		void cleanup();
 
-public:
-	void setup();
-	void init( LocationEngine* game);
-	void cleanup();
+		void pause();
+		void resume();
 
-	void pause();
-	void resume();
+		void handleEvents();
+		void mouseEvents();
+		void update();
+		void keyEvents();
+		void draw();
 
-	void handleEvents();
-	void mouseEvents();
-	void update();
-	void keyEvents();
-	void draw();
+		static IntroScreen* Instance() {
+			return &IntroScreenState;
+		}
 
-	static IntroScreen* Instance() {
-		return &IntroScreenState;
-	}
+		void	gotoFirstScreen();
 
-	void	gotoFirstScreen();
+	protected:
+		IntroScreen() { };
 
-protected:
-	IntroScreen() { };
+	private:	
+		enum states {INIT, 
+					 SHOW_INVITE,  
+					 SHOW_INSTRUCTION,
+					 START_GAME,
+					 ANIMATE_TO_SHOW_INVITE};
 
-private:	
+		LocationEngine*			_game;
+		static IntroScreen		IntroScreenState;	
 
-	LocationEngine*			_game;
-	static IntroScreen		IntroScreenState;	
-
-	ci::signals::connection startInstructionBtnSignal;
-	ci::signals::connection startGameBtnSignal;
-	ci::signals::connection comeBackBtnSignal;
+		ci::signals::connection startInstructionBtnSignal;
+		ci::signals::connection startGameBtnSignal;
+		ci::signals::connection comeBackBtnSignal;
 
 
-	int						state, nextState;
-	std::string				debugString;		
+		int						state, nextState;
+		std::string				debugString;		
 	
-	ci::gl::Texture			introImage, playImage, instructionImage;
+		ci::gl::Texture			introImage, playImage, instructionImage;
 	
-	ButtonColor				*startInstructionBtn, *startGameBtn, *comeBackBtn;
+		ButtonColor				*startInstructionBtn, *startGameBtn, *comeBackBtn;
 
-	ci::Anim<float>			alphaAnimate;	
+		ci::Anim<float>			alphaAnimate;	
 
-	void	startInstructionBtnDown();
-	void	startGameBtnDown();
-	void	drawInitElements();
-	void	animationFinished();
-	void	changeState();
+		void	startInstructionBtnDown();
+		void	startGameBtnDown();
+		void	drawInitElements();
+		void	animationFinished();
+		void	changeState();
 };

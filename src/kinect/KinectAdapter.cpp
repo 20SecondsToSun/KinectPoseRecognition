@@ -62,12 +62,14 @@ void KinectAdapter::update()
 	else
 		bufferDisconnect = 0;
 
-	if (bufferDisconnect > 100)
+
+	if (bufferDisconnect > 4)
 	{
 		_isConnected = false;
+
 		if(!reconnectTimer.isStopped() && (getElapsedFrames() % 10 )== 0)
 		{
-			console()<<"CONNECT!!!!!!!!!!!!!!"<<endl;
+			//console()<<"CONNECT!!!!!!!!!!!!!!"<<endl;
 			connect();
 		}
 		else if (reconnectTimer.isStopped())
@@ -85,6 +87,8 @@ void KinectAdapter::update()
 
 void KinectAdapter::updateGame() 
 {	
+	if (!_isConnected) return;
+
 	if (isTracking)
 		updateSkeletonData();
 
@@ -123,7 +127,7 @@ void KinectAdapter::updateSkeletonData()
 {		
 	currentSkelet.clear();
 	int k = 0;
-
+	
 	for ( const auto& skeleton : mFrame.getSkeletons() ) 
 	{	
 		if (skeleton.size() == 0 ) continue;
@@ -142,10 +146,9 @@ void KinectAdapter::updateSkeletonData()
 
 		if (currentSkelet.size()!= 0 ) break;
 	}
-
-	if(getSurface8u())	
-		savePoseDepth = MsKinect::greenScreenUsers(getDepthChannel16u(), getSurface8u(), COLOR_RESOLUTION, DEPTH_RESOLUTION);	
 	
+	if(getSurface8u() && getDepthChannel16u() && currentSkelet.size()!=0 && mDevice->isCapturing())	
+		savePoseDepth = MsKinect::greenScreenUsers(getDepthChannel16u(), getSurface8u(), COLOR_RESOLUTION, DEPTH_RESOLUTION);	
 }
 
 int KinectAdapter::getSkeletsInFrame()

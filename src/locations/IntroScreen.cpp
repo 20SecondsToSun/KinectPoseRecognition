@@ -2,7 +2,6 @@
 
 using namespace ci;
 using namespace ci::app;
-using namespace instructionDefaults;
 using namespace colorsParams;
 
 IntroScreen IntroScreen::IntroScreenState;
@@ -247,16 +246,13 @@ void IntroScreen::animationFinished()
 }
 
 void IntroScreen::pause()
-{
-	
+{	
 }
 
 void IntroScreen::resume()
-{
-	
+{	
 }
 
 void IntroScreen::handleEvents()
 {
-
 }

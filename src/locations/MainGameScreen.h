@@ -148,4 +148,5 @@ class MainGameScreen : public Location
 
 		void drawFadeOutIfAllow();
 		ci::Anim<float> alphaFinAnimate;	
+		bool errorOccur;
 };

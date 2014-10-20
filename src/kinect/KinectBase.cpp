@@ -13,11 +13,10 @@ void KinectBase::setDevice()
 	lastFrameId = frameID = -1;
 
 	mDevice = MsKinect::Device::create();	
-
 	mDevice->connectEventHandler( [ & ]( MsKinect::Frame frame )
 	{
 		mFrame = frame;	
-		frameID = frame.getFrameId();
+		frameID = frame.getFrameId();		
 	} );
 }
 
@@ -25,6 +24,7 @@ void KinectBase::kinectConnect()
 {
 	try {		
 		mDevice->start(deviceOptions);		
+		_isConnected = true;
 		kinectConnectedEvent();
 	} catch ( MsKinect::Device::ExcDeviceCreate ex ) {
 		console() << ex.what() << endl;
