@@ -93,9 +93,7 @@ class Pose
 		ci::gl::Texture		getComicsImage()  
 		{
 			return comics;
-		}
-
-		
+		}		
 
 		void	drawPoints()
 		{ 

@@ -2,25 +2,18 @@
 #include "Saver.h"
 
 using namespace kinectDefaults;
-
 KinectAdapter KinectAdapter::KinectAdapterState;
 
-void KinectAdapter::Setup()
-{	
-	currentPoseInGame  =  0;
-	isTracking = true;
-
+void KinectAdapter::setup()
+{
 	setActiveJoints();
-
 	setDevice();
-
 	calculateAspects();
-
-	#ifdef kinectUsed
-		kinectConnect();
-	#endif
+	connect();
 
 	poses = saver().loadPoseBase();
+
+	reset();
 }
 
 void KinectAdapter::setActiveJoints()
@@ -43,8 +36,55 @@ void KinectAdapter::setActiveJoints()
 	jointToRecord.push_back(NUI_SKELETON_POSITION_ANKLE_RIGHT);*/
 }
 
+void KinectAdapter::reset()
+{
+	currentPoseInGame  =  0;
+	isTracking = true;	
+	bufferDisconnect = 0;
+}
+
+void KinectAdapter::connect()
+{	
+	#ifdef kinectUsed
+		kinectConnect();
+	#endif	
+}
+
 void KinectAdapter::update() 
 {
+	_isConnected = (lastFrameId != frameID);
+	lastFrameId = frameID;
+
+	if (!_isConnected)
+	{
+		bufferDisconnect++;
+	}
+	else
+		bufferDisconnect = 0;
+
+	if (bufferDisconnect > 100)
+	{
+		_isConnected = false;
+		if(!reconnectTimer.isStopped() && (getElapsedFrames() % 10 )== 0)
+		{
+			console()<<"CONNECT!!!!!!!!!!!!!!"<<endl;
+			connect();
+		}
+		else if (reconnectTimer.isStopped())
+		{
+			reconnectTimer.start();
+		}
+	}
+	else
+	{
+		_isConnected = true;
+		if (!reconnectTimer.isStopped())		
+			reconnectTimer.stop();		
+	}
+}
+
+void KinectAdapter::updateGame() 
+{	
 	if (isTracking)
 		updateSkeletonData();
 
@@ -103,24 +143,22 @@ void KinectAdapter::updateSkeletonData()
 		if (currentSkelet.size()!= 0 ) break;
 	}
 
-	if(mDepthChannel16u)
-	{
-		savePoseDepth = MsKinect::greenScreenUsers(mDepthChannel16u, surface8u, COLOR_RESOLUTION, DEPTH_RESOLUTION);	
-	}
+	if(getSurface8u())	
+		savePoseDepth = MsKinect::greenScreenUsers(getDepthChannel16u(), getSurface8u(), COLOR_RESOLUTION, DEPTH_RESOLUTION);	
+	
 }
 
 int KinectAdapter::getSkeletsInFrame()
 {
-	if(mDepthChannel16u)
-		return MsKinect::calcNumUsersFromDepth(mDepthChannel16u);
+	if(getDepthChannel16u())
+		return MsKinect::calcNumUsersFromDepth(getDepthChannel16u());
 
 	return 0;
 }
 
 void KinectAdapter::draw()
 {
-	gl::color(Color::white());
-	
+	gl::color(Color::white());	
 
 	#ifdef recording	
 		//gl::color(ColorA(1,1,1,0.5));
@@ -130,7 +168,7 @@ void KinectAdapter::draw()
 		drawUserMask();
 		drawSkeletJoints();	
 	#else 	
-		drawKinectCameraColorSurface();
+		//drawKinectCameraColorSurface();
 		drawLoadedPoses();
 		drawSkeletJoints();
 	#endif
@@ -159,15 +197,14 @@ void KinectAdapter::drawSkeletJoints()
 
 void KinectAdapter::drawUserMask()
 {
-	if(mDepthChannel16u)
+	if(getDepthChannel16u())
 	{
 		gl::color(Color::white());
 		gl::enableAlphaBlending();
 		
 		gl::pushMatrices();
 			gl::translate(viewShiftX, viewShiftY);
-			gl::scale(headScale, headScale);
-			//if(mDepthChannel16u) gl::draw(mTextureDepth);
+			gl::scale(headScale, headScale);			
 			gl::draw(Texture(savePoseDepth));
 		gl::popMatrices();
 	}
@@ -199,7 +236,6 @@ int KinectAdapter::nextPose()
 	return currentPoseInGame;
 }
 
-
 int KinectAdapter::getPoseCode()
 {
 	return currentPoseInGame;
@@ -219,8 +255,6 @@ ci::gl::Texture KinectAdapter::getPoseImageById(int id)
 {
 	return poses[id]->getComicsImage();
 }
-
-
 
 string KinectAdapter::getPoseIndex()
 {
@@ -261,11 +295,8 @@ void KinectAdapter::matchTemplate()
 		return;
 	}	
 
-
 	//computeMistakeWay1();
 	computeMistakeWay2();
-	
-
 }
 
 void KinectAdapter::computeMistakeWay1()

@@ -29,12 +29,12 @@ class EmailForm
 		boost::signals2::signal<void(void)> closeEvent, sendEvent;
 		std::vector<std::string> getEmails();
 		std::string EmailForm::getEmailsInString();
-			
 
-		// singleton implementation
 		static EmailForm& getInstance() { static EmailForm emailF; return emailF; };
 
 	private :
+
+		enum closePopupMode {CLOSE_MAIL, SEND_MAIL};
 
 		ci::signals::connection	keyboardTouchSignal;
 		ci::signals::connection	deleteAllLettersSignal;
@@ -52,18 +52,12 @@ class EmailForm
 
 		void drawEmailInput();
 		void drawAdditionEmails();
-
-		VirtualKeyboard		touchKeyBoard;
-
-
-
+	
 		ci::Anim<ci::Vec2f>  bgPosition;
 		ci::Anim<ci::ColorA> errorAlpha, bgColor;
 		ci::gl::Texture		*keyBoardMainBgTex, *emailLineTex;
 		ci::gl::Texture		addEmailTex, deleteAllTex, closeEmailTex;
-		ci::Font			emailInputFont, emailAddFont;
-
-	
+		ci::Font			emailInputFont, emailAddFont;	
 		
 		void initHandlers();		
 		void closedHandler();
@@ -74,9 +68,7 @@ class EmailForm
 		std::string currentEmail;
 		std::vector<std::string> emailVector;
 
-		std::string mode;
-
-
+		int mode;
 
 };
 inline EmailForm&	emailPopup() { return EmailForm::getInstance(); };

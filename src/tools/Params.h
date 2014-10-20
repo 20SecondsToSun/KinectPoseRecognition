@@ -6,9 +6,16 @@
 #include "FontStore.h"
 #include "AssetsManager.h"
 
-//#define kinectUsed
+#define kinectUsed
 //#define   recording
 #define debug	
+
+namespace colorsParams
+{
+	const ci::Color   RED      =  ci::Color(1.0f, 0.0f, 0.0f);
+	const ci::Color   GREEN    =  ci::Color(0.0f, 1.0f, 0.0f);
+	const ci::Color   BLUE     =  ci::Color(0.0f, 0.0f, 1.0f);
+}
 
 namespace photoParams
 {

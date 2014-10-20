@@ -2,31 +2,24 @@
 
 using namespace ci;
 using namespace ci::app;
-using namespace ReadyScreenDefaults;
+using namespace colorsParams;
 
 ResultScreen ResultScreen::ResultScreenState;
 
 void ResultScreen::setup()
 {
-	mailBtn = new ButtonColor(getWindow(),Rectf(100,700,500, 800), Color(1,0,0),
-							fonts().getFont("Helvetica Neue", 46),
-							"E-mail");
+	Font *btnFont = fonts().getFont("Helvetica Neue", 46);
 
-	facebookBtn = new ButtonColor(getWindow(),Rectf(700,700,1100, 800), Color(1,0,0),
-							fonts().getFont("Helvetica Neue", 46),
-							"Facebook");
+	mailBtn		 = new ButtonColor(Rectf(100,700,500, 800),    RED, btnFont , "E-mail");
+	facebookBtn  = new ButtonColor(Rectf(700,700,1100, 800),   RED, btnFont,  "Facebook");
+	vkontakteBtn = new ButtonColor(Rectf(1300,700,1700, 800),  RED, btnFont,  "Vkontakte");
+	comeBackBtn  = new ButtonColor(Rectf(1200,300, 1600, 400), RED, btnFont,  "BACK");
 
-	vkontakteBtn = new ButtonColor(getWindow(),Rectf(1300,700,1700, 800), Color(1,0,0),
-							fonts().getFont("Helvetica Neue", 46),
-							"Vkontakte");
-
-
-	comeBackBtn = new ButtonColor(getWindow(), Rectf(1200,300, 1600, 400), Color(1,0,0),
-							fonts().getFont("Helvetica Neue", 46),
-							"НАЗАД");
-
-	popup().setup();
+	socialPopup().setup();
 	emailPopup().setup();
+
+	touchKeyboard().setup(Vec2f(360.0f, getWindowHeight() - 504.0f));
+	touchKeyboard().initKeyboard();
 }
 
 void ResultScreen::init( LocationEngine* game)
@@ -39,7 +32,7 @@ void ResultScreen::init( LocationEngine* game)
 	isLeaveAnimation	= false;	
 
 	qrCode.reset();
-	popup().reset();
+	socialPopup().reset();
 	server().reset();	
 
 	alphaFinAnimate = 0;
@@ -252,9 +245,9 @@ void ResultScreen::initPopup(int type)
 	else if (type == popupTypes::VKONTAKTE || type == popupTypes::FACEBOOK)
 	{
 		state = POPUP_MODE;	
-		popup().start(type);	
+		socialPopup().show(type);	
 		disconnectButtons();
-		closeSocialPopupSignal = popup().closeEvent.connect(boost::bind(&ResultScreen::closeSocialPopup, this));
+		closeSocialPopupSignal = socialPopup().closeEvent.connect(boost::bind(&ResultScreen::closeSocialPopup, this));
 	}
 }
 
@@ -290,6 +283,7 @@ void ResultScreen::closeSocialPopup()
 {
 	state = DEFAULT_STATE;		
 	closeSocialPopupSignal.disconnect();
+	socialPopup().disconnectAll();
 	connectButtons();	
 }
 
@@ -306,7 +300,7 @@ void ResultScreen::animationShowSendingToMailText()
 			boost::bind(&ResultScreen::serverLoadingEmailHandler, this) 
 		);	
 
-	server().sendToMail(emailPopup().getEmails());
+	server().sendToMail(emailPopup().getEmailsInString());
 }
 
 void ResultScreen::serverLoadingEmailHandler()
@@ -417,12 +411,11 @@ void ResultScreen::draw()
 
 		case POPUP_EMAIL:	
 			emailPopup().draw();			
-			break;
+		break;
 
 		case POPUP_MODE:	
-			drawPopup();			
-			break;
-			
+			socialPopup().draw();			
+		break;			
 
 		case SORRY_GO_HOME:
 			drawUpsetScreen();
@@ -447,13 +440,13 @@ void ResultScreen::draw()
 
 	drawFadeOutIfAllow();
 
-	if (!returnTimer.isStopped())
-	{
-		#ifdef debug
+	#ifdef debug
+		if (!returnTimer.isStopped())
+		{	
 			string debugString = "Возвращение на главный экран произойдет через : "+to_string(getSecondsToComeBack());	
-			Utils::textFieldDraw(debugString,  fonts().getFont("Helvetica Neue", 46), Vec2f(40.f, 940.0f), ColorA(1.f, 0.f, 0.f, 1.f));
-		#endif
-	}
+			Utils::textFieldDraw(debugString,  fonts().getFont("Helvetica Neue", 46), Vec2f(40.f, 940.0f), ColorA(1.f, 0.f, 0.f, 1.f));		
+		}
+	#endif
 
 	gl::disableAlphaBlending();	
 		
@@ -462,11 +455,6 @@ void ResultScreen::draw()
 		fonts().getFont("Helvetica Neue", 46), 
 		Vec2f(400.f, 400.0f),
 		ColorA(1.f, 1.f, 1.f, 1.f));*/	
-}
-
-void ResultScreen::drawPopup() 
-{
-	popup().draw();
 }
 
 void ResultScreen::drawResultImagesIfAllow() 
@@ -478,13 +466,12 @@ void ResultScreen::drawResultImagesIfAllow()
 			if(PlayerData::playerData[i].isSuccess )
 			{
 				gl::pushMatrices();
-					gl::translate(505*i, 200 );
+					gl::translate(505.f*i, 200.0f );
 					gl::scale(0.5f, 0.5f);	
 					gl::color(ColorA(1,1,1,alphaAnimateComics[i]));					
 					gl::draw( PlayerData::getDisplayingTexture(i));
 				gl::popMatrices();
-			}
-			
+			}	
 		}
 		gl::color(ColorA(1,1,1,1));
 	}
@@ -580,6 +567,7 @@ void ResultScreen::disconnectListeners()
 	closeEmailPopupSignal.disconnect();
 	sendToMailSignal.disconnect();	
 	emailPopup().disconnectAll();
+	socialPopup().disconnectAll();
 
 	comeBackTimerStop();
 	disconnectButtons();	

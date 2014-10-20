@@ -19,8 +19,8 @@ class KinectAdapter: public KinectBase
 {
 	public:
 		boost::signals2::signal<void(void)>		levelCompleteEvent, gameOverEvent;
-		void Setup();	
-		void update();
+		void setup();			
+		void updateGame();
 		void draw();
 
 		static KinectAdapter* Instance() {
@@ -50,16 +50,20 @@ class KinectAdapter: public KinectBase
 		void						drawSkeletJoints();
 
 		bool						isGameRunning, isPoseDetecting;
-		double						getMatchPercent();
+		double						getMatchPercent();	
+
+		void update();
+		void connect();
+		void reset();
 
 protected:
+
 		KinectAdapter() { }
 
 	private:
-		static KinectAdapter		KinectAdapterState;		
 
-		void						updateSkeletonData();	
-
+		static KinectAdapter		KinectAdapterState;	
+		void						updateSkeletonData();
 		std::vector<ci::Vec3f>		currentSkelet;		
 		
 		Pose*						foundPose;
@@ -82,6 +86,7 @@ protected:
 		void						computeMistakeWay2();
 
 		int							level;
+		int							bufferDisconnect;
 };
 
 inline KinectAdapter&	kinect() { return *KinectAdapter::Instance(); };

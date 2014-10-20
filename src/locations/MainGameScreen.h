@@ -16,27 +16,10 @@
 #include "CameraAdapter.h"
 #include "cinder/Timeline.h"
 
-
-
-
 using namespace ci;
 using namespace ci::app;
 using namespace gl;
 using namespace std;
-
-namespace MainGameDefaults
-{	
-	enum states {
-				 NONE, 
-				 SHOW_FIRST_MESSAGE,
-				 PRE_GAME_INTRO,
-				 MAIN_GAME, 
-				 SHOW_GAME_RESULT,
-				 PHOTO_MAKING_WAIT,
-				 WIN_ANIMATION_FINISH_WAIT,
-				 MAKE_SCREENSHOOT
-	};
-}
 
 class MainGameScreen : public Location
 {
@@ -47,7 +30,6 @@ class MainGameScreen : public Location
 
 		void pause();
 		void resume();
-
 		void shutdown();
 
 		void handleEvents();
@@ -59,17 +41,26 @@ class MainGameScreen : public Location
 		static MainGameScreen* Instance() {
 			return &MainGameScreenState;
 		}
-			
 
 	protected:
 		MainGameScreen() { };
 
 	private:
-
 		LocationEngine*			_game;
 		static MainGameScreen	MainGameScreenState;
 
-		int						state;
+		int	 state;
+		enum states {
+				 NONE, 
+				 SHOW_FIRST_MESSAGE,
+				 PRE_GAME_INTRO,
+				 MAIN_GAME, 
+				 SHOW_GAME_RESULT,
+				 PHOTO_MAKING_WAIT,
+				 WIN_ANIMATION_FINISH_WAIT,
+				 MAKE_SCREENSHOOT
+		};
+
 		std::map<int, string>	stateMemoMap;
 
 		void					checkPersonMissed();
@@ -119,21 +110,15 @@ class MainGameScreen : public Location
 
 		void					cameraIsConnectedNow( );
 
-
 		bool					winAnimationFinished, needToSaveFocusOutPhoto;
 
 		Anim<float>				 alphaFlashAnim;
 	
-	//	static KinectAdapter*	kinect;
-
 		static const int		MATCHING_MAX_VALUE = 100;
 
 		ci::gl::Texture			failImage;
 
-		void					animationFinished() ;
-
-
-
+		void					animationFinished();
 		
 		void					updateFirstMessage();		
 		void					updatePreGameIntro();
@@ -149,8 +134,18 @@ class MainGameScreen : public Location
 		ButtonColor				*comeBackBtn;
 
 		void					gotoFirstScreen() ;
-
-
 		int						poseCode;
-	
+
+		ci::signals::connection comeBackBtnSignal;
+		ci::signals::connection cameraConnectionSignal;
+		ci::signals::connection kinectConnectionSignal;
+
+		void kinectIsConnectedNow();
+
+		bool  somethingWrongWithDevices();
+		void  animationLeaveLocationFinished() ;
+		bool isLeaveAnimation;
+
+		void drawFadeOutIfAllow();
+		ci::Anim<float> alphaFinAnimate;	
 };

@@ -138,25 +138,14 @@ void Server::checkConnectionThreadHandler( )
 	isCheckingConnection = false;
 }
 
-void Server::sendToMail(vector<string> mails)
+void Server::sendToMail(string mails)
 {
 	serverWaitingTimer.start();	
 	sendToMailThread = std::shared_ptr<boost::thread>( new boost::thread( bind( &Server::sendToMailThreadHandler, this, mails ) ) );	
 }
 
-void Server::sendToMailThreadHandler(vector<string> emailVector)
+void Server::sendToMailThreadHandler(string allEmails)
 {	
-	string allEmails = "";
-
-	for (size_t i = 0; i < emailVector.size(); i++)
-	{
-		if ( i != emailVector.size()-1)
-		{
-			allEmails +=emailVector[i] +",";
-		}
-		else allEmails +=emailVector[i];		
-	}
-
 	ci::app::console()<<"SEND TO EMAILS::  "<<allEmails<<"  sessionId  "<<sessionId<<std::endl;	
 
 	std::map<string,string> strings;

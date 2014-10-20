@@ -11,8 +11,10 @@
 class VirtualKeyboard
 {
 	public:
+
+		static VirtualKeyboard& getInstance() { static VirtualKeyboard vk; return vk; };
 		
-		void setup( ci::app::WindowRef window, ci::Vec2f pos);
+		void setup(ci::Vec2f pos);
 		void show();
 		void hide();
 		void draw();
@@ -75,3 +77,5 @@ class VirtualKeyboard
 
 		ci::signals::connection KeyDownCon, MouseDownCon, MouseUpCon;
 };
+
+inline VirtualKeyboard&	touchKeyboard() { return VirtualKeyboard::getInstance(); };

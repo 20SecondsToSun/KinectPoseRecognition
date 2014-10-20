@@ -15,7 +15,6 @@ string VirtualKeyboard::secondLineCharacters2[10] = {"[","]","{","}","#","%","^"
 string VirtualKeyboard::thirdLineCharacters2[10]  = {"$","&","\\","|","~","<",">","(",")","-"};
 string VirtualKeyboard::fourthLineCharacters2[10]  = {"/",":",";",",","?","!","'","\"",".","_"};
 
-
 int    VirtualKeyboard::lineLength1 = 10;
 
 float  VirtualKeyboard::_xOffset1 = 14.0f;
@@ -30,7 +29,7 @@ ci::Vec2f  VirtualKeyboard::lineOffset3 = Vec2f(455.0f, 214.0f);
 ci::Vec2f  VirtualKeyboard::lineOffset4 = Vec2f(510.0f, 306.0f);
 ci::Vec2f  VirtualKeyboard::lineOffset5 = Vec2f(504.0f, 398.0f);
 
-void VirtualKeyboard::setup( ci::app::WindowRef window, Vec2f _position)
+void VirtualKeyboard::setup(Vec2f _position)
 {
 	Font *mFont								= fonts().getFont("Helvetica Neue Light", 32);
 
@@ -47,13 +46,11 @@ void VirtualKeyboard::setup( ci::app::WindowRef window, Vec2f _position)
 
 	gl::Texture spaceBtnTex					= gl::Texture( loadImage( loadAsset(  "keyboard2/k3.png" )));
 
-
 	changeKeyboardTex1						= gl::Texture( loadImage( loadAsset(   "keyboard2/k2.png" )));
 	changeKeyboardTex2						= gl::Texture( loadImage( loadAsset(   "keyboard2/k2.png")));
 
-	Vec2f shift_Y							= Vec2f(0.0f, 0.0f);
+	Vec2f shift_Y= Vec2f(0.0f, 0.0f);
 	float _width = 86.0f;
-
 	
 	lineOffset1 = Vec2f(0.0f, 0.0f);
 	lineOffset2 = Vec2f(65.0f, 92.0f);
@@ -65,7 +62,6 @@ void VirtualKeyboard::setup( ci::app::WindowRef window, Vec2f _position)
 	{
 		ButtonTex* btn = new ButtonTex(_simple, mFont, to_string(i));
 		btn->setScreenField(lineOffset1 + Vec2f(i*(_xOffset1 + _width), 0.0f)+shift_Y);		
-		//console()<<"  id::  "<< btn->getBtnId()<<std::endl;
 		buttonsMainKeyboard.push_back( btn );
 		buttonsSecondKeyboard.push_back( btn );
 	}
@@ -168,7 +164,7 @@ void VirtualKeyboard::setup( ci::app::WindowRef window, Vec2f _position)
 	buttonsMainKeyboard.push_back(ramBtn);
 	buttonsSecondKeyboard.push_back( ramBtn );
 
-	mainWindow = window;
+	mainWindow = getWindow();
 	position = _position;
 
 	show();

@@ -6,7 +6,6 @@
 #include "cinder/gl/gl.h"
 #include "cinder/gl/Texture.h"
 #include "cinder/Timeline.h"
-#include "cinder/gl/GlslProg.h"
 
 #include "CinderCanon.h"
 #include "CanonCamera.h"
@@ -21,9 +20,9 @@ class CameraAdapter :public canon::PhotoHandler
 		void loadResource();
 		void setup();
 		
-		void draw();
-		void drawDesaturate();
+		void draw();	
 		void update();
+		void reset();
 		void reconnect();
 
 		string getpathToDownloadedPhoto();
@@ -71,7 +70,6 @@ class CameraAdapter :public canon::PhotoHandler
 	private:
 		static CameraAdapter		CameraAdapterState;
 
-		ci::gl::GlslProg		mShader, mShaderColor;
 		fs::path                    mPhotoDownloadFolder;
 
 		Timer restartLiveViewTimer, reconnectTimer;
@@ -88,8 +86,7 @@ class CameraAdapter :public canon::PhotoHandler
 
 		 void			takePhotoThread();
 		 std::shared_ptr<std::thread>				tkphThread;
-		
-		/////////////////////////
+
 
 		 CanonCamera  mCamera;	
 		

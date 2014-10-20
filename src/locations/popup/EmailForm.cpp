@@ -26,15 +26,15 @@ void EmailForm::setup()
 
 	closeEmailBtn= new ButtonTex(closeEmailTex, "closeEmail", getWindow());
 	closeEmailBtn->setScreenField( Vec2f(1778.0f, 88.0f));	
-		
-	touchKeyBoard.setup( getWindow(), Vec2f(360.0f, getWindowHeight() - 504.0f));	
-	touchKeyBoard.initKeyboard();
 }
 
 void EmailForm::show()
 {
 	currentEmail = "";
 	emailVector.clear();
+
+	touchKeyboard().setPosition( Vec2f(360.0f, getWindowHeight() - 504.0f));
+
 	bgPosition =  Vec2f(0.0f, 0.0f);
 	timeline().apply( &bgPosition, Vec2f(0.0f, 0.0f), Vec2f(0.0f,  getWindowHeight() - 1754.0f), 0.6f, EaseOutQuart()).delay(0.4f).finishFn( bind( &EmailForm::initHandlers, this ) );
 	timeline().apply( &bgColor, ColorA(1.0f, 1.0f, 1.0f, 0.0f), ColorA(1.0f, 1.0f, 1.0f, 0.98f), 0.5f, EaseOutQuart());
@@ -42,7 +42,7 @@ void EmailForm::show()
 
 void EmailForm::initHandlers()
 {
-	keyboardTouchSignal = touchKeyBoard.keyboardTouchSignal.connect(boost::bind(&EmailForm::keyboardTouchSignalHandler, this));
+	keyboardTouchSignal = touchKeyboard().keyboardTouchSignal.connect(boost::bind(&EmailForm::keyboardTouchSignalHandler, this));
 	closeBtnSignal		=  closeEmailBtn->mouseDownEvent.connect(boost::bind(&EmailForm::closeSignalHandler, this));
 	deleteAllLettersSignal =  deleteAllLettersBtn->mouseDownEvent.connect(boost::bind(&EmailForm::deleteAllLettersHandler, this));
 	addEmailSignal		=  addEmailBtn->mouseDownEvent.connect(boost::bind(&EmailForm::addEmailHandler, this));
@@ -50,15 +50,15 @@ void EmailForm::initHandlers()
 
 void EmailForm::closeSignalHandler()
 {
-	mode = "closeMail";
+	mode = CLOSE_MAIL;
 	hide();
 }
 
 void EmailForm::keyboardTouchSignalHandler()
 {
-	string lastCode = touchKeyBoard.getLastCode();		
+	string lastCode = touchKeyboard().getLastCode();		
 
-	if (touchKeyBoard.isBackCode())
+	if (touchKeyboard().isBackCode())
 	{
 		currentEmail = currentEmail.substr(0, currentEmail.size() - 1);	
 		return;
@@ -66,7 +66,7 @@ void EmailForm::keyboardTouchSignalHandler()
 
 	if (currentEmail.size() > 30)   return;
 
-	if (touchKeyBoard.isMailCode())
+	if (touchKeyboard().isMailCode())
 	{
 		if (currentEmail.size() == 0) return;	
 				
@@ -82,7 +82,7 @@ void EmailForm::keyboardTouchSignalHandler()
 		}
 		return;
 	}
-	else if (touchKeyBoard.isSendCode())
+	else if (touchKeyboard().isSendCode())
 	{
 		if ((currentEmail.size() == 0 && emailVector.size() == 0 ) ||(currentEmail.size() && !Utils::isValidEmail(currentEmail)))
 		{	
@@ -91,7 +91,7 @@ void EmailForm::keyboardTouchSignalHandler()
 		if (currentEmail.size() != 0)
 			addCurrentEmail(currentEmail);	
 
-		mode = "sendMail";
+		mode = SEND_MAIL;
 	
 		hide();
 		return;
@@ -137,11 +137,11 @@ void EmailForm::hide()
 
 void EmailForm::closedHandler()
 {
-	if (mode == "sendMail")
+	if (mode == SEND_MAIL)
 	{
 		sendEvent();
 	}
-	else if (mode == "closeMail")
+	else if (mode == CLOSE_MAIL)
 	{
 		closeEvent();
 	}
@@ -243,7 +243,7 @@ void EmailForm::draw()
 	gl::pushMatrices();
 			gl::translate(0.0f, 674.0f);
 			gl::translate(bgPosition);
-			touchKeyBoard.draw();
+			touchKeyboard().draw();
 	gl::popMatrices();	
 
 	gl::pushMatrices();

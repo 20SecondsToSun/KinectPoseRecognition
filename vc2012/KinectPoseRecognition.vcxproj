@@ -139,6 +139,7 @@
     <ClCompile Include="..\src\tools\Params.cpp" />
     <ClCompile Include="..\src\tools\PreloaderCircle.cpp" />
     <ClCompile Include="..\src\tools\QRcode.cpp" />
+    <ClCompile Include="..\src\tools\Toucher.cpp" />
     <ClCompile Include="..\src\tools\VirtualKeyboard.cpp" />
     <ClCompile Include="..\src\Utils.cpp" />
   </ItemGroup>
@@ -177,6 +178,7 @@
     <ClInclude Include="..\src\tools\Params.h" />
     <ClInclude Include="..\src\tools\PreloaderCircle.h" />
     <ClInclude Include="..\src\tools\QRcode.h" />
+    <ClInclude Include="..\src\tools\Toucher.h" />
     <ClInclude Include="..\src\tools\VirtualKeyboard.h" />
     <ClInclude Include="..\src\Utils.h" />
   </ItemGroup>

@@ -183,6 +183,9 @@
     <ClCompile Include="..\src\locations\popup\EmailForm.cpp">
       <Filter>Source Files\locations\popup</Filter>
     </ClCompile>
+    <ClCompile Include="..\src\tools\Toucher.cpp">
+      <Filter>Source Files\tools</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\include\Resources.h">
@@ -292,6 +295,9 @@
     </ClInclude>
     <ClInclude Include="..\src\locations\popup\EmailForm.h">
       <Filter>Source Files\locations\popup</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\tools\Toucher.h">
+      <Filter>Source Files\tools</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

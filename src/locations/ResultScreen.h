@@ -18,15 +18,40 @@
 #include "Saver.h"
 #include "EmailForm.h"
 
-
 using namespace ci;
 using namespace ci::app;
 using namespace gl;
 using namespace std;
 
-namespace ReadyScreenDefaults
+class ResultScreen : public Location
 {
-	enum states {	INIT_STATE,
+	public:
+		void setup();
+		void init( LocationEngine* game);
+		void cleanup();
+		void pause();
+		void resume();
+		void shutdown();
+
+		void handleEvents();
+		void mouseEvents();
+		void keyEvents();
+		void update();
+		void draw();
+
+		static ResultScreen* Instance() {
+			return &ResultScreenState;
+		}	
+
+	protected:
+		ResultScreen() { };
+
+	private:
+		LocationEngine* _game;
+		static ResultScreen ResultScreenState;
+
+		int		state;
+		enum states {	INIT_STATE,
 					PHOTO_LOADING_TO_SERVER,
 					PHOTO_CREATE_COMICS, 
 					PHOTO_LOADING_FROM_DIRECTORY,					
@@ -43,110 +68,78 @@ namespace ReadyScreenDefaults
 					ERROR_STATE,
 					POPUP_EMAIL,
 					DEFAULT_STATE
-					};
-}
+				};
 
-class ResultScreen : public Location
-{
-
-public:
-	void setup();
-	void init( LocationEngine* game);
-	void cleanup();
-	void pause();
-	void resume();
-	void shutdown();
-
-	void handleEvents();
-	void mouseEvents();
-	void keyEvents();
-	void update();
-	void draw();
-
-	static ResultScreen* Instance() {
-		return &ResultScreenState;
-	}	
-
-protected:
-	ResultScreen() { };
-
-private:
-	LocationEngine* _game;
-	static ResultScreen ResultScreenState;
-
-	int		state;
-
-	void	animationLeaveLocationFinished();	
-	void	animationPhotoSavedFinished();
-	void	animationStartFinished();
-	void	animationShowChekConnection();
-	void	animationHideChekConnection();
-	void	animationShowServerPhotoLoad();
-	void    animationHideServerPhotoLoad();
-	void	animationShowSendingToMailText();
-	void    animationShowSendingToMailTextOut();
+		void	animationLeaveLocationFinished();	
+		void	animationPhotoSavedFinished();
+		void	animationStartFinished();
+		void	animationShowChekConnection();
+		void	animationHideChekConnection();
+		void	animationShowServerPhotoLoad();
+		void    animationHideServerPhotoLoad();
+		void	animationShowSendingToMailText();
+		void    animationShowSendingToMailTextOut();
 	
-	void	drawPhotoLoadingPreloader();
-	void	drawNetConnectionPreloader();
-	void	drawUpsetScreen();
-	void	drawErrorScreen();
-	void	drawServerPreloader(); 
-	void	drawPopup();
-	void	drawSendingToMailPreloader();
+		void	drawPhotoLoadingPreloader();
+		void	drawNetConnectionPreloader();
+		void	drawUpsetScreen();
+		void	drawErrorScreen();
+		void	drawServerPreloader(); 
+		void	drawSendingToMailPreloader();
 
-	void	drawResultImagesIfAllow();
-	void	drawQRCodeIfAllow();
-	void	drawButtonsIfAllow();
-	void	drawFadeOutIfAllow();
+		void	drawResultImagesIfAllow();
+		void	drawQRCodeIfAllow();
+		void	drawButtonsIfAllow();
+		void	drawFadeOutIfAllow();
 
-	void	photoLoadedFromDirHandler();
-	void	photoLoadeFromDirErrorHandler();
-	void	serverSignalConnectionCheckHandler();
-	void	serverLoadingPhotoHandler();	
-	void	serverLoadingEmailHandler();	
+		void	photoLoadedFromDirHandler();
+		void	photoLoadeFromDirErrorHandler();
+		void	serverSignalConnectionCheckHandler();
+		void	serverLoadingPhotoHandler();	
+		void	serverLoadingEmailHandler();	
 
-	void	serverTimeoutHandler();
+		void	serverTimeoutHandler();
 
-	void	connectButtons();
-	void	disconnectButtons();
-	void	disconnectListeners();
+		void	connectButtons();
+		void	disconnectButtons();
+		void	disconnectListeners();
 
-	void	initPopup(int);
-	void	closeSocialPopup();
-	void	closeEmailPopup();
+		void	initPopup(int);
+		void	closeSocialPopup();
+		void	closeEmailPopup();
 
-	ButtonColor	*mailBtn;
-	ButtonColor *facebookBtn;
-	ButtonColor *vkontakteBtn;
-	ButtonColor *comeBackBtn;	
+		ButtonColor	*mailBtn;
+		ButtonColor *facebookBtn;
+		ButtonColor *vkontakteBtn;
+		ButtonColor *comeBackBtn;	
 
-	void	facebookBtnHandler();
-	void	vkBtnHandler();
-	void	openEmailBtnHandler();
-	void	closeScreenHandler();
-	void	sendToEmailBtnHandler();
+		void	facebookBtnHandler();
+		void	vkBtnHandler();
+		void	openEmailBtnHandler();
+		void	closeScreenHandler();
+		void	sendToEmailBtnHandler();
 	
-	ci::signals::connection serverSignalLoadingCheck;
-	ci::signals::connection serverSignalLoadingEmailCheck;
-	ci::signals::connection photoLoadingFromDirSignal;
-	ci::signals::connection photoLoadingFromDirErrorSignal;
-	ci::signals::connection closeEmailPopupSignal;
-	ci::signals::connection closeSocialPopupSignal;
+		ci::signals::connection serverSignalLoadingCheck;
+		ci::signals::connection serverSignalLoadingEmailCheck;
+		ci::signals::connection photoLoadingFromDirSignal;
+		ci::signals::connection photoLoadingFromDirErrorSignal;
+		ci::signals::connection closeEmailPopupSignal;
+		ci::signals::connection closeSocialPopupSignal;
 
-	ci::signals::connection	comeBackSignal;
-	ci::signals::connection	fbSignal;
-	ci::signals::connection vkSignal;
-	ci::signals::connection mailSignal;
-	ci::signals::connection serverTimeoutCheck;
-	ci::signals::connection sendToMailSignal;
-	ci::signals::connection serverSignalConnectionCheck;
+		ci::signals::connection	comeBackSignal;
+		ci::signals::connection	fbSignal;
+		ci::signals::connection vkSignal;
+		ci::signals::connection mailSignal;
+		ci::signals::connection serverTimeoutCheck;
+		ci::signals::connection sendToMailSignal;
+		ci::signals::connection serverSignalConnectionCheck;
 
-	ci::Anim<float> alphaAnimate, alphaFinAnimate;
-	ci::Anim<float> alphaAnimateComics[3];
-	bool canShowResultImages, isButtonsInit, isLeaveAnimation;
+		ci::Anim<float> alphaAnimate, alphaFinAnimate;
+		ci::Anim<float> alphaAnimateComics[3];
+		bool canShowResultImages, isButtonsInit, isLeaveAnimation;
 
-	QRcode qrCode;		
+		QRcode qrCode;		
 
-	void	savePhotoToLocalBase();
-	void	sendPhotoToEmail();	
+		void	savePhotoToLocalBase();
+		void	sendPhotoToEmail();	
 };

@@ -9,8 +9,7 @@ class ButtonColor: public Button
 	public:
 
 		ButtonColor(ci::Rectf rect, ci::Color color);
-		ButtonColor(ci::Rectf rect, ci::Color color, ci::Font* _font, std::string _label);
-		ButtonColor(ci::app::WindowRef window, ci::Rectf rect, ci::Color color, ci::Font* _font, std::string _label);
+		ButtonColor(ci::Rectf rect, ci::Color color, ci::Font* _font, std::string _label);	
 
 		void		draw();
 

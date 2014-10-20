@@ -3,13 +3,11 @@
 #include "cinder/app/AppNative.h"
 #include "cinder/Timeline.h"
 #include "cinder/gl/Texture.h"
-//#include "cinder/Text.h"
 #include "cinder/Timer.h"
 #include "Utils.h"
 #include "Kinect.h"
 #include "Params.h"
 #include "Pose.h"
-#include "cinder/gl/Fbo.h"
 
 using namespace ci;
 using namespace ci::app;
@@ -23,62 +21,58 @@ namespace kinectDefaults
 	const NUI_IMAGE_RESOLUTION DEPTH_RESOLUTION = MsKinect::ImageResolution::NUI_IMAGE_RESOLUTION_640x480;
 	//MsKinect::ImageResolution::NUI_IMAGE_RESOLUTION_1280x960
 	const float   MIN_DEPTH							= 0.8f;
-	const float	  MAX_DEPTH							= 3.0f;
-	
+	const float	  MAX_DEPTH							= 3.0f;	
 }
-
 
 class KinectBase
 {
 	public:
 		void setDevice();
 		void kinectConnect();
-		void Shutdown();	
+		void Shutdown();
 
-		MsKinect::DeviceRef			mDevice;
-		MsKinect::DeviceOptions     deviceOptions;
-		MsKinect::Frame				mFrame;	
+		boost::signals2::signal<void(void)>		kinectConnectedEvent;
 
-		ci::gl::TextureRef			mTextureColor;
-		ci::gl::Texture				_mTextureColor;
-		ci::gl::TextureRef			mTextureDepth;	
-		ci::Surface8u				surface8u;
+		MsKinect::DeviceRef		mDevice;
+		MsKinect::DeviceOptions deviceOptions;
+		MsKinect::Frame			mFrame;	
 
-		ci::Channel16u				mDepthChannel16u;
+		long frameID, lastFrameId;
 
-		void						swapTracking()	;		
-		void						stopTracking();
-		void						startTracking();
+		void	swapTracking()	;		
+		void	stopTracking();
+		void	startTracking();
 
-		ci::gl::TextureRef			getColorTexRef();
-		ci::gl::TextureRef			getDepthTexRef();
+		ci::gl::TextureRef	getColorTexRef();
+		ci::gl::TextureRef	getDepthTexRef();
+		ci::gl::Texture getColorTex();		
+		ci::Surface8u getSurface8u();		
+		ci::Channel16u getDepthChannel16u();
 			
-		Rectf						getColorResolutionRectf();
+		Rectf	getColorResolutionRectf();
 		
-		float						getMinDepth(){ return kinectDefaults::MIN_DEPTH;};
-		float						getMaxDepth(){ return kinectDefaults::MAX_DEPTH;};
-		
-		ci::gl::Texture				getColorTex();		
-		ci::Surface8u				getSurface8u();	
-
+		float	getMinDepth(){ return kinectDefaults::MIN_DEPTH;};
+		float	getMaxDepth(){ return kinectDefaults::MAX_DEPTH;};
 	
-		void						drawKinectCameraColorSurface();
-		void						calculateAspects();	
+		void	drawKinectCameraColorSurface();
+		void	calculateAspects();	
 
-		void						setTilt(int32_t angleInDegrees);
-		int32_t						getTilt();
+		void	setTilt(int32_t angleInDegrees);
+		int32_t getTilt();
 
-		float						headScale;
-		int							viewWidth, viewHeight;
-		float						viewShiftX, viewShiftY; 
-		bool						isTracking;	
-		void						drawToFBO1( ci::gl::Texture tex, ci::gl::Fbo& fbo, ci::Vec2f vec);
+		bool	isConnected();
 
+		float	headScale;
+		int		viewWidth, viewHeight;
+		float	viewShiftX, viewShiftY; 
+		bool	isTracking;			
 		
+		ci::Timer	reconnectTimer;
 
-	private:
-		
-		
-		int32_t						currentKinectTiltInDegrees;
+	protected:
+		bool	_isConnected;
+
+	private:		
+		int32_t	currentKinectTiltInDegrees;	
 		
 };

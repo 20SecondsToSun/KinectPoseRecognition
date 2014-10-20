@@ -3,6 +3,7 @@
 using namespace ci;
 using namespace ci::app;
 using namespace instructionDefaults;
+using namespace colorsParams;
 
 IntroScreen IntroScreen::IntroScreenState;
 
@@ -12,33 +13,42 @@ void IntroScreen::setup()
 	playImage		  = *AssetManager::getInstance()->getTexture( "images/play.jpg" );
 	instructionImage  = *AssetManager::getInstance()->getTexture( "images/instruction.jpg" );
 
+	Font *btnFont = fonts().getFont("Helvetica Neue", 46);
 
-	startInstructionBtn = new ButtonColor(getWindow(), Rectf(1000,700,1600, 800), Color(1,0,0),
-							fonts().getFont("Helvetica Neue", 46),
-							"ÏÎÈÃÐÀÉ ÑÎ ÌÍÎÉ");
+	startInstructionBtn = new ButtonColor(Rectf(1000,700,1600, 800),  RED, btnFont, "ÏÎÈÃÐÀÉ ÑÎ ÌÍÎÉ");
+	startGameBtn		= new ButtonColor(Rectf(1200,700,1600, 800),  RED, btnFont, "ÍÀ×ÀÒÜ ÈÃÐÓ");	
+	comeBackBtn			= new ButtonColor(Rectf(1200,300, 1600, 400), RED, btnFont, "ÍÀÇÀÄ");
+}
 
-	startGameBtn = new ButtonColor(getWindow(), Rectf(1200,700,1600, 800), Color(1,0,0),
-							fonts().getFont("Helvetica Neue", 46),
-							"ÍÀ×ÀÒÜ ÈÃÐÓ");	
+void IntroScreen::init( LocationEngine* game)
+{	
+	_game = game;
+	state = INIT;	
 
-	comeBackBtn = new ButtonColor(getWindow(), Rectf(1200,300, 1600, 400), Color(1,0,0),
-							fonts().getFont("Helvetica Neue", 46),
-							"ÍÀÇÀÄ");
+	_game->freezeLocation = false;
+	isPeopleInFrame = false;
+	
+	startInstructionBtnSignal = startInstructionBtn->mouseDownEvent.connect(boost::bind(&IntroScreen::startInstructionBtnDown, this));
+	startGameBtnSignal		  = startGameBtn->mouseDownEvent.connect(boost::bind(&IntroScreen::startGameBtnDown, this));		
+	comeBackBtnSignal		  = comeBackBtn->mouseDownEvent.connect(boost::bind(&IntroScreen::gotoFirstScreen, this));
 }
 
 void IntroScreen::startInstructionBtnDown()
 {
-	if(_game->freezeLocation) return;
-
-	nextState = SHOW_INSTRUCTION;		
-	changeState();
+	if(!_game->freezeLocation)
+	{
+		nextState = SHOW_INSTRUCTION;		
+		changeState();
+	}	
 }
 
 void IntroScreen::startGameBtnDown()
 {
-	if(_game->freezeLocation) return;
-	nextState = START_GAME;			
-	changeState();	
+	if(!_game->freezeLocation)
+	{
+		nextState = START_GAME;			
+		changeState();
+	}
 }
 
 void IntroScreen::gotoFirstScreen() 
@@ -51,36 +61,12 @@ void IntroScreen::gotoFirstScreen()
 	}
 }
 
-
-void IntroScreen::init( LocationEngine* game)
-{	
-	_game = game;
-	state = INIT;	
-
-	_game->freezeLocation = false;
-	isPeopleInFrame = false;
-
-	startInstructionBtn->mouseDownEvent.connect(boost::bind(&IntroScreen::startInstructionBtnDown, this));
-	startGameBtn->mouseDownEvent.connect(boost::bind(&IntroScreen::startGameBtnDown, this));		
-	comeBackBtn->mouseDownEvent.connect(boost::bind(&IntroScreen::gotoFirstScreen, this));
-}
-
 void IntroScreen::cleanup()
 {
-	startInstructionBtn->removeConnect(MouseEvents::MOUSE_DOWN);
-	startGameBtn->removeConnect(MouseEvents::MOUSE_DOWN);
-	comeBackBtn->removeConnect(MouseEvents::MOUSE_DOWN);
+	startInstructionBtnSignal.disconnect();
+	startGameBtnSignal.disconnect();
+	comeBackBtnSignal.disconnect();
 	comeBackTimerStop();
-}
-
-void IntroScreen::pause()
-{
-	
-}
-
-void IntroScreen::resume()
-{
-	
 }
 
 void IntroScreen::mouseEvents()
@@ -100,7 +86,7 @@ void IntroScreen::mouseEvents()
 
 void IntroScreen::keyEvents()
 {
-	#ifndef kinectInUse
+	#ifdef debug
 		KeyEvent _event = _game->getKeyEvent();
 
 		switch (_event.getChar())
@@ -114,11 +100,6 @@ void IntroScreen::keyEvents()
 			break;
 		 }
 	 #endif
-}
-
-void IntroScreen::handleEvents()
-{
-
 }
 
 void IntroScreen::update() 
@@ -238,20 +219,25 @@ void IntroScreen::animationFinished()
 	switch (state)
 	{
 		case INIT:				
-			startInstructionBtn->removeConnect(MouseEvents::MOUSE_DOWN);
-			comeBackBtn->removeConnect(MouseEvents::MOUSE_DOWN);
-			startGameBtn->removeConnect(MouseEvents::MOUSE_DOWN);			
+			startInstructionBtnSignal.disconnect();
+			comeBackBtnSignal.disconnect();
+			startGameBtnSignal.disconnect();		
 		break;
 
 		case SHOW_INVITE:	
-			startInstructionBtn->addEventListener(MouseEvents::MOUSE_DOWN);
-			comeBackBtn->addEventListener(MouseEvents::MOUSE_DOWN);
-			startGameBtn->removeConnect(MouseEvents::MOUSE_DOWN);		
+			if (!startInstructionBtnSignal.connected())
+				startInstructionBtnSignal = startInstructionBtn->mouseDownEvent.connect(boost::bind(&IntroScreen::startInstructionBtnDown, this));
+
+			if (!comeBackBtnSignal.connected())
+				comeBackBtnSignal		  = comeBackBtn->mouseDownEvent.connect(boost::bind(&IntroScreen::gotoFirstScreen, this));
+				startGameBtnSignal.disconnect();
 		break;
 
-		case SHOW_INSTRUCTION:			
-			startGameBtn->addEventListener(MouseEvents::MOUSE_DOWN);
-			startInstructionBtn->removeConnect(MouseEvents::MOUSE_DOWN);
+		case SHOW_INSTRUCTION:	
+			if (!startGameBtnSignal.connected())
+				startGameBtnSignal		  = startGameBtn->mouseDownEvent.connect(boost::bind(&IntroScreen::startGameBtnDown, this));
+
+			startInstructionBtnSignal.disconnect();
 		break;
 
 		case START_GAME:		
@@ -260,3 +246,17 @@ void IntroScreen::animationFinished()
 	}	
 }
 
+void IntroScreen::pause()
+{
+	
+}
+
+void IntroScreen::resume()
+{
+	
+}
+
+void IntroScreen::handleEvents()
+{
+
+}

@@ -4,9 +4,6 @@ CameraAdapter CameraAdapter::CameraAdapterState;
 
 void CameraAdapter::loadResource()
 {
-	mShader = gl::GlslProg( loadAsset( "shaders/passThru_vert.glsl"),  loadAsset( "shaders/shriner.frag") );		
-	mShaderColor = gl::GlslProg( loadAsset( "shaders/passThru_vert_color.glsl"),  loadAsset( "shaders/shriner_color.frag") );	
-
 	mPhotoDownloadFolder = Params::getPhotosStorageDirectory();
     if (!fs::exists(mPhotoDownloadFolder)) fs::create_directories(mPhotoDownloadFolder); 
 }
@@ -26,6 +23,12 @@ void CameraAdapter::setup()
 	   mCamera.startLiveView();
 	   cameraConnectedEvent();
 	}
+}
+
+void CameraAdapter::reset()
+{
+	userPhotoIsDownloaded	= false;	
+	photoCameraErrorMsg		= "NONE";
 }
 
 void CameraAdapter::update()
@@ -78,39 +81,29 @@ Vec2f CameraAdapter::getSurfaceTranslate()
 
 void CameraAdapter::takePhoto()
 {
-
 	tryToTakePhoto = true;
 	userPhotoIsDownloaded = false;
 	photoCameraErrorMsg = "NONE";
 
 	mCamera.endLiveView();
-    mCamera.takePicture(this);	
-	//tkphThread = shared_ptr<thread>( new thread( bind( &CameraAdapter::takePhotoThread, this ) ) );	
-	
+    mCamera.takePicture(this);		
 }
 
 void CameraAdapter::takePhotoThread()
 {
-	ci::ThreadSetup threadSetup; // instantiate this if you're talking to Cinder from a secondary thread	
-
 	
-	
-
-	tkphThread->detach();
 }
 
 void CameraAdapter::live()
 {
-	if (mCamera.isLiveViewing()) return;
-
-	photoCameraReadyLiveView();
+	if (!mCamera.isLiveViewing())
+		photoCameraReadyLiveView();
 }
 
 void CameraAdapter::liveOff()
 {
-	if (!mCamera.isLiveViewing()) return;
-
-	mCamera.endLiveView();
+	if (mCamera.isLiveViewing())
+		mCamera.endLiveView();
 }
 
 void CameraAdapter::reconnect()
@@ -141,15 +134,9 @@ string CameraAdapter::getpathToDownloadedPhoto()
 
 void CameraAdapter::draw()
 {
-	//console()<<"camera.mCamera.isBusy"<<camera.mCamera.isBusy()<<std::endl;
-	//return;
 	if (!isConnected ) return;
 
-	//mShaderColor.bind();
-	//mShaderColor.uniform( "basetex", 2 );
-
-	gl::pushMatrices();		
-
+	gl::pushMatrices();	
 		if (mCamera.isLiveViewing())//tryToTakePhoto == false)	
 		{	
 			gl::translate(translateSurface);
@@ -165,31 +152,12 @@ void CameraAdapter::draw()
 			gl::color(Color::white());
 			gl::draw(lastFrame);
 		}
-
-	gl::popMatrices();
-	//mShaderColor.unbind();		
+	gl::popMatrices();	
 }
 
 Surface8u CameraAdapter::getSurface()
 {
 	return mCamera.getLiveSurface();	
-}
-
-void CameraAdapter::drawDesaturate()
-{
-	//return;
-	if (!isConnected) return;
-
-	mShader.bind();
-	mShader.uniform( "basetex", 2 );
-	if (mCamera.isLiveViewing())//tryToTakePhoto == false)	
-	{
-		gl::draw( gl::Texture( mCamera.getLiveSurface() ));		
-		lastFrame = mCamera.getLiveSurface();
-	}
-	else 
-		gl::draw(lastFrame);
-	mShader.unbind();		
 }
 
 float CameraAdapter::getWidth()

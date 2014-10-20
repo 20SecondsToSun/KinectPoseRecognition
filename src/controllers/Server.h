@@ -15,7 +15,7 @@ class Server
 
 		void										checkConnection();
 		void										sendPhoto(ci::fs::path path);
-		void										sendToMail(std::vector<std::string> mails);
+		void										sendToMail(std::string mails);
 
 		void										reset();
 		std::string									getBuffer(){return buffer;};
@@ -43,7 +43,7 @@ class Server
 		
 
 		std::shared_ptr<boost::thread>				sendToMailThread;
-		void										sendToMailThreadHandler(std::vector<std::string> emailVector);
+		void										sendToMailThreadHandler(std::string emailVector);
 		
 
 		std::string									buffer, link;

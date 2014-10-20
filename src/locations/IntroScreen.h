@@ -55,6 +55,11 @@ private:
 	LocationEngine*			_game;
 	static IntroScreen		IntroScreenState;	
 
+	ci::signals::connection startInstructionBtnSignal;
+	ci::signals::connection startGameBtnSignal;
+	ci::signals::connection comeBackBtnSignal;
+
+
 	int						state, nextState;
 	std::string				debugString;		
 	
@@ -64,9 +69,9 @@ private:
 
 	ci::Anim<float>			alphaAnimate;	
 
-	void					startInstructionBtnDown();
-	void					startGameBtnDown();
-	void					drawInitElements();
-	void					animationFinished();
-	void					changeState();
+	void	startInstructionBtnDown();
+	void	startGameBtnDown();
+	void	drawInitElements();
+	void	animationFinished();
+	void	changeState();
 };

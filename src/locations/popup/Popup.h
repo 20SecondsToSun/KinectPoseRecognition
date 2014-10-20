@@ -16,28 +16,35 @@
 	
 class PopupBase
 {
-public:	
-	// singleton implementation
-	static PopupBase& getInstance() { static PopupBase tm; return tm; };
+	public:	
+		// singleton implementation
+		static PopupBase& getInstance() { static PopupBase popup; return popup; };
 
-	void			draw();
-	void			reset();
-	
-	void			start(int);
-	void			setup();
-	bool			isDrawing;
+		void			setup();
+		void			draw();
+		void			reset();	
+		void			show(int popuptype);
+		void			disconnectAll();	
+		bool			isDrawing;
 
-	ci::gl::Texture		screenShot;
+		ci::gl::Texture		screenShot;
 
-	boost::signals2::signal<void(void )> closeEvent;
-	ci::signals::connection	closeBtnSignal;
+		boost::signals2::signal<void(void )> closeEvent;
+		ci::signals::connection	closeBtnSignal, keyboardTouchSignal;
 
-	ButtonColor			*closeBtn;
+		ButtonColor			*closeBtn;
 
-private:
-	void	closeHandled();
-	void	cleanPopup();
-	int		type;
+	private:		
+
+		void	closedHandler();	
+		void	initHandlers();
+		void	keyboardTouchSignalHandler();
+		void	hide();
+		int		type;
+
+		ci::Anim<ci::Vec2f>  bgPosition;
+		ci::Anim<ci::ColorA> bgColor;
+		ci::gl::Texture		*keyBoardMainBgTex;	
 };
 
-inline PopupBase&	popup() { return PopupBase::getInstance(); };
+inline PopupBase&	socialPopup() { return PopupBase::getInstance(); };

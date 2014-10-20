@@ -12,6 +12,7 @@
 #include "ResultScreen.h"
 #include "cinder/params/Params.h"
 #include "Params.h"
+#include "Toucher.h"
 
 using namespace ci;
 using namespace ci::app;
@@ -20,13 +21,14 @@ using namespace std;
 class KinectPoseRecognitionApp : public AppNative {
   public:	void				setup();
 	void				keyDown( KeyEvent event );
+	void				mouseDown( MouseEvent event );
 	void				update();
 	void				draw();
 	void				shutdown();
 
 	static const int	secondsToRec		= 5;	
 
-	 ci::Font				hintFont;
+	 ci::Font			hintFont;
 	 Timer				saveTimer;
 	 string				state, poseName;
 
@@ -53,27 +55,18 @@ void KinectPoseRecognitionApp::setup()
 	hintFont = *fonts().getFont("Helvetica Neue", 46);
 	state    = "ChooseMode";
 
-	
-	kinect().Setup();	
-	
-
-	
-
-	cameraCanon().setup();
-	cameraCanon().live();
-
     #ifndef recording
 	
-	saver().loadConfigData();
+		saver().loadConfigData();
 
-	IntroScreen::Instance()->setup();
-	MainGameScreen::Instance()->setup();
-	ResultScreen::Instance()->setup();
+		IntroScreen::Instance()->setup();
+		MainGameScreen::Instance()->setup();
+		ResultScreen::Instance()->setup();
 
-	//popup().start(popupTypes::EMAIL);	
+		//popup().start(popupTypes::EMAIL);	
 
-	game.init("init", getWindow());
-	game.changeState(IntroScreen::Instance());
+		game.init("init", getWindow());
+		game.changeState(IntroScreen::Instance());
 	#endif
 
 
@@ -166,13 +159,20 @@ void KinectPoseRecognitionApp::draw()
 
 	#ifdef debug
 		mParams->draw();
-
 	#endif
+
+	toucher().draw();
 }
+void KinectPoseRecognitionApp::mouseDown( MouseEvent event )
+{
+	toucher().setPosition(event.getPos());
+}
+
+
 
 void KinectPoseRecognitionApp::keyDown( KeyEvent event )
 {
-	 int32_t angle;
+	int32_t angle = 0;
 	#ifdef recording	
 	   switch (event.getChar())
 		{ 
@@ -204,8 +204,6 @@ void KinectPoseRecognitionApp::keyDown( KeyEvent event )
 		}	
 	#else
 
-	
-
 		switch (event.getChar())
 		{ 
 			case '1':
@@ -217,7 +215,12 @@ void KinectPoseRecognitionApp::keyDown( KeyEvent event )
 			case '3':
 				game.changeState(ResultScreen::Instance());
 			break;
-
+			case 'q':
+				shutdown();
+			break;
+			case '0':
+				kinect().Shutdown();
+			break;
 			
 		}
 	#endif
