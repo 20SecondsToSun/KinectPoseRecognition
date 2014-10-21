@@ -22,18 +22,18 @@ using namespace std;
 class MainGameScreen : public Location
 {
 	public:
+
 		void setup();
 		void init( LocationEngine* game);
+		void update();
+		void draw();
 		void cleanup();
 
 		void pause(){};
 		void resume(){};
-
 		void handleEvents(){};
 		void mouseEvents(){};
-		void keyEvents(){};
-		void update();
-		void draw();
+		void keyEvents(){};		
 
 		static MainGameScreen* Instance()
 		{
@@ -50,14 +50,14 @@ class MainGameScreen : public Location
 		std::map<int, string>	stateMemoMap;
 	
 		void kinectMissPersonHandler();
-
+		void photoFlashHandler();
 		void checkPersonMissed();
 		bool personisFound();		
 
 		bool showGameResultTimeIsFinished();
 		void gotoResultScreen();
 		
-		void drawDebugMessage();		
+		void drawGame();		
 		void drawFirstMessageBox();
 		void drawPreReadyCounterBox();
 		void drawPoseSilhouette();
@@ -67,11 +67,12 @@ class MainGameScreen : public Location
 		void drawCameraLostImage();
 		void drawPhotoFlash();
 		void drawFadeOutIfAllow();
+		void drawDeviceError();
 
+		void animationLeaveLocationPrepare();
 		void animationFinished();
 		void checkAnimationFinished();
-		void animationLeaveLocationFinished() ;
-		bool somethingWrongWithDevices();
+		void animationLeaveLocationFinished();
 
 		void removeTimers();
 		void removeHandlers();
@@ -82,6 +83,8 @@ class MainGameScreen : public Location
 		ci::signals::connection kinectMissPersonSignal;
 		ci::signals::connection kinectFindPersonSignal;
 		ci::signals::connection gotoResultScreenSignal;	
+		ci::signals::connection photoFlashSignal;	
+		
 
 		void gotoFirstScreen();
 		bool isLeaveAnimation;
@@ -91,5 +94,5 @@ class MainGameScreen : public Location
 		ci::Timer _missedTimer;
 		ci::gl::Texture failImage;
 		ButtonColor *comeBackBtn;
-		ci::Anim<float> alphaFinAnimate;
+		ci::Anim<float> alphaFinAnimate, alphaFlashAnim;
 };

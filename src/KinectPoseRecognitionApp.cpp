@@ -32,6 +32,8 @@ class KinectPoseRecognitionApp : public AppNative {
 	 Timer				saveTimer;
 	 string				state, poseName;
 
+	 gl::Texture		bg;
+
 	private:
 		LocationEngine			 game;
 		params::InterfaceGlRef   mParams;
@@ -52,6 +54,8 @@ void KinectPoseRecognitionApp::setup()
 
 	hintFont = *fonts().getFont("Helvetica Neue", 46);
 	state    = "ChooseMode";
+
+	bg  = *AssetManager::getInstance()->getTexture( "images/diz/bg.jpg" );
 
     #ifndef recording
 	
@@ -127,6 +131,8 @@ void KinectPoseRecognitionApp::update()
 void KinectPoseRecognitionApp::draw()
 {
 	gl::clear( Color( 0, 0, 0 ) ); 
+
+	gl::draw(bg);
 	
 	#ifdef recording
 	    cameraCanon().draw();
@@ -230,6 +236,13 @@ void KinectPoseRecognitionApp::shutdown( )
 	#ifdef kinectUsed
 		kinect().Shutdown();
 	#endif
+
+	cameraCanon().shutdown();
+		
+	//IntroScreen::Instance()->shutdown();
+	//MainGameScreen::Instance()->shutdown();
+	ResultScreen::Instance()->shutdown();
+	
 }
 CINDER_APP_NATIVE( KinectPoseRecognitionApp, RendererGl )
 #pragma warning(pop)

@@ -71,6 +71,9 @@ class KinectBase
 		
 		ci::Timer	reconnectTimer;
 
+		ci::Vec2f getTranslation();
+		ci::Vec2f getScale();
+
 	protected:
 		bool	_isConnected;
 

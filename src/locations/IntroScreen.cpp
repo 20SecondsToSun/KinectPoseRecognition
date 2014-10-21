@@ -8,7 +8,11 @@ IntroScreen IntroScreen::IntroScreenState;
 
 void IntroScreen::setup()
 {	
-	introImage		  = *AssetManager::getInstance()->getTexture( "images/intro.png" );
+	cat		  = *AssetManager::getInstance()->getTexture( "images/diz/cat.png" );
+	logo	  = *AssetManager::getInstance()->getTexture( "images/diz/logo1.png" );	
+	text1	  = *AssetManager::getInstance()->getTexture( "images/diz/text1.png" );	
+
+
 	playImage		  = *AssetManager::getInstance()->getTexture( "images/play.jpg" );
 	instructionImage  = *AssetManager::getInstance()->getTexture( "images/instruction.jpg" );
 
@@ -30,6 +34,17 @@ void IntroScreen::init( LocationEngine* game)
 	startInstructionBtnSignal = startInstructionBtn->mouseDownEvent.connect(boost::bind(&IntroScreen::startInstructionBtnDown, this));
 	startGameBtnSignal		  = startGameBtn->mouseDownEvent.connect(boost::bind(&IntroScreen::startGameBtnDown, this));		
 	comeBackBtnSignal		  = comeBackBtn->mouseDownEvent.connect(boost::bind(&IntroScreen::gotoFirstScreen, this));
+
+	catAnimate = -507;
+	timeline().apply( &catAnimate, 0.0f, 0.5f, EaseOutCubic() );
+
+	logoAnimate= -1080;
+	timeline().apply( &logoAnimate, 0.0f, 0.5f, EaseOutCubic() );
+
+	textAnimateY = 870;
+	textAnimateAlpha = 0.6;
+	timeline().apply( &textAnimateY, 885.0f, 0.5f, EaseOutCubic() );
+	timeline().apply( &textAnimateAlpha, 885.0f, 0.5f, EaseOutCubic() );
 }
 
 void IntroScreen::startInstructionBtnDown()
@@ -188,7 +203,8 @@ void IntroScreen::draw()
 
 	if(_game->freezeLocation)
 	{
-		gl::color(ColorA(0, 0, 0, alphaAnimate));
+		gl::color(ColorA(0.01, 0.31, 0.62, alphaAnimate));
+		//gl::color(Color::hex(0x011f3e));
 		gl::drawSolidRect(Rectf( 0.0f, 0.0f, getWindowWidth(), getWindowHeight()));
 		gl::color(Color::white());
 	}	
@@ -196,12 +212,20 @@ void IntroScreen::draw()
 
 void IntroScreen::drawInitElements() 
 {
-	Rectf centeredRect = Rectf( 0.0f, 0.0f, getWindowWidth(), getWindowHeight() ).getCenteredFit( getWindowBounds(),true );
-	gl::draw( introImage, centeredRect);			
-			Utils::textFieldDraw("ÇÀÑÒÀÂÎ×ÊÀ", 
-			fonts().getFont("Helvetica Neue", 46), 
-			Vec2f(600.f, getWindowHeight()*0.5f), 
-			ColorA(1, 1, 1, 1));
+	gl::pushMatrices();
+		gl::translate(catAnimate, 410);
+		gl::draw(cat);
+	gl::popMatrices();
+
+	gl::pushMatrices();
+		gl::translate(150, logoAnimate);
+		gl::draw(logo);
+	gl::popMatrices();
+
+	gl::pushMatrices();
+		gl::translate(547, textAnimateY);
+		gl::draw(text1);
+	gl::popMatrices();
 }
 
 void IntroScreen::changeState() 

@@ -8,6 +8,7 @@
 #include "cinder/gl/Fbo.h"
 #include "CameraAdapter.h"
 #include "TextureManager.h"
+#include "Game.h"
 
 class PhotoMaker
 {

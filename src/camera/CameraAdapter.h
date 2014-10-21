@@ -31,6 +31,7 @@ class CameraAdapter :public canon::PhotoHandler
 		bool checkIfDownloaded();
 		bool checkIfError();
 
+
 		float getWidth();
 		float getHeight();
 		void  shutdown();
@@ -89,6 +90,10 @@ class CameraAdapter :public canon::PhotoHandler
 
 
 		 CanonCamera  mCamera;	
+
+		 void calculateAspects();
+
+		 bool	isPhotoMakingInThread;
 		
 };
 inline CameraAdapter&	cameraCanon() { return *CameraAdapter::Instance(); };

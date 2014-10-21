@@ -63,7 +63,7 @@ bool CinderCanon::setup(PhotoHandler * photoHandler, int cameraIndex )
     EdsError err = EdsInitializeSDK();
     if( err != EDS_ERR_OK )
 	{ 
-		console() << "Cinder-Canon :: Couldn't initialize SDK" << endl; 
+		//console() << "Cinder-Canon :: Couldn't initialize SDK" << endl; 
 		//return false;	
 	}
     
@@ -76,7 +76,7 @@ bool CinderCanon::setup(PhotoHandler * photoHandler, int cameraIndex )
 		return false;
 	}
     
-    console() << "Cinder-Canon :: initialized.  Found " << getNumConnectedCameras() << " camera(s) connected" << endl;
+   // console() << "Cinder-Canon :: initialized.  Found " << getNumConnectedCameras() << " camera(s) connected" << endl;
     
     if( getNumConnectedCameras() == 0 ) return false;
 
@@ -492,8 +492,7 @@ EdsError EDSCALLBACK CinderCanon::handleStateEvent(
 		}
 		default:break;
 	};
-	
-    
+
     return EDS_ERR_OK;
 }
 
@@ -515,9 +514,9 @@ EdsError CinderCanon::sendCommand( EdsCameraRef inCameraRef, EdsUInt32 inCommand
     return err;
 }
 
-
 void CinderCanon::shutdown()
-{   
+{ 
+	console() << "Cinder-Canon :: try to shutdown " << "." << endl;      
     EdsError err = EdsCloseSession( mCamera );
 	console() << "Cinder-Canon :: answer shutdown " <<  CanonErrorToString(err) << "." << endl;      
     EdsTerminateSDK();

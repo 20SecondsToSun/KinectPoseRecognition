@@ -22,21 +22,33 @@ void KinectBase::setDevice()
 
 void KinectBase::kinectConnect()
 {
-	try {		
+	try 
+	{
+		console()<<" TEY CONNECT>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> "<<endl;
 		mDevice->start(deviceOptions);		
 		_isConnected = true;
 		kinectConnectedEvent();
-	} catch ( MsKinect::Device::ExcDeviceCreate ex ) {
+	} 
+	catch ( MsKinect::Device::ExcDeviceCreate ex )
+	{
 		console() << ex.what() << endl;
-	} catch ( MsKinect::Device::ExcDeviceInit ex ) {
+	} 
+	catch ( MsKinect::Device::ExcDeviceInit ex ) 
+	{
 		console() << ex.what() << endl;
-	} catch ( MsKinect::Device::ExcDeviceInvalid ex ) {
+	} 
+	catch ( MsKinect::Device::ExcDeviceInvalid ex )
+	{
 		console() << ex.what() << endl;
 	//} catch ( MsKinect::Device::ExcGetCoordinateMapper ex ) {
 	//	console() << ex.what() << endl;
-	} catch ( MsKinect::Device::ExcOpenStreamColor ex ) {
+	}
+	catch ( MsKinect::Device::ExcOpenStreamColor ex )
+	{
 		console() << ex.what() << endl;
-	} catch ( MsKinect::Device::ExcOpenStreamDepth ex ) {
+	} 
+	catch ( MsKinect::Device::ExcOpenStreamDepth ex )
+	{
 		console() << ex.what() << endl;
 	//} catch ( MsKinect::Device::ExcStreamStart ex ) {
 	//	console() << ex.what() << endl;
@@ -98,6 +110,10 @@ Rectf KinectBase::getColorResolutionRectf()
 		case MsKinect::ImageResolution::NUI_IMAGE_RESOLUTION_1280x960 :
 			return Rectf(0.0f, 0.0f, 1280.0f,960.0f);
 		break;
+
+		default:
+			return Rectf(0.0f, 0.0f, 640.0f,480.0f);
+		break;
 	}		
 }
 
@@ -146,4 +162,14 @@ void KinectBase::calculateAspects()
 	
 	viewShiftX =float( 0.5 * (getWindowWidth()  - viewWidth));
 	viewShiftY= float( 0.5 * (getWindowHeight() - viewHeight));		
+}
+
+Vec2f KinectBase::getTranslation()
+{
+	return Vec2f(viewShiftX, viewShiftY);
+}
+
+Vec2f KinectBase::getScale()
+{
+	return Vec2f(headScale, headScale);
 }

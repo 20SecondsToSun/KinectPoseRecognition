@@ -23,11 +23,6 @@ std::string PlayerData::getTexPath(int i)
 	return playerData[i].pathHiRes;
 }
 
-ci::gl::Texture PlayerData::getComicsImage(int i)
-{	
-	return kinect().getPoseImageById(playerData[i].storyCode);
-}
-
 void PlayerData::setDisplayingTexture(int i, ci::gl::Texture tex)
 {
 	playerData[i].displayingTexture = tex;

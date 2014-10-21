@@ -25,6 +25,7 @@ void MainGameScreen::setup()
 	cameraCanon().live();
 
 	kinect().setup();
+	recognitionGame().setup();
 
 	comeBackBtn = new ButtonColor(Rectf(1200,300, 1600, 400), RED, &debugFont26, "BACK");
 }
@@ -52,21 +53,19 @@ void MainGameScreen::init( LocationEngine* game)
 	{
 		gotoResultScreen();
 	});	
-	
+
+	photoFlashSignal	  = recognitionGame().photoFlashEvent.connect(boost::bind(&MainGameScreen::photoFlashHandler, this));
+
 	recognitionGame().initnew();
 }
 
 void MainGameScreen::gotoFirstScreen() 
 {	
-	if(!isLeaveAnimation && cameraCanon().isConnected && kinect().isConnected())
-	{		
-		_game->freezeLocation = true;
-		isLeaveAnimation = true;
-		alphaFinAnimate = 0;
-		removeTimers();
-		removeHandlers();	
+	if(!isLeaveAnimation && !deviceError)
+	{
+		animationLeaveLocationPrepare();
 
-		timeline().apply( &alphaFinAnimate, 1.0f, 1.9f, EaseOutCubic() ).finishFn( [ & ]( )
+		timeline().apply( &alphaFinAnimate,0.0f, 1.0f, 1.9f, EaseOutCubic() ).finishFn( [ & ]( )
 		{
 			_game->freezeLocation = false;
 			_game->changeState(IntroScreen::Instance());
@@ -96,13 +95,8 @@ void MainGameScreen::kinectMissPersonHandler()
 void MainGameScreen::gotoResultScreen() 
 {
 	if(!isLeaveAnimation)
-	{		
-		_game->freezeLocation = true;
-		isLeaveAnimation = true;
-		alphaFinAnimate = 0;
-
-		removeTimers();
-		removeHandlers();
+	{
+		animationLeaveLocationPrepare();
 
 		timeline().apply( &alphaFinAnimate, 0.0f, 1.0f, 1.9f, EaseOutCubic() ).finishFn( [ & ]( )
 		{
@@ -112,22 +106,31 @@ void MainGameScreen::gotoResultScreen()
 	}		
 }
 
+void MainGameScreen::photoFlashHandler() 
+{
+	timeline().apply(&alphaFlashAnim, 1.0f,  0.0f, 1.1f , EaseInCubic()).delay(0.4).finishFn( [ & ]( )
+	{
+		recognitionGame().flashAnimationFinished();
+	});	
+}
+
+void MainGameScreen::animationLeaveLocationPrepare() 
+{
+	_game->freezeLocation = true;
+	isLeaveAnimation = true;
+	removeTimers();
+	removeHandlers();
+}
+
 void MainGameScreen::update() 
 {
 	cameraCanon().update();	
 	kinect().update();
 
-	if(deviceError)
-	{
-		
-	}
-	else if (!cameraCanon().isConnected || !kinect().isConnected())
-	{
-		deviceError = true;
-	}
-	else
-		recognitionGame().update();	
-	
+	deviceError = !cameraCanon().isConnected || !kinect().isConnected();
+
+	if(deviceError == false)	
+		recognitionGame().update();
 }
 
 void MainGameScreen::draw() 
@@ -136,50 +139,20 @@ void MainGameScreen::draw()
 
 	cameraCanon().draw();	
 
-	if (!somethingWrongWithDevices() && !deviceError) 
+	if (deviceError) 
+	{
+		drawDeviceError();
+	}
+	else
 	{	
-		switch(recognitionGame().state)
-		{
-			case SHOW_FIRST_MESSAGE:			
-				drawFirstMessageBox();
-			break;
-
-			case PRE_GAME_INTRO:
-				drawPreReadyCounterBox();
-			break;
-
-			case MAIN_GAME:
-				drawPoseSilhouette();
-			break;
-
-			case SHOW_GAME_RESULT:				
-				drawGameResult();			
-			break;
-
-			case MAKE_SCREENSHOOT:
-				drawGameResultWithoutTimer();
-			break;
-
-			case PHOTO_MAKING_WAIT:
-				drawPoseSilhouette();
-				drawPhotoFlash();
-			break;
-
-			case WIN_ANIMATION_FINISH_WAIT:
-				drawPoseSilhouette();
-				drawPhotoFlash();
-			break;
-		}	
-
-		comeBackBtn->draw();
+		drawGame();
 	}
 
 	drawFadeOutIfAllow();
 }
 
-bool MainGameScreen::somethingWrongWithDevices() 
-{
-	bool deviceConnected = true;
+void MainGameScreen::drawDeviceError() 
+{	
 	string errorDeviceMessage ="";
 
 	if (cameraCanon().isConnected == false)
@@ -187,8 +160,7 @@ bool MainGameScreen::somethingWrongWithDevices()
 		errorDeviceMessage = "КАМЕРА ВЫКЛЮЧЕНА";
 
 		recognitionGame().stopAllTimersIfNeed();	
-		_missedTimer.stop();
-		deviceConnected = false;
+		_missedTimer.stop();		
 	}
 
 	if (kinect().isConnected() == false)
@@ -203,13 +175,48 @@ bool MainGameScreen::somethingWrongWithDevices()
 		}
 
 		recognitionGame().stopAllTimersIfNeed();
-		_missedTimer.stop();
-		deviceConnected = false;
+		_missedTimer.stop();		
 	}
-	if (!deviceConnected)	
-		Utils::textFieldDraw(errorDeviceMessage, &debugFont26, Vec2f(10.0f, 10.0f), ColorA(1.f, 1.f, 1.f, 1.f));
+	
+	Utils::textFieldDraw(errorDeviceMessage, &debugFont26, Vec2f(10.0f, 10.0f), ColorA(1.f, 1.f, 1.f, 1.f));
+}
 
-	return !deviceConnected;
+void MainGameScreen::drawGame() 
+{
+	switch(recognitionGame().state)
+	{
+		case SHOW_FIRST_MESSAGE:			
+			drawFirstMessageBox();
+		break;
+
+		case PRE_GAME_INTRO:
+			drawPreReadyCounterBox();
+		break;
+
+		case MAIN_GAME:
+			drawPoseSilhouette();
+		break;
+
+		case SHOW_GAME_RESULT:				
+			drawGameResult();			
+		break;
+
+		case MAKE_SCREENSHOOT:
+			drawGameResultWithoutTimer();
+		break;
+
+		case PHOTO_MAKING_WAIT:
+			drawPoseSilhouette();
+			drawPhotoFlash();
+		break;
+
+		case WIN_ANIMATION_FINISH_WAIT:
+			drawPoseSilhouette();
+			drawPhotoFlash();
+		break;
+	}	
+
+	comeBackBtn->draw();
 }
 
 void MainGameScreen::drawFirstMessageBox()
@@ -220,19 +227,27 @@ void MainGameScreen::drawFirstMessageBox()
 void MainGameScreen::drawPreReadyCounterBox()
 {
 	gl::disableAlphaBlending();
-	Utils::textFieldDraw("ПРИГОТОВЬТЕСЬ К ПОЗЕ "+to_string(recognitionGame().currentPose)+" : "+to_string(recognitionGame().PREGAME_TIME - (int)recognitionGame()._preGameTimer.getSeconds()), &debugFont46, Vec2f(400.f, 400.0f), ColorA(1.f, 1.f, 1.f, 1.f));
+	Utils::textFieldDraw("ПРИГОТОВЬТЕСЬ К ПОЗЕ "+to_string(recognitionGame().level)+" : "+to_string(recognitionGame().PREGAME_TIME - (int)recognitionGame()._preGameTimer.getSeconds()), &debugFont46, Vec2f(400.f, 400.0f), ColorA(1.f, 1.f, 1.f, 1.f));
 	gl::enableAlphaBlending();
 }
 
 void MainGameScreen::drawPoseSilhouette()
 {
-	kinect().drawLoadedPoses();
+	gl::enableAlphaBlending();
+
+	gl::pushMatrices();
+		gl::translate(kinect().getTranslation());
+		gl::scale(kinect().getScale());		
+		recognitionGame().drawCurrentSilhouette();
+	gl::popMatrices();
+
 	kinect().drawSkeletJoints();
+
 	gl::disableAlphaBlending();
 	gl::color(Color::white());
 	Utils::textFieldDraw("ДО КОНЦА ПОПЫТКИ ОСТАЛОСЬ  "+to_string(recognitionGame().ONE_POSE_TIME - (int)recognitionGame()._onePoseTimer.getSeconds()), &debugFont26, Vec2f(1300.f, 10.0f), ColorA(1.f, 0.f, 0.f, 1.f));
 
-	Utils::textFieldDraw("MATCHING  " + to_string((int)kinect().getMatchPercent())+" %", &debugFont46, Vec2f(1300.f, 100.0f), ColorA(1.f, 0.f, 0.f, 1.f));
+	Utils::textFieldDraw("MATCHING  " + to_string((int)recognitionGame().getMatchPercent())+" %", &debugFont46, Vec2f(1300.f, 100.0f), ColorA(1.f, 0.f, 0.f, 1.f));
 	gl::enableAlphaBlending();
 
 	gl::pushMatrices();	
@@ -240,7 +255,7 @@ void MainGameScreen::drawPoseSilhouette()
 	gl::color(ColorA(1,1,1,1));
 	gl::drawSolidRect(Rectf(0, 0, 300, 50));
 	gl::color(ColorA(1,0,0,1));
-	gl::scale(kinect().getPoseProgress()/100.0f, 1.0f);
+	gl::scale(recognitionGame().getPoseProgress()/100.0f, 1.0f);
 	gl::drawSolidRect(Rectf(0, 0, 300, 50));
 	gl::popMatrices();
 }
@@ -249,7 +264,7 @@ void MainGameScreen::drawGameResult()
 {
 	Rectf centeredRect = Rectf( 0,0, getWindowWidth(), getWindowHeight() ).getCenteredFit( getWindowBounds(),true );
 
-	if (kinect().isPoseDetecting)
+	if (recognitionGame().isPoseDetecting)
 	{		
 		drawPoseComics();
 		gl::disableAlphaBlending();
@@ -270,10 +285,9 @@ void MainGameScreen::drawGameResultWithoutTimer()
 {
 	Rectf centeredRect = Rectf( 0,0, getWindowWidth(), getWindowHeight() ).getCenteredFit( getWindowBounds(),true );
 
-	if (kinect().isPoseDetecting)
+	if (recognitionGame().isPoseDetecting)
 	{		
-		drawPoseComics();		
-		
+		drawPoseComics();
 	}
 	else
 	{
@@ -286,41 +300,20 @@ void MainGameScreen::drawPoseComics()
 	gl::pushMatrices();
 		gl::translate(cameraCanon().getSurfaceTranslate());
 		gl::scale(-cameraCanon().scaleFactor, cameraCanon().scaleFactor);
-		gl::draw(PlayerData::playerData[recognitionGame().currentPose-1].screenshot);
+		gl::draw(recognitionGame().getCurrentScreenShot());
 	gl::popMatrices();
 
 	gl::pushMatrices();
 		gl::translate(getWindowWidth() - 360.0, getWindowHeight() - 512.0);		
-		gl::draw(kinect().getPoseImage());
+		gl::draw(recognitionGame().getPoseImage());
 	gl::popMatrices();
 }
 
 void MainGameScreen::drawPhotoFlash()
 {
-	gl::color(ColorA(1, 1, 1, recognitionGame().alphaFlashAnim));
+	gl::color(ColorA(1, 1, 1, alphaFlashAnim));
 	gl::drawSolidRect(Rectf(0, 0, getWindowWidth(), getWindowHeight()));
 	gl::color(Color::white());
-}
-
-void MainGameScreen::drawDebugMessage()
-{
-	/*gl::color(Color::white());
-	string outString1	 = "state : " + stateMemoMap[state];
-	Utils::textFieldDraw(outString1, &debugFont26, Vec2f(10.f, 10.0f), ColorA(1.f, 1.f, 1.f, 1.f));
-
-	string outString2	 = "Людей в кадре : " + to_string(peopleCount) +
-						   " | Расстояние до ближайшего игрока : " +  to_string(distanceToPlayer)+
-						   " | Текущая поза : " +  to_string(currentPose)+"/"+  to_string(ALL_POSES_COUNT);
-
-
-	Utils::textFieldDraw(outString2, &debugFont26, Vec2f(10.f, 40.0f), ColorA(1.f, 1.f, 1.f, 1.f));
-
-	string outString3	 = "ТАЙМЕРЫ ::::::: \n| Таймер чтобы отойти : " + to_string(_preWaitingTimer.getSeconds()) +
-		" \n| Подготовительный таймер : "+ to_string((int)_preGameTimer.getSeconds()) +
-		" \n| Таймер для одной позы "+  to_string((int)_onePoseTimer.getSeconds()) +
-		" \n| Таймер показа результата "+  to_string((int)_resultTimer.getSeconds());
-
-	Utils::textFieldDraw(outString3, &debugFont26, Vec2f(10.f, 100.0f), ColorA(1.f, 1.f, 1.f, 1.f));*/
 }
 
 void MainGameScreen::drawFadeOutIfAllow() 
@@ -348,11 +341,11 @@ void MainGameScreen::removeTimers()
 void MainGameScreen::removeHandlers()
 {
 	comeBackBtnSignal.disconnect();
-	cameraConnectionSignal.disconnect();
+	photoFlashSignal.disconnect();
 
+	cameraConnectionSignal.disconnect();
 	kinectConnectionSignal.disconnect();
 	kinectMissPersonSignal.disconnect();
 	kinectFindPersonSignal.disconnect();
-
 	gotoResultScreenSignal.disconnect();
 }

@@ -91,7 +91,11 @@ void PhotoMaker::resizeFinalImages()
 			Surface cadrSurface = Surface(getWindowWidth(),  getWindowHeight(), true);
 			cadrSurface.copyFrom(photoFromCameraSurface, Area(0, 0, getWindowWidth(), getWindowHeight()-trans.y), trans);
 			cadrSurface = Utils::resizeScreenshot(cadrSurface, (int32_t)BIG_PHOTO_WIDTH, (int32_t)BIG_PHOTO_HEIGHT);
-			drawToFBO(cadrSurface, PlayerData::getComicsImage(i));
+
+
+			drawToFBO(cadrSurface, recognitionGame().getPoseImageById(PlayerData::playerData[i].storyCode));
+
+
 			mFbo.getTexture().setFlipped(true);
 			Surface comicsImage = Surface(mFbo.getTexture());
 

@@ -1,13 +1,9 @@
 #pragma once
 
 #include "cinder/app/AppNative.h"
-#include "cinder/Timeline.h"
 #include "cinder/gl/Texture.h"
 #include "cinder/Timer.h"
 #include "Utils.h"
-#include "Kinect.h"
-#include "Params.h"
-#include "Pose.h"
 #include "KinectBase.h"
 
 using namespace ci;
@@ -18,75 +14,37 @@ using namespace std;
 class KinectAdapter: public KinectBase
 {
 	public:
-		boost::signals2::signal<void(void)>		levelCompleteEvent, gameOverEvent;
-		void setup();			
-		void updateGame();
+		
+		void setup();
 		void draw();
 
-		static KinectAdapter* Instance() {
+		static KinectAdapter* Instance()
+		{
 			return &KinectAdapterState;
-		}	
+		}
 
-		void						saveAsTemplate(std::string name);
-		void						matchTemplate();	
-
-		std::vector<Pose*>			poses;		
-	
-		void						startPoseGame();
-
-		int							nextPose();
-		int							generatePoseNum();
-		ci::gl::Texture				getPoseImage();
-		int							getPoseCode();
-
-		std::string					getPoseIndex();
-		void						drawPoseComics();
-		void						poseComplete();
-		float						getPoseProgress();	
-		void						drawLoadedPoses();
-		ci::gl::Texture				getPoseImageById(int id);
-
-		int							getSkeletsInFrame();		
-		void						drawSkeletJoints();
-
-		bool						isGameRunning, isPoseDetecting;
-		double						getMatchPercent();	
+		int getSkeletsInFrame();
+		void drawSkeletJoints();
 
 		void update();
 		void connect();
-		void reset();
+		void updateSkeletonData();
 
-protected:
-
-		KinectAdapter() { }
+		std::vector<ci::Vec3f> getCurrentSkelet()
+		{
+			return currentSkelet;
+		};
 
 	private:
 
-		static KinectAdapter		KinectAdapterState;	
-		void						updateSkeletonData();
-		std::vector<ci::Vec3f>		currentSkelet;		
-		
-		Pose*						foundPose;
-		float						mathPercent;
-		void						drawUserMask();
+		static KinectAdapter KinectAdapterState;	
 
+		std::vector<ci::Vec3f> currentSkelet;		
+		void drawUserMask();		
+		Surface16u savePoseDepth;		
+		void setActiveJoints();		
+		int bufferDisconnect;
 		std::vector<_NUI_SKELETON_POSITION_INDEX>			jointToRecord;
-		Surface16u					savePoseDepth;		
-		int							currentPoseInGame;
-		int							levelCompletion;
-		void						setActiveJoints();
-		
-		bool						isAnchorPointsMatch(Pose pose1, Pose pose2);
-		bool						isPointsSizeEqual(Pose pose1, Pose pose2);
-		double						calculateDistanceBetweenPoints(ci::Vec3f vec1, ci::Vec3f vec2);
-
-		Pose						currentPose;
-
-		void						computeMistakeWay1();
-		void						computeMistakeWay2();
-
-		int							level;
-		int							bufferDisconnect;
 };
 
 inline KinectAdapter&	kinect() { return *KinectAdapter::Instance(); };

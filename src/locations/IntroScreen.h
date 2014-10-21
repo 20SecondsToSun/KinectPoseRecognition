@@ -7,7 +7,6 @@
 
 #include "Location.h"
 #include "ButtonColor.h"
-#include "KinectAdapter.h"
 #include "MainGameScreen.h"
 
 using namespace ci;
@@ -56,11 +55,11 @@ class IntroScreen : public Location
 		int						state, nextState;
 		std::string				debugString;		
 	
-		ci::gl::Texture			introImage, playImage, instructionImage;
+		ci::gl::Texture			cat, logo, text1, playImage, instructionImage;
 	
 		ButtonColor				*startInstructionBtn, *startGameBtn, *comeBackBtn;
 
-		ci::Anim<float>			alphaAnimate;	
+		ci::Anim<float>			alphaAnimate, catAnimate, logoAnimate,textAnimateY, textAnimateAlpha;	
 
 		void	startInstructionBtnDown();
 		void	startGameBtnDown();

@@ -8,6 +8,7 @@ void   Server::reset()
 {
 	isPhotoLoaded = false;	
 	isPhotoSendingToServer = false;	
+	isCheckingConnection = false;	
 }
 
 void   Server::sendPhoto(fs::path _path)

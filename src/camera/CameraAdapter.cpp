@@ -16,6 +16,7 @@ void CameraAdapter::setup()
 {
 	isConnected = false;    
 	tryToTakePhoto = true;
+	isPhotoMakingInThread = false;
 	userPhotoIsDownloaded = false;
 	photoCameraErrorMsg = "NONE";
 	isAspectsCompute = false;
@@ -25,13 +26,15 @@ void CameraAdapter::setup()
 	if (isConnected)
 	{
 	   mCamera.startLiveView();
+	   calculateAspects();
 	   cameraConnectedEvent();
 	}
 }
 
 void CameraAdapter::reset()
 {
-	userPhotoIsDownloaded	= false;	
+	userPhotoIsDownloaded	= false;
+	isPhotoMakingInThread    = false;
 	photoCameraErrorMsg		= "NONE";
 }
 
@@ -41,33 +44,9 @@ void CameraAdapter::update()
 	{
 		mCamera.update();	
 
-		if (!restartLiveViewTimer.isStopped()  && (int)restartLiveViewTimer.getSeconds() == 1)
+		if (!restartLiveViewTimer.isStopped()  && (int)restartLiveViewTimer.getSeconds() == 2)
 		{		
 			photoCameraReadyLiveView();		
-		}
-
-		if (!isAspectsCompute)
-		{
-			double aspect =  (double)mCamera.getLiveSurface().getWidth()/mCamera.getLiveSurface().getHeight();
-			double viewHeight, viewWidth;
-
-			if( getWindowWidth() / getWindowHeight() > aspect)			
-			{
-				viewHeight = getWindowHeight();
-				viewWidth = int(viewHeight * aspect);	
-				scaleFactor = viewHeight/ mCamera.getLiveSurface().getHeight();
-			}
-			else 
-			{ 
-				viewWidth = getWindowWidth();
-				viewHeight = int(viewWidth / aspect);	
-				scaleFactor  = viewWidth/ mCamera.getLiveSurface().getWidth();
-			}
-	
-			viewShiftX =float( 0.5 * (getWindowWidth()  - viewWidth));
-			viewShiftY= float( 0.5 * (getWindowHeight() - viewHeight));
-
-			translateSurface = Vec2f(viewShiftX + mCamera.getLiveSurface().getWidth()*scaleFactor, viewShiftY);
 		}
 	}
 	else
@@ -75,6 +54,32 @@ void CameraAdapter::update()
 		if (!reconnectTimer.isStopped() && (int) reconnectTimer.getSeconds() % 2 == 0)		
 			reconnect();
 		else reconnectTimer.start();
+	}
+}
+void CameraAdapter::calculateAspects()
+{
+	if (!isAspectsCompute)
+	{
+		double aspect =  (double)mCamera.getLiveSurface().getWidth()/mCamera.getLiveSurface().getHeight();
+		double viewHeight, viewWidth;
+
+		if( getWindowWidth() / getWindowHeight() > aspect)			
+		{
+			viewHeight = getWindowHeight();
+			viewWidth = int(viewHeight * aspect);	
+			scaleFactor = viewHeight/ mCamera.getLiveSurface().getHeight();
+		}
+		else 
+		{ 
+			viewWidth = getWindowWidth();
+			viewHeight = int(viewWidth / aspect);	
+			scaleFactor  = viewWidth/ mCamera.getLiveSurface().getWidth();
+		}
+	
+		viewShiftX =float( 0.5 * (getWindowWidth()  - viewWidth));
+		viewShiftY= float( 0.5 * (getWindowHeight() - viewHeight));
+
+		translateSurface = Vec2f(viewShiftX + mCamera.getLiveSurface().getWidth()*scaleFactor, viewShiftY);
 	}
 }
 
@@ -90,12 +95,15 @@ void CameraAdapter::takePhoto()
 	photoCameraErrorMsg = "NONE";
 
 	mCamera.endLiveView();
-	tkphThread = std::shared_ptr< boost::thread>( new  boost::thread( bind( &CameraAdapter::takePhotoThread, this ) ) );	
+	isPhotoMakingInThread = true;
+	takePhotoThread();
+	//tkphThread = std::shared_ptr< boost::thread>( new  boost::thread( bind( &CameraAdapter::takePhotoThread, this ) ) );	
 }
 
 void CameraAdapter::takePhotoThread()
 {	
-    mCamera.takePicture(this);		
+    mCamera.takePicture(this);
+	isPhotoMakingInThread = false;
 }
 
 void CameraAdapter::live()
@@ -118,6 +126,13 @@ void CameraAdapter::reconnect()
 
 bool CameraAdapter::checkIfDownloaded()
 {
+	console()<< "  --------------------- userPhotoIsDownloaded  -------------------------  "<<userPhotoIsDownloaded<<endl;
+	if(isPhotoMakingInThread)
+	{
+		isPhotoMakingInThread = false;
+		//tkphThread->join();
+	}
+
 	return userPhotoIsDownloaded;
 }
 
@@ -178,8 +193,6 @@ void CameraAdapter::shutdown()
 {
 	 mCamera.shutdown();
 }
-
-//-----------------------------------------------------------------------------------
 
 void CameraAdapter::photoCameraError( EdsError err)
 {
