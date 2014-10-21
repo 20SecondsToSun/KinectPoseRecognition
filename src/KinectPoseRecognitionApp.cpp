@@ -36,8 +36,6 @@ class KinectPoseRecognitionApp : public AppNative {
 		LocationEngine			 game;
 		params::InterfaceGlRef   mParams;
 		void					changeState();
-		
-		
 };
 
 void KinectPoseRecognitionApp::setup()
@@ -94,8 +92,6 @@ void KinectPoseRecognitionApp::setup()
 		mParams->addSeparator();
 		//mParams->addParam( "kinect", &Params::serverEmailSendError );
 		//mParams->addParam( "Imitate_serverEmailSendTimeout", &Params::serverEmailSendTimeout );
-
-
 		//mParams->addParam( "recordingMode", &Params::recording );			
 	#endif
 
@@ -166,12 +162,11 @@ void KinectPoseRecognitionApp::draw()
 
 	toucher().draw();
 }
+
 void KinectPoseRecognitionApp::mouseDown( MouseEvent event )
 {
 	toucher().setPosition(event.getPos());
 }
-
-
 
 void KinectPoseRecognitionApp::keyDown( KeyEvent event )
 {

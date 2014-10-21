@@ -31,8 +31,10 @@ class KinectBase
 		void kinectConnect();
 		void Shutdown();
 
-		boost::signals2::signal<void(void)>		kinectConnectedEvent;
-
+		boost::signals2::signal<void(void)> kinectConnectedEvent;
+		boost::signals2::signal<void(void)> kinectMissPersonEvent;
+		boost::signals2::signal<void(void)> kinectFindPersonEvent;
+	
 		MsKinect::DeviceRef		mDevice;
 		MsKinect::DeviceOptions deviceOptions;
 		MsKinect::Frame			mFrame;	

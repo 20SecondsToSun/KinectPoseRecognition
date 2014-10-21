@@ -5,7 +5,11 @@ CameraAdapter CameraAdapter::CameraAdapterState;
 void CameraAdapter::loadResource()
 {
 	mPhotoDownloadFolder = Params::getPhotosStorageDirectory();
-    if (!fs::exists(mPhotoDownloadFolder)) fs::create_directories(mPhotoDownloadFolder); 
+
+    if (!fs::exists(mPhotoDownloadFolder))
+	{
+		fs::create_directories(mPhotoDownloadFolder);
+	}
 }
 
 void CameraAdapter::setup()
@@ -86,12 +90,12 @@ void CameraAdapter::takePhoto()
 	photoCameraErrorMsg = "NONE";
 
 	mCamera.endLiveView();
-    mCamera.takePicture(this);		
+	tkphThread = std::shared_ptr< boost::thread>( new  boost::thread( bind( &CameraAdapter::takePhotoThread, this ) ) );	
 }
 
 void CameraAdapter::takePhotoThread()
-{
-	
+{	
+    mCamera.takePicture(this);		
 }
 
 void CameraAdapter::live()
@@ -108,7 +112,6 @@ void CameraAdapter::liveOff()
 
 void CameraAdapter::reconnect()
 {
-	console()<<"try reconnect ......................"<<std::endl;
 	reconnectTimer.stop();
 	setup();	
 }
@@ -122,6 +125,7 @@ bool CameraAdapter::checkIfError()
 {
 	return photoCameraErrorMsg != "NONE";
 }
+
 string CameraAdapter::getpathToErrorPhoto()
 {
 	return "ERROR.jpg";
@@ -175,7 +179,6 @@ void CameraAdapter::shutdown()
 	 mCamera.shutdown();
 }
 
-
 //-----------------------------------------------------------------------------------
 
 void CameraAdapter::photoCameraError( EdsError err)
@@ -210,8 +213,7 @@ std::string CameraAdapter::photoCameraReadyLiveView()
 	if (isConnected == false)	 return "ERROR";
 	if (mCamera.isLiveViewing()) return "START";
 
-	//console()<<"START LIVE VIEW!!!!!!"<<std::endl;
-//
+	//console()<<"START LIVE VIEW!!!!!!"<<std::endl;//
 	//console()<<"isBusy? "<<mCamera.isBusy()<<std::endl;
 
 	if (mCamera.isBusy())

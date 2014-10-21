@@ -91,8 +91,7 @@ void EmailForm::keyboardTouchSignalHandler()
 		if (currentEmail.size() != 0)
 			addCurrentEmail(currentEmail);	
 
-		mode = SEND_MAIL;
-	
+		mode = SEND_MAIL;	
 		hide();
 		return;
 	}

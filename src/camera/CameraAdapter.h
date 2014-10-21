@@ -85,7 +85,7 @@ class CameraAdapter :public canon::PhotoHandler
 		 bool			isAspectsCompute;
 
 		 void			takePhotoThread();
-		 std::shared_ptr<std::thread>				tkphThread;
+		 std::shared_ptr<boost::thread>				tkphThread;
 
 
 		 CanonCamera  mCamera;	

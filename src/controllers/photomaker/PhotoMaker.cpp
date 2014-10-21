@@ -18,7 +18,7 @@ void PhotoMaker::loadFinalImages()
 		{
 			if (!PlayerData::playerData[i].isFocusError)
 			{
-				string url = PlayerData::getTexPath(i) ;
+				string  url = PlayerData::getTexPath(i) ;
         		Texture tex = ph::fetchTexture(url);
 
 				if (tex)

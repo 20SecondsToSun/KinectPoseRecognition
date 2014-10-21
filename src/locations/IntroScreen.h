@@ -15,7 +15,6 @@ using namespace ci::app;
 using namespace gl;
 using namespace std;
 
-
 class IntroScreen : public Location
 {
 	public:
@@ -23,10 +22,10 @@ class IntroScreen : public Location
 		void init( LocationEngine* game);
 		void cleanup();
 
-		void pause();
-		void resume();
+		void pause(){};
+		void resume(){};
 
-		void handleEvents();
+		void handleEvents(){};
 		void mouseEvents();
 		void update();
 		void keyEvents();
@@ -38,10 +37,8 @@ class IntroScreen : public Location
 
 		void	gotoFirstScreen();
 
-	protected:
-		IntroScreen() { };
-
 	private:	
+
 		enum states {INIT, 
 					 SHOW_INVITE,  
 					 SHOW_INSTRUCTION,

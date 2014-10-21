@@ -244,15 +244,3 @@ void IntroScreen::animationFinished()
 		break;
 	}	
 }
-
-void IntroScreen::pause()
-{	
-}
-
-void IntroScreen::resume()
-{	
-}
-
-void IntroScreen::handleEvents()
-{
-}

@@ -592,22 +592,3 @@ void ResultScreen::cleanup()
 {
 	disconnectListeners();
 }
-
-void ResultScreen::pause()
-{
-	
-}
-
-void ResultScreen::resume()
-{
-	
-}
-void ResultScreen::keyEvents()
-{
-
-}
-
-void ResultScreen::handleEvents()
-{
-
-}

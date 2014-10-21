@@ -73,6 +73,9 @@
     <Filter Include="Source Files\locations\popup">
       <UniqueIdentifier>{e604a487-2eab-4569-a983-41a4bffe3e04}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\controllers\game">
+      <UniqueIdentifier>{4143ca4f-6e21-4f25-82ea-7d3267c01378}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\src\KinectPoseRecognitionApp.cpp">
@@ -153,9 +156,6 @@
     <ClCompile Include="..\src\locations\TextureManager.cpp">
       <Filter>Source Files\controllers\assets</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\controllers\Server.cpp">
-      <Filter>Source Files\controllers</Filter>
-    </ClCompile>
     <ClCompile Include="..\blocks\Cinder-Curl\src\Curl.cpp">
       <Filter>blocks\Curl</Filter>
     </ClCompile>
@@ -180,8 +180,8 @@
     <ClCompile Include="..\src\locations\popup\EmailForm.cpp">
       <Filter>Source Files\locations\popup</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\tools\Toucher.cpp">
-      <Filter>Source Files\tools</Filter>
+    <ClCompile Include="..\src\controllers\Server.cpp">
+      <Filter>Source Files\controllers\game</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -242,9 +242,6 @@
     <ClInclude Include="..\src\controllers\saver\Saver.h">
       <Filter>Source Files\controllers\saver</Filter>
     </ClInclude>
-    <ClInclude Include="..\src\controllers\Pose.h">
-      <Filter>Source Files\controllers</Filter>
-    </ClInclude>
     <ClInclude Include="..\src\kinect\KinectBase.h">
       <Filter>Source Files\controllers\kinectAdapter</Filter>
     </ClInclude>
@@ -265,9 +262,6 @@
     </ClInclude>
     <ClInclude Include="..\src\locations\TextureManager.h">
       <Filter>Source Files\controllers\assets</Filter>
-    </ClInclude>
-    <ClInclude Include="..\src\controllers\Server.h">
-      <Filter>Source Files\controllers</Filter>
     </ClInclude>
     <ClInclude Include="..\blocks\Cinder-Curl\src\Curl.h">
       <Filter>blocks\Curl</Filter>
@@ -295,6 +289,15 @@
     </ClInclude>
     <ClInclude Include="..\src\tools\Toucher.h">
       <Filter>Source Files\tools</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\controllers\Pose.h">
+      <Filter>Source Files\controllers\game</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\controllers\Server.h">
+      <Filter>Source Files\controllers\game</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\controllers\Game.h">
+      <Filter>Source Files\controllers\game</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

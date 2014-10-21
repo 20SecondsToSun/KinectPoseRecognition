@@ -29,13 +29,13 @@ class ResultScreen : public Location
 		void setup();
 		void init( LocationEngine* game);
 		void cleanup();
-		void pause();
-		void resume();
+		void pause(){};
+		void resume(){};
 		void shutdown();
 
-		void handleEvents();
+		void handleEvents(){};
 		void mouseEvents();
-		void keyEvents();
+		void keyEvents(){};
 		void update();
 		void draw();
 
