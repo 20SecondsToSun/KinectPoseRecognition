@@ -15,7 +15,7 @@ void MainGameScreen::setup()
 	debugFont26 = *fonts().getFont("Helvetica Neue", 26);
 	debugFont46 = *fonts().getFont("Helvetica Neue", 66);
 
-	stateMemoMap[SHOW_FIRST_MESSAGE] = "Отойдите подальше";
+	//stateMemoMap[SHOW_FIRST_MESSAGE] = "Отойдите подальше";
 	stateMemoMap[PRE_GAME_INTRO]	 = "Приготовьтесь к котопозе";
 	stateMemoMap[MAIN_GAME]			 = "Играем";
 	stateMemoMap[SHOW_GAME_RESULT]	 = "Результат кривляний";
@@ -27,7 +27,10 @@ void MainGameScreen::setup()
 	kinect().setup();
 	recognitionGame().setup();
 
-	comeBackBtn = new ButtonColor(Rectf(1200,300, 1600, 400), RED, &debugFont26, "BACK");
+	gameControls().setup();
+	hintScreen().setup();
+
+	comeBackBtn = new ButtonColor(Rectf(1520,980, 1920, 1080), RED, &debugFont26, "BACK");
 }
 
 void MainGameScreen::init( LocationEngine* game)
@@ -54,8 +57,10 @@ void MainGameScreen::init( LocationEngine* game)
 		gotoResultScreen();
 	});	
 
-	photoFlashSignal	  = recognitionGame().photoFlashEvent.connect(boost::bind(&MainGameScreen::photoFlashHandler, this));
+	photoFlashSignal	  = recognitionGame().photoFlashEvent.connect(boost::bind(&MainGameScreen::photoFlashHandler, this));	
 
+	gameControls().init();
+	hintScreen().init();
 	recognitionGame().initnew();
 }
 
@@ -135,9 +140,7 @@ void MainGameScreen::update()
 
 void MainGameScreen::draw() 
 {
-	gl::enableAlphaBlending();	
-
-	cameraCanon().draw();	
+	gl::enableAlphaBlending();		
 
 	if (deviceError) 
 	{
@@ -183,14 +186,22 @@ void MainGameScreen::drawDeviceError()
 
 void MainGameScreen::drawGame() 
 {
+	cameraCanon().draw();	
+
 	switch(recognitionGame().state)
 	{
-		case SHOW_FIRST_MESSAGE:			
-			drawFirstMessageBox();
+		case STEP_BACK_MESSAGE:
+			hintScreen().draw();		
+		break;
+		
+		case HINT_MESSAGE:
+			hintScreen().draw();
+			gameControls().draw();
 		break;
 
 		case PRE_GAME_INTRO:
 			drawPreReadyCounterBox();
+			gameControls().draw();
 		break;
 
 		case MAIN_GAME:
@@ -217,11 +228,6 @@ void MainGameScreen::drawGame()
 	}	
 
 	comeBackBtn->draw();
-}
-
-void MainGameScreen::drawFirstMessageBox()
-{
-	Utils::textFieldDraw("ОТОЙДИТЕ ПОДАЛЬШЕ", &debugFont46, Vec2f(400.f, 400.0f), ColorA(1.f, 1.f, 1.f, 1.f));
 }
 
 void MainGameScreen::drawPreReadyCounterBox()

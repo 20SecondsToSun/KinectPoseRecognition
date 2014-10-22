@@ -5,12 +5,16 @@
 #include "Saver.h"
 #include "Playerdata.h"
 #include "KinectAdapter.h"
+#include "HintScreen.h"
+#include "GameControLScreen.h"
+
 
 namespace gameStates
 {
 	enum states {
 					 NONE, 
-					 SHOW_FIRST_MESSAGE,
+					 STEP_BACK_MESSAGE,
+					 HINT_MESSAGE,
 					 PRE_GAME_INTRO,
 					 MAIN_GAME, 
 					 SHOW_GAME_RESULT,
@@ -28,8 +32,9 @@ class Game
 	public:	
 
 		static Game& getInstance() { static Game game; return game; };
-
-		static const int	PREWAITING_TIME = 2;
+		
+		static const int	STEP_BACK_TIME  = 2;
+		static const int	HINT_TIME		= 6;		
 		static const int	PREGAME_TIME	= 3;
 		static const int	ONE_POSE_TIME	= 20;
 		static const int	RESULT_TIME		= 4;	
@@ -37,7 +42,7 @@ class Game
 
 		int state;
 		bool isGameRunning, isPoseDetecting, winAnimationFinished;
-		ci::Timer _preWaitingTimer, _preGameTimer, _onePoseTimer, _resultTimer;
+		ci::Timer  _preGameTimer, _onePoseTimer, _resultTimer, _stepBackTimer, _hintTimer;
 		
 		Pose* foundPose, currentPose;
 		std::vector<Pose*> poses;
@@ -56,14 +61,14 @@ class Game
 
 		void initnew()
 		{
-			state = SHOW_FIRST_MESSAGE;
+			state = STEP_BACK_MESSAGE;
 			kinect().startTracking();			
 			PlayerData::initData();	
 
 			level = 1;
 			poseCode = generatePoseCode();	
 
-			_preWaitingTimer.start();
+			_stepBackTimer.start();
 		}
 
 		int generatePoseCode()
@@ -73,11 +78,16 @@ class Game
 
 		void update()
 		{
+			//console()<<"state:::::::::::::::::::::::::::::  "<<_preGameTimer.getSeconds()<<endl;
 			switch(state)
 			{
-				case SHOW_FIRST_MESSAGE:
-					updateFirstMessage();
+				case STEP_BACK_MESSAGE:
+					updateStepBackMessage();
 				break;
+
+				case HINT_MESSAGE:
+					updateHintMessage();
+				break;			
 
 				case PRE_GAME_INTRO:
 					updatePreGameIntro();
@@ -105,13 +115,30 @@ class Game
 			}
 		}
 
-		void updateFirstMessage() 
+		void updateStepBackMessage() 
 		{
-			if (preWaitingTimerIsFinished() && kinect().getSkeletsInFrame() >0)
+			if(stepBackTimerFinished() && kinect().getSkeletsInFrame() > 0)
 			{
-				_preWaitingTimer.stop();
+				_stepBackTimer.stop();
+				_hintTimer.start();
+
+				hintScreen().startHint();
+				gameControls().show();
+
+				state = HINT_MESSAGE;	
+			}
+		}
+
+		void updateHintMessage() 
+		{
+			if ((int)_hintTimer.getSeconds() == HINT_TIME - 1)			
+				hintScreen().out();
+
+			if(hintTimerFinished())
+			{
+				_hintTimer.stop();
 				_preGameTimer.start();
-				state = PRE_GAME_INTRO;				
+				state = PRE_GAME_INTRO;	
 			}
 		}
 
@@ -144,7 +171,7 @@ class Game
 		{
 			updateGame();
 	
-			if (state == MAIN_GAME)/// getPoseProgress() >= MATCHING_MAX_VALUE)
+			if ( getPoseProgress() >= MATCHING_MAX_VALUE)//state == MAIN_GAME)/// getPoseProgress() >= MATCHING_MAX_VALUE)
 			{
 				isPoseDetecting		 = true;
 				isGameRunning		 = false;
@@ -375,7 +402,7 @@ class Game
 				}
 				mathPercent += onePartPercent;
 			}
-			mathPercent*=0.01;
+			mathPercent *=0.01f;
 		}
 
 		double getMatchPercent()
@@ -403,15 +430,21 @@ class Game
 
 		void stopAllTimersIfNeed()
 		{
-			if(!_preWaitingTimer.isStopped()) _preWaitingTimer.stop();
+			if(!_stepBackTimer.isStopped()) _stepBackTimer.stop();
+			if(!_hintTimer.isStopped()) _hintTimer.stop();
 			if(!_preGameTimer.isStopped()) _preGameTimer.stop();
 			if(!_onePoseTimer.isStopped()) _onePoseTimer.stop();
 			if(!_resultTimer.isStopped()) _resultTimer.stop();			
 		}
 		
-		bool preWaitingTimerIsFinished() 
+		bool stepBackTimerFinished() 
 		{
-			return  (!_preWaitingTimer.isStopped() &&  _preWaitingTimer.getSeconds() > PREWAITING_TIME);
+			return  (!_stepBackTimer.isStopped() &&  _stepBackTimer.getSeconds() > STEP_BACK_TIME);
+		}
+
+		bool hintTimerFinished() 
+		{
+			return  (!_hintTimer.isStopped() &&  _hintTimer.getSeconds() > HINT_TIME);
 		}
 
 		bool preGameTimerIsFinished() 

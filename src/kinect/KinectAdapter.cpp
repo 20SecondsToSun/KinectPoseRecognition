@@ -67,10 +67,8 @@ void KinectAdapter::update()
 	}
 	else
 	{
-		_isConnected = true;
-
+		//_isConnected = true;
 		if (!reconnectTimer.isStopped())	
-
 			reconnectTimer.stop();		
 	}
 }

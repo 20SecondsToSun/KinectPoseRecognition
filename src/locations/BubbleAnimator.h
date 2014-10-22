@@ -69,8 +69,7 @@ class BubbleAnimator
 		{
 			index = nextIndex();
 			alphaBubble = 0;
-			timer.start();
-			//console()<<"index:::::::::::::  "<<index<<endl;
+			timer.start();			
 			timeline().apply( &alphaBubble, 0.0f, 1.0f, 0.9f, EaseInOutQuart() );
 		}
 

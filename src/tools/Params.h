@@ -5,7 +5,7 @@
 #include "Utils.h"
 #include "FontStore.h"
 
-//#define kinectUsed
+#define kinectUsed
 //#define   recording
 #define debug	
 

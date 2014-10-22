@@ -14,6 +14,9 @@
 #include "AssetsManager.h"
 #include "CameraAdapter.h"
 
+#include "GameControLScreen.h"
+#include "HintScreen.h"
+
 using namespace ci;
 using namespace ci::app;
 using namespace gl;
@@ -57,8 +60,7 @@ class MainGameScreen : public Location
 		bool showGameResultTimeIsFinished();
 		void gotoResultScreen();
 		
-		void drawGame();		
-		void drawFirstMessageBox();
+		void drawGame();				
 		void drawPreReadyCounterBox();
 		void drawPoseSilhouette();
 		void drawGameResult();

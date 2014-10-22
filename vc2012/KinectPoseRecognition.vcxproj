@@ -167,6 +167,8 @@
     <ClInclude Include="..\src\kinect\KinectBase.h" />
     <ClInclude Include="..\src\locations\AssetsManager.h" />
     <ClInclude Include="..\src\locations\BubbleAnimator.h" />
+    <ClInclude Include="..\src\locations\GameControLScreen.h" />
+    <ClInclude Include="..\src\locations\HintScreen.h" />
     <ClInclude Include="..\src\locations\IntroScreen.h" />
     <ClInclude Include="..\src\locations\Location.h" />
     <ClInclude Include="..\src\locations\LocationEngine.h" />

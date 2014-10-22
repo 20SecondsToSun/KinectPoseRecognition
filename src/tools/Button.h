@@ -19,9 +19,8 @@ namespace MouseEvents
 
 namespace MouseTypes
 {
-	static const int		COLOR_BTN = 1;
+	static const int		COLOR_BTN   = 1;
 	static const int		TEXTURE_BTN = 1;
-	
 }
 
 class Button
@@ -71,7 +70,4 @@ class Button
 		std::string		code;
 		ci::gl::Texture textTexture;
 		ci::Anim<ci::ColorA> overTextColor;
-
-		
-
 };

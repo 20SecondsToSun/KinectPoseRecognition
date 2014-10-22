@@ -7,8 +7,8 @@
 
 
 #include "LocationEngine.h"
-#include "IntroScreen.h"
-//#include "MainGameScreen.h"
+//#include "IntroScreen.h"
+#include "MainGameScreen.h"
 //#include "ResultScreen.h"
 //#include "KinectAdapter.h"
 
@@ -68,14 +68,14 @@ void KinectPoseRecognitionApp::setup()
 	
 		saver().loadConfigData();
 
-		IntroScreen::Instance()->setup();
-		//MainGameScreen::Instance()->setup();
+		//IntroScreen::Instance()->setup();
+		MainGameScreen::Instance()->setup();
 		//ResultScreen::Instance()->setup();
 
 		//popup().start(popupTypes::EMAIL);	
 
 		game.init(getWindow());
-		game.changeState(IntroScreen::Instance());
+		game.changeState(MainGameScreen::Instance());
 	#endif
 
 
@@ -221,7 +221,7 @@ void KinectPoseRecognitionApp::keyDown( KeyEvent event )
 				game.changeState(IntroScreen::Instance());
 			break;
 			case '2':
-				//game.changeState(MainGameScreen::Instance());
+				game.changeState(MainGameScreen::Instance());
 			break;
 			case '3':
 				//game.changeState(ResultScreen::Instance());
