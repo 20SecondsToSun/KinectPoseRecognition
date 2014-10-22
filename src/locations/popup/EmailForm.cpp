@@ -18,13 +18,13 @@ void EmailForm::setup()
 	emailInputFont			= Font( loadFile(getAssetPath("fonts/ToyotaDisplay_Bd.ttf")), 70 );
 	emailAddFont			= Font( loadFile(getAssetPath("fonts/ToyotaDisplay_Bd.ttf")), 20 );
 
-	addEmailBtn = new ButtonTex(addEmailTex, "addEmail", getWindow());
+	addEmailBtn = new ButtonTex(addEmailTex, "addEmail");
 	addEmailBtn->setScreenField(Vec2f(389.0f, 260.0f));	
 
-	deleteAllLettersBtn = new ButtonTex(deleteAllTex, "deleteAll", getWindow());	
+	deleteAllLettersBtn = new ButtonTex(deleteAllTex, "deleteAll");	
 	deleteAllLettersBtn->setScreenField(Vec2f(1463.0f, 135.0f));	
 
-	closeEmailBtn= new ButtonTex(closeEmailTex, "closeEmail", getWindow());
+	closeEmailBtn= new ButtonTex(closeEmailTex, "closeEmail");
 	closeEmailBtn->setScreenField( Vec2f(1778.0f, 88.0f));	
 }
 

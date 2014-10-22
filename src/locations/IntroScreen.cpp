@@ -8,19 +8,30 @@ IntroScreen IntroScreen::IntroScreenState;
 
 void IntroScreen::setup()
 {	
-	cat		  = *AssetManager::getInstance()->getTexture( "images/diz/cat.png" );
-	logo	  = *AssetManager::getInstance()->getTexture( "images/diz/logo1.png" );	
-	text1	  = *AssetManager::getInstance()->getTexture( "images/diz/text1.png" );	
+	cat	  = *AssetManager::getInstance()->getTexture( "images/diz/cat.png" );
+	logo  = *AssetManager::getInstance()->getTexture( "images/diz/logo1.png" );	
+	text1 = *AssetManager::getInstance()->getTexture( "images/diz/text1.png" );	
 
 
-	playImage		  = *AssetManager::getInstance()->getTexture( "images/play.jpg" );
-	instructionImage  = *AssetManager::getInstance()->getTexture( "images/instruction.jpg" );
+	cat2   = *AssetManager::getInstance()->getTexture( "images/diz/cat2.png" );
+	btnFon = *AssetManager::getInstance()->getTexture( "images/diz/btnFon.png" );
+	paws   = *AssetManager::getInstance()->getTexture( "images/diz/paws.png" );
+	
+	bubbleAnimator().setup();
+
+	instructionImage  = *AssetManager::getInstance()->getTexture( "images/diz/instr.png" );
 
 	Font *btnFont = fonts().getFont("Helvetica Neue", 46);
 
-	startInstructionBtn = new ButtonColor(Rectf(1000,700,1600, 800),  RED, btnFont, "ÏÎÈÃÐÀÉ ÑÎ ÌÍÎÉ");
-	startGameBtn		= new ButtonColor(Rectf(1200,700,1600, 800),  RED, btnFont, "ÍÀ×ÀÒÜ ÈÃÐÓ");	
-	comeBackBtn			= new ButtonColor(Rectf(1200,300, 1600, 400), RED, btnFont, "ÍÀÇÀÄ");
+	Texture startInstructionBtnTex   = *AssetManager::getInstance()->getTexture( "images/diz/btn_off.png" );
+	Texture startInstructionBtnTexUp   = *AssetManager::getInstance()->getTexture( "images/diz/btn_on.png" );
+
+	startInstructionBtn = new ButtonTex(startInstructionBtnTex,  "startInstruction");
+	startInstructionBtn->setScreenField(Vec2f(502, 505));
+	startInstructionBtn->setDownState(startInstructionBtnTexUp);
+
+	startGameBtn		= new ButtonColor(Rectf(1200,700,1600, 800),  RED, btnFont, "ÍÀ×ÀÒÜ ÈÃÐÓ");
+	comeBackBtn			= new ButtonColor(Rectf(1520,980, 1920, 1080), RED, btnFont, "ÍÀÇÀÄ");
 }
 
 void IntroScreen::init( LocationEngine* game)
@@ -29,26 +40,36 @@ void IntroScreen::init( LocationEngine* game)
 	state = INIT;	
 
 	_game->freezeLocation = false;
-	isPeopleInFrame = false;
+	isPeopleInFrame = false;	
 	
-	startInstructionBtnSignal = startInstructionBtn->mouseDownEvent.connect(boost::bind(&IntroScreen::startInstructionBtnDown, this));
-	startGameBtnSignal		  = startGameBtn->mouseDownEvent.connect(boost::bind(&IntroScreen::startGameBtnDown, this));		
-	comeBackBtnSignal		  = comeBackBtn->mouseDownEvent.connect(boost::bind(&IntroScreen::gotoFirstScreen, this));
+	initAnimateParam();
+}
 
-	catAnimate = -507;
-	timeline().apply( &catAnimate, 0.0f, 0.5f, EaseOutCubic() );
+void IntroScreen::initAnimateParam()
+{
+	catAnimate = -537;
+	timeline().apply( &catAnimate, 0.0f, 0.9f, EaseInOutQuart() );
 
-	logoAnimate= -1080;
-	timeline().apply( &logoAnimate, 0.0f, 0.5f, EaseOutCubic() );
+	logoAnimate= -1180;
+	timeline().apply( &logoAnimate, 0.0f,  0.9f, EaseInOutQuart() );
 
-	textAnimateY = 870;
-	textAnimateAlpha = 0.6;
-	timeline().apply( &textAnimateY, 885.0f, 0.5f, EaseOutCubic() );
-	timeline().apply( &textAnimateAlpha, 885.0f, 0.5f, EaseOutCubic() );
+	textAnimateY = 860;
+	textAnimateAlpha = 0;
+	timeline().apply( &textAnimateY, 885.0f,  0.9f, EaseInOutQuart() );
+	timeline().apply( &textAnimateAlpha, 1.0f,  0.9f, EaseInOutQuart() );
+}
+
+void IntroScreen::inviteAnimateParam() 
+{
+	bubbleAnimator().init();
+	cat2AnimateVec = Vec2f(432, 1080);
+	instructBtnAnimateVec = Vec2f(0, 1080);
+	timeline().apply( &cat2AnimateVec, Vec2f(432, 127), 0.9f, EaseInOutQuart() );
+	timeline().apply( &instructBtnAnimateVec, Vec2f(0, 0), 0.9f, EaseInOutQuart() );
 }
 
 void IntroScreen::startInstructionBtnDown()
-{
+{	
 	if(!_game->freezeLocation)
 	{
 		nextState = SHOW_INSTRUCTION;		
@@ -69,9 +90,20 @@ void IntroScreen::gotoFirstScreen()
 {
 	if (state!= INIT && !_game->freezeLocation)
 	{
+		initAnimateParam();
 		nextState = INIT;		
 		changeState();		
 		comeBackTimerStop();	
+	}
+}
+
+void IntroScreen::gotoInviteScreen() 
+{
+	if (state!= SHOW_INVITE && !_game->freezeLocation)
+	{
+		nextState = SHOW_INVITE;
+		inviteAnimateParam();
+		changeState();
 	}
 }
 
@@ -83,17 +115,14 @@ void IntroScreen::cleanup()
 	comeBackTimerStop();
 }
 
-void IntroScreen::mouseEvents()
+void IntroScreen::mouseEvents(int type)
 {	
 	MouseEvent event = _game->getMouseEvent();	
 
-	if (!_game->freezeLocation && event.isLeftDown())
+	if (!_game->freezeLocation && event.isLeft() && type == MouseEvents::MOUSE_UP)
 	{
 		if(state == INIT)
-		{
-			nextState = SHOW_INVITE;			
-			changeState();	
-		}
+			gotoInviteScreen();
 		else comeBackTimerStart();
 	}
 }
@@ -128,41 +157,28 @@ void IntroScreen::update()
 	{
 		case INIT:
 			if (isPeopleInFrame)
-			{
-				nextState = SHOW_INVITE;				
-				changeState();
-			}	
+				gotoInviteScreen();
+		
 			#ifdef debug
 				debugString = "";
 			#endif
 		break;
 
 		case SHOW_INVITE:			
-			if (isComeBackTimerKinectFired())
-			{
-				nextState = INIT;
-				changeState();
-			}
+			if (isComeBackTimerKinectFired())			
+				gotoFirstScreen();
+			
 			#ifdef debug
-				if (isPeopleInFrame)
-				{
-					debugString = "Åñòü êòî-òî â çîíå  ";//+to_string(kinect().getSkeletsInFrame());
-				}
-				else
-				{
-					debugString = "Ëþäåé íåò ñ çîíå, \nâîçâðàùåíèå íà ãëàâíûé ýêðàí ïðîèçîéäåò ÷åðåç : "+to_string(getSecondsToComeBack());
-				}
+				debugString = to_string(getSecondsToComeBack());	
 			#endif
+			bubbleAnimator().update();
 		break;
 
 		case SHOW_INSTRUCTION:			
 			if (isComeBackTimerTouchFired())
-			{
-				nextState = INIT;			
-				changeState();	
-			}
+				gotoFirstScreen();
 			#ifdef debug
-				debugString = "Âîçâðàùåíèå íà ãëàâíûé ýêðàí ïðîèçîéäåò ÷åðåç : "+to_string(getSecondsToComeBack());	
+				debugString = to_string(getSecondsToComeBack());	
 			#endif
 		break;
 	}	
@@ -172,7 +188,6 @@ void IntroScreen::draw()
 {
 	gl::enableAlphaBlending();	
 	gl::color( Color::white());
-	Rectf centeredRect = Rectf( 0.0f, 0.0f, getWindowWidth(), getWindowHeight() ).getCenteredFit( getWindowBounds(),true );	
 
 	switch (state)
 	{
@@ -181,13 +196,11 @@ void IntroScreen::draw()
 		break;
 
 		case SHOW_INVITE:
-			gl::draw( playImage, centeredRect);	
-			startInstructionBtn->draw();
-			comeBackBtn->draw();
+			drawInviteElements();			
 		break;
 
 		case SHOW_INSTRUCTION:
-			gl::draw( instructionImage, centeredRect);	
+			gl::draw( instructionImage);	
 			startGameBtn->draw();
 			comeBackBtn->draw();
 		break;
@@ -203,7 +216,7 @@ void IntroScreen::draw()
 
 	if(_game->freezeLocation)
 	{
-		gl::color(ColorA(0.01, 0.31, 0.62, alphaAnimate));
+		gl::color(ColorA(38 /255.0,184/255.0,240/255.0, alphaAnimate));
 		//gl::color(Color::hex(0x011f3e));
 		gl::drawSolidRect(Rectf( 0.0f, 0.0f, getWindowWidth(), getWindowHeight()));
 		gl::color(Color::white());
@@ -224,14 +237,40 @@ void IntroScreen::drawInitElements()
 
 	gl::pushMatrices();
 		gl::translate(547, textAnimateY);
+		gl::color(ColorA(1,1,1,textAnimateAlpha));
 		gl::draw(text1);
+		gl::color(Color::white());
 	gl::popMatrices();
+}
+
+void IntroScreen::drawInviteElements() 
+{
+	bubbleAnimator().draw();
+
+	gl::pushMatrices();
+		gl::translate(cat2AnimateVec);
+		gl::draw(cat2);	
+		gl::translate(Vec2f(29, 353));
+		gl::draw(btnFon);	
+	gl::popMatrices();
+
+	gl::pushMatrices();
+		gl::translate(instructBtnAnimateVec);
+		startInstructionBtn->draw();
+
+		gl::pushMatrices();
+			gl::translate(Vec2f(435, 429));
+			gl::draw(paws);	
+		gl::popMatrices();
+	gl::popMatrices();
+
+	comeBackBtn->draw();
 }
 
 void IntroScreen::changeState() 
 {
 	_game->freezeLocation = true;
-	timeline().apply( &alphaAnimate, 0.0f, 1.0f, 0.9f, EaseOutCubic() ).finishFn( bind( &IntroScreen::animationFinished, this ) );	
+	timeline().apply( &alphaAnimate,  0.0f, 1.0f, 0.4f, EaseOutCubic() ).finishFn( bind( &IntroScreen::animationFinished, this ) );//.delay(0.5);	
 }
 
 void IntroScreen::animationFinished() 
@@ -244,12 +283,13 @@ void IntroScreen::animationFinished()
 		case INIT:				
 			startInstructionBtnSignal.disconnect();
 			comeBackBtnSignal.disconnect();
-			startGameBtnSignal.disconnect();		
+			startGameBtnSignal.disconnect();	
+			bubbleAnimator() .kill();
 		break;
 
 		case SHOW_INVITE:	
 			if (!startInstructionBtnSignal.connected())
-				startInstructionBtnSignal = startInstructionBtn->mouseDownEvent.connect(boost::bind(&IntroScreen::startInstructionBtnDown, this));
+				startInstructionBtnSignal = startInstructionBtn->mouseUpEvent.connect(boost::bind(&IntroScreen::startInstructionBtnDown, this));
 
 			if (!comeBackBtnSignal.connected())
 				comeBackBtnSignal		  = comeBackBtn->mouseDownEvent.connect(boost::bind(&IntroScreen::gotoFirstScreen, this));
@@ -260,11 +300,12 @@ void IntroScreen::animationFinished()
 			if (!startGameBtnSignal.connected())
 				startGameBtnSignal		  = startGameBtn->mouseDownEvent.connect(boost::bind(&IntroScreen::startGameBtnDown, this));
 
+			bubbleAnimator() .kill();
 			startInstructionBtnSignal.disconnect();
 		break;
 
 		case START_GAME:		
-			_game->changeState(MainGameScreen::Instance());
+			//_game->changeState(MainGameScreen::Instance());
 		break;
 	}	
 }

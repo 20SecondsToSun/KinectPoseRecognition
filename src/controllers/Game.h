@@ -4,6 +4,7 @@
 #include "cinder/app/AppBasic.h"
 #include "Saver.h"
 #include "Playerdata.h"
+#include "KinectAdapter.h"
 
 namespace gameStates
 {

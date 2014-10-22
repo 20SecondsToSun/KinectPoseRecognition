@@ -76,6 +76,9 @@
     <Filter Include="Source Files\controllers\game">
       <UniqueIdentifier>{4143ca4f-6e21-4f25-82ea-7d3267c01378}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\locations\screens\help">
+      <UniqueIdentifier>{c01441de-54fe-4555-aa3e-198d90954d02}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\src\KinectPoseRecognitionApp.cpp">
@@ -298,6 +301,9 @@
     </ClInclude>
     <ClInclude Include="..\src\controllers\Game.h">
       <Filter>Source Files\controllers\game</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\locations\BubbleAnimator.h">
+      <Filter>Source Files\locations\screens\help</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -1,18 +1,25 @@
 #pragma once
 
-#include "Params.h"
 #include "cinder/Timeline.h"
 #include "cinder/gl/Texture.h"
 #include "cinder/Timer.h"
 
 #include "Location.h"
 #include "ButtonColor.h"
-#include "MainGameScreen.h"
+#include "ButtonTexture.h"
+#include "AssetsManager.h"
+#include "BubbleAnimator.h"
+
+//#include "MainGameScreen.h"
 
 using namespace ci;
 using namespace ci::app;
 using namespace gl;
 using namespace std;
+
+
+
+
 
 class IntroScreen : public Location
 {
@@ -25,7 +32,7 @@ class IntroScreen : public Location
 		void resume(){};
 
 		void handleEvents(){};
-		void mouseEvents();
+		void mouseEvents(int type);
 		void update();
 		void keyEvents();
 		void draw();
@@ -33,8 +40,6 @@ class IntroScreen : public Location
 		static IntroScreen* Instance() {
 			return &IntroScreenState;
 		}
-
-		void	gotoFirstScreen();
 
 	private:	
 
@@ -55,15 +60,27 @@ class IntroScreen : public Location
 		int						state, nextState;
 		std::string				debugString;		
 	
-		ci::gl::Texture			cat, logo, text1, playImage, instructionImage;
+		ci::gl::Texture			cat, logo, text1, cat2, btnFon, paws,  instructionImage;
 	
-		ButtonColor				*startInstructionBtn, *startGameBtn, *comeBackBtn;
+		ButtonColor				 *startGameBtn, *comeBackBtn;
+
+		ButtonTex *startInstructionBtn;
 
 		ci::Anim<float>			alphaAnimate, catAnimate, logoAnimate,textAnimateY, textAnimateAlpha;	
+		ci::Anim<ci::Vec2f>     cat2AnimateVec, instructBtnAnimateVec;
+		
 
 		void	startInstructionBtnDown();
 		void	startGameBtnDown();
 		void	drawInitElements();
+		void	drawInviteElements();
 		void	animationFinished();
 		void	changeState();
+
+
+		void initAnimateParam();
+		void inviteAnimateParam();
+
+		void gotoFirstScreen();
+		void gotoInviteScreen();
 };

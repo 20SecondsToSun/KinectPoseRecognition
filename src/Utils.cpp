@@ -1,7 +1,5 @@
 #include "Utils.h"
 
-
-
 struct tm Utils::getCurrentTime()
 {
 	time_t     now = time(0);
@@ -10,7 +8,6 @@ struct tm Utils::getCurrentTime()
 	tstruct = *localtime(&now);
 
 	return tstruct;
-
 }
 
 std::string  Utils::duplicateSymbol(std::string str, std::string symb)
@@ -24,7 +21,6 @@ gl::Texture Utils::loadImageFromString(std::string value)
 	auto myImage = ci::loadImage(DataSourceBuffer::create(buff), ImageSource::Options(), "png");
 	return gl::Texture(myImage);
 }
-
 
 int Utils::spc_email_isvalid(const char *address)
 {

@@ -6,10 +6,9 @@
 #include "cinder/gl/gl.h"
 #include "cinder/gl/Texture.h"
 #include "cinder/Timeline.h"
-
+#include <boost/thread.hpp>
 #include "CinderCanon.h"
 #include "CanonCamera.h"
-
 #include "Params.h"
 
 using namespace std;

@@ -13,6 +13,8 @@
 #include <boost/thread.hpp>
 #include <boost/functional/hash.hpp>
 #include "VirtualKeyboard.h"
+#include "AssetsManager.h"
+
 	
 class PopupBase
 {

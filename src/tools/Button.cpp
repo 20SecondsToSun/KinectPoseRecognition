@@ -22,12 +22,21 @@ void Button::setup(ci::app::WindowRef window)
 }
 
 void Button::MouseDown( MouseEvent &event )
-{	
+{
 	if( contains(event.getPos()))
 	{
 		mouseDownEvent();
 	}
 }
+
+void Button::MouseUp( MouseEvent &event )
+{
+	if( contains(event.getPos()))
+	{
+		mouseUpEvent();
+	}
+}
+
 
 void Button::removeConnect(int type)
 {

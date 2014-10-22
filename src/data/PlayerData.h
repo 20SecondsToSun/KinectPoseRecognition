@@ -3,7 +3,6 @@
 #include "cinder/gl/gl.h"
 #include "cinder/ip/Resize.h"
 #include "Params.h"
-#include "KinectAdapter.h"
 
 using namespace  poseParams;
 

@@ -177,4 +177,3 @@ void CanonCamera::draw(Rectf drawingRect) {
         else gl::draw( gl::Texture( sf ), Area(sfRect.getCenteredFit( drawingRect, true )) );
     }
 }
-

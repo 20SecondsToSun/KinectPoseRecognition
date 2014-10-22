@@ -3,28 +3,34 @@
 
 #include "cinder/app/AppNative.h"
 #include "cinder/gl/gl.h"
-#include "KinectAdapter.h"
-#include "cinder/Timer.h"
-#include "Utils.h"
+#include "cinder/params/Params.h"
+
+
 #include "LocationEngine.h"
 #include "IntroScreen.h"
-#include "MainGameScreen.h"
-#include "ResultScreen.h"
-#include "cinder/params/Params.h"
+//#include "MainGameScreen.h"
+//#include "ResultScreen.h"
+//#include "KinectAdapter.h"
+
 #include "Params.h"
+#include "Saver.h"
+#include "Utils.h"
+#include "PlayerData.h"
 #include "Toucher.h"
 
 using namespace ci;
 using namespace ci::app;
 using namespace std;
 
-class KinectPoseRecognitionApp : public AppNative {
-  public:	void				setup();
-	void				keyDown( KeyEvent event );
-	void				mouseDown( MouseEvent event );
-	void				update();
-	void				draw();
-	void				shutdown();
+class KinectPoseRecognitionApp : public AppNative
+{
+  public:	
+	  void				setup();
+		void				keyDown( KeyEvent event );
+		void				mouseDown( MouseEvent event );
+		void				update();
+		void				draw();
+		void				shutdown();
 
 	static const int	secondsToRec		= 5;	
 
@@ -49,7 +55,8 @@ void KinectPoseRecognitionApp::setup()
 	fonts().loadFont( loadFile(getAssetPath("fonts/Helvetica Neue Bold.ttf")), 46);
 	fonts().loadFont( loadFile(getAssetPath("fonts/Helvetica Neue Bold.ttf")), 26);
 	fonts().loadFont( loadFile(getAssetPath("fonts/Helvetica Neue Bold.ttf")), 66);	
-	fonts().loadFont( loadFile(getAssetPath("fonts/Helvetica Neue Light.ttf")), 32);	
+	fonts().loadFont( loadFile(getAssetPath("fonts/Helvetica Neue Light.ttf")), 32);
+	fonts().loadFont( loadFile(getAssetPath("fonts/Helvetica Neue Light.ttf")), 32);
 	fonts().listFonts();
 
 	hintFont = *fonts().getFont("Helvetica Neue", 46);
@@ -62,12 +69,12 @@ void KinectPoseRecognitionApp::setup()
 		saver().loadConfigData();
 
 		IntroScreen::Instance()->setup();
-		MainGameScreen::Instance()->setup();
-		ResultScreen::Instance()->setup();
+		//MainGameScreen::Instance()->setup();
+		//ResultScreen::Instance()->setup();
 
 		//popup().start(popupTypes::EMAIL);	
 
-		game.init("init", getWindow());
+		game.init(getWindow());
 		game.changeState(IntroScreen::Instance());
 	#endif
 
@@ -214,16 +221,18 @@ void KinectPoseRecognitionApp::keyDown( KeyEvent event )
 				game.changeState(IntroScreen::Instance());
 			break;
 			case '2':
-				game.changeState(MainGameScreen::Instance());
+				//game.changeState(MainGameScreen::Instance());
 			break;
 			case '3':
-				game.changeState(ResultScreen::Instance());
+				//game.changeState(ResultScreen::Instance());
 			break;
 			case 'q':
 				shutdown();
 			break;
 			case '0':
+			#ifdef kinectUsed
 				kinect().Shutdown();
+			#endif
 			break;
 			
 		}
@@ -237,11 +246,11 @@ void KinectPoseRecognitionApp::shutdown( )
 		kinect().Shutdown();
 	#endif
 
-	cameraCanon().shutdown();
+	//cameraCanon().shutdown();
 		
 	//IntroScreen::Instance()->shutdown();
 	//MainGameScreen::Instance()->shutdown();
-	ResultScreen::Instance()->shutdown();
+	//ResultScreen::Instance()->shutdown();
 	
 }
 CINDER_APP_NATIVE( KinectPoseRecognitionApp, RendererGl )

@@ -34,7 +34,7 @@ class ResultScreen : public Location
 		void shutdown();
 
 		void handleEvents(){};
-		void mouseEvents();
+		void mouseEvents(int type);
 		void keyEvents(){};
 		void update();
 		void draw();

@@ -352,7 +352,7 @@ void ResultScreen::animationLeaveLocationFinished()
 	_game->changeState(IntroScreen::Instance());
 }
 
-void ResultScreen::mouseEvents( )
+void ResultScreen::mouseEvents(int type )
 {
 	if(_game->freezeLocation) return;
 

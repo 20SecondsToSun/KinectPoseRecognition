@@ -32,7 +32,7 @@ class MainGameScreen : public Location
 		void pause(){};
 		void resume(){};
 		void handleEvents(){};
-		void mouseEvents(){};
+		void mouseEvents(int type){};
 		void keyEvents(){};		
 
 		static MainGameScreen* Instance()

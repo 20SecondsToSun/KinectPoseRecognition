@@ -1,5 +1,4 @@
 #include "Location.h"
-#include "Params.h"
 
 bool Location::isComeBackTimerTouchFired()
 {

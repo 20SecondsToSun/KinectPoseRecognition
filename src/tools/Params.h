@@ -4,9 +4,8 @@
 #include "cinder/ip/Resize.h"
 #include "Utils.h"
 #include "FontStore.h"
-#include "AssetsManager.h"
 
-#define kinectUsed
+//#define kinectUsed
 //#define   recording
 #define debug	
 

@@ -79,11 +79,13 @@
       <AdditionalIncludeDirectories>..\include;..\..\..\\include;..\..\..\\boost;..\blocks\Cinder-KCB\src;..\blocks\Cinder-KCB\lib;$(KINECT_TOOLKIT_DIR)inc;$(KINECTSDK10_DIR)\inc;..\src;..\src\kinect;..\src\locations;..\src\controllers;..\src\data;..\src\tools;..\src\controllers\fonts;..\src\controllers\saver;..\src\camera;..\blocks\Cinder-CanonSdk\include;..\blocks\Cinder-CanonSdk\src;..\blocks\Cinder-CanonSdk\lib\EDSDK\Header;..\src\controllers\photomaker;..\blocks\Cinder-Curl\src;..\src\locations\popup</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;NOMINMAX;_WIN32_WINNT=0x0502;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
-      <PrecompiledHeader />
+      <PrecompiledHeader>
+      </PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <MinimalRebuild>false</MinimalRebuild>
+      <PrecompiledHeaderFile />
     </ClCompile>
     <ProjectReference>
       <LinkLibraryDependencies>true</LinkLibraryDependencies>
@@ -164,6 +166,7 @@
     <ClInclude Include="..\src\kinect\KinectAdapter.h" />
     <ClInclude Include="..\src\kinect\KinectBase.h" />
     <ClInclude Include="..\src\locations\AssetsManager.h" />
+    <ClInclude Include="..\src\locations\BubbleAnimator.h" />
     <ClInclude Include="..\src\locations\IntroScreen.h" />
     <ClInclude Include="..\src\locations\Location.h" />
     <ClInclude Include="..\src\locations\LocationEngine.h" />
