@@ -1,3 +1,5 @@
+#pragma warning(push)
+#pragma warning(disable: 4244)
 #include "ResultScreen.h"
 
 using namespace ci;
@@ -592,3 +594,4 @@ void ResultScreen::cleanup()
 {
 	disconnectListeners();
 }
+#pragma warning(pop)

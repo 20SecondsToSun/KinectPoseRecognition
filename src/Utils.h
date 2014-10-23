@@ -48,4 +48,8 @@ class Utils
                               float ostop);
 
 		static ci::Surface Utils::resizeScreenshot(ci::Surface screenshot, int32_t width, int32_t height);
+
+
+		static gl::Texture  getTextField(std::string text,ci::Font* font,  ci::ColorA color);
+
 };

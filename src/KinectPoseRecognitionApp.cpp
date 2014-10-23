@@ -36,7 +36,7 @@ class KinectPoseRecognitionApp : public AppNative
 
 	 ci::Font			hintFont;
 	 Timer				saveTimer;
-	 string				state, poseName;
+	 string				state;
 
 	 gl::Texture		bg;
 
@@ -106,6 +106,13 @@ void KinectPoseRecognitionApp::setup()
 		//mParams->addParam( "recordingMode", &Params::recording );			
 	#endif
 
+
+	#ifdef recording	
+		cameraCanon().setup();
+		cameraCanon().live();
+		kinect().setup();
+	#endif
+
 	gl::enableAlphaBlending();	
 }
 
@@ -118,6 +125,7 @@ void KinectPoseRecognitionApp::update()
 {
 	 #ifdef recording	
 		kinect().update();
+		kinect().updateSkeletonData();
 		cameraCanon().update();
 
 		 if (state == "RecordingPose")
@@ -193,9 +201,8 @@ void KinectPoseRecognitionApp::keyDown( KeyEvent event )
 			break;
 			case '3':
 				if (state == "SaveOrNot")	
-				{					
-					poseName = "Cat" + kinect().getPoseIndex();					
-					kinect().saveAsTemplate(poseName);
+				{		
+					recognitionGame().saveAsTemplate();
 				}
 				state = "ChooseMode";	
 				kinect().startTracking();
@@ -242,6 +249,7 @@ void KinectPoseRecognitionApp::keyDown( KeyEvent event )
 
 void KinectPoseRecognitionApp::shutdown( )
 {
+	console()<<"SHUT DOWN!!!!!!!!!!"<<endl;
 	#ifdef kinectUsed
 		kinect().Shutdown();
 	#endif
@@ -252,6 +260,7 @@ void KinectPoseRecognitionApp::shutdown( )
 	//MainGameScreen::Instance()->shutdown();
 	//ResultScreen::Instance()->shutdown();
 	
+	console()<<"!!!!!!!!!!!!!!!!SHUT DOWN!!!!!!!!!!"<<endl;
 }
-CINDER_APP_NATIVE( KinectPoseRecognitionApp, RendererGl )
 #pragma warning(pop)
+CINDER_APP_NATIVE( KinectPoseRecognitionApp, RendererGl )

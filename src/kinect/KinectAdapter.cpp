@@ -67,7 +67,7 @@ void KinectAdapter::update()
 	}
 	else
 	{
-		//_isConnected = true;
+		_isConnected = true;
 		if (!reconnectTimer.isStopped())	
 			reconnectTimer.stop();		
 	}
@@ -102,16 +102,26 @@ void KinectAdapter::updateSkeletonData()
 		savePoseDepth = MsKinect::greenScreenUsers(getDepthChannel16u(), getSurface8u(), COLOR_RESOLUTION, DEPTH_RESOLUTION);	
 }
 
+ci::Surface16u KinectAdapter::getSilhouette()
+{
+	return savePoseDepth;
+}
+
 int KinectAdapter::getSkeletsInFrame()
 {
 	#ifdef debug
-		return 1;
+		return 1; 
 	#endif
-
+	
 	if(getDepthChannel16u())
 		return MsKinect::calcNumUsersFromDepth(getDepthChannel16u());
 
 	return 0;
+}
+
+float KinectAdapter::distanceToSkelet()
+{
+	return 1.5f;
 }
 
 void KinectAdapter::draw()

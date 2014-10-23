@@ -720,7 +720,7 @@ Surface16u greenScreenUsers( const Channel16u& depth,const Surface8u& colorSurf,
 	
 	Surface16u surfaceColor( colorSurf.getWidth(), colorSurf.getHeight(),true);
 
-	console()<<"here inside surfaceDepth!!!!!!!!!!!!!!"<<depth.getWidth()<<endl;
+	//console()<<"here inside surfaceDepth!!!!!!!!!!!!!!"<<depth.getWidth()<<endl;
 
 	Surface16u surfaceDepth( depth);
 	

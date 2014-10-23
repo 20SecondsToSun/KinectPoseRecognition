@@ -82,6 +82,12 @@
     <Filter Include="Source Files\controllers\game\graphicSceens">
       <UniqueIdentifier>{67bbb140-3006-4715-a945-1e46c785d0fd}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\math">
+      <UniqueIdentifier>{3b44d9bd-af72-4fbd-9b70-37e71c24afa3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\math\splines">
+      <UniqueIdentifier>{abc54ea4-bb6e-4026-9d50-858704fd3ad5}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\src\KinectPoseRecognitionApp.cpp">
@@ -188,6 +194,15 @@
     </ClCompile>
     <ClCompile Include="..\src\controllers\Server.cpp">
       <Filter>Source Files\controllers\game</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\math\splines\ofxMSASpline2D.cpp">
+      <Filter>Source Files\math\splines</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\math\splines\ofxMSASpline3D.cpp">
+      <Filter>Source Files\math\splines</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\math\splines\ofxMSASurface3D.cpp">
+      <Filter>Source Files\math\splines</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -312,6 +327,30 @@
       <Filter>Source Files\controllers\game\graphicSceens</Filter>
     </ClInclude>
     <ClInclude Include="..\src\locations\GameControLScreen.h">
+      <Filter>Source Files\controllers\game\graphicSceens</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\math\splines\ofxMSASpline.h">
+      <Filter>Source Files\math\splines</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\math\splines\ofxMSASpline1D.h">
+      <Filter>Source Files\math\splines</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\math\splines\ofxMSASpline2D.h">
+      <Filter>Source Files\math\splines</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\math\splines\ofxMSASpline3D.h">
+      <Filter>Source Files\math\splines</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\math\splines\ofxMSASplineInterpolationTypes.h">
+      <Filter>Source Files\math\splines</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\math\splines\ofxMSASplineTemplate.h">
+      <Filter>Source Files\math\splines</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\math\splines\ofxMSASurface3D.h">
+      <Filter>Source Files\math\splines</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\locations\ComicsScreen.h">
       <Filter>Source Files\controllers\game\graphicSceens</Filter>
     </ClInclude>
   </ItemGroup>

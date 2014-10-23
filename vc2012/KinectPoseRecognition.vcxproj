@@ -76,7 +76,7 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
-      <AdditionalIncludeDirectories>..\include;..\..\..\\include;..\..\..\\boost;..\blocks\Cinder-KCB\src;..\blocks\Cinder-KCB\lib;$(KINECT_TOOLKIT_DIR)inc;$(KINECTSDK10_DIR)\inc;..\src;..\src\kinect;..\src\locations;..\src\controllers;..\src\data;..\src\tools;..\src\controllers\fonts;..\src\controllers\saver;..\src\camera;..\blocks\Cinder-CanonSdk\include;..\blocks\Cinder-CanonSdk\src;..\blocks\Cinder-CanonSdk\lib\EDSDK\Header;..\src\controllers\photomaker;..\blocks\Cinder-Curl\src;..\src\locations\popup</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\include;..\..\..\\include;..\..\..\\boost;..\blocks\Cinder-KCB\src;..\blocks\Cinder-KCB\lib;$(KINECT_TOOLKIT_DIR)inc;$(KINECTSDK10_DIR)\inc;..\src;..\src\kinect;..\src\locations;..\src\controllers;..\src\data;..\src\tools;..\src\controllers\fonts;..\src\controllers\saver;..\src\camera;..\blocks\Cinder-CanonSdk\include;..\blocks\Cinder-CanonSdk\src;..\blocks\Cinder-CanonSdk\lib\EDSDK\Header;..\src\controllers\photomaker;..\blocks\Cinder-Curl\src;..\src\locations\popup;..\src\math\splines</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;NOMINMAX;_WIN32_WINNT=0x0502;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <PrecompiledHeader>
@@ -135,6 +135,9 @@
     <ClCompile Include="..\src\locations\popup\Popup.cpp" />
     <ClCompile Include="..\src\locations\ResultScreen.cpp" />
     <ClCompile Include="..\src\locations\TextureManager.cpp" />
+    <ClCompile Include="..\src\math\splines\ofxMSASpline2D.cpp" />
+    <ClCompile Include="..\src\math\splines\ofxMSASpline3D.cpp" />
+    <ClCompile Include="..\src\math\splines\ofxMSASurface3D.cpp" />
     <ClCompile Include="..\src\tools\Button.cpp" />
     <ClCompile Include="..\src\tools\ButtonColor.cpp" />
     <ClCompile Include="..\src\tools\ButtonTexture.cpp" />
@@ -167,6 +170,7 @@
     <ClInclude Include="..\src\kinect\KinectBase.h" />
     <ClInclude Include="..\src\locations\AssetsManager.h" />
     <ClInclude Include="..\src\locations\BubbleAnimator.h" />
+    <ClInclude Include="..\src\locations\ComicsScreen.h" />
     <ClInclude Include="..\src\locations\GameControLScreen.h" />
     <ClInclude Include="..\src\locations\HintScreen.h" />
     <ClInclude Include="..\src\locations\IntroScreen.h" />
@@ -177,6 +181,13 @@
     <ClInclude Include="..\src\locations\popup\Popup.h" />
     <ClInclude Include="..\src\locations\ResultScreen.h" />
     <ClInclude Include="..\src\locations\TextureManager.h" />
+    <ClInclude Include="..\src\math\splines\ofxMSASpline.h" />
+    <ClInclude Include="..\src\math\splines\ofxMSASpline1D.h" />
+    <ClInclude Include="..\src\math\splines\ofxMSASpline2D.h" />
+    <ClInclude Include="..\src\math\splines\ofxMSASpline3D.h" />
+    <ClInclude Include="..\src\math\splines\ofxMSASplineInterpolationTypes.h" />
+    <ClInclude Include="..\src\math\splines\ofxMSASplineTemplate.h" />
+    <ClInclude Include="..\src\math\splines\ofxMSASurface3D.h" />
     <ClInclude Include="..\src\tools\Button.h" />
     <ClInclude Include="..\src\tools\ButtonColor.h" />
     <ClInclude Include="..\src\tools\ButtonTexture.h" />

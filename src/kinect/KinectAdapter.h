@@ -30,10 +30,14 @@ class KinectAdapter: public KinectBase
 		void connect();
 		void updateSkeletonData();
 
+		float distanceToSkelet();
+
 		std::vector<ci::Vec3f> getCurrentSkelet()
 		{
 			return currentSkelet;
 		};
+
+		ci::Surface16u getSilhouette();
 
 	private:
 

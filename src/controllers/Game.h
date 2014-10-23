@@ -7,6 +7,7 @@
 #include "KinectAdapter.h"
 #include "HintScreen.h"
 #include "GameControLScreen.h"
+#include "ComicsScreen.h"
 
 
 namespace gameStates
@@ -20,7 +21,8 @@ namespace gameStates
 					 SHOW_GAME_RESULT,
 					 PHOTO_MAKING_WAIT,
 					 WIN_ANIMATION_FINISH_WAIT,
-					 MAKE_SCREENSHOOT
+					 MAKE_SCREENSHOOT,
+					 COUNTER_STATE
 				};
 }
 
@@ -33,16 +35,19 @@ class Game
 
 		static Game& getInstance() { static Game game; return game; };
 		
-		static const int	STEP_BACK_TIME  = 2;
+		static const int	STEP_BACK_TIME  = 4;	
+		static const int	PREGAME_TIME	= 2;
+		static const int	COUNTDOWN_TIME	= 3;
+		
+
 		static const int	HINT_TIME		= 6;		
-		static const int	PREGAME_TIME	= 3;
 		static const int	ONE_POSE_TIME	= 20;
 		static const int	RESULT_TIME		= 4;	
 		static const int	MATCHING_MAX_VALUE = 100;		
 
 		int state;
 		bool isGameRunning, isPoseDetecting, winAnimationFinished;
-		ci::Timer  _preGameTimer, _onePoseTimer, _resultTimer, _stepBackTimer, _hintTimer;
+		ci::Timer  _preGameTimer, _onePoseTimer, _resultTimer, _stepBackTimer, _hintTimer, _counDownTimer;
 		
 		Pose* foundPose, currentPose;
 		std::vector<Pose*> poses;
@@ -53,7 +58,9 @@ class Game
 		boost::signals2::signal<void(void)> gotoResultScreenEvent;	
 		boost::signals2::signal<void(void)> photoFlashEvent;	
 		boost::signals2::signal<void(void)> levelCompleteEvent, gameOverEvent;
-		
+
+		ci::signals::connection quickAnimationFinishedSignal;
+
 		void setup()
 		{
 			poses = saver().loadPoseBase();
@@ -71,14 +78,9 @@ class Game
 			_stepBackTimer.start();
 		}
 
-		int generatePoseCode()
-		{
-			return level - 1; //TODO
-		}		
-
 		void update()
 		{
-			//console()<<"state:::::::::::::::::::::::::::::  "<<_preGameTimer.getSeconds()<<endl;
+		//	console()<<"state:::::::::::::::::::::::::::::  "<<state<<endl;
 			switch(state)
 			{
 				case STEP_BACK_MESSAGE:
@@ -92,6 +94,13 @@ class Game
 				case PRE_GAME_INTRO:
 					updatePreGameIntro();
 				break;
+
+				case COUNTER_STATE:
+					updateCounterState();
+				break;
+				
+
+
 
 				case MAIN_GAME:			
 					updateMainGame();
@@ -113,57 +122,154 @@ class Game
 					makeScreenShootUpdtae();
 				break;
 			}
+
+			gameControls().update();
 		}
+
+		int generatePoseCode()
+		{
+			return level - 1; //TODO
+		}	
+
+		
 
 		void updateStepBackMessage() 
 		{
-			if(stepBackTimerFinished() && kinect().getSkeletsInFrame() > 0)
+			if(stepBackTimerFinished() && kinect().getSkeletsInFrame() > 0 && kinect().distanceToSkelet() > MIN_DISTANCE_TO_SKELET)
 			{
 				_stepBackTimer.stop();
-				_hintTimer.start();
-
-				hintScreen().startHint();
-				gameControls().show();
-
-				state = HINT_MESSAGE;	
-			}
-		}
-
-		void updateHintMessage() 
-		{
-			if ((int)_hintTimer.getSeconds() == HINT_TIME - 1)			
-				hintScreen().out();
-
-			if(hintTimerFinished())
-			{
-				_hintTimer.stop();
 				_preGameTimer.start();
-				state = PRE_GAME_INTRO;	
+				//_hintTimer.start();
+
+				//hintScreen().startHint();
+
+				//gameControls().setTime(ONE_POSE_TIME);
+				//gameControls().setQuickAnimTime(ONE_POSE_TIME + 40);
+				//gameControls().setQuickAnimPosePercent(.45);	
+				//gameControls().show();
+
+				//state = HINT_MESSAGE;	
+				hintScreen().poseNum = level;
+				hintScreen().startReadySate();
+				state = PRE_GAME_INTRO;					
 			}
 		}
+
 
 		void updatePreGameIntro() 
 		{
 			if (preGameTimerIsFinished())
 			{
 				_preGameTimer.stop();
+				_counDownTimer.start();
+
+				hintScreen().startCountDown();
+				state = COUNTER_STATE;
+
+			}		
+				/*_preGameTimer.stop();
 				_onePoseTimer.start();		
 				state = MAIN_GAME;
 				isPoseDetecting = false;
 				isGameRunning   = true;
+				gameControls().quickAnimationSetProgress(1);
+			}
+			else
+			{
+				gameControls().quickAnimationSetProgress(_preGameTimer.getSeconds());///(float)PREGAME_TIME);				
+			}*/
+		}
+
+		void updateCounterState() 
+		{				
+			if (countDownTimerIsFinished())
+			{
+				_counDownTimer.stop();				
+
+				if (level == 2)
+				{
+					_hintTimer.start();
+					state = HINT_MESSAGE;
+					hintScreen().startHint();
+				}
+				else
+				{
+					_onePoseTimer.start();						
+					isPoseDetecting = false;
+					isGameRunning   = true;
+					//gameControls().quickAnimationSetProgress(1);
+					gameControls().setTime(ONE_POSE_TIME);
+					gameControls().setQuickAnimTime(ONE_POSE_TIME+ 40);
+					gameControls().setQuickAnimPosePercent(.45);	
+				    gameControls().show();
+					state = MAIN_GAME;
+					console()<<"MAIN GAME!!!!!!!!!!!!"<<endl;
+				}
+
+				//state = COUNTER_STATE;
+			}
+			else
+			{
+				hintScreen().updateCountDown( COUNTDOWN_TIME-(int)_counDownTimer.getSeconds());
 			}
 		}
+
+
+		void updateHintMessage() 
+		{
+			if(hintTimerFinished())
+			{
+				_hintTimer.stop();
+				//_preGameTimer.start();
+
+				//hintScreen().out();
+				//gameControls().quickAnimationSetProgress(0);			
+				//state = PRE_GAME_INTRO;					
+			}
+		}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+		
+		
+
+
+
+		
 
 		void updateMainGame() 
 		{
 			if (mainTimerIsFinished())
 			{
+				gameControls().setShowingTime(0);				
 				stopPersonChecking();
 				isPoseDetecting = false;
+				gotoLevelCompleteScreen() ;
 			}
 			else
 			{
-				checkPersonPose();
+				gameControls().setShowingTime(ONE_POSE_TIME - (int)_onePoseTimer.getSeconds());
+				gameControls().setDetentionPercent(mathPercent);				
+				checkPersonPose();			
 			}
 		}
 
@@ -223,6 +329,7 @@ class Game
 		{
 			if (cameraCanon().checkIfDownloaded())
 			{
+				console()<<"cameraCanon().checkIfDownloaded()!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! "<<endl;
 				setPlayerOnePoseGuess(cameraCanon().getpathToDownloadedPhoto());			
 				checkAnimationFinished();
 			}
@@ -235,13 +342,34 @@ class Game
 
 		void checkAnimationFinished() 
 		{
-			state = winAnimationFinished ? SHOW_GAME_RESULT: WIN_ANIMATION_FINISH_WAIT;
+			console()<<"checkAnimationFinished!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! "<<endl;
+			if (winAnimationFinished)
+				gotoLevelCompleteScreen(); 
+			else 
+				state = WIN_ANIMATION_FINISH_WAIT;
 		}
 
 		void updateAnimationWait() 
 		{
 			if (winAnimationFinished)
-				state = SHOW_GAME_RESULT;
+				gotoLevelCompleteScreen(); 
+		}
+
+
+		void gotoLevelCompleteScreen() 
+		{
+			console()<<"GO TO FINAL!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! "<<endl;
+			gameControls().hide();
+
+			comicsScreen().isGuess = isPoseDetecting;
+			if(isPoseDetecting)	
+			{
+				comicsScreen().comicsTexture = PlayerData::playerData[level].screenshot;
+				comicsScreen().poseTexture = getPoseImage();
+			}			
+			comicsScreen().show();
+
+			state = SHOW_GAME_RESULT;	
 		}
 
 		void setPlayerOnePoseGuess(std::string pathToHiRes = "") 
@@ -265,6 +393,12 @@ class Game
 			{				
 				poseCode = generatePoseCode();	
 				state = PRE_GAME_INTRO;
+
+				gameControls().setTime(ONE_POSE_TIME);
+				gameControls().setQuickAnimTime(ONE_POSE_TIME+ 40);
+				gameControls().setQuickAnimPosePercent(.45);	
+				gameControls().show();
+
 				_preGameTimer.start();
 			}
 		}
@@ -297,20 +431,7 @@ class Game
 		ci::Surface getCurrentScreenShot() 
 		{
 			return PlayerData::playerData[level].screenshot;
-		}
-
-	/*	void saveAsTemplate(string name)
-		{
-			if (currentSkelet.size() && savePoseDepth) 
-			{
-				Pose* pose = new Pose();
-				pose->setName(name);
-				pose->setPoints(currentSkelet);
-				pose->setKinectTilt(getTilt());
-				pose->setImage(savePoseDepth);
-				saver().savePoseIntoBase(pose);		
-			}
-		}*/
+		}	
 
 		void matchTemplate()
 		{
@@ -341,8 +462,7 @@ class Game
 		{
 			_onePoseTimer.stop();
 			_resultTimer.start();
-			isGameRunning = false;
-			state = SHOW_GAME_RESULT;
+			isGameRunning = false;			
 		}
 
 		void computeMistakeWay1()
@@ -451,6 +571,10 @@ class Game
 		{	
 			return  (!_preGameTimer.isStopped()	  &&  _preGameTimer.getSeconds() > PREGAME_TIME);
 		}
+		bool countDownTimerIsFinished() 
+		{	
+			return  (!_counDownTimer.isStopped()	  &&  _counDownTimer.getSeconds() > COUNTDOWN_TIME);
+		}
 
 		bool mainTimerIsFinished() 
 		{
@@ -467,6 +591,20 @@ class Game
 			winAnimationFinished = true;
 			_resultTimer.start();	
 		}	
+
+		void saveAsTemplate()
+		{
+			string poseName = "Cat1";// + 1;	
+			if (kinect().getCurrentSkelet().size() && kinect().getSilhouette()) 
+			{
+				Pose* pose = new Pose();
+				pose->setName(poseName);
+				pose->setPoints(kinect().getCurrentSkelet());
+				pose->setKinectTilt(kinect().getTilt());
+				pose->setImage(kinect().getSilhouette());
+				saver().savePoseIntoBase(pose);		
+			}
+		}
 };
 
 inline Game&	recognitionGame() { return Game::getInstance(); };

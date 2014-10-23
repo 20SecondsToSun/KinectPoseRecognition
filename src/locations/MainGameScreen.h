@@ -93,8 +93,7 @@ class MainGameScreen : public Location
 		bool deviceError;
 
 		ci::Font debugFont26, debugFont46;
-		ci::Timer _missedTimer;
-		ci::gl::Texture failImage;
+		ci::Timer _missedTimer;		
 		ButtonColor *comeBackBtn;
 		ci::Anim<float> alphaFinAnimate, alphaFlashAnim;
 };

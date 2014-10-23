@@ -33,6 +33,8 @@ namespace poseParams
 	const int				  POSE_IN_GAME_TOTAL				= 3;
 	static const std::string  DATA_BASE_NAME					= "poses.json";
 	static const std::string  JSON_STORAGE_FOLDER				= "poses";
+
+	const float				  MIN_DISTANCE_TO_SKELET			= 1.3f;
 }
 
 namespace popupTypes

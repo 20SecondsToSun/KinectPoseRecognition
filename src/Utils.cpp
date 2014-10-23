@@ -321,6 +321,16 @@ void Utils::textFieldDraw(std::string text,ci::Font* font, Vec2f coords, ColorA 
 
 }
 
+gl::Texture  Utils::getTextField(std::string text,ci::Font* font, ColorA color)
+{		
+	ci::TextLayout simple;
+	simple.clear(ColorA(1,1,1,0));
+	simple.setFont( *font );
+	simple.setColor(color );
+	simple.addLine(cp1251_to_utf8(text.c_str()));			
+	return gl::Texture( simple.render( true, false ) );
+}
+
 float Utils::map(float value, 
                               float istart, 
                               float istop, 
