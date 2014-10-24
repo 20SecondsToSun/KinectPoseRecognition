@@ -13,9 +13,6 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav</Extensions>
     </Filter>
-    <Filter Include="Source Files\1dollar">
-      <UniqueIdentifier>{fac6e5c5-7456-497c-9e6e-47383b572d34}</UniqueIdentifier>
-    </Filter>
     <Filter Include="blocks">
       <UniqueIdentifier>{dfa2c9b1-464c-4d52-8bca-3acf3e90dc86}</UniqueIdentifier>
     </Filter>
@@ -25,68 +22,77 @@
     <Filter Include="blocks\Cinder-KCB\lib">
       <UniqueIdentifier>{821b68ee-5b0c-4d43-a85c-29c010945083}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\locations">
-      <UniqueIdentifier>{c1dce514-979b-4a8f-b1e2-79ca58762eba}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\locations\engine">
-      <UniqueIdentifier>{de1a19c1-5389-46c2-a692-935c424619a4}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\locations\screens">
-      <UniqueIdentifier>{2e876fca-e632-42b5-8191-99cdfabde1cf}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\controllers">
-      <UniqueIdentifier>{d185e687-4c42-413c-b71b-1331d9c2ad2f}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\controllers\kinectAdapter">
-      <UniqueIdentifier>{60d39534-aabf-45ef-bd78-75d93c8f73a9}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\controllers\assets">
-      <UniqueIdentifier>{9d6a8ed2-d656-4849-b44e-c42a9ca589d8}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\data">
-      <UniqueIdentifier>{15cf0a73-aca3-4f44-abc3-adbd0fff3dbe}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\tools">
-      <UniqueIdentifier>{0e08f232-8988-4573-8d47-d73ae7b56586}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\controllers\fonts">
-      <UniqueIdentifier>{f5d64b4e-a353-4cf7-b30f-20ce53496deb}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\buttons">
-      <UniqueIdentifier>{ba2ff3d6-bf45-457a-b6c7-a91c450d253d}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\controllers\saver">
-      <UniqueIdentifier>{ded768c4-53f8-4181-9369-bf28d57384ab}</UniqueIdentifier>
-    </Filter>
     <Filter Include="blocks\Canon-SDK">
       <UniqueIdentifier>{2097e27a-2c65-41c4-b64e-ea8cdea9f564}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\controllers\camera">
-      <UniqueIdentifier>{b9e56feb-815a-4c30-8690-e8bd2c4aada5}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\controllers\photomaker">
-      <UniqueIdentifier>{b05b70b6-3eb4-4bb4-bb65-a60d061da595}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="blocks\Curl">
-      <UniqueIdentifier>{ebf896ef-db21-4768-b23a-ea568ea82bf9}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\locations\popup">
-      <UniqueIdentifier>{e604a487-2eab-4569-a983-41a4bffe3e04}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\controllers\game">
-      <UniqueIdentifier>{4143ca4f-6e21-4f25-82ea-7d3267c01378}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\locations\screens\help">
-      <UniqueIdentifier>{c01441de-54fe-4555-aa3e-198d90954d02}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\controllers\game\graphicSceens">
-      <UniqueIdentifier>{67bbb140-3006-4715-a945-1e46c785d0fd}</UniqueIdentifier>
     </Filter>
     <Filter Include="Source Files\math">
       <UniqueIdentifier>{3b44d9bd-af72-4fbd-9b70-37e71c24afa3}</UniqueIdentifier>
     </Filter>
     <Filter Include="Source Files\math\splines">
       <UniqueIdentifier>{abc54ea4-bb6e-4026-9d50-858704fd3ad5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\buttons">
+      <UniqueIdentifier>{bae6e77f-2aaf-4480-82af-0ac866145743}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\controllers">
+      <UniqueIdentifier>{5985eebd-8cfd-407e-8d6e-5f8478b227be}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\controllers\assets">
+      <UniqueIdentifier>{4cdcf574-704e-4070-843c-db11fe686d50}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\controllers\kinect">
+      <UniqueIdentifier>{fc0fc1f7-7403-4e7d-8a1f-06c8c6912f27}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\controllers\camera">
+      <UniqueIdentifier>{63638bab-c5e5-4efd-bf13-98a415bc748b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\controllers\fonts">
+      <UniqueIdentifier>{7ef51256-ad92-4537-8274-359c1de40a08}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\controllers\photomaker">
+      <UniqueIdentifier>{9db4c3fa-fed0-4298-b762-3c3cda694494}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\controllers\saver">
+      <UniqueIdentifier>{ef5a6752-517f-44c9-a194-94202646f5a1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\controllers\server">
+      <UniqueIdentifier>{ee54cd69-51a5-4ea1-b656-9b51202e7d45}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\data">
+      <UniqueIdentifier>{899b0433-3530-498c-821d-1e89da79c329}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\game">
+      <UniqueIdentifier>{63071bc2-b415-4d19-9005-87e4ac2605a4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\game\graphicScene">
+      <UniqueIdentifier>{298ca2d7-4ece-49e6-9c8c-729351442c09}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\graphics">
+      <UniqueIdentifier>{c0c9d7ae-6994-4b5e-891c-cd8d8a3b9744}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\locations">
+      <UniqueIdentifier>{fc7c3602-f37c-4c80-8c68-50b09f06af19}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\locations\engine">
+      <UniqueIdentifier>{ec23b803-fc86-40dd-ad29-fd239d9a3597}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\locations\popup">
+      <UniqueIdentifier>{2ce4e320-47b8-4115-93a7-002fde1b5b30}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\tools">
+      <UniqueIdentifier>{2564172a-b237-435c-ab3f-71ffb193a106}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\touchKeyboard">
+      <UniqueIdentifier>{9f1ae954-14c4-4f7f-a684-59e0a62f4978}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\locations\screens">
+      <UniqueIdentifier>{0fdfc4b0-5906-4a77-89da-b853fba58ac5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\locations\screens\help">
+      <UniqueIdentifier>{c8549100-03fc-4ff0-bc3c-c033f2879268}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="blocks\Cinder-Curl">
+      <UniqueIdentifier>{ebf896ef-db21-4768-b23a-ea568ea82bf9}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -99,59 +105,8 @@
     <ClInclude Include="..\include\Resources.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClCompile Include="..\src\1dollar\Dollar.cpp">
-      <Filter>Source Files\1dollar</Filter>
-    </ClCompile>
-    <ClCompile Include="..\src\kinect\KinectAdapter.cpp">
-      <Filter>Source Files\controllers\kinectAdapter</Filter>
-    </ClCompile>
     <ClCompile Include="..\blocks\Cinder-KCB\src\Kinect.cpp">
       <Filter>blocks\Cinder-KCB</Filter>
-    </ClCompile>
-    <ClCompile Include="..\src\locations\Location.cpp">
-      <Filter>Source Files\locations\engine</Filter>
-    </ClCompile>
-    <ClCompile Include="..\src\locations\LocationEngine.cpp">
-      <Filter>Source Files\locations\engine</Filter>
-    </ClCompile>
-    <ClCompile Include="..\src\locations\AssetsManager.cpp">
-      <Filter>Source Files\controllers\assets</Filter>
-    </ClCompile>
-    <ClCompile Include="..\src\locations\IntroScreen.cpp">
-      <Filter>Source Files\locations\screens</Filter>
-    </ClCompile>
-    <ClCompile Include="..\src\locations\MainGameScreen.cpp">
-      <Filter>Source Files\locations\screens</Filter>
-    </ClCompile>
-    <ClCompile Include="..\src\locations\ResultScreen.cpp">
-      <Filter>Source Files\locations\screens</Filter>
-    </ClCompile>
-    <ClCompile Include="..\src\data\PlayerData.cpp">
-      <Filter>Source Files\data</Filter>
-    </ClCompile>
-    <ClCompile Include="..\src\Utils.cpp">
-      <Filter>Source Files\tools</Filter>
-    </ClCompile>
-    <ClCompile Include="..\src\tools\Params.cpp">
-      <Filter>Source Files\tools</Filter>
-    </ClCompile>
-    <ClCompile Include="..\src\controllers\fonts\FontStore.cpp">
-      <Filter>Source Files\controllers\fonts</Filter>
-    </ClCompile>
-    <ClCompile Include="..\src\tools\Button.cpp">
-      <Filter>Source Files\buttons</Filter>
-    </ClCompile>
-    <ClCompile Include="..\src\tools\ButtonColor.cpp">
-      <Filter>Source Files\buttons</Filter>
-    </ClCompile>
-    <ClCompile Include="..\src\tools\ButtonTexture.cpp">
-      <Filter>Source Files\buttons</Filter>
-    </ClCompile>
-    <ClCompile Include="..\src\controllers\saver\Saver.cpp">
-      <Filter>Source Files\controllers\saver</Filter>
-    </ClCompile>
-    <ClCompile Include="..\src\kinect\KinectBase.cpp">
-      <Filter>Source Files\controllers\kinectAdapter</Filter>
     </ClCompile>
     <ClCompile Include="..\blocks\Cinder-CanonSdk\src\CanonCamera.cpp">
       <Filter>blocks\Canon-SDK</Filter>
@@ -159,41 +114,14 @@
     <ClCompile Include="..\blocks\Cinder-CanonSdk\src\CinderCanon.cpp">
       <Filter>blocks\Canon-SDK</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\camera\CameraAdapter.cpp">
-      <Filter>Source Files\controllers\camera</Filter>
-    </ClCompile>
-    <ClCompile Include="..\src\controllers\photomaker\PhotoMaker.cpp">
-      <Filter>Source Files\controllers\photomaker</Filter>
-    </ClCompile>
-    <ClCompile Include="..\src\locations\TextureManager.cpp">
-      <Filter>Source Files\controllers\assets</Filter>
-    </ClCompile>
     <ClCompile Include="..\blocks\Cinder-Curl\src\Curl.cpp">
-      <Filter>blocks\Curl</Filter>
+      <Filter>blocks\Cinder-Curl</Filter>
     </ClCompile>
     <ClCompile Include="..\blocks\Cinder-Curl\src\Ftp.cpp">
-      <Filter>blocks\Curl</Filter>
+      <Filter>blocks\Cinder-Curl</Filter>
     </ClCompile>
     <ClCompile Include="..\blocks\Cinder-Curl\src\FtpManager.cpp">
-      <Filter>blocks\Curl</Filter>
-    </ClCompile>
-    <ClCompile Include="..\src\tools\PreloaderCircle.cpp">
-      <Filter>Source Files\tools</Filter>
-    </ClCompile>
-    <ClCompile Include="..\src\tools\QRcode.cpp">
-      <Filter>Source Files\tools</Filter>
-    </ClCompile>
-    <ClCompile Include="..\src\locations\popup\Popup.cpp">
-      <Filter>Source Files\locations\popup</Filter>
-    </ClCompile>
-    <ClCompile Include="..\src\tools\VirtualKeyboard.cpp">
-      <Filter>Source Files\tools</Filter>
-    </ClCompile>
-    <ClCompile Include="..\src\locations\popup\EmailForm.cpp">
-      <Filter>Source Files\locations\popup</Filter>
-    </ClCompile>
-    <ClCompile Include="..\src\controllers\Server.cpp">
-      <Filter>Source Files\controllers\game</Filter>
+      <Filter>blocks\Cinder-Curl</Filter>
     </ClCompile>
     <ClCompile Include="..\src\math\splines\ofxMSASpline2D.cpp">
       <Filter>Source Files\math\splines</Filter>
@@ -204,67 +132,91 @@
     <ClCompile Include="..\src\math\splines\ofxMSASurface3D.cpp">
       <Filter>Source Files\math\splines</Filter>
     </ClCompile>
+    <ClCompile Include="..\src\buttons\Button.cpp">
+      <Filter>Source Files\buttons</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\buttons\ButtonColor.cpp">
+      <Filter>Source Files\buttons</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\buttons\ButtonTexture.cpp">
+      <Filter>Source Files\buttons</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\touchKeyboard\VirtualKeyboard.cpp">
+      <Filter>Source Files\touchKeyboard</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\tools\Utils.cpp">
+      <Filter>Source Files\tools</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\locations\popup\EmailForm.cpp">
+      <Filter>Source Files\locations\popup</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\locations\popup\Popup.cpp">
+      <Filter>Source Files\locations\popup</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\locations\screens\IntroScreen.cpp">
+      <Filter>Source Files\locations\screens</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\locations\screens\MainGameScreen.cpp">
+      <Filter>Source Files\locations\screens</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\locations\screens\ResultScreen.cpp">
+      <Filter>Source Files\locations\screens</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\locations\engine\Location.cpp">
+      <Filter>Source Files\locations\engine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\locations\engine\LocationEngine.cpp">
+      <Filter>Source Files\locations\engine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\graphics\PreloaderCircle.cpp">
+      <Filter>Source Files\graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\graphics\QRcode.cpp">
+      <Filter>Source Files\graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\data\Params.cpp">
+      <Filter>Source Files\data</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\data\PlayerData.cpp">
+      <Filter>Source Files\data</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\controllers\photomaker\PhotoMaker.cpp">
+      <Filter>Source Files\controllers\photomaker</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\controllers\saver\Saver.cpp">
+      <Filter>Source Files\controllers\saver</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\controllers\server\Server.cpp">
+      <Filter>Source Files\controllers\server</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\controllers\fonts\FontStore.cpp">
+      <Filter>Source Files\controllers\fonts</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\controllers\camera\CameraAdapter.cpp">
+      <Filter>Source Files\controllers\camera</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\controllers\kinect\KinectAdapter.cpp">
+      <Filter>Source Files\controllers\kinect</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\controllers\kinect\KinectBase.cpp">
+      <Filter>Source Files\controllers\kinect</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\controllers\assets\AssetsManager.cpp">
+      <Filter>Source Files\controllers\assets</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\controllers\assets\TextureManager.cpp">
+      <Filter>Source Files\controllers\assets</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\include\Resources.h">
       <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\src\1dollar\Dollar.h">
-      <Filter>Source Files\1dollar</Filter>
-    </ClInclude>
-    <ClInclude Include="..\src\kinect\KinectAdapter.h">
-      <Filter>Source Files\controllers\kinectAdapter</Filter>
     </ClInclude>
     <ClInclude Include="..\blocks\Cinder-KCB\lib\KinectCommonBridgeLib.h">
       <Filter>blocks\Cinder-KCB\lib</Filter>
     </ClInclude>
     <ClInclude Include="..\blocks\Cinder-KCB\src\Kinect.h">
       <Filter>blocks\Cinder-KCB</Filter>
-    </ClInclude>
-    <ClInclude Include="..\src\locations\Location.h">
-      <Filter>Source Files\locations\engine</Filter>
-    </ClInclude>
-    <ClInclude Include="..\src\locations\LocationEngine.h">
-      <Filter>Source Files\locations\engine</Filter>
-    </ClInclude>
-    <ClInclude Include="..\src\locations\AssetsManager.h">
-      <Filter>Source Files\controllers\assets</Filter>
-    </ClInclude>
-    <ClInclude Include="..\src\locations\IntroScreen.h">
-      <Filter>Source Files\locations\screens</Filter>
-    </ClInclude>
-    <ClInclude Include="..\src\locations\MainGameScreen.h">
-      <Filter>Source Files\locations\screens</Filter>
-    </ClInclude>
-    <ClInclude Include="..\src\locations\ResultScreen.h">
-      <Filter>Source Files\locations\screens</Filter>
-    </ClInclude>
-    <ClInclude Include="..\src\data\PlayerData.h">
-      <Filter>Source Files\data</Filter>
-    </ClInclude>
-    <ClInclude Include="..\src\Utils.h">
-      <Filter>Source Files\tools</Filter>
-    </ClInclude>
-    <ClInclude Include="..\src\tools\Params.h">
-      <Filter>Source Files\tools</Filter>
-    </ClInclude>
-    <ClInclude Include="..\src\controllers\fonts\FontStore.h">
-      <Filter>Source Files\controllers\fonts</Filter>
-    </ClInclude>
-    <ClInclude Include="..\src\tools\Button.h">
-      <Filter>Source Files\buttons</Filter>
-    </ClInclude>
-    <ClInclude Include="..\src\tools\ButtonColor.h">
-      <Filter>Source Files\buttons</Filter>
-    </ClInclude>
-    <ClInclude Include="..\src\tools\ButtonTexture.h">
-      <Filter>Source Files\buttons</Filter>
-    </ClInclude>
-    <ClInclude Include="..\src\controllers\saver\Saver.h">
-      <Filter>Source Files\controllers\saver</Filter>
-    </ClInclude>
-    <ClInclude Include="..\src\kinect\KinectBase.h">
-      <Filter>Source Files\controllers\kinectAdapter</Filter>
     </ClInclude>
     <ClInclude Include="..\blocks\Cinder-CanonSdk\include\CanonCamera.h">
       <Filter>blocks\Canon-SDK</Filter>
@@ -275,59 +227,14 @@
     <ClInclude Include="..\blocks\Cinder-CanonSdk\include\CinderCanon.h">
       <Filter>blocks\Canon-SDK</Filter>
     </ClInclude>
-    <ClInclude Include="..\src\camera\CameraAdapter.h">
-      <Filter>Source Files\controllers\camera</Filter>
-    </ClInclude>
-    <ClInclude Include="..\src\controllers\photomaker\PhotoMaker.h">
-      <Filter>Source Files\controllers\photomaker</Filter>
-    </ClInclude>
-    <ClInclude Include="..\src\locations\TextureManager.h">
-      <Filter>Source Files\controllers\assets</Filter>
-    </ClInclude>
     <ClInclude Include="..\blocks\Cinder-Curl\src\Curl.h">
-      <Filter>blocks\Curl</Filter>
+      <Filter>blocks\Cinder-Curl</Filter>
     </ClInclude>
     <ClInclude Include="..\blocks\Cinder-Curl\src\Ftp.h">
-      <Filter>blocks\Curl</Filter>
+      <Filter>blocks\Cinder-Curl</Filter>
     </ClInclude>
     <ClInclude Include="..\blocks\Cinder-Curl\src\FtpManager.h">
-      <Filter>blocks\Curl</Filter>
-    </ClInclude>
-    <ClInclude Include="..\src\tools\PreloaderCircle.h">
-      <Filter>Source Files\tools</Filter>
-    </ClInclude>
-    <ClInclude Include="..\src\tools\QRcode.h">
-      <Filter>Source Files\tools</Filter>
-    </ClInclude>
-    <ClInclude Include="..\src\locations\popup\Popup.h">
-      <Filter>Source Files\locations\popup</Filter>
-    </ClInclude>
-    <ClInclude Include="..\src\tools\VirtualKeyboard.h">
-      <Filter>Source Files\tools</Filter>
-    </ClInclude>
-    <ClInclude Include="..\src\locations\popup\EmailForm.h">
-      <Filter>Source Files\locations\popup</Filter>
-    </ClInclude>
-    <ClInclude Include="..\src\tools\Toucher.h">
-      <Filter>Source Files\tools</Filter>
-    </ClInclude>
-    <ClInclude Include="..\src\controllers\Pose.h">
-      <Filter>Source Files\controllers\game</Filter>
-    </ClInclude>
-    <ClInclude Include="..\src\controllers\Server.h">
-      <Filter>Source Files\controllers\game</Filter>
-    </ClInclude>
-    <ClInclude Include="..\src\controllers\Game.h">
-      <Filter>Source Files\controllers\game</Filter>
-    </ClInclude>
-    <ClInclude Include="..\src\locations\BubbleAnimator.h">
-      <Filter>Source Files\locations\screens\help</Filter>
-    </ClInclude>
-    <ClInclude Include="..\src\locations\HintScreen.h">
-      <Filter>Source Files\controllers\game\graphicSceens</Filter>
-    </ClInclude>
-    <ClInclude Include="..\src\locations\GameControLScreen.h">
-      <Filter>Source Files\controllers\game\graphicSceens</Filter>
+      <Filter>blocks\Cinder-Curl</Filter>
     </ClInclude>
     <ClInclude Include="..\src\math\splines\ofxMSASpline.h">
       <Filter>Source Files\math\splines</Filter>
@@ -350,8 +257,86 @@
     <ClInclude Include="..\src\math\splines\ofxMSASurface3D.h">
       <Filter>Source Files\math\splines</Filter>
     </ClInclude>
-    <ClInclude Include="..\src\locations\ComicsScreen.h">
-      <Filter>Source Files\controllers\game\graphicSceens</Filter>
+    <ClInclude Include="..\src\buttons\Button.h">
+      <Filter>Source Files\buttons</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\buttons\ButtonColor.h">
+      <Filter>Source Files\buttons</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\buttons\ButtonTexture.h">
+      <Filter>Source Files\buttons</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\touchKeyboard\VirtualKeyboard.h">
+      <Filter>Source Files\touchKeyboard</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\tools\Utils.h">
+      <Filter>Source Files\tools</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\locations\popup\EmailForm.h">
+      <Filter>Source Files\locations\popup</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\locations\popup\Popup.h">
+      <Filter>Source Files\locations\popup</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\locations\screens\IntroScreen.h">
+      <Filter>Source Files\locations\screens</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\locations\screens\MainGameScreen.h">
+      <Filter>Source Files\locations\screens</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\locations\screens\ResultScreen.h">
+      <Filter>Source Files\locations\screens</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\locations\screens\help\BubbleAnimator.h">
+      <Filter>Source Files\locations\screens\help</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\locations\engine\Location.h">
+      <Filter>Source Files\locations\engine</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\locations\engine\LocationEngine.h">
+      <Filter>Source Files\locations\engine</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\graphics\PreloaderCircle.h">
+      <Filter>Source Files\graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\graphics\QRcode.h">
+      <Filter>Source Files\graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\graphics\Toucher.h">
+      <Filter>Source Files\graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\data\Params.h">
+      <Filter>Source Files\data</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\data\PlayerData.h">
+      <Filter>Source Files\data</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\controllers\photomaker\PhotoMaker.h">
+      <Filter>Source Files\controllers\photomaker</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\controllers\saver\Saver.h">
+      <Filter>Source Files\controllers\saver</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\controllers\server\Server.h">
+      <Filter>Source Files\controllers\server</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\controllers\fonts\FontStore.h">
+      <Filter>Source Files\controllers\fonts</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\controllers\camera\CameraAdapter.h">
+      <Filter>Source Files\controllers\camera</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\controllers\kinect\KinectAdapter.h">
+      <Filter>Source Files\controllers\kinect</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\controllers\kinect\KinectBase.h">
+      <Filter>Source Files\controllers\kinect</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\controllers\assets\AssetsManager.h">
+      <Filter>Source Files\controllers\assets</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\controllers\assets\TextureManager.h">
+      <Filter>Source Files\controllers\assets</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

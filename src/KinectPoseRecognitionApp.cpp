@@ -26,11 +26,11 @@ class KinectPoseRecognitionApp : public AppNative
 {
   public:	
 	  void				setup();
-		void				keyDown( KeyEvent event );
-		void				mouseDown( MouseEvent event );
-		void				update();
-		void				draw();
-		void				shutdown();
+		void			keyDown( KeyEvent event );
+		void			mouseDown( MouseEvent event );
+		void			update();
+		void			draw();
+		void			shutdown();
 
 	static const int	secondsToRec		= 5;	
 
@@ -178,7 +178,7 @@ void KinectPoseRecognitionApp::draw()
 	#endif	
 
 	#ifdef debug
-		mParams->draw();
+		//mParams->draw();
 	#endif
 
 	toucher().draw();

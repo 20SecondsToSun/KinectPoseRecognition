@@ -76,7 +76,7 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
-      <AdditionalIncludeDirectories>..\include;..\..\..\\include;..\..\..\\boost;..\blocks\Cinder-KCB\src;..\blocks\Cinder-KCB\lib;$(KINECT_TOOLKIT_DIR)inc;$(KINECTSDK10_DIR)\inc;..\src;..\src\kinect;..\src\locations;..\src\controllers;..\src\data;..\src\tools;..\src\controllers\fonts;..\src\controllers\saver;..\src\camera;..\blocks\Cinder-CanonSdk\include;..\blocks\Cinder-CanonSdk\src;..\blocks\Cinder-CanonSdk\lib\EDSDK\Header;..\src\controllers\photomaker;..\blocks\Cinder-Curl\src;..\src\locations\popup;..\src\math\splines</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\include;..\..\..\\include;..\..\..\\boost;..\blocks\Cinder-KCB\src;..\blocks\Cinder-KCB\lib;$(KINECT_TOOLKIT_DIR)inc;$(KINECTSDK10_DIR)\inc;..\src;..\blocks\Cinder-CanonSdk\include;..\blocks\Cinder-CanonSdk\src;..\blocks\Cinder-CanonSdk\lib\EDSDK\Header;..\blocks\Cinder-Curl\src;..\src\buttons;..\src\controllers\assets;..\src\controllers\camera;..\src\controllers\fonts;..\src\controllers\kinect;..\src\controllers\photomaker;..\src\controllers\saver;..\src\controllers\server;..\src\data;..\src\game\graphicScene;..\src\game;..\src\graphics;..\src\locations\engine;..\src\locations\popup;..\src\locations\screens;..\src\math\splines;..\src\tools;..\src\touchKeyboard;..\src\locations\screens\help</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;NOMINMAX;_WIN32_WINNT=0x0502;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <PrecompiledHeader>
@@ -116,36 +116,35 @@
     <ClCompile Include="..\blocks\Cinder-Curl\src\Ftp.cpp" />
     <ClCompile Include="..\blocks\Cinder-Curl\src\FtpManager.cpp" />
     <ClCompile Include="..\blocks\Cinder-KCB\src\Kinect.cpp" />
-    <ClCompile Include="..\src\1dollar\Dollar.cpp" />
-    <ClCompile Include="..\src\camera\CameraAdapter.cpp" />
+    <ClCompile Include="..\src\buttons\Button.cpp" />
+    <ClCompile Include="..\src\buttons\ButtonColor.cpp" />
+    <ClCompile Include="..\src\buttons\ButtonTexture.cpp" />
+    <ClCompile Include="..\src\controllers\assets\AssetsManager.cpp" />
+    <ClCompile Include="..\src\controllers\assets\TextureManager.cpp" />
+    <ClCompile Include="..\src\controllers\camera\CameraAdapter.cpp" />
     <ClCompile Include="..\src\controllers\fonts\FontStore.cpp" />
+    <ClCompile Include="..\src\controllers\kinect\KinectAdapter.cpp" />
+    <ClCompile Include="..\src\controllers\kinect\KinectBase.cpp" />
     <ClCompile Include="..\src\controllers\photomaker\PhotoMaker.cpp" />
     <ClCompile Include="..\src\controllers\saver\Saver.cpp" />
-    <ClCompile Include="..\src\controllers\Server.cpp" />
+    <ClCompile Include="..\src\controllers\server\Server.cpp" />
+    <ClCompile Include="..\src\data\Params.cpp" />
     <ClCompile Include="..\src\data\PlayerData.cpp" />
+    <ClCompile Include="..\src\graphics\PreloaderCircle.cpp" />
+    <ClCompile Include="..\src\graphics\QRcode.cpp" />
     <ClCompile Include="..\src\KinectPoseRecognitionApp.cpp" />
-    <ClCompile Include="..\src\kinect\KinectAdapter.cpp" />
-    <ClCompile Include="..\src\kinect\KinectBase.cpp" />
-    <ClCompile Include="..\src\locations\AssetsManager.cpp" />
-    <ClCompile Include="..\src\locations\IntroScreen.cpp" />
-    <ClCompile Include="..\src\locations\Location.cpp" />
-    <ClCompile Include="..\src\locations\LocationEngine.cpp" />
-    <ClCompile Include="..\src\locations\MainGameScreen.cpp" />
+    <ClCompile Include="..\src\locations\engine\Location.cpp" />
+    <ClCompile Include="..\src\locations\engine\LocationEngine.cpp" />
     <ClCompile Include="..\src\locations\popup\EmailForm.cpp" />
     <ClCompile Include="..\src\locations\popup\Popup.cpp" />
-    <ClCompile Include="..\src\locations\ResultScreen.cpp" />
-    <ClCompile Include="..\src\locations\TextureManager.cpp" />
+    <ClCompile Include="..\src\locations\screens\IntroScreen.cpp" />
+    <ClCompile Include="..\src\locations\screens\MainGameScreen.cpp" />
+    <ClCompile Include="..\src\locations\screens\ResultScreen.cpp" />
     <ClCompile Include="..\src\math\splines\ofxMSASpline2D.cpp" />
     <ClCompile Include="..\src\math\splines\ofxMSASpline3D.cpp" />
     <ClCompile Include="..\src\math\splines\ofxMSASurface3D.cpp" />
-    <ClCompile Include="..\src\tools\Button.cpp" />
-    <ClCompile Include="..\src\tools\ButtonColor.cpp" />
-    <ClCompile Include="..\src\tools\ButtonTexture.cpp" />
-    <ClCompile Include="..\src\tools\Params.cpp" />
-    <ClCompile Include="..\src\tools\PreloaderCircle.cpp" />
-    <ClCompile Include="..\src\tools\QRcode.cpp" />
-    <ClCompile Include="..\src\tools\VirtualKeyboard.cpp" />
-    <ClCompile Include="..\src\Utils.cpp" />
+    <ClCompile Include="..\src\tools\Utils.cpp" />
+    <ClCompile Include="..\src\touchKeyboard\VirtualKeyboard.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\blocks\Cinder-CanonSdk\include\CanonCamera.h" />
@@ -157,30 +156,31 @@
     <ClInclude Include="..\blocks\Cinder-KCB\lib\KinectCommonBridgeLib.h" />
     <ClInclude Include="..\blocks\Cinder-KCB\src\Kinect.h" />
     <ClInclude Include="..\include\Resources.h" />
-    <ClInclude Include="..\src\1dollar\Dollar.h" />
-    <ClInclude Include="..\src\camera\CameraAdapter.h" />
+    <ClInclude Include="..\src\buttons\Button.h" />
+    <ClInclude Include="..\src\buttons\ButtonColor.h" />
+    <ClInclude Include="..\src\buttons\ButtonTexture.h" />
+    <ClInclude Include="..\src\controllers\assets\AssetsManager.h" />
+    <ClInclude Include="..\src\controllers\assets\TextureManager.h" />
+    <ClInclude Include="..\src\controllers\camera\CameraAdapter.h" />
     <ClInclude Include="..\src\controllers\fonts\FontStore.h" />
-    <ClInclude Include="..\src\controllers\Game.h" />
+    <ClInclude Include="..\src\controllers\kinect\KinectAdapter.h" />
+    <ClInclude Include="..\src\controllers\kinect\KinectBase.h" />
     <ClInclude Include="..\src\controllers\photomaker\PhotoMaker.h" />
-    <ClInclude Include="..\src\controllers\Pose.h" />
     <ClInclude Include="..\src\controllers\saver\Saver.h" />
-    <ClInclude Include="..\src\controllers\Server.h" />
+    <ClInclude Include="..\src\controllers\server\Server.h" />
+    <ClInclude Include="..\src\data\Params.h" />
     <ClInclude Include="..\src\data\PlayerData.h" />
-    <ClInclude Include="..\src\kinect\KinectAdapter.h" />
-    <ClInclude Include="..\src\kinect\KinectBase.h" />
-    <ClInclude Include="..\src\locations\AssetsManager.h" />
-    <ClInclude Include="..\src\locations\BubbleAnimator.h" />
-    <ClInclude Include="..\src\locations\ComicsScreen.h" />
-    <ClInclude Include="..\src\locations\GameControLScreen.h" />
-    <ClInclude Include="..\src\locations\HintScreen.h" />
-    <ClInclude Include="..\src\locations\IntroScreen.h" />
-    <ClInclude Include="..\src\locations\Location.h" />
-    <ClInclude Include="..\src\locations\LocationEngine.h" />
-    <ClInclude Include="..\src\locations\MainGameScreen.h" />
+    <ClInclude Include="..\src\graphics\PreloaderCircle.h" />
+    <ClInclude Include="..\src\graphics\QRcode.h" />
+    <ClInclude Include="..\src\graphics\Toucher.h" />
+    <ClInclude Include="..\src\locations\engine\Location.h" />
+    <ClInclude Include="..\src\locations\engine\LocationEngine.h" />
     <ClInclude Include="..\src\locations\popup\EmailForm.h" />
     <ClInclude Include="..\src\locations\popup\Popup.h" />
-    <ClInclude Include="..\src\locations\ResultScreen.h" />
-    <ClInclude Include="..\src\locations\TextureManager.h" />
+    <ClInclude Include="..\src\locations\screens\help\BubbleAnimator.h" />
+    <ClInclude Include="..\src\locations\screens\IntroScreen.h" />
+    <ClInclude Include="..\src\locations\screens\MainGameScreen.h" />
+    <ClInclude Include="..\src\locations\screens\ResultScreen.h" />
     <ClInclude Include="..\src\math\splines\ofxMSASpline.h" />
     <ClInclude Include="..\src\math\splines\ofxMSASpline1D.h" />
     <ClInclude Include="..\src\math\splines\ofxMSASpline2D.h" />
@@ -188,15 +188,8 @@
     <ClInclude Include="..\src\math\splines\ofxMSASplineInterpolationTypes.h" />
     <ClInclude Include="..\src\math\splines\ofxMSASplineTemplate.h" />
     <ClInclude Include="..\src\math\splines\ofxMSASurface3D.h" />
-    <ClInclude Include="..\src\tools\Button.h" />
-    <ClInclude Include="..\src\tools\ButtonColor.h" />
-    <ClInclude Include="..\src\tools\ButtonTexture.h" />
-    <ClInclude Include="..\src\tools\Params.h" />
-    <ClInclude Include="..\src\tools\PreloaderCircle.h" />
-    <ClInclude Include="..\src\tools\QRcode.h" />
-    <ClInclude Include="..\src\tools\Toucher.h" />
-    <ClInclude Include="..\src\tools\VirtualKeyboard.h" />
-    <ClInclude Include="..\src\Utils.h" />
+    <ClInclude Include="..\src\tools\Utils.h" />
+    <ClInclude Include="..\src\touchKeyboard\VirtualKeyboard.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets" />
