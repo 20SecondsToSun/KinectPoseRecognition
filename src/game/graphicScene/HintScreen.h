@@ -48,6 +48,7 @@ class HintScreen
 			Vec2f position;
 			Vec2f scale;
 			float rotation;
+			Texture screenshot;
 		};
 
 		previewParams previewVec[3];
@@ -241,14 +242,7 @@ class HintScreen
 					gl::translate(previewVec[i].position);
 					gl::scale(previewVec[i].scale);
 					gl::rotate(previewVec[i].rotation);
-					if(PlayerData::playerData[i].isSuccess)
-					{
-						gl::draw(PlayerData::playerData[i].screenshot);
-					}
-					else
-					{
-						gl::draw(failImage);
-					}
+					gl::draw(previewVec[i].screenshot);			
 				gl::popMatrices();
 			}
 		}
@@ -276,6 +270,7 @@ class HintScreen
 		void startReadySate()
 		{
 			screenshot = gl::Texture(copyWindowSurface());
+			
 
 			if (poseNum == 1)
 			{
@@ -284,6 +279,7 @@ class HintScreen
 			}
 			else
 			{
+				previewVec[poseNum-2].screenshot = screenshot;
 				timeline().apply( &scaleComicsAnimate,    Vec2f(1.0f, 1.0f), previewVec[poseNum-2].scale, 0.4f, EaseInCubic());
 				timeline().apply( &positionComicsAnimate, Vec2f(0.0f, 0.0f), previewVec[poseNum-2].position, 0.4f, EaseInCubic());
 				timeline().apply( &rotationComicsAnimate, 0.0f             , previewVec[poseNum-2].rotation, 0.4f, EaseInCubic());

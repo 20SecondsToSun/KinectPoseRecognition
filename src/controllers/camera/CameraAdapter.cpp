@@ -126,7 +126,7 @@ void CameraAdapter::reconnect()
 
 bool CameraAdapter::checkIfDownloaded()
 {
-	console()<< "  --------------------- userPhotoIsDownloaded  -------------------------  "<<userPhotoIsDownloaded<<endl;
+	//console()<< "  --------------------- userPhotoIsDownloaded  -------------------------  "<<userPhotoIsDownloaded<<endl;
 	if(isPhotoMakingInThread)
 	{
 		isPhotoMakingInThread = false;

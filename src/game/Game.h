@@ -9,7 +9,6 @@
 #include "GameControLScreen.h"
 #include "ComicsScreen.h"
 
-
 namespace gameStates
 {
 	enum states {
@@ -40,10 +39,10 @@ class Game
 		static const int	PREGAME_TIME	= 2;
 		static const int	COUNTDOWN_TIME	= 3;
 		static const int	HINT_TIME		= 6;		
-		static const int	ONE_POSE_TIME	= 5;
+		static const int	ONE_POSE_TIME	= 25;
 		static const int	RESULT_TIME		= 4;
 		static const int	COUNTERS_ANIM_TIME	= 2;
-		static const int	MATCHING_MAX_VALUE = 100;		
+		static const int	MATCHING_MAX_VALUE = 500;		
 
 		int state;
 		bool isGameRunning, isPoseDetecting, winAnimationFinished;
@@ -56,8 +55,7 @@ class Game
 		float mathPercent;		
 
 		boost::signals2::signal<void(void)> gotoResultScreenEvent;	
-		boost::signals2::signal<void(void)> photoFlashEvent;	
-		boost::signals2::signal<void(void)> levelCompleteEvent, gameOverEvent;
+		boost::signals2::signal<void(void)> photoFlashEvent;
 
 		ci::signals::connection quickAnimationFinishedSignal;
 
@@ -224,7 +222,7 @@ class Game
 				_countersAnimTimer.start();
 				hintScreen().fadeHint();
 				gameControls().show2();
-				state = COUNTERS_ANIMATE;					
+				state = COUNTERS_ANIMATE;
 			}
 		}	
 
@@ -240,7 +238,7 @@ class Game
 				poseCode = generatePoseCode();	
 				
 				_preGameTimer.start();	
-				hintScreen().poseNum = level;				
+				hintScreen().poseNum = level;
 				hintScreen().startReadySate();
 				gameControls().setCurrentPose(poses[poseCode]);
 
@@ -285,15 +283,15 @@ class Game
 				gotoLevelCompleteScreen(); 
 		}
 
-
 		void gotoLevelCompleteScreen() 
 		{
+			console()<<"go to complete:::::::::::::::::"<<endl;
 			gameControls().hide();
 
 			comicsScreen().isGuess = isPoseDetecting;
 			if(isPoseDetecting)	
 			{
-				comicsScreen().comicsTexture = PlayerData::playerData[level].screenshot;
+				comicsScreen().comicsTexture = PlayerData::playerData[level-1].screenshot;
 				comicsScreen().poseTexture   = getPoseImage();
 			}			
 			comicsScreen().show();
@@ -317,8 +315,9 @@ class Game
 		{
 			updateGame();
 	
-			if ( getPoseProgress() >= MATCHING_MAX_VALUE)//state == MAIN_GAME)/// getPoseProgress() >= MATCHING_MAX_VALUE)
+			if ( getPoseProgress() >= MATCHING_MAX_VALUE + 10)//state == MAIN_GAME)/// getPoseProgress() >= MATCHING_MAX_VALUE)
 			{
+				gameControls().showMatching(1.0f);
 				isPoseDetecting		 = true;
 				isGameRunning		 = false;
 				winAnimationFinished = false;	
@@ -341,29 +340,30 @@ class Game
 			if (isGameRunning)	
 			{
 				matchTemplate();
-
+				mathPercent = 1;//
 				if (mathPercent > Params::percentForMatching )		
-				{
-					levelCompletion += 4;
+				{					
+					levelCompletion += 4;					
 				}
 				else
 				{
 					if(levelCompletion - 6 >=0)
 						levelCompletion -= 6;
 					else
-						levelCompletion = 0;
+						levelCompletion = 0;					
 				}
+				gameControls().showMatching((float)levelCompletion/MATCHING_MAX_VALUE);
 			}	
 		}
 
 		void setPlayerOnePoseGuess(std::string pathToHiRes = "") 
-		{
+		{			
 			PlayerData::score++;			
-			PlayerData::playerData[level ].isFocusError = false;
-			PlayerData::playerData[level ].isSuccess	 = true;
-			PlayerData::playerData[level ].pathHiRes	 =  pathToHiRes;
-			PlayerData::playerData[level ].screenshot	 = cameraCanon().getSurface();
-			PlayerData::playerData[level ].storyCode	 = poseCode;
+			PlayerData::playerData[level-1 ].isFocusError = false;
+			PlayerData::playerData[level-1 ].isSuccess	 = true;
+			PlayerData::playerData[level-1 ].pathHiRes	 =  pathToHiRes;
+			PlayerData::playerData[level-1 ].screenshot	 = cameraCanon().getSurface();
+			PlayerData::playerData[level-1 ].storyCode	 = poseCode;			
 		}
 		
 		float getPoseProgress() 

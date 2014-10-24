@@ -170,6 +170,11 @@
     <ClInclude Include="..\src\controllers\server\Server.h" />
     <ClInclude Include="..\src\data\Params.h" />
     <ClInclude Include="..\src\data\PlayerData.h" />
+    <ClInclude Include="..\src\game\Game.h" />
+    <ClInclude Include="..\src\game\graphicScene\ComicsScreen.h" />
+    <ClInclude Include="..\src\game\graphicScene\GameControlScreen.h" />
+    <ClInclude Include="..\src\game\graphicScene\HintScreen.h" />
+    <ClInclude Include="..\src\game\Pose.h" />
     <ClInclude Include="..\src\graphics\PreloaderCircle.h" />
     <ClInclude Include="..\src\graphics\QRcode.h" />
     <ClInclude Include="..\src\graphics\Toucher.h" />

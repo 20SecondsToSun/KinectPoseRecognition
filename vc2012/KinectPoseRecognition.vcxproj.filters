@@ -338,6 +338,21 @@
     <ClInclude Include="..\src\controllers\assets\TextureManager.h">
       <Filter>Source Files\controllers\assets</Filter>
     </ClInclude>
+    <ClInclude Include="..\src\game\Game.h">
+      <Filter>Source Files\game</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\game\Pose.h">
+      <Filter>Source Files\game</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\game\graphicScene\ComicsScreen.h">
+      <Filter>Source Files\game\graphicScene</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\game\graphicScene\GameControlScreen.h">
+      <Filter>Source Files\game\graphicScene</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\game\graphicScene\HintScreen.h">
+      <Filter>Source Files\game\graphicScene</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Resources.rc">

@@ -19,16 +19,19 @@ class GameControLScreen
 
 		static GameControLScreen& getInstance() { static GameControLScreen game; return game; };
 
-		Anim<float>	 alphaBubble, silhouetteAlpha;
+		static const int circlesNum = 4;
+
+		Anim<float>	 alphaBubble, silhouetteAlpha, matchingPopupAlpha;
 		Anim<Vec2f> timerVec, plashkaVec, krugPercentAnimateVec;
 
-		Texture sidePlashka, krugPercent, sector, ciferblat, arrow, silhouette, percentTexure;
+		Texture sidePlashka, krugPercent, sector, ciferblat, arrow, silhouette, percentTexure, matchingPopup;
 
 		Font debugFont26, debugFontText, percentFont;		
 
 		float rotor, quickAnimPosePercent, qaPercent;
-		int quickAnimTime, state, showingSeconds, startingTime, secondsToStop;
-		int percentMatching;	
+		int quickAnimTime, state, showingSeconds, startingTime;
+		float  matchingProgress;	
+		int percentMatching;
 
 		ofxMSASpline2D spline2D;
 		Pose* currentPose;
@@ -46,11 +49,13 @@ class GameControLScreen
 
 		void setup()
 		{
-			sidePlashka   =  loadImage( loadAsset( "images/diz/sidePlashka.png" ));
-			krugPercent   =  loadImage( loadAsset( "images/diz/krugPercent.png" ));
-			sector		  =  loadImage( loadAsset( "images/diz/sector.png" ));
-			ciferblat     =  loadImage( loadAsset( "images/diz/ciferblat.png" ));
-			arrow         =  loadImage( loadAsset( "images/diz/arrow.png" ));
+			sidePlashka   =  *AssetManager::getInstance()->getTexture( "images/diz/sidePlashka.png" );
+			krugPercent   =  *AssetManager::getInstance()->getTexture( "images/diz/krugPercent.png" );
+			sector		  =  *AssetManager::getInstance()->getTexture( "images/diz/sector.png" );
+			ciferblat     =  *AssetManager::getInstance()->getTexture( "images/diz/ciferblat.png" );
+			arrow         =  *AssetManager::getInstance()->getTexture( "images/diz/arrow.png" );
+			matchingPopup =  *AssetManager::getInstance()->getTexture( "images/diz/poseAlreadyBubble.png" );
+
 
 			timerVec              = Vec2f(-300.0f, 1076.0f);
 			plashkaVec            = Vec2f(2100.0f, 0.0f);
@@ -63,9 +68,7 @@ class GameControLScreen
 
 
 			Font percentTexureFont  = Font(loadFile(getAssetPath("fonts/maestroc.ttf")), 70);
-			percentTexure = Utils::getTextField("%", &percentTexureFont,  Color(1,1,1));
-
-			secondsToStop = 10;
+			percentTexure = Utils::getTextField("%", &percentTexureFont,  Color(1,1,1));			
 
 			spline2D.reserve(4);		
 			spline2D.push_back(Vec2f(1794,148));			
@@ -138,20 +141,40 @@ class GameControLScreen
 				gl::color(Color::hex(0xc42f39));
 				gl::translate( 20 + (krugPercent.getWidth() - totalWidth)*0.5, 12 );
 				gl::draw(percent);
-				gl::translate(percent.getWidth()- 36, 28);
+				gl::translate(percent.getWidth()-36, 28);
 				gl::draw(percentTexure);
 				gl::color(Color::white());			
 			gl::popMatrices();
 
-			//kinect().drawSkeletJoints();
+			//kinect().drawSkeletJoints();			
 
+			if (matchingPopupAlpha > 0.0f)
+			{
+				gl::pushMatrices();
+					gl::color(ColorA(1, 1, 1, matchingPopupAlpha));
+					gl::translate(981, 440);
+					gl::draw(matchingPopup);
+					gl::translate(269, 342);
+					int numActiveCircles = circlesNum*matchingProgress;
+					for (int i = 0; i < circlesNum; i++)
+					{
+						gl::pushMatrices();
+							gl::translate(20 + 60*i, 0);
+							if (i+1<=numActiveCircles)							
+								gl::color(ColorA(196.0/255, 47.0/255, 57.0/255, matchingPopupAlpha));
+							else
+								gl::color(ColorA(223.0/255, 223.0/255, 223.0/255, matchingPopupAlpha));
+							gl::drawSolidCircle(Vec2f(0,0), 20, 20);
+						gl::popMatrices();
+					}
+				gl::popMatrices();
+			}
 			gl::color(Color::white());
 		}
 	
 		void setTimeForAnimation(int seconds)
 		{
-			secondsToStop = seconds;
-			showingSeconds = secondsToStop;
+			showingSeconds = seconds;
 		}
 
 		void show()
@@ -259,10 +282,11 @@ class GameControLScreen
 		void hide()
 		{
 			state = HIDING;
-			timeline().apply( &timerVec, Vec2f(-300.0f, 1076.0f), 1.2f, EaseOutCubic() );			
+			timeline().apply( &timerVec, Vec2f(-300.0f, 1076.0f), 1.2f, EaseOutCubic() );
 			timeline().apply( &plashkaVec,  Vec2f(2100.0f, 0.0f), 1.2f, EaseOutCubic() );
 			timeline().apply( &krugPercentAnimateVec,  Vec2f(300.0f, 0.0f), 1.2f, EaseOutCubic() );
 			timeline().apply( &silhouetteAlpha, 1.0f, 0.0f, 0.4f, EaseInCubic() );
+			timeline().apply( &matchingPopupAlpha, 0.0f, 0.3f, EaseInCubic() );
 		}
 
 		void setDetentionPercent(float percent)
@@ -271,6 +295,10 @@ class GameControLScreen
 			if(percent < 0) percent = 0;
 
 			percentMatching = (int)(percent*100);
+
+			if(percentMatching>=100)
+				percentMatching -= 1;
+
 			animationPosition = animationPointsStates[percentMatching];			
 		}		
 
@@ -283,6 +311,26 @@ class GameControLScreen
 		void setCurrentPose(Pose *pose)
 		{
 			currentPose = pose;
+		}
+
+		void showMatching(float  progressInt)
+		{
+			if (progressInt <= 0)
+			{
+				if (matchingPopupAlpha > 0.0f)
+				{
+					timeline().apply( &matchingPopupAlpha, 0.0f, 0.4f, EaseInCubic() );
+				}
+			}
+			else
+			{
+				if (matchingPopupAlpha <= 0.0f)
+				{
+					timeline().apply( &matchingPopupAlpha, 1.0f, 0.4f, EaseInCubic() );
+				}
+			}
+
+			matchingProgress = progressInt;
 		}
 };
 
