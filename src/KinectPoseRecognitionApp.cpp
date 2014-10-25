@@ -68,14 +68,14 @@ void KinectPoseRecognitionApp::setup()
 	
 		saver().loadConfigData();
 
-		//IntroScreen::Instance()->setup();
+		IntroScreen::Instance()->setup();
 		MainGameScreen::Instance()->setup();
 		//ResultScreen::Instance()->setup();
 
 		//popup().start(popupTypes::EMAIL);	
 
 		game.init(getWindow());
-		game.changeState(MainGameScreen::Instance());
+		game.changeState(IntroScreen::Instance());
 	#endif
 
 

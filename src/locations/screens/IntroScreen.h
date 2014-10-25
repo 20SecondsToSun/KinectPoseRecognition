@@ -10,7 +10,7 @@
 #include "AssetsManager.h"
 #include "BubbleAnimator.h"
 
-//#include "MainGameScreen.h"
+#include "MainGameScreen.h"
 
 using namespace ci;
 using namespace ci::app;
@@ -52,31 +52,34 @@ class IntroScreen : public Location
 		ci::signals::connection startGameBtnSignal;
 		ci::signals::connection comeBackBtnSignal;
 
-
 		int						state, nextState;
-		std::string				debugString;		
+		std::string				debugString;
 	
-		ci::gl::Texture			cat, logo, text1, cat2, btnFon, paws,  instructionImage;
+		ci::gl::Texture			cat, logo, text1, cat2, btnFon, paws,  instructionImage, lapaTv;
 	
-		ButtonColor				 *startGameBtn, *comeBackBtn;
+		ButtonColor				 *comeBackBtn;
 
-		ButtonTex *startInstructionBtn;
+		ButtonTex *startInstructionBtn, *startGameBtn;
 
-		ci::Anim<float>			alphaAnimate, catAnimate, logoAnimate,textAnimateY, textAnimateAlpha;	
-		ci::Anim<ci::Vec2f>     cat2AnimateVec, instructBtnAnimateVec;
-		
+		ci::Anim<float>			alphaAnimate, catAnimate, logoAnimate, textAnimateAlpha;	
+		ci::Anim<ci::Vec2f>     cat2AnimateVec, instructBtnAnimateVec;	
+		ci::Anim<ci::Vec2f>     lapaTvAnimateVec, startBtnAnimateVec, textAnimateVec;
 
 		void	startInstructionBtnDown();
 		void	startGameBtnDown();
 		void	drawInitElements();
 		void	drawInviteElements();
+		void    drawIstructionElements();
 		void	animationFinished();
 		void	changeState();
 
-
+		void initInstructionParam();
 		void initAnimateParam();
 		void inviteAnimateParam();
 
 		void gotoFirstScreen();
 		void gotoInviteScreen();
+
+		void (IntroScreen::* drawHandler)();
+		
 };

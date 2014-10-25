@@ -5,7 +5,6 @@ using namespace ci::app;
 using namespace std;
 using namespace MouseEvents;
 
-
 ButtonTex::ButtonTex(ci::gl::Texture _tex, string _char)
 {
 	texture = _tex;		
@@ -30,9 +29,10 @@ ButtonTex::ButtonTex(ci::gl::Texture _tex, Font* _font, string _char)
 	createTextField();	
 }
 
-void ButtonTex::setDownState(ci::gl::Texture _tex)
+void ButtonTex::setDownState(ci::gl::Texture _tex, ci::Vec2f vec)
 {
 	downTexture = _tex;
+	donwShiftVec = vec;
 }
 
 void ButtonTex::MouseDown( MouseEvent &event )
@@ -53,7 +53,6 @@ void ButtonTex::MouseUp( MouseEvent &event )
 	}
 }
 
-
 void ButtonTex::draw()
 {	
 	gl::pushMatrices();
@@ -62,10 +61,16 @@ void ButtonTex::draw()
 		if (isDown)
 		{
 			if(downTexture)
-				gl::draw(downTexture);	
+			{
+				gl::pushMatrices();
+					gl::translate(donwShiftVec);
+					gl::draw(downTexture);	
+				gl::popMatrices();
+			}
 		}
 		else
 			gl::draw(texture);	
+
 		gl::color(Color::white());
 		if (isTextField)
 		{
