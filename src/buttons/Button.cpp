@@ -9,7 +9,7 @@ void Button::createTextField()
 {
 	TextLayout simple;
 	simple.setFont( *textFont );	
-	simple.setColor( Color::white());
+	simple.setColor( Color::black());
 	simple.addLine(Utils::cp1251_to_utf8(label.c_str()));		
 	textTexture = gl::Texture( simple.render( true, false ) );	
 }
@@ -67,7 +67,11 @@ void Button::setScreenField(Vec2f vec)
 
 void Button::down()
 {	
-	timeline().apply( &overColor,  Color::hex(0x9dc9f6), Color::white() , 0.5f, EaseInBack());
+	animate = true;
+	timeline().apply( &overColor,  Color::hex(0x9dc9f6), Color::white() , 0.5f, EaseInBack()).finishFn( [ & ]( )
+	{
+		animate = false;
+	});	
 }
 
 void Button::up()
@@ -108,7 +112,7 @@ void  Button::setBtnId(string value)
 		code = value;
 		TextLayout simple;
 		simple.setFont( *textFont );	
-		simple.setColor( Color::white());
+		simple.setColor( Color::black());
 		simple.addLine(Utils::cp1251_to_utf8(value.c_str()));		
 		textTexture = gl::Texture( simple.render( true, false ) );	
 	}

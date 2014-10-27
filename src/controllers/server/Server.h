@@ -8,6 +8,10 @@
 #include <boost/thread.hpp>
 #include "Params.h"
 
+#define SERVER "92.63.102.99:82"
+#define SERVER_OK "OK"
+#define SERVER_ERROR "ERROR"
+
 class Server
 {
 	public:	
@@ -33,6 +37,10 @@ class Server
 		boost::signals2::signal<void(void)>			serverCheckConnectionEvent;
 		boost::signals2::signal<void(void)>			sendToMailEvent;
 
+		std::string  sendVkSharePlus();
+		std::string  sendFbSharePlus();
+		std::string  sendToServerPrintInfo();
+
 	private:
 
 		std::shared_ptr<boost::thread>				sendPhotoThread;
@@ -52,6 +60,8 @@ class Server
 
 		ci::Timer									serverWaitingTimer;
 		bool										isPhotoSendingToServer, isCheckingConnection, isMailSending;
+
+		
 };
 
 inline Server&	server() { return Server::getInstance(); };

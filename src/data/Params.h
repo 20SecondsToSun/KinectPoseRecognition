@@ -13,7 +13,8 @@ namespace colorsParams
 {
 	const ci::Color   RED      =  ci::Color(1.0f, 0.0f, 0.0f);
 	const ci::Color   GREEN    =  ci::Color(0.0f, 1.0f, 0.0f);
-	const ci::Color   BLUE     =  ci::Color(0.0f, 0.0f, 1.0f);
+	const ci::Color   BLUE     =  ci::Color(0.0f, 0.0f, 1.0f);	
+	const ci::Color   BLUE_FADE   =  ci::Color(102.0f /255.0, 206.0f/255.0,245.0f/255.0);
 }
 
 namespace photoParams
@@ -85,5 +86,4 @@ class Params
 		static bool		serverEmailSendTimeout;
 
 		static std::string	standID;
-
 };

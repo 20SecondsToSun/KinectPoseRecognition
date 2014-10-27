@@ -76,7 +76,7 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
-      <AdditionalIncludeDirectories>..\include;..\..\..\\include;..\..\..\\boost;..\blocks\Cinder-KCB\src;..\blocks\Cinder-KCB\lib;$(KINECT_TOOLKIT_DIR)inc;$(KINECTSDK10_DIR)\inc;..\src;..\blocks\Cinder-CanonSdk\include;..\blocks\Cinder-CanonSdk\src;..\blocks\Cinder-CanonSdk\lib\EDSDK\Header;..\blocks\Cinder-Curl\src;..\src\buttons;..\src\controllers\assets;..\src\controllers\camera;..\src\controllers\fonts;..\src\controllers\kinect;..\src\controllers\photomaker;..\src\controllers\saver;..\src\controllers\server;..\src\data;..\src\game\graphicScene;..\src\game;..\src\graphics;..\src\locations\engine;..\src\locations\popup;..\src\locations\screens;..\src\math\splines;..\src\tools;..\src\touchKeyboard;..\src\locations\screens\help</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\include;..\..\..\\include;..\..\..\\boost;..\blocks\Cinder-KCB\src;..\blocks\Cinder-KCB\lib;$(KINECT_TOOLKIT_DIR)inc;$(KINECTSDK10_DIR)\inc;..\src;..\blocks\Cinder-CanonSdk\include;..\blocks\Cinder-CanonSdk\src;..\blocks\Cinder-CanonSdk\lib\EDSDK\Header;..\blocks\Cinder-Curl\src;..\src\buttons;..\src\controllers\assets;..\src\controllers\camera;..\src\controllers\fonts;..\src\controllers\kinect;..\src\controllers\photomaker;..\src\controllers\saver;..\src\controllers\server;..\src\data;..\src\game\graphicScene;..\src\game;..\src\graphics;..\src\locations\engine;..\src\locations\popup;..\src\locations\screens;..\src\math\splines;..\src\tools;..\src\touchKeyboard;..\src\locations\screens\help;..\src\social;..\blocks\Awesomium\include</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;NOMINMAX;_WIN32_WINNT=0x0502;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <PrecompiledHeader>
@@ -94,7 +94,7 @@
       <AdditionalIncludeDirectories>"..\..\..\\include";..\include</AdditionalIncludeDirectories>
     </ResourceCompile>
     <Link>
-      <AdditionalDependencies>cinder-$(PlatformToolset).lib;Kinect10.lib;KinectCommonBridge.lib;FaceTrackLib.lib;OpenGL32.lib;..\blocks\Cinder-CanonSdk\lib\EDSDK\Library\EDSDK.lib;..\blocks\Cinder-Curl\lib\msw\libcurl.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>cinder-$(PlatformToolset).lib;Kinect10.lib;KinectCommonBridge.lib;FaceTrackLib.lib;OpenGL32.lib;..\blocks\Awesomium\build\lib\msw\awesomium.lib;..\blocks\Cinder-CanonSdk\lib\EDSDK\Library\EDSDK.lib;..\blocks\Cinder-Curl\lib\msw\libcurl.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <GenerateDebugInformation>false</GenerateDebugInformation>
       <GenerateMapFile>true</GenerateMapFile>
       <SubSystem>Windows</SubSystem>
@@ -110,6 +110,7 @@
     <ResourceCompile Include="Resources.rc" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\blocks\Awesomium\src\CinderAwesomium.cpp" />
     <ClCompile Include="..\blocks\Cinder-CanonSdk\src\CanonCamera.cpp" />
     <ClCompile Include="..\blocks\Cinder-CanonSdk\src\CinderCanon.cpp" />
     <ClCompile Include="..\blocks\Cinder-Curl\src\Curl.cpp" />
@@ -130,7 +131,6 @@
     <ClCompile Include="..\src\controllers\server\Server.cpp" />
     <ClCompile Include="..\src\data\Params.cpp" />
     <ClCompile Include="..\src\data\PlayerData.cpp" />
-    <ClCompile Include="..\src\graphics\PreloaderCircle.cpp" />
     <ClCompile Include="..\src\graphics\QRcode.cpp" />
     <ClCompile Include="..\src\KinectPoseRecognitionApp.cpp" />
     <ClCompile Include="..\src\locations\engine\Location.cpp" />
@@ -143,10 +143,14 @@
     <ClCompile Include="..\src\math\splines\ofxMSASpline2D.cpp" />
     <ClCompile Include="..\src\math\splines\ofxMSASpline3D.cpp" />
     <ClCompile Include="..\src\math\splines\ofxMSASurface3D.cpp" />
+    <ClCompile Include="..\src\social\Facebook.cpp" />
+    <ClCompile Include="..\src\social\SocialShare.cpp" />
+    <ClCompile Include="..\src\social\Vkontakte.cpp" />
     <ClCompile Include="..\src\tools\Utils.cpp" />
     <ClCompile Include="..\src\touchKeyboard\VirtualKeyboard.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\blocks\Awesomium\include\CinderAwesomium.h" />
     <ClInclude Include="..\blocks\Cinder-CanonSdk\include\CanonCamera.h" />
     <ClInclude Include="..\blocks\Cinder-CanonSdk\include\CanonDebug.h" />
     <ClInclude Include="..\blocks\Cinder-CanonSdk\include\CinderCanon.h" />
@@ -175,7 +179,6 @@
     <ClInclude Include="..\src\game\graphicScene\GameControlScreen.h" />
     <ClInclude Include="..\src\game\graphicScene\HintScreen.h" />
     <ClInclude Include="..\src\game\Pose.h" />
-    <ClInclude Include="..\src\graphics\PreloaderCircle.h" />
     <ClInclude Include="..\src\graphics\QRcode.h" />
     <ClInclude Include="..\src\graphics\Toucher.h" />
     <ClInclude Include="..\src\locations\engine\Location.h" />
@@ -193,6 +196,9 @@
     <ClInclude Include="..\src\math\splines\ofxMSASplineInterpolationTypes.h" />
     <ClInclude Include="..\src\math\splines\ofxMSASplineTemplate.h" />
     <ClInclude Include="..\src\math\splines\ofxMSASurface3D.h" />
+    <ClInclude Include="..\src\social\Facebook.h" />
+    <ClInclude Include="..\src\social\SocialShare.h" />
+    <ClInclude Include="..\src\social\Vkontakte.h" />
     <ClInclude Include="..\src\tools\Utils.h" />
     <ClInclude Include="..\src\touchKeyboard\VirtualKeyboard.h" />
   </ItemGroup>

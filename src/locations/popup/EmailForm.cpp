@@ -20,6 +20,7 @@ void EmailForm::setup()
 
 	addEmailBtn = new ButtonTex(addEmailTex, "addEmail");
 	addEmailBtn->setScreenField(Vec2f(389.0f, 260.0f));	
+	addEmailBtn->setDownState(addEmailTex);
 
 	deleteAllLettersBtn = new ButtonTex(deleteAllTex, "deleteAll");	
 	deleteAllLettersBtn->setScreenField(Vec2f(1463.0f, 135.0f));	

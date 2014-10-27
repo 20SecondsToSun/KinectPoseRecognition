@@ -9,7 +9,7 @@
 #include "LocationEngine.h"
 //#include "IntroScreen.h"
 #include "MainGameScreen.h"
-//#include "ResultScreen.h"
+#include "ResultScreen.h"
 //#include "KinectAdapter.h"
 
 #include "Params.h"
@@ -25,7 +25,7 @@ using namespace std;
 class KinectPoseRecognitionApp : public AppNative
 {
   public:	
-	    void			setup();
+		void			setup();
 		void			keyDown( KeyEvent event );
 		void			mouseDown( MouseEvent event );
 		void			update();
@@ -33,17 +33,17 @@ class KinectPoseRecognitionApp : public AppNative
 		void			shutdown();
 
 		static const int secondsToRec = 5;	
-
+		 
 		ci::Font		hintFont;
 		Timer			saveTimer;
 		string			state;
 
-		gl::Texture		bg;
+		gl::Texture	bg;
 
 	private:
-		LocationEngine			 game;
-		params::InterfaceGlRef   mParams;
-		void					changeState();
+		LocationEngine	game;
+		params::InterfaceGlRef	mParams;
+		void	changeState();
 };
 
 void KinectPoseRecognitionApp::setup()
@@ -57,6 +57,9 @@ void KinectPoseRecognitionApp::setup()
 	fonts().loadFont( loadFile(getAssetPath("fonts/Helvetica Neue Bold.ttf")), 66);	
 	fonts().loadFont( loadFile(getAssetPath("fonts/Helvetica Neue Light.ttf")), 32);
 	fonts().loadFont( loadFile(getAssetPath("fonts/Helvetica Neue Light.ttf")), 32);
+	fonts().loadFont( loadFile(getAssetPath("fonts/MyriadPro-Bold.ttf")), 27 );
+
+	
 	fonts().listFonts();
 
 	hintFont = *fonts().getFont("Helvetica Neue", 46);
@@ -68,8 +71,8 @@ void KinectPoseRecognitionApp::setup()
 	
 		saver().loadConfigData();
 
-		//IntroScreen::Instance()->setup();
-		//MainGameScreen::Instance()->setup();
+		IntroScreen::Instance()->setup();
+		MainGameScreen::Instance()->setup();
 		ResultScreen::Instance()->setup();
 
 		//popup().start(popupTypes::EMAIL);	
@@ -77,7 +80,7 @@ void KinectPoseRecognitionApp::setup()
 
 
 	#ifdef debug
-		PlayerData::score = 1;
+		PlayerData::score = 3;
 		mParams = params::InterfaceGl::create( getWindow(), "App parameters", toPixels( Vec2i( 500, 400 ) ) );
 		mParams->addParam( "boxMaxErrorX", &Params::boxMaxErrorX ).min( 5.f ).max( 50.5f ).step( 5.f );
 		mParams->addParam( "boxMaxErrorY", &Params::boxMaxErrorY ).min( 5.f ).max( 50.5f ).step( 5.f );
@@ -114,7 +117,7 @@ void KinectPoseRecognitionApp::setup()
   #ifndef recording
 		recognitionGame().setup();
 		game.init(getWindow());
-		game.changeState(ResultScreen::Instance());
+		game.changeState(MainGameScreen::Instance());
 	#endif
 
 	gl::enableAlphaBlending();	
@@ -182,7 +185,7 @@ void KinectPoseRecognitionApp::draw()
 	#endif	
 
 	#ifdef debug
-		//mParams->draw();
+		mParams->draw();
 	#endif
 
 	toucher().draw();
@@ -232,10 +235,10 @@ void KinectPoseRecognitionApp::keyDown( KeyEvent event )
 				game.changeState(IntroScreen::Instance());
 			break;
 			case '2':
-				game.changeState(MainGameScreen::Instance());
+			//	game.changeState(MainGameScreen::Instance());
 			break;
 			case '3':
-				//game.changeState(ResultScreen::Instance());
+				game.changeState(ResultScreen::Instance());
 			break;
 			case 'q':
 				shutdown();

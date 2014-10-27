@@ -1,9 +1,11 @@
 #include "QRcode.h"
-#include "FontStore.h"
 
 void QRcode::setup()
 {
-	preloader.setup();
+	plashkaTex             = *AssetManager::getInstance()->getTexture("images/serverScreen/plashka.png");
+	loadPhotoText          = *AssetManager::getInstance()->getTexture("images/serverScreen/loadPhotoText.png");
+
+	startQRCodeHolderXY = Vec2f(1130.0f, 512.0f);	
 }
 
 void QRcode::reset()
@@ -11,7 +13,6 @@ void QRcode::reset()
 	isError = false;
 	isReady = false;
 }
-
 
 void QRcode::draw()
 {
@@ -28,42 +29,46 @@ void QRcode::draw()
 		{
 			if (isReady == false)
 			{
-				gl::pushMatrices();
-					gl::translate(220, 650);	
-					preloader.draw();			
-				gl::popMatrices();
+				
 			}
 			else
 			{
 				if(stringQrcode=="") return;
-
-				qrCodeTexture = loadImageFromString(stringQrcode);
+				
+				gl::color(ColorA(1.0f, 1.0f, 1.0f, alphaAnimate));
+				gl::draw(loadPhotoText);
+	
+				gl::translate(Vec2f(-10.0f, 160.0f));				
+				gl::draw(plashkaTex);
+				
 				TextLayout simple;
-				simple.setFont( *fonts().getFont("Helvetica Neue", 26) );
-				simple.setColor( Color( 1, 1, 1 ) );
+				simple.setFont( *fonts().getFont("Myriad Pro", 27) );
+				simple.setColor(Color::hex(0x197ec7));
 				simple.addLine(url);
 				qrCodeTextTexture = gl::Texture( simple.render( true, false ) );
 
-				if(qrCodeTextTexture)
-				{
-					gl::pushMatrices();			
-					gl::translate(33, 885);	
-					gl::draw(qrCodeTextTexture);
-					gl::popMatrices();
-				}	
-
+				
 				if(qrCodeTexture)
-				{
+				{					
 					gl::pushMatrices();			
-					gl::translate(86, 505);		
+					gl::translate(74, 36);
+					qrCodeTexture = Utils::resizeScreenshot(Surface(qrCodeTexture), (int32_t)208, (int32_t)208);	
+					gl::color(ColorA(1.0f, 1.0f, 1.0f, alphaAnimate));
 					gl::draw(qrCodeTexture);
 					gl::popMatrices();
 				}
 
+				if(qrCodeTextTexture)
+				{
+					gl::color(ColorA(1.0f, 1.0f, 1.0f, alphaAnimate));
+					gl::draw(qrCodeTextTexture, Vec2f(0.5f*(plashkaTex.getWidth() - qrCodeTextTexture.getWidth()), 250.0f));	
+				}	
+
 			}
 		}
 
-	gl::popMatrices();	
+	gl::popMatrices();
+	gl::color(Color::white());
 }
 
 void QRcode::drawError()
@@ -77,12 +82,15 @@ void QRcode::drawError()
 void QRcode::setTextureString(std::string str)
 {
 	stringQrcode = str;
+	qrCodeTexture = loadImageFromString(stringQrcode);
+	
 }
 
 void QRcode::setLink(std::string link)
 {	
 	url =  link;
 	url = url.substr(7);
+	console()<<"  url   "<<url<<endl;
 }
 
 void QRcode::setData(std::string str, std::string link)
@@ -91,6 +99,8 @@ void QRcode::setData(std::string str, std::string link)
 	setLink(link);	
 	
 	isReady = true;
+	alphaAnimate = 0.0f;
+	timeline().apply( &alphaAnimate, 1.0f, 0.8f, EaseOutCubic() ).delay(0.8f);
 }
 
 void QRcode::initAnim()

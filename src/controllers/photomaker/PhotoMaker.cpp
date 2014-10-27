@@ -92,7 +92,6 @@ void PhotoMaker::resizeFinalImages()
 	{
 		if (PlayerData::playerData[i].isSuccess)
 		{
-			
 			Texture photoFromCameraTex = PlayerData::playerData[i].imageTexture;
 			Surface photoFromCameraSurface = Surface(photoFromCameraTex);
 		
@@ -104,7 +103,29 @@ void PhotoMaker::resizeFinalImages()
 			
 			mFbo.getTexture().setFlipped(true);
 			Surface comicsImage = Surface(mFbo.getTexture());
-			PlayerData::setDisplayingTexture(i, gl::Texture(comicsImage));	
+
+			Surface displaySurface;			
+			if (i == 0)
+			{
+				displaySurface = Utils::resizeScreenshot(comicsImage, (int32_t)560, (int32_t)314);
+				PlayerData::setDisplayingTexture(i, gl::Texture(displaySurface));
+				PlayerData::setTranslation(i, Vec2f(36.5f, 128.5f));
+				PlayerData::setRotation(i, -2.0f);
+			}
+			else if (i == 1)
+			{
+				displaySurface = Utils::resizeScreenshot(comicsImage, (int32_t)411, (int32_t)227);
+				PlayerData::setDisplayingTexture(i, gl::Texture(displaySurface));
+				PlayerData::setTranslation(i, Vec2f(23.0f, 144.0f));
+				PlayerData::setRotation(i, 0.5f);
+			}
+			else if (i == 2)
+			{
+				displaySurface = Utils::resizeScreenshot(comicsImage, (int32_t)561, (int32_t)315);
+				PlayerData::setDisplayingTexture(i, gl::Texture(displaySurface));
+				PlayerData::setTranslation(i, Vec2f(40.0f, 86.5f));
+				PlayerData::setRotation(i, 1.0f);
+			}
 			writeImage( Params::getTempPhotoSavePath(i), comicsImage);
 			Vec2f offset = Vec2f(0.0f, (float)BIG_PHOTO_HEIGHT*offsetI);
 			finalImage.copyFrom(comicsImage, Area(0, 0, BIG_PHOTO_WIDTH, BIG_PHOTO_HEIGHT), offset);	
@@ -123,13 +144,13 @@ void PhotoMaker::drawToFBO(Surface img, ci::gl::Texture comicsImage)
       gl::SaveFramebufferBinding bindingSaver;
       mFbo.bindFramebuffer();
 	  Area saveView = getViewport();
-      gl::setViewport(mFbo.getBounds() );
+      gl::setViewport(mFbo.getBounds());
 	  gl::pushMatrices();
-      gl::setMatricesWindow( mFbo.getSize(), false );
-      gl::clear( Color( 0, 0, 0 ) );
+      gl::setMatricesWindow( mFbo.getSize(), false);
+      gl::clear( Color::black());
 	  gl::enableAlphaBlending();  
-	  gl::translate(BIG_PHOTO_WIDTH, 0 );
-	  gl::scale(-1, 1);
+	  gl::translate((float)BIG_PHOTO_WIDTH, 0.0f);
+	  gl::scale(-1.0f, 1.0f);
 	  gl::draw( img );		
 	  gl::draw(comicsImage);
 

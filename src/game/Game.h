@@ -42,7 +42,7 @@ class Game
 		static const int	ONE_POSE_TIME	= 25;
 		static const int	RESULT_TIME		= 4;
 		static const int	COUNTERS_ANIM_TIME	= 2;
-		static const int	MATCHING_MAX_VALUE = 500;		
+		static const int	MATCHING_MAX_VALUE = 300;		
 
 		int state;
 		bool isGameRunning, isPoseDetecting, winAnimationFinished;
@@ -285,7 +285,6 @@ class Game
 
 		void gotoLevelCompleteScreen() 
 		{
-			console()<<"go to complete:::::::::::::::::"<<endl;
 			gameControls().hide();
 
 			comicsScreen().isGuess = isPoseDetecting;
@@ -458,15 +457,15 @@ class Game
 			}
 
 			double kv = BOX_SCALE*BOX_SCALE;
-			double half_diagonal = 0.5 * sqrt(kv + kv); 
-			mathPercent = 1.0 - (min_dist/half_diagonal);	
+			double half_diagonal = 0.5f * sqrt(kv + kv); 
+			mathPercent = 1.0f - (min_dist/half_diagonal);	
 
-			mathPercent < 0 ? mathPercent = 0 : mathPercent = mathPercent;
+			mathPercent < 0.0f ? mathPercent = 0 : mathPercent = mathPercent;
 		}
 
 		void computeMistakeWay2()
 		{
-			mathPercent = 0;
+			mathPercent = 0.0f;
 			size_t len = currentPose.getNormalizePoints().size();
 			double onePart = 100.0 / len;
 

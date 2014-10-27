@@ -94,6 +94,12 @@
     <Filter Include="blocks\Cinder-Curl">
       <UniqueIdentifier>{ebf896ef-db21-4768-b23a-ea568ea82bf9}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\social">
+      <UniqueIdentifier>{b4aa658b-afb3-479d-9040-b959040d4ea2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="blocks\Cinder-Awesomium">
+      <UniqueIdentifier>{8b1e07e7-a11d-4467-9e2f-3f95f11ff831}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\src\KinectPoseRecognitionApp.cpp">
@@ -168,9 +174,6 @@
     <ClCompile Include="..\src\locations\engine\LocationEngine.cpp">
       <Filter>Source Files\locations\engine</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\graphics\PreloaderCircle.cpp">
-      <Filter>Source Files\graphics</Filter>
-    </ClCompile>
     <ClCompile Include="..\src\graphics\QRcode.cpp">
       <Filter>Source Files\graphics</Filter>
     </ClCompile>
@@ -206,6 +209,18 @@
     </ClCompile>
     <ClCompile Include="..\src\controllers\assets\TextureManager.cpp">
       <Filter>Source Files\controllers\assets</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\social\Facebook.cpp">
+      <Filter>Source Files\social</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\social\SocialShare.cpp">
+      <Filter>Source Files\social</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\social\Vkontakte.cpp">
+      <Filter>Source Files\social</Filter>
+    </ClCompile>
+    <ClCompile Include="..\blocks\Awesomium\src\CinderAwesomium.cpp">
+      <Filter>blocks\Cinder-Awesomium</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -296,9 +311,6 @@
     <ClInclude Include="..\src\locations\engine\LocationEngine.h">
       <Filter>Source Files\locations\engine</Filter>
     </ClInclude>
-    <ClInclude Include="..\src\graphics\PreloaderCircle.h">
-      <Filter>Source Files\graphics</Filter>
-    </ClInclude>
     <ClInclude Include="..\src\graphics\QRcode.h">
       <Filter>Source Files\graphics</Filter>
     </ClInclude>
@@ -352,6 +364,18 @@
     </ClInclude>
     <ClInclude Include="..\src\game\graphicScene\HintScreen.h">
       <Filter>Source Files\game\graphicScene</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\social\Facebook.h">
+      <Filter>Source Files\social</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\social\SocialShare.h">
+      <Filter>Source Files\social</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\social\Vkontakte.h">
+      <Filter>Source Files\social</Filter>
+    </ClInclude>
+    <ClInclude Include="..\blocks\Awesomium\include\CinderAwesomium.h">
+      <Filter>blocks\Cinder-Awesomium</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

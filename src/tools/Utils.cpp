@@ -299,6 +299,7 @@ void Utils::textFieldDraw(std::string text,ci::Font* font, Vec2f coords, ColorA 
 	simple.addLine(cp1251_to_utf8(text.c_str()));	
 	gl::draw(gl::Texture( simple.render( true, false ) ));
 	gl::popMatrices();
+	gl::color(ColorA(1, 1, 1, 1));
 
 	
 	/*
@@ -345,6 +346,8 @@ Surface Utils::resizeScreenshot(Surface screenshot, int32_t width, int32_t heigh
 	ci::ip::resize( screenshot, screenshot.getBounds(), &screenshot_r, screenshot_r.getBounds(), FilterBox() );
 	return screenshot_r;
 }
+
+
 
 std::string  Utils::getCorrectSecondsText(int seconds)
 {

@@ -50,8 +50,6 @@ class MainGameScreen : public Location
 		LocationEngine*			_game;
 		static MainGameScreen	MainGameScreenState;
 
-		std::map<int, string>	stateMemoMap;
-	
 		void kinectMissPersonHandler();
 		void photoFlashHandler();
 		void checkPersonMissed();

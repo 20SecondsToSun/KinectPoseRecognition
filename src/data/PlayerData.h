@@ -19,6 +19,8 @@ class PlayerData
 			ci::gl::Texture imageTexture;
 			ci::gl::Texture displayingTexture;
 			ci::ImageSourceRef imageSourceRef;	
+			ci::Vec2f translation;
+			float degree;
 		};
 
 		static OnePlayerPoseData playerData[POSE_IN_GAME_TOTAL];
@@ -30,4 +32,14 @@ class PlayerData
 		static ci::gl::Texture getDisplayingTexture(int i );
 		static ci::Surface finalImageSurface;	
 		static void setDisplayingTexture(int, gl::Texture);
+
+		static void setTranslation(int i, ci::Vec2f vec);
+		static ci::Vec2f getTranslation(int i);
+
+		static void  setRotation(int i, float _degree);
+		static float getRotation(int i);
+
+	private :
+		static ci::Vec2f translation;
+		static float degree;
 };

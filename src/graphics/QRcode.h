@@ -1,11 +1,14 @@
 #pragma once
 #include "cinder/app/AppBasic.h"
 #include "cinder/gl/gl.h"
-#include "AssetsManager.h"
 #include "cinder/Text.h"
 #include "cinder/Timeline.h"
-#include "PreloaderCircle.h"
 #include "cinder/Base64.h"
+#include "cinder/Timeline.h"
+
+#include "FontStore.h"
+#include "Utils.h"
+#include "AssetsManager.h"
 
 class QRcode
 {
@@ -24,10 +27,9 @@ class QRcode
 private:
 		ci::Font						qrCodeFont ;
 		ci::Anim<ci::Vec2f>				startQRCodeHolderXY;
+		ci::Anim<float>					alphaAnimate;	
 		ci::gl::Texture					qrCodeFon, qrCodeTextTexture, qrCodeTexture, *errorTexture;	
-
-		PreloaderCircle					preloader;
-
+	
 		std::string				url;
 		std::string				stringQrcode;
 
@@ -35,4 +37,6 @@ private:
 
 		void setTextureString(std::string str);
 		void setLink(std::string link);
+
+		gl::Texture	plashkaTex, loadPhotoText;
 };

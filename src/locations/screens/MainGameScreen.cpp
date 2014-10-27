@@ -10,14 +10,9 @@ MainGameScreen MainGameScreen::MainGameScreenState;
 
 void MainGameScreen::setup()
 {
+	console()<<" setup--------------->"<<endl;
 	debugFont26 = *fonts().getFont("Helvetica Neue", 26);
-	debugFont46 = *fonts().getFont("Helvetica Neue", 66);
-
-	//stateMemoMap[SHOW_FIRST_MESSAGE] = "Отойдите подальше";
-	stateMemoMap[PRE_GAME_INTRO]	 = "Приготовьтесь к котопозе";
-	stateMemoMap[MAIN_GAME]			 = "Играем";
-	stateMemoMap[SHOW_GAME_RESULT]	 = "Результат кривляний";
-	stateMemoMap[NONE]				 = "Пустое состояние";	
+	debugFont46 = *fonts().getFont("Helvetica Neue", 66);	
 
 	cameraCanon().setup();
 	cameraCanon().live();
@@ -248,15 +243,15 @@ void MainGameScreen::drawPoseComics()
 	gl::popMatrices();
 
 	gl::pushMatrices();
-		gl::translate(getWindowWidth() - 360.0, getWindowHeight() - 512.0);		
+		gl::translate(getWindowWidth() - 360.0f, getWindowHeight() - 512.0f);		
 		gl::draw(recognitionGame().getPoseImage());
 	gl::popMatrices();
 }
 
 void MainGameScreen::drawPhotoFlash()
 {
-	gl::color(ColorA(1, 1, 1, alphaFlashAnim));
-	gl::drawSolidRect(Rectf(0, 0, getWindowWidth(), getWindowHeight()));
+	gl::color(ColorA(1.0f, 1.0f, 1.0f, alphaFlashAnim));
+	gl::drawSolidRect(Rectf(0.0f, 0.0f, getWindowWidth(), getWindowHeight()));
 	gl::color(Color::white());
 }
 
@@ -264,9 +259,9 @@ void MainGameScreen::drawFadeOutIfAllow()
 {
 	if (isLeaveAnimation)
 	{
-		gl::color(ColorA(0, 0, 0, alphaFinAnimate));	
+		gl::color(ColorA(BLUE.r, BLUE.g, BLUE.b, alphaFinAnimate));	
 		gl::drawSolidRect(getWindowBounds());
-		gl::color(ColorA(0,0,0,1));
+		gl::color(Color::white());
 	}
 }
 

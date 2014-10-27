@@ -151,7 +151,7 @@ class HintScreen
 			}
 			else if (state == SHOW_NUMS)
 			{
-				gl::color(ColorA(235/255.0, 237/255.0, 238/255.0, 1));				
+				gl::color(ColorA(235/255.0f, 237/255.0f, 238/255.0f, 1.0f));				
 				gl::drawSolidRect(Rectf( 0.0f, 0.0f, getWindowWidth(), getWindowHeight()));	
 
 				gl::pushMatrices();
@@ -162,7 +162,7 @@ class HintScreen
 				
 				gl::pushMatrices();
 					gl::translate(780, 222);
-					gl::color(ColorA(196/255.0,47/255.0,57/255.0, startCounterAlpha));					
+					gl::color(ColorA(196/255.0f, 47/255.0f, 57/255.0f, startCounterAlpha));					
 					gl::draw(countDownTexture);
 				gl::popMatrices();
 				gl::color(Color::white());	
@@ -173,12 +173,12 @@ class HintScreen
 			}
 			else if (state == FADE_NUMS)
 			{
-				gl::color(ColorA(235/255.0, 237/255.0, 238/255.0, alphaBg));
+				gl::color(ColorA(235/255.0f, 237/255.0f, 238/255.0f, alphaBg));
 				gl::drawSolidRect(Rectf( 0.0f, 0.0f, getWindowWidth(), getWindowHeight()));	
 				
 				gl::pushMatrices();
-					gl::translate(780, 222);
-					gl::color(ColorA(196/255.0,47/255.0,57/255.0, alphaBg));
+					gl::translate(780.0f, 222.0f);
+					gl::color(ColorA(196/255.0f, 47/255.0f, 57/255.0f, alphaBg));
 					gl::draw(countDownTexture);
 				gl::popMatrices();	
 				gl::color(ColorA(1,1,1, alphaBg));
@@ -194,23 +194,23 @@ class HintScreen
 			}
 			else if (state == START_HINT)
 			{
-				gl::color(ColorA(235/255.0, 237/255.0, 238/255.0, alphaBg));
+				gl::color(ColorA(235/255.0f, 237/255.0f, 238/255.0f, alphaBg));
 				gl::drawSolidRect(Rectf( 0.0f, 0.0f, getWindowWidth(), getWindowHeight()));	
 				
 				gl::pushMatrices();
-					gl::translate(780, 222);
-					gl::color(ColorA(196/255.0,47/255.0,57/255.0, alphaBg));
+					gl::translate(780.0f, 222.0f);
+					gl::color(ColorA(196/255.0f, 47/255.0f, 57/255.0f, alphaBg));
 					gl::draw(countDownTexture);
 				gl::popMatrices();	
-				gl::color(ColorA(1,1,1, alphaBg));
+				gl::color(ColorA(1.0f, 1.0f, 1.0f, alphaBg));
 				drawTitle();
 
 				gl::color(Color::white());
 				drawPreview(false);
 
 				gl::pushMatrices();
-					gl::color(ColorA(1,1,1, alphaHint));
-					gl::translate(882, 39);
+					gl::color(ColorA(1.0f, 1.0f, 1.0f, alphaHint));
+					gl::translate(882.0f, 39.0f);
 					gl::draw(hint3);
 				gl::popMatrices();	
 			}
@@ -219,9 +219,9 @@ class HintScreen
 		void drawTitle()
 		{			
 			gl::pushMatrices();
-				gl::translate(780, 107);
+				gl::translate(780.0f, 107.0f);
 				gl::draw(titleNum);
-				gl::translate(302, 9);
+				gl::translate(302.0f, 9.0f);
 				gl::draw(levelNumTexture);
 			gl::popMatrices();
 		}
@@ -229,10 +229,10 @@ class HintScreen
 		void drawPreview(bool isShadow = true)
 		{
 			gl::pushMatrices();
-				gl::translate(29, 39);
+				gl::translate(29.0f, 39.0f);
 				if(isShadow)
 					gl::draw(shadowPreview);
-				gl::translate(-10, -14);
+				gl::translate(-10.0f, -14.0f);
 				gl::draw(iconsPreview);
 			gl::popMatrices();
 

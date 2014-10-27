@@ -7,6 +7,7 @@ using namespace MouseEvents;
 
 ButtonTex::ButtonTex(ci::gl::Texture _tex, string _char)
 {
+	animate = false;
 	texture = _tex;		
 	code = _char;
 	overColor = Color::white();
@@ -18,12 +19,13 @@ ButtonTex::ButtonTex(ci::gl::Texture _tex, string _char)
 
 ButtonTex::ButtonTex(ci::gl::Texture _tex, Font* _font, string _char)
 {
+	animate = false;
 	texture = _tex;
 	label = _char;
 	textFont = _font;
 	isTextField = true;
 	code = _char;
-
+	isDown = false;
 	overColor = Color::white();
 
 	createTextField();	
@@ -56,8 +58,8 @@ void ButtonTex::MouseUp( MouseEvent &event )
 void ButtonTex::draw()
 {	
 	gl::pushMatrices();
-		gl::translate(field.x1, field.y1);	
-		gl::color(overColor);
+		gl::translate(field.x1, field.y1);
+			
 		if (isDown)
 		{
 			if(downTexture)
@@ -67,11 +69,17 @@ void ButtonTex::draw()
 					gl::draw(downTexture);	
 				gl::popMatrices();
 			}
+			else
+			{	
+				console()<<" OVER:::::::::: "<<overColor<<endl;
+				gl::color(overColor);
+				gl::draw(texture);
+			}
 		}
 		else
 			gl::draw(texture);	
 
-		gl::color(Color::white());
+		//gl::color(Color::white());
 		if (isTextField)
 		{
 			gl::pushMatrices();

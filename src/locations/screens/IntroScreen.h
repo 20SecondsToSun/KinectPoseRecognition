@@ -9,7 +9,6 @@
 #include "ButtonTexture.h"
 #include "AssetsManager.h"
 #include "BubbleAnimator.h"
-
 #include "MainGameScreen.h"
 
 using namespace ci;
@@ -81,5 +80,4 @@ class IntroScreen : public Location
 		void gotoInviteScreen();
 
 		void (IntroScreen::* drawHandler)();
-		
 };

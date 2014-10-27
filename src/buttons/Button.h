@@ -70,4 +70,6 @@ class Button
 		std::string		code;
 		ci::gl::Texture textTexture;
 		ci::Anim<ci::ColorA> overTextColor;
+
+		bool		animate;
 };

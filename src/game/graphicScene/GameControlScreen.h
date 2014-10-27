@@ -64,7 +64,7 @@ class GameControLScreen
 
 			secondsFont   = Font(loadFile(getAssetPath("fonts/maestroc.ttf")), 170);
 			percentFont   = Font(loadFile(getAssetPath("fonts/maestroc.ttf")), 190);
-			debugFontText = Font(loadFile(getAssetPath("fonts/myriad/MyriadPro-BlackSemiExt.ttf")), 26);
+			debugFontText = Font(loadFile(getAssetPath("fonts/MyriadPro-BlackSemiExt.ttf")), 26);
 
 
 			Font percentTexureFont  = Font(loadFile(getAssetPath("fonts/maestroc.ttf")), 70);
@@ -95,11 +95,8 @@ class GameControLScreen
 					currentPose->draw();
 			gl::popMatrices();
 
-			gl::color(Color::white());
-			gl::pushMatrices();
-				gl::translate(timerVec);
-				gl::draw(sector);
-			gl::popMatrices();
+			gl::color(Color::white());		
+			gl::draw(sector, timerVec);		
 			
 			gl::pushMatrices();
 					gl::translate(timerVec);
@@ -109,26 +106,21 @@ class GameControLScreen
 					gl::draw(ciferblat);					
 			gl::popMatrices();	
 
-			gl::pushMatrices();
+			gl::pushMatrices();		
 				gl::translate(timerVec);
 				gl::translate(Vec2f(0.0f, 2.0f));
 				gl::draw(arrow);
 
 				gl::translate(Vec2f(75.0f, 40.0f));		
 				gl::Texture time = Utils::getTextField(to_string(showingSeconds), &secondsFont, Color(1,1,1));
-
-				gl::pushMatrices();
-					gl::translate(10.0f + 0.5f*(125 - time.getWidth()), 0.0f);
-					gl::draw(time);
-				gl::popMatrices();
+			
+				gl::draw(time, Vec2f(10.0f + 0.5f*(125 - time.getWidth()), 0.0f));
+			
 
 				gl::color(Color::white());
-			gl::popMatrices();
-			
-			gl::pushMatrices();
-				gl::translate(plashkaVec);
-				gl::draw(sidePlashka);
-			gl::popMatrices();
+			gl::popMatrices();			
+		
+			gl::draw(sidePlashka, plashkaVec);			
 
 			gl::pushMatrices();
 				gl::translate(krugPercentAnimateVec);
@@ -142,7 +134,7 @@ class GameControLScreen
 				gl::color(Color::hex(0xc42f39));
 				gl::translate(20 + (krugPercent.getWidth() - totalWidth) * 0.5f, 0.0f );
 				gl::draw(percent);
-				gl::translate(percent.getWidth() - 36, 35);
+				gl::translate(percent.getWidth() - 36.0f, 35.0f);
 				gl::draw(percentTexure);
 				gl::color(Color::white());			
 			gl::popMatrices();
@@ -153,19 +145,19 @@ class GameControLScreen
 			{
 				gl::pushMatrices();
 					gl::color(ColorA(1, 1, 1, matchingPopupAlpha));
-					gl::translate(981, 440);
+					gl::translate(981.0f, 440.0f);
 					gl::draw(matchingPopup);
-					gl::translate(269, 342);
+					gl::translate(269.0f, 342.0f);
 					int numActiveCircles = circlesNum*matchingProgress;
 					for (int i = 0; i < circlesNum; i++)
 					{
 						gl::pushMatrices();
-							gl::translate(20 + 60*i, 0);
+							gl::translate(20.0f + 60.0f*i, 0.0f);
 							if (i+1<=numActiveCircles)							
-								gl::color(ColorA(196.0/255, 47.0/255, 57.0/255, matchingPopupAlpha));
+								gl::color(ColorA(196.0f/255.0f, 47.0f/255.0f, 57.0f/255.0f, matchingPopupAlpha));
 							else
-								gl::color(ColorA(223.0/255, 223.0/255, 223.0/255, matchingPopupAlpha));
-							gl::drawSolidCircle(Vec2f(0,0), 20, 20);
+								gl::color(ColorA(223.0f/255.0f, 223.0f/255.0f, 223.0f/255.0f, matchingPopupAlpha));
+							gl::drawSolidCircle(Vec2f(0.0f, 0.0f), 20.0f, 20.0f);
 						gl::popMatrices();
 					}
 				gl::popMatrices();
