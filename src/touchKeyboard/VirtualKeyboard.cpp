@@ -44,10 +44,10 @@ void VirtualKeyboard::setup(Vec2f _position)
 				shiftTex1					= gl::Texture( loadImage( loadAsset(   "keyboard/shift.png" )));
 				shiftTex0					= gl::Texture( loadImage( loadAsset(   "keyboard/shift0.png")));
 
-	gl::Texture spaceBtnTex					= gl::Texture( loadImage( loadAsset(  "keyboard2/k3.png" )));
+	gl::Texture spaceBtnTex					= gl::Texture( loadImage( loadAsset(  "keyboard/k3.png" )));
 
-	changeKeyboardTex1						= gl::Texture( loadImage( loadAsset(   "keyboard2/k2.png" )));
-	changeKeyboardTex2						= gl::Texture( loadImage( loadAsset(   "keyboard2/k2.png")));
+	changeKeyboardTex1						= gl::Texture( loadImage( loadAsset(   "keyboard/k2.png" )));
+	changeKeyboardTex2						= gl::Texture( loadImage( loadAsset(   "keyboard/k2.png")));
 
 	Vec2f shift_Y= Vec2f(0.0f, 0.0f);
 	float _width = 86.0f;

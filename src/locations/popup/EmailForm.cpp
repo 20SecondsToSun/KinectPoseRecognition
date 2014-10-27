@@ -9,14 +9,14 @@ using namespace mndl::curl;
 
 void EmailForm::setup()
 {	
-	keyBoardMainBgTex		= AssetManager::getInstance()->getTexture(  "images/06_podl.jpg" );
+	keyBoardMainBgTex		= AssetManager::getInstance()->getTexture(  "keyboard/06_podl.jpg" );
 	emailLineTex			= AssetManager::getInstance()->getTexture( "keyboard/emailLine.png"  );
 	closeEmailTex			= gl::Texture( loadImage( loadAsset("keyboard/closeEmail.png"  )));
 	deleteAllTex			= gl::Texture( loadImage(getAssetPath("keyboard/deleteAll.png"  )));
-	addEmailTex				= gl::Texture( loadImage( loadAsset( "images/06_add.png"  )));	
+	addEmailTex				= gl::Texture( loadImage( loadAsset( "keyboard/addEmail.png"  )));	
 
-	emailInputFont			= Font( loadFile(getAssetPath("fonts/ToyotaDisplay_Bd.ttf")), 70 );
-	emailAddFont			= Font( loadFile(getAssetPath("fonts/ToyotaDisplay_Bd.ttf")), 20 );
+	emailInputFont			= *fonts().getFont("Helvetica Neue", 46);
+	emailAddFont			= *fonts().getFont("Helvetica Neue", 26);//20
 
 	addEmailBtn = new ButtonTex(addEmailTex, "addEmail");
 	addEmailBtn->setScreenField(Vec2f(389.0f, 260.0f));	

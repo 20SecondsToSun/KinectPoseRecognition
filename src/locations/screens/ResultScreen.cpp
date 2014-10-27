@@ -12,11 +12,35 @@ void ResultScreen::setup()
 {
 	Font *btnFont = fonts().getFont("Helvetica Neue", 46);
 
-	mailBtn		 = new ButtonColor(Rectf(100,700,500, 800),    RED, btnFont , "E-mail");
-	facebookBtn  = new ButtonColor(Rectf(700,700,1100, 800),   RED, btnFont,  "Facebook");
-	vkontakteBtn = new ButtonColor(Rectf(1300,700,1700, 800),  RED, btnFont,  "Vkontakte");
-	comeBackBtn  = new ButtonColor(Rectf(1200,300, 1600, 400), RED, btnFont,  "BACK");
+	Texture emailBtnTex   = *AssetManager::getInstance()->getTexture("images/serverScreen/mailBtn.png");
+	mailBtn = new ButtonTex(emailBtnTex,  "E-mail");
+	mailBtn->setScreenField(Vec2f(674.0f, 672.0f));
+	mailBtn->setDownState(emailBtnTex);
 
+	Texture backBtnTex   = *AssetManager::getInstance()->getTexture("images/serverScreen/playMore.png");
+	comeBackBtn = new ButtonTex(backBtnTex,  "BACK");
+	comeBackBtn->setScreenField(Vec2f(1578.0f, 655.0f));
+	comeBackBtn->setDownState(backBtnTex);
+
+	Texture facebookBtnTex   = *AssetManager::getInstance()->getTexture("images/serverScreen/fb_off.png");
+	Texture facebookBtnTexDown   = *AssetManager::getInstance()->getTexture("images/serverScreen/fb_on.png");	
+	facebookBtn = new ButtonTex(facebookBtnTex,  "Facebook");
+	facebookBtn->setScreenField(Vec2f(158.0f, 672.0f));
+	facebookBtn->setDownState(facebookBtnTexDown);
+
+	Texture vkontakteBtnTex   = *AssetManager::getInstance()->getTexture("images/serverScreen/vk_off.png");
+	Texture vkontakteBtnTexDown   = *AssetManager::getInstance()->getTexture("images/serverScreen/vk_on.png");	
+	vkontakteBtn = new ButtonTex(vkontakteBtnTex,  "Vkontakte");
+	vkontakteBtn->setScreenField(Vec2f(158.0f, 840.0f));
+	vkontakteBtn->setDownState(vkontakteBtnTexDown);
+
+	postPhotoTextTex       = *AssetManager::getInstance()->getTexture("images/serverScreen/postPhotoText.png");
+	emailtPhotoTextTex     = *AssetManager::getInstance()->getTexture("images/serverScreen/sendEmailText.png");
+	downloadPhotoTextTex   = *AssetManager::getInstance()->getTexture("images/serverScreen/loadPhotoText.png");
+	plashkaTex             = *AssetManager::getInstance()->getTexture("images/serverScreen/plashka.png");
+	playMoreTex            = *AssetManager::getInstance()->getTexture("images/serverScreen/playMore.png");
+	
+	photoRamki().setup();
 	socialPopup().setup();
 	emailPopup().setup();
 
@@ -62,6 +86,7 @@ void ResultScreen::init( LocationEngine* game)
 
 	if(PlayerData::score != 0)
 	{
+		drawHandler = &ResultScreen::drawPhotoLoadingPreloader;
 		state = INIT_STATE;
 		photoLoadingFromDirSignal = photoMaker().photoLoadEvent.connect(boost::bind(&ResultScreen::photoLoadedFromDirHandler, this));	
 		photoLoadingFromDirErrorSignal = photoMaker().photoLoadErrorEvent.connect(boost::bind(&ResultScreen::photoLoadeFromDirErrorHandler, this));	
@@ -69,15 +94,17 @@ void ResultScreen::init( LocationEngine* game)
 	}
 	else
 	{
+		drawHandler = &ResultScreen::drawUpsetScreen;
 		state = SORRY_GO_HOME;	
-		comeBackSignal = comeBackBtn->mouseDownEvent.connect(boost::bind(&ResultScreen::closeScreenHandler, this));
+		comeBackSignal = comeBackBtn->mouseUpEvent.connect(boost::bind(&ResultScreen::closeScreenHandler, this));
 		comeBackTimerStart();
 	}
 }
 
 void ResultScreen::animationStartFinished()
 {
-	state = PHOTO_LOADING_FROM_DIRECTORY;	
+	drawHandler = &ResultScreen::drawPhotoLoadingPreloader;
+	state = PHOTO_LOADING_FROM_DIRECTORY;
 }
 
 void ResultScreen::photoLoadedFromDirHandler()
@@ -92,36 +119,32 @@ void ResultScreen::photoLoadedFromDirHandler()
 
 void ResultScreen::photoLoadeFromDirErrorHandler()
 {
-	state = ERROR_STATE;	
+	drawHandler = &ResultScreen::drawErrorScreen;
+	state = ERROR_STATE;
+
 	photoLoadingFromDirSignal.disconnect();
 	photoLoadingFromDirErrorSignal.disconnect();
-	comeBackSignal = comeBackBtn->mouseDownEvent.connect(boost::bind(&ResultScreen::closeScreenHandler, this));
+	comeBackSignal = comeBackBtn->mouseUpEvent.connect(boost::bind(&ResultScreen::closeScreenHandler, this));
 	comeBackTimerStart();
 }
 
 void ResultScreen::animationPhotoSavedFinished()
 {
-	canShowResultImages = true;	
 
-	for (int i = 0; i < POSE_IN_GAME_TOTAL; i++)
-	{
-		if (PlayerData::playerData[i].isSuccess)
-		{
-			alphaAnimateComics[i] = 0;
-			timeline().apply( &alphaAnimateComics[i], 1.0f, 0.7f, EaseOutCubic() ).delay(0.5f*i);		
-		}
-	}
+	photoRamki().initAnimationParams();
+	canShowResultImages = true;		
 	
 	if (Params::isNetConnected == false)
 	{
-		state = NET_OFF_LOCATION_READY;		
+		state = NET_OFF_LOCATION_READY;	
 		_game->freezeLocation = false;	
 		connectButtons();
 		comeBackTimerStart();	
 	}
 	else
 	{	
-		_game->freezeLocation = true;	
+		_game->freezeLocation = true;
+		drawHandler = &ResultScreen::drawNetConnectionPreloader;
 		state = CHECKING_NET_CONNECTION;	
 		timeline().apply( &alphaAnimate, 0.0f, 1.0f, 0.9f, EaseOutCubic() ).finishFn( bind( &ResultScreen::animationShowChekConnection, this ) );		
 	}
@@ -154,7 +177,8 @@ void ResultScreen::animationHideChekConnection()
 	else
 	{
 		_game->freezeLocation = true;	
-		state = PHOTO_LOADING_TO_SERVER;	
+		state = PHOTO_LOADING_TO_SERVER;
+		drawHandler = &ResultScreen::drawServerPreloader;
 		timeline().apply( &alphaAnimate, 0.0f, 1.0f, 0.9f, EaseOutCubic() ).finishFn( bind( &ResultScreen::animationShowServerPhotoLoad, this ) );	
 	}
 }
@@ -208,12 +232,12 @@ void ResultScreen::connectButtons()
 {
 	if(server().isConnected)
 	{
-		fbSignal =facebookBtn->mouseDownEvent.connect(boost::bind(&ResultScreen::facebookBtnHandler, this));
-		vkSignal =vkontakteBtn->mouseDownEvent.connect(boost::bind(&ResultScreen::vkBtnHandler, this));		
+		fbSignal =facebookBtn->mouseUpEvent.connect(boost::bind(&ResultScreen::facebookBtnHandler, this));
+		vkSignal =vkontakteBtn->mouseUpEvent.connect(boost::bind(&ResultScreen::vkBtnHandler, this));		
 	}
 
-	mailSignal =  mailBtn->mouseDownEvent.connect(boost::bind(&ResultScreen::openEmailBtnHandler, this));
-	comeBackSignal = comeBackBtn->mouseDownEvent.connect(boost::bind(&ResultScreen::closeScreenHandler, this));
+	mailSignal =  mailBtn->mouseUpEvent.connect(boost::bind(&ResultScreen::openEmailBtnHandler, this));
+	comeBackSignal = comeBackBtn->mouseUpEvent.connect(boost::bind(&ResultScreen::closeScreenHandler, this));
 
 	isButtonsInit = true;
 	console()<<"BUTTONS INIT ............. "<<endl;	
@@ -238,7 +262,9 @@ void ResultScreen::initPopup(int type)
 {
 	if (type == popupTypes::EMAIL)
 	{
+		drawHandler = &ResultScreen::drawEmailPopup;
 		state = POPUP_EMAIL;	
+
 		emailPopup().show();
 		closeEmailPopupSignal = emailPopup().closeEvent.connect(boost::bind(&ResultScreen::closeEmailPopup, this));
 		sendToMailSignal = emailPopup().sendEvent.connect(boost::bind(&ResultScreen::sendToEmailBtnHandler, this));
@@ -246,11 +272,23 @@ void ResultScreen::initPopup(int type)
 	}
 	else if (type == popupTypes::VKONTAKTE || type == popupTypes::FACEBOOK)
 	{
+		drawHandler = &ResultScreen::drawSocialPopup;
 		state = POPUP_MODE;	
+
 		socialPopup().show(type);	
 		disconnectButtons();
 		closeSocialPopupSignal = socialPopup().closeEvent.connect(boost::bind(&ResultScreen::closeSocialPopup, this));
 	}
+}
+
+void ResultScreen::drawEmailPopup()
+{
+	emailPopup().draw();
+}
+
+void ResultScreen::drawSocialPopup()
+{
+	socialPopup().draw();
 }
 
 void ResultScreen::closeEmailPopup()
@@ -290,8 +328,10 @@ void ResultScreen::closeSocialPopup()
 }
 
 void ResultScreen::sendPhotoToEmail() 
-{	
+{
+	drawHandler = &ResultScreen::drawSendingToMailPreloader;
 	state = PHOTO_SENDING_TO_MAIL;
+
 	_game->freezeLocation = true;	
 	timeline().apply( &alphaAnimate, 0.0f, 1.0f, 0.9f, EaseOutCubic() ).finishFn( bind( &ResultScreen::animationShowSendingToMailText, this ) );		
 }
@@ -390,48 +430,8 @@ void ResultScreen::update()
 void ResultScreen::draw() 
 {
 	gl::enableAlphaBlending();
-	gl::clear(Color::black());	
 
-	switch (state)
-	{
-		case PHOTO_LOADING_FROM_DIRECTORY:
-		case INIT_STATE:			
-			drawPhotoLoadingPreloader();
-		break;
-
-		case CHECKING_NET_CONNECTION:
-			drawNetConnectionPreloader();
-		break;		
-
-		case PHOTO_LOADING_TO_SERVER:			
-			drawServerPreloader();
-		break;			
-
-		case PHOTO_SENDING_TO_MAIL:			
-			drawSendingToMailPreloader();
-		break;			
-
-		case POPUP_EMAIL:	
-			emailPopup().draw();			
-		break;
-
-		case POPUP_MODE:	
-			socialPopup().draw();			
-		break;			
-
-		case SORRY_GO_HOME:
-			drawUpsetScreen();
-			comeBackBtn->draw();
-		break;		
-
-		case ERROR_STATE:
-			drawErrorScreen();
-			comeBackBtn->draw();
-		break;	
-
-		default:
-			break;
-	}	
+	(this->*drawHandler)();
 
 	if(state!= POPUP_EMAIL && state!=POPUP_MODE)
 	{
@@ -451,32 +451,12 @@ void ResultScreen::draw()
 	#endif
 
 	gl::disableAlphaBlending();	
-		
-	
-	/*Utils::textFieldDraw("‘»Õ¿À‹Õ€… › –¿Õ | ”—œ≈ÿÕŒ: "+ to_string(PlayerData::score) +" ËÁ 3", 
-		fonts().getFont("Helvetica Neue", 46), 
-		Vec2f(400.f, 400.0f),
-		ColorA(1.f, 1.f, 1.f, 1.f));*/	
 }
 
 void ResultScreen::drawResultImagesIfAllow() 
 {
-	if(canShowResultImages)
-	{
-		for (size_t  i = 0; i < POSE_IN_GAME_TOTAL; i++)
-		{
-			if(PlayerData::playerData[i].isSuccess )
-			{
-				gl::pushMatrices();
-					gl::translate(505.f*i, 200.0f );
-					gl::scale(0.5f, 0.5f);	
-					gl::color(ColorA(1,1,1,alphaAnimateComics[i]));					
-					gl::draw( PlayerData::getDisplayingTexture(i));
-				gl::popMatrices();
-			}	
-		}
-		gl::color(ColorA(1,1,1,1));
-	}
+	if(canShowResultImages)	
+		photoRamki().draw();	
 }
 
 void ResultScreen::drawQRCodeIfAllow() 
@@ -543,6 +523,7 @@ void ResultScreen::drawUpsetScreen()
 	//gl::color(ColorA(1, 1, 1, alphaAnimate));
 	Utils::textFieldDraw("¬˚ ÌÂ Û„‡‰‡ÎË ÌË Ó‰ÌÓÈ ÔÓÁ˚...(((",  fonts().getFont("Helvetica Neue", 46), Vec2f(40.f, 40.0f), ColorA(1.f, 0.f, 0.f, 1.f));
 	//gl::color(ColorA(1, 1, 1, 1));
+	comeBackBtn->draw();
 }
 
 void ResultScreen::drawErrorScreen() 
@@ -550,6 +531,7 @@ void ResultScreen::drawErrorScreen()
 	//gl::color(ColorA(1, 1, 1, alphaAnimate));
 	Utils::textFieldDraw("◊ÚÓ-ÚÓ ÔÓ¯ÎÓ ÌÂ Ú‡Í...(((",  fonts().getFont("Helvetica Neue", 46), Vec2f(40.f, 40.0f), ColorA(1.f, 0.f, 0.f, 1.f));
 	//gl::color(ColorA(1, 1, 1, 1));
+	comeBackBtn->draw();
 }
 
 void ResultScreen::disconnectListeners()

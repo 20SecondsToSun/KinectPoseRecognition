@@ -5,7 +5,7 @@ using namespace ci;
 void	PopupBase::setup()
 {
 	closeBtn		  = new ButtonColor(Rectf(1700,100, 1900, 200), Color(1,0,0), fonts().getFont("Helvetica Neue", 26),	"ÇÀÊÐÛÒÜ");	
-	keyBoardMainBgTex = AssetManager::getInstance()->getTexture(  "images/06_podl.jpg" );	
+	keyBoardMainBgTex = AssetManager::getInstance()->getTexture(  "keyboard/06_podl.jpg" );	
 }
 
 void	PopupBase::reset()
