@@ -25,20 +25,20 @@ using namespace std;
 class KinectPoseRecognitionApp : public AppNative
 {
   public:	
-	  void				setup();
+	    void			setup();
 		void			keyDown( KeyEvent event );
 		void			mouseDown( MouseEvent event );
 		void			update();
 		void			draw();
 		void			shutdown();
 
-	static const int	secondsToRec		= 5;	
+		static const int secondsToRec = 5;	
 
-	 ci::Font			hintFont;
-	 Timer				saveTimer;
-	 string				state;
+		ci::Font		hintFont;
+		Timer			saveTimer;
+		string			state;
 
-	 gl::Texture		bg;
+		gl::Texture		bg;
 
 	private:
 		LocationEngine			 game;
@@ -68,19 +68,16 @@ void KinectPoseRecognitionApp::setup()
 	
 		saver().loadConfigData();
 
-		IntroScreen::Instance()->setup();
-		MainGameScreen::Instance()->setup();
-		//ResultScreen::Instance()->setup();
+		//IntroScreen::Instance()->setup();
+		//MainGameScreen::Instance()->setup();
+		ResultScreen::Instance()->setup();
 
 		//popup().start(popupTypes::EMAIL);	
-
-		game.init(getWindow());
-		game.changeState(IntroScreen::Instance());
 	#endif
 
 
 	#ifdef debug
-		PlayerData::score = 3;
+		PlayerData::score = 1;
 		mParams = params::InterfaceGl::create( getWindow(), "App parameters", toPixels( Vec2i( 500, 400 ) ) );
 		mParams->addParam( "boxMaxErrorX", &Params::boxMaxErrorX ).min( 5.f ).max( 50.5f ).step( 5.f );
 		mParams->addParam( "boxMaxErrorY", &Params::boxMaxErrorY ).min( 5.f ).max( 50.5f ).step( 5.f );
@@ -111,6 +108,13 @@ void KinectPoseRecognitionApp::setup()
 		cameraCanon().setup();
 		cameraCanon().live();
 		kinect().setup();
+	#endif
+
+
+  #ifndef recording
+		recognitionGame().setup();
+		game.init(getWindow());
+		game.changeState(ResultScreen::Instance());
 	#endif
 
 	gl::enableAlphaBlending();	
@@ -251,7 +255,7 @@ void KinectPoseRecognitionApp::shutdown( )
 {
 	console()<<"SHUT DOWN!!!!!!!!!!"<<endl;
 	#ifdef kinectUsed
-		kinect().Shutdown();
+		//kinect().Shutdown();
 	#endif
 
 	//cameraCanon().shutdown();

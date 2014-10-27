@@ -73,7 +73,15 @@ void PhotoMaker::resizeFinalImages()
 {
 	mFbo					= gl::Fbo( BIG_PHOTO_WIDTH, BIG_PHOTO_HEIGHT);
 
-	Vec2f  trans			  = Vec2f(0, cameraCanon().translateSurface.y);
+	Vec2f  trans;//
+	try
+	{
+		trans = Vec2f(0.0f, cameraCanon().translateSurface.y);
+	}
+	catch(...)
+	{
+		trans = Vec2f(0.0f, 0.0f);
+	}	
 
 	int finalImageHeight =  BIG_PHOTO_HEIGHT*PlayerData::score;
 	Surface finalImage = Surface(BIG_PHOTO_WIDTH, finalImageHeight, true);
@@ -82,9 +90,9 @@ void PhotoMaker::resizeFinalImages()
 
 	for (size_t  i = 0; i < POSE_IN_GAME_TOTAL; i++)
 	{
-		
 		if (PlayerData::playerData[i].isSuccess)
 		{
+			
 			Texture photoFromCameraTex = PlayerData::playerData[i].imageTexture;
 			Surface photoFromCameraSurface = Surface(photoFromCameraTex);
 		
@@ -92,16 +100,12 @@ void PhotoMaker::resizeFinalImages()
 			cadrSurface.copyFrom(photoFromCameraSurface, Area(0, 0, getWindowWidth(), getWindowHeight()-trans.y), trans);
 			cadrSurface = Utils::resizeScreenshot(cadrSurface, (int32_t)BIG_PHOTO_WIDTH, (int32_t)BIG_PHOTO_HEIGHT);
 
-
 			drawToFBO(cadrSurface, recognitionGame().getPoseImageById(PlayerData::playerData[i].storyCode));
-
-
+			
 			mFbo.getTexture().setFlipped(true);
 			Surface comicsImage = Surface(mFbo.getTexture());
-
 			PlayerData::setDisplayingTexture(i, gl::Texture(comicsImage));	
 			writeImage( Params::getTempPhotoSavePath(i), comicsImage);
-
 			Vec2f offset = Vec2f(0.0f, (float)BIG_PHOTO_HEIGHT*offsetI);
 			finalImage.copyFrom(comicsImage, Area(0, 0, BIG_PHOTO_WIDTH, BIG_PHOTO_HEIGHT), offset);	
 			offsetI ++;

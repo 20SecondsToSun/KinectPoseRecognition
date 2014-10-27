@@ -23,6 +23,7 @@ using namespace ci::app;
 using namespace gl;
 using namespace std;
 
+class PhotoRamki;
 class ResultScreen : public Location
 {
 	public:
@@ -86,6 +87,8 @@ class ResultScreen : public Location
 		void	drawErrorScreen();
 		void	drawServerPreloader(); 
 		void	drawSendingToMailPreloader();
+		void	drawEmailPopup();
+		void	drawSocialPopup();
 
 		void	drawResultImagesIfAllow();
 		void	drawQRCodeIfAllow();
@@ -108,10 +111,10 @@ class ResultScreen : public Location
 		void	closeSocialPopup();
 		void	closeEmailPopup();
 
-		ButtonColor	*mailBtn;
-		ButtonColor *facebookBtn;
-		ButtonColor *vkontakteBtn;
-		ButtonColor *comeBackBtn;	
+		ButtonTex   *facebookBtn;
+		ButtonTex   *vkontakteBtn;
+		ButtonTex	*comeBackBtn;	
+		ButtonTex	*mailBtn;			
 
 		void	facebookBtnHandler();
 		void	vkBtnHandler();
@@ -134,12 +137,88 @@ class ResultScreen : public Location
 		ci::signals::connection sendToMailSignal;
 		ci::signals::connection serverSignalConnectionCheck;
 
-		ci::Anim<float> alphaAnimate, alphaFinAnimate;
-		ci::Anim<float> alphaAnimateComics[3];
+		ci::Anim<float> alphaAnimate, alphaFinAnimate;		
 		bool canShowResultImages, isButtonsInit, isLeaveAnimation;
 
-		QRcode qrCode;		
+		QRcode qrCode;	
+
+		Texture	postPhotoTextTex, emailtPhotoTextTex, downloadPhotoTextTex;
+		Texture	plashkaTex, playMoreTex;	
 
 		void	savePhotoToLocalBase();
-		void	sendPhotoToEmail();	
+		void	sendPhotoToEmail();			
+
+		void (ResultScreen::* drawHandler)();
 };
+
+class PhotoRamki 
+{
+	public:
+
+		// singleton implementation
+		static PhotoRamki& getInstance() { static PhotoRamki ramki; return ramki; };
+
+		Texture	ramka1Tex, ramka2Tex, ramka3Tex;
+
+		void setup()
+		{
+			for (int i = 0; i < 3; i++)			
+				images[i]   = *AssetManager::getInstance()->getTexture("images/serverScreen/photo"+to_string(i+1)+".png");
+
+			startPosition[0] = Vec2f(53.0f, -537.0f);
+			startPosition[1] = Vec2f(733.0f, -455.0f);
+			startPosition[2] = Vec2f(1219.0f, -519.0f);
+
+			finalPosition[0] = Vec2f(53.0f, 0.0f);
+			finalPosition[1] = Vec2f(733.0f, 0.0f);
+			finalPosition[2] = Vec2f(1219.0f, 0.0f);			
+		}
+
+		void initAnimationParams()
+		{
+			for (int i = 0; i < POSE_IN_GAME_TOTAL; i++)
+			{
+				if (PlayerData::playerData[i].isSuccess)
+				{
+					alphaAnimateComics[i] = 0;
+					timeline().apply( &alphaAnimateComics[i], 1.0f, 0.7f, EaseOutCubic() ).delay(0.5f*i);		
+				}
+				animatePosition[i] = startPosition[i];
+				timeline().apply( &animatePosition[i], startPosition[i], finalPosition[i], 0.7f, EaseOutCubic() ).delay(0.5f*i);
+			}
+			
+		}
+
+		void draw()
+		{			
+			for (int i = 0; i < POSE_IN_GAME_TOTAL; i++)
+			{		
+				gl::pushMatrices();
+						gl::translate(animatePosition[i] );									
+						gl::draw( images[i]);
+				gl::popMatrices();
+			}		
+			
+			/*for (size_t  i = 0; i < POSE_IN_GAME_TOTAL; i++)
+			{
+				if(PlayerData::playerData[i].isSuccess )
+				{
+					gl::pushMatrices();
+						gl::translate(505.f*i, 200.0f );
+						gl::scale(0.5f, 0.5f);	
+						gl::color(ColorA(1.0f, 1.0f, 1.0f, alphaAnimateComics[i]));					
+						gl::draw( PlayerData::getDisplayingTexture(i));
+					gl::popMatrices();
+				}	
+			}*/
+			gl::color(Color::white());
+		}
+
+		private:
+			ci::Anim<float> alphaAnimateComics[3];
+			ci::Anim<Vec2f> animatePosition[3];	
+			Vec2f startPosition[3], finalPosition[3];
+			Texture		images[3];
+	
+};
+inline PhotoRamki&	photoRamki() { return PhotoRamki::getInstance(); };
