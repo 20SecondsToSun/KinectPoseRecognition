@@ -26,7 +26,7 @@ class GameControLScreen
 
 		Texture sidePlashka, krugPercent, sector, ciferblat, arrow, silhouette, percentTexure, matchingPopup;
 
-		Font debugFont26, debugFontText, percentFont;		
+		Font secondsFont, debugFontText, percentFont;		
 
 		float rotor, quickAnimPosePercent, qaPercent;
 		int quickAnimTime, state, showingSeconds, startingTime;
@@ -62,7 +62,7 @@ class GameControLScreen
 			krugPercentAnimateVec = Vec2f(300.0f, 0.0f);
 			silhouetteAlpha		  = 0;
 
-			debugFont26   = Font(loadFile(getAssetPath("fonts/maestroc.ttf")), 160);
+			secondsFont   = Font(loadFile(getAssetPath("fonts/maestroc.ttf")), 170);
 			percentFont   = Font(loadFile(getAssetPath("fonts/maestroc.ttf")), 190);
 			debugFontText = Font(loadFile(getAssetPath("fonts/myriad/MyriadPro-BlackSemiExt.ttf")), 26);
 
@@ -71,10 +71,11 @@ class GameControLScreen
 			percentTexure = Utils::getTextField("%", &percentTexureFont,  Color(1,1,1));			
 
 			spline2D.reserve(4);		
-			spline2D.push_back(Vec2f(1794,148));			
-			spline2D.push_back(Vec2f(1761,394));			
-			spline2D.push_back(Vec2f(1757,650));		
-			spline2D.push_back(Vec2f(1793,970));
+			spline2D.push_back(Vec2f(1794,148));
+			spline2D.push_back(Vec2f(1758,430));		
+			spline2D.push_back(Vec2f(1758,692));		
+			spline2D.push_back(Vec2f(1788,948));
+
 			spline2D.setInterpolation(OFX_MSA_SPLINE_CUBIC);
 			animationPointsStates = spline2D.getPoints(101);
 			std::reverse(animationPointsStates.begin(),animationPointsStates.end());  
@@ -114,10 +115,10 @@ class GameControLScreen
 				gl::draw(arrow);
 
 				gl::translate(Vec2f(75.0f, 40.0f));		
-				gl::Texture time = Utils::getTextField(to_string(showingSeconds), &debugFont26, Color(1,1,1));
+				gl::Texture time = Utils::getTextField(to_string(showingSeconds), &secondsFont, Color(1,1,1));
 
 				gl::pushMatrices();
-					gl::translate(10 + 0.5*(125 - time.getWidth()), 0);
+					gl::translate(10.0f + 0.5f*(125 - time.getWidth()), 0.0f);
 					gl::draw(time);
 				gl::popMatrices();
 
@@ -132,16 +133,16 @@ class GameControLScreen
 			gl::pushMatrices();
 				gl::translate(krugPercentAnimateVec);
 				gl::translate(animationPosition);
-				gl::translate(-krugPercent.getWidth()*0.5, -krugPercent.getHeight()*0.5 );
+				gl::translate(-krugPercent.getWidth()*0.5, -krugPercent.getHeight()*0.5f );
 				gl::draw(krugPercent);
 				gl::Texture percent = Utils::getTextField(to_string(percentMatching), &percentFont,  Color(1,1,1));
 
 				float totalWidth = percent.getWidth() + percentTexure.getWidth();
 
 				gl::color(Color::hex(0xc42f39));
-				gl::translate( 20 + (krugPercent.getWidth() - totalWidth)*0.5, 12 );
+				gl::translate(20 + (krugPercent.getWidth() - totalWidth) * 0.5f, 0.0f );
 				gl::draw(percent);
-				gl::translate(percent.getWidth()-36, 28);
+				gl::translate(percent.getWidth() - 36, 35);
 				gl::draw(percentTexure);
 				gl::color(Color::white());			
 			gl::popMatrices();

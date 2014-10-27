@@ -42,7 +42,6 @@ void IntroScreen::setup()
 
 	///////////////////////////////
 	comeBackBtn			= new ButtonColor(Rectf(1520,980, 1920, 1080), RED, btnFont, "ÍÀÇÀÄ");
-
 }
 
 void IntroScreen::init( LocationEngine* game)
