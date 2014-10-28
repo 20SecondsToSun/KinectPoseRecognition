@@ -1,0 +1,282 @@
+Awesomium v1.7.0 Mar 06 2013
+
+    API Major Changes:
+        - [Added] WebView::RequestPageInfo
+        - [Added] WebView::DidOverrideCertificateError
+        - [Added] WebView::routing_id
+        - [Added] WebView::ZoomIn, ZoomOut, SetZoom, ResetZoom
+        - [Added] WebView::set_sync_message_timeout
+        - [Added] WebConfig::remote_debugging_host
+        - [Added] WebViewListener::Dialog::OnShowPageInfoDialog
+        - [Added] WebViewListener::Dialog::OnShowCertificateErrorDialog
+        - [Added] WebViewListener::View::OnAddConsoleMessage
+        - [Added] ResourceInterceptor::OnFilterNavigation
+        - [Added] ResourceInterceptor::OnWillDownload
+        - [Added] JSObject::SetPropertyAsync
+        - [Added] JSObject::InvokeAsync    
+    
+    Major Core Changes:
+        - You can now handle SSL errors and display relevant UI to allow the 
+          user to ignore certain certificate errors. 
+          See WebViewListener::Dialog::OnShowCertificateErrorDialog.
+        - You can now request SSL info for a certain web-page so that you can 
+          display relevant UI (for example, the green "lock" in Chrome for 
+          authenticated web-sites). See WebView::RequestPageInfo
+        - Full page zoom has been added, see WebView::ZoomIn and WebView::SetZoom
+        - You can now block certain page navigations 
+          (useful for custom blacklist/whitelist behavior).
+          See ResourceInterceptor::OnFilterNavigation
+        - You can now define properties on remote JSObjects asynchronously. 
+          This is useful for setting a large number of properties at once. 
+          See JSObject::SetPropertyAsync
+        - You can now invoke methods on remote JSObjects asynchronously. 
+          See JSObject::InvokeAsync
+        - You can now define a custom hostname for the remote Inspector to listen 
+          on (useful if you are behind a router). 
+          See WebConfig::remote_debugging_host
+
+    Bug Fixes:   
+        - [Bugfix] Fixed issue with WebSession::AddDataSource not matching 
+                   uppercase names
+        - [Bugfix] Fixed issue with WebView::DidCancelDownload
+        - [Bugfix] Fixed issue with custom method names not being enumerated 
+                   within JSObject::GetMethodNames
+        - [Bugfix] Fixed issue with crash upon certain download events.
+
+        
+Awesomium.NET v1.7.0 Mar 06 2013
+
+    API Major Changes:
+        - [Added] WebCore.Configuration (returns the configuration settings
+                  used to initialize the core).
+        - [Added] WebSession.ClearCookies()
+        - [Added] WebSession.IsJavascriptEnabled (no JS related API can
+                  called if it's false).
+        - [Added] WebSession.GetZoomForURL (zoom setting for a particular
+                  host).
+        - [Added] WebSessionCollection.Item (indexer to access sessions by 
+                  data path)
+        - [Added] WebSessionCollection.Contains (overload)
+        - [Added] NativeViewModel (split from ViewModel. Separates disposal
+                  logic from MVVM logic so that ViewModel can be used by non-
+                  disposable types).
+        - [Added] NetError enumeration. (Provides description for the error 
+                  code of the LoadingFrameFailed event).
+        - [Added] CertError (Certificate errors)
+        - [Modified] Changed all event triggers to not accept a sender 
+                     (having a sender is a wrong pattern).
+        - [Added] JavascriptAsynchMethodEventHandler (delegate used in
+                  dyamic model to create asynchronous custom methods).
+        - [Modified] IWebView.Download -> WebCore.Download
+        - [Added] DownloadItem (MVVM friendly info for a dowanload operation)
+        - [Added] DownloadCollection
+        - [Added] WebCore.DownloadBegin (fired before a download starts;
+                  provides the DownloadItem just added to Downloads).
+        - [Added] WebCore.Downloads (list of active, complete or cancele 
+                  download operations)
+        - [Added] INavigationInterceptor (Service available on IWebView
+                  instances. Allows you to handle navigation requests
+                  or add filtering ruls - whitelist, blacklist).
+        - [Added] IWebView.WindowClosed (event fired when 'window.close' is 
+                  called from Javascript).
+        - [Added] JSDialogFlags (used with ShowJavascriptDialog).
+        - [Added] IWebView.ShowJavascriptDialog (alert, confirm, prompt)
+        - [Added] IWebView.ConsoleMessage (event fired for Javascript console
+                  messages).
+        - [Added] IWebView.InitializeNativeView (event fired right before the
+                  underlying web-view of a technology specfic WebControl,
+                  is instantiated).
+        - [Added] IWebView.NativeViewInitialized (event fired right after the
+                  underlying web-view of a technology specfic WebControl,
+                  is instantiated).
+        - [Added] IWebView.SynchronousMessageTimout (sets the maximum amount 
+                  of time to wait for a response from a synchronous 
+                  IPC message dispatched to the view's renderer process).
+        - [Added] IWebView.ZoomIn (Zooms in by 20%)
+        - [Added] IWebView.ZoomOut (Zooms out by 20%)
+        - [Added] IWebView.ResetZoom (Resets to 100%)
+        - [Added] IWebView.Zoom
+        - [Added] IWebView.Printing (event for when a printing operation
+                  starts.
+        - [Added] IWebView.IsPrinting (property reflecting printing
+                  operation status)
+        - [Added] IWebView.RequestPageInfo (Requests page's security related
+                  information)
+        - [Added] IWebView.ShowPageInfo (Event fired in response to
+                  RequestPageInfo)
+        - [Added] WebPageInfo (Available through ShowPageInfo)
+        - [Added] WebPopupMenuInfo.Item (indexer; WebMenuItem is now 
+                  IEnumerable<WebMenuItem>).
+        - [Added] IWebView.CertificateError (Event fired on certificate
+                  errors. Allows you to ignore errors).
+        - [Added] IWebView.Identifier (Unique, global web-view identifier).
+        - [Removed] IWebView.BeginNavigation (See INavigationInterceptor).
+        - [Added] WebPopupMenuInfo.Count
+        - [Obsolete] WebPopupMenuInfo.Items
+        - [Added] WebViewCollection.GetByProcessId
+        - [Added] WebViewCollection.GetById (See IWebView.Identifier).
+        - [Added] WebViewCollection.Contains (overload for seeking by
+                  process ID).
+        - [Added] UrlEventArgs.HasErrors (indicates that the original URI
+                  provided, is malformed).
+        - [Added] UrlEventArgs.OriginalString (the original URI string)
+        - [Modified] ShowCreatedWebViewEventArgs -> CreatedWebViewEventArgs
+        - [Added] CreatedWebViewEventArgs.IsWindowOpen
+        - [Added] CreatedWebViewEventArgs.IsUserSpecsOnly
+        - [Removed] CreatedWebViewEventArgs.InitialPos
+        - [Added] CreatedWebViewEventArgs.Specs (JSWindowOpenSpecs)
+        - [Added] JSWindowOpenSpecs structure (represents the specs specified
+                  by users in a Javascript 'window.open' call, including
+                  size and positioning, if any).
+        - [Added] IWebView.IsJavascriptEnabled (Prevents calling 
+                  Javascript-related API when WebPreferences.Javascript 
+                  is false)
+        - [Added] (WPF) WebPopupMenu (default drop-down, popup menu)
+        - [Added] (WPF) WebControl.PopupMenuResourceKey (ComponentResourceKey
+                  for the default popup menu).
+        - [Added] (WPF) SourceBinding (MarkupExtension; binds TextBoxes
+                  to WebControl.Source and provides features to make them
+                  act as address-boxes).
+        - [Added] (WPF) UriValueConverter (IValueConverter for Uri).
+        - [Added] (WPF) InputEventManager (WeakEventManager that allows to
+                  use the "weak event pattern" for UIElement user input events;
+                  used by the SourceBinding).
+        - [Added] (WPF) WebViewEventManager (WeakEventManager that allows to
+                  use the "weak event pattern" for IWebView events).
+        - [Modified] (WinForms) WebControl.ViewType (property that tells 
+                     the Windows Forms WebControl to optionally wrap 
+                     an offscreen web-view. - Enables transparency).
+        - [Added] (WinForms) WebSessionProvider (equivalent to the WPF
+                  WebSessionProvider, allows you to assign a WebSession
+                  to a Windows Forms WebControl at design-time).
+        - [Added] (WinForms) PromptForm (default dialog for Javascript 
+                  'window.confirm').
+
+    Core Changes:
+        - [Modified] All API members' names with an ID suffix, have been
+                     renamed to have an Id suffix (eg, IWebView.ProcessId).
+                     These would be too many to list above.
+        - [Feature] Added protections that prevent JS interoperation methods
+                    being called on an IWebView instance, before DocumentReady.
+        - [Feature] Added protections that prevent the use of JS-related API
+                    being called, when WebPreferences.Javascript is disabled.
+        - [Modified] JSObject no longer inherits DynamicObject. It now provides
+                     advanced low level dynamic API support through .NET's
+                     IDynamicMetaObjectProvider.
+        - [Feature] Added protections that prevent the use of synchronous JS
+                    API calls, when the context is synchronous (synchronous
+                    custom method handler).
+        - [Feature] Implemented internal downloads management and added the
+                    DownloadCollection and DownloadItem classes that allow you
+                    to easily monitor and bind your MVVM application to download
+                    operations.
+        - [Feature] Added support for Zoom setting to views and the ability to
+                    retrieve settings for specific hosts from WebSession.
+        - [Modified] Made it so the WPF/WinForms WebSessionProviders provide 
+                     a previously created WebSession with the same DataPath, 
+                     instead of attempting to create a new one.
+        - [Modified] Made it so the IsManipulationEnabled of WPF presenters is 
+                     bound to the WebControl (this will propagate the 
+                     ManipulationDelta routed event to the WebControl).
+        - [Feature] Added design-time support for WebPreferences (available 
+                    through WebSessionProviders).
+        - [Feature] All properties and event args that accept or return a Uri,
+                    are now ready to silently respond to malformed URIs.
+        - [Removed] Removed the ResourceInterceptor class. IResourceInterceptor
+                    interface remains.
+        - [Feature] Added support for JavaScript dialogs.
+        - [Feature] Added support for handling Certificate errors and obtaining
+                    page's security related information.
+        - [Feature] Added the ability cancel/handle navigations asynchronously,
+                    through the new INavigationInterceptor service. The service
+                    also supports white/blacklisting.
+        - [Feature] Added default dialog for selecting a folder at Print requests,
+                    SelectLocalFiles and design-time, to the WPF WebControl
+                    and design-time support.
+        - [Feature] Added default drop-down (popup) menu to WPF WebControl
+                    (see WebPopupMenu and WebPopupMenuBase).
+        - [Feature] Added default WPF certificate error dialog.
+        - [Feature] Added default WPF web page info cpntrol and popup.
+                    (see WebPageInfoPopup and WebPageInfoControl).
+        - [Feature] Added default dialog layers for handling Javascript dialogs 
+                    to the WPF WebControl.
+        - [Feature] Added the ability to handle all user input (including
+                    system and control keyboard events) through the
+                    WPF WebControl's Preview events.
+        - [Feature] Added default dialogs for handling Javascript dialogs 
+                    to the Windows Forms WebControl.
+        - [Feature] Added default ContextMenu to the Windows Forms WebControl.
+        - [Feature] Extended design-time support for the WPF WebControl.
+        - [Feature] Added design-time support for the Windows Forms WebControl.
+        
+    Bug Fixes:                    
+        - [Bugfix] Fixed issue with ResourceDataSource that would not allow
+                   requests with queries.
+        - [Bugfix] Fixed issue in designer of the Windows Forms and WPF
+                   WebControl, that would cause the core to attempt to make
+                   p/invoke calls to the Awesomium library at design-time.
+        - [Bugfix] Fixed bug that would prevent escaped URIs from being properly
+                   passed to servers.
+        - [Bugfix] Fixed bug that would cause the SurfaceFactory to throw an
+                   exception, when destroying a Surface.
+        - [BugFix] Fixed bug in default implementation of dialog callbacks
+                   in WebView. Events are now properly canceled.
+        - [BugFix] Removed all useless production-time GC.Collect() calls.
+        - [BugFix] Made it so default navigation of new child views, is
+                   properly cancelled until the view is wrapped.
+        - [BugFix] Removed useless protection from CreateGlobalJavascriptObject,
+                   that would prevent the method from being called before
+                   ProcessCreated. This is no longer a requirement.
+        - [BugFix] Fixed bug that would cause an exception be thrown at user
+                   input, when using the WPF WebViewPresenter independently.
+        - [BugFix] Fixed issues with setting a NativeView to the WPF 
+                   WebControl.
+        - [BugFix] Fixed false LoadingFrameFailed events occuring before
+                   downloads.
+        - [BugFix] Fixed bug that would prevent setting the Source property
+                   to the WPF WebControl, at runtime.
+        - [BugFix] Fixed bug that would prevent the Source property of the
+                   WPF WebControl, to reflect the currently loaded page URL.
+        - [BugFix] Fixed bug introduced in RC3 that would prevent tranparency
+                   to the WPF WebControl.
+        - [BugFix] Fixed AddressChanged event not being fired on WPF WebControl.
+        - [BugFix] Fixed issues with Unicode strings not being properly passed
+                   to and from native Awesomium.
+        - [BugFix] Fixed issues with the IsCrashed property not reflecting
+                   the actual status of the view, and issues with the Crashed
+                   event not being fired.
+        - [BugFix] Fixed exception that could occur when attempting to
+                   Shutdown the core during internal update.
+        - [BugFix] Fixed bug that could occassionally cause a 
+                   NullReferenceException at ExecuteJavascript.
+        - [BugFix] Fixed InvalidCastException when setting ViewType on the
+                   WPF WebControl.
+        - [BugFix] Fixed issue in WPF WebControl that caused the right side 
+                   to be cropped when DPI was set to any value other than 
+                   the default.
+        - [BugFix] Fixed view crash when WebPreferences.Javascript was set
+                   to false on the view's WebSession.
+        - [BugFix] Fixed bug causing a WebControl crash when repeatedly
+                   opening/closing a WebPopupMenu.
+        - [BugFix] Fixed "Width and Height must be positive" exceptions
+                   on the WPF WebControl.
+        - [BugFix] Fixed focusing editable content issues on the WPF
+                   WebControl.
+                   
+    Samples Major Changes:
+        - [Modified] Extended the C# WPF WebControlSample, presenting simple
+                     Web UI and JS interoperation.
+        - [Added] Added the WPF TabbedWPFSample introducing new features such
+                  as the new downloads management features and support for
+                  popup windows.
+        - [Added] Added the Windows Forms TabbedFormsSample introducing new 
+                  features such as the new downloads management features and
+                  support for popup windows.
+        - [Modified] Modified all samples to accomodate the new features and 
+                     changes.          
+                     
+------------------------------------------------------------------------------
+Awesomium.NET v1.7.0 RC3 - Oct 05 2012
+    
+    Please visit: http://wiki.awesomium.net/getting-started/whats-new.html
+    

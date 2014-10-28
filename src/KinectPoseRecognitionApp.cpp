@@ -7,8 +7,8 @@
 
 
 #include "LocationEngine.h"
-//#include "IntroScreen.h"
-#include "MainGameScreen.h"
+#include "IntroScreen.h"
+//#include "MainGameScreen.h"
 #include "ResultScreen.h"
 //#include "KinectAdapter.h"
 
@@ -58,7 +58,7 @@ void KinectPoseRecognitionApp::setup()
 	fonts().loadFont( loadFile(getAssetPath("fonts/Helvetica Neue Light.ttf")), 32);
 	fonts().loadFont( loadFile(getAssetPath("fonts/Helvetica Neue Light.ttf")), 32);
 	fonts().loadFont( loadFile(getAssetPath("fonts/MyriadPro-Bold.ttf")), 27 );
-
+	fonts().loadFont( loadFile(getAssetPath("fonts/maestroc.ttf")), 114 );
 	
 	fonts().listFonts();
 
@@ -72,7 +72,7 @@ void KinectPoseRecognitionApp::setup()
 		saver().loadConfigData();
 
 		IntroScreen::Instance()->setup();
-		MainGameScreen::Instance()->setup();
+		//MainGameScreen::Instance()->setup();
 		ResultScreen::Instance()->setup();
 
 		//popup().start(popupTypes::EMAIL);	
@@ -117,7 +117,7 @@ void KinectPoseRecognitionApp::setup()
   #ifndef recording
 		recognitionGame().setup();
 		game.init(getWindow());
-		game.changeState(MainGameScreen::Instance());
+		game.changeState(ResultScreen::Instance());
 	#endif
 
 	gl::enableAlphaBlending();	

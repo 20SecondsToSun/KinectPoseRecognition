@@ -37,11 +37,21 @@ void ResultScreen::setup()
 	postPhotoTextTex       = *AssetManager::getInstance()->getTexture("images/serverScreen/postPhotoText.png");
 	emailtPhotoTextTex     = *AssetManager::getInstance()->getTexture("images/serverScreen/sendEmailText.png");	
 	playMoreTex            = *AssetManager::getInstance()->getTexture("images/serverScreen/playMore.png");
+
+	Texture playMoreTex1            = *AssetManager::getInstance()->getTexture("images/serverScreen/OneMore.png");
+	comeBackBtn1 = new ButtonTex(playMoreTex1,  "BACK");
+	comeBackBtn1->setScreenField(Vec2f(1449.0f, 692.0f));
+	comeBackBtn1->setDownState(playMoreTex1);
+
+	nothingCatTex           = *AssetManager::getInstance()->getTexture("images/serverScreen/nothingCat.png");
+
+
 	
 	photoRamki().setup();
 	socialPopup().setup();
 	emailPopup().setup();
 	qrCode.setup();
+	PlayerData::setup();
 
 	touchKeyboard().setup(Vec2f(360.0f, getWindowHeight() - 504.0f));
 	touchKeyboard().initKeyboard();
@@ -58,7 +68,8 @@ void ResultScreen::init( LocationEngine* game)
 
 	qrCode.reset();
 	socialPopup().reset();
-	server().reset();	
+	server().reset();
+	
 
 	alphaSocialAnimate = 0.0f;
 	alphaEmailAnimate = 0.0f;
@@ -97,7 +108,7 @@ void ResultScreen::init( LocationEngine* game)
 	{
 		drawHandler = &ResultScreen::drawUpsetScreen;
 		state = SORRY_GO_HOME;	
-		comeBackSignal = comeBackBtn->mouseUpEvent.connect(boost::bind(&ResultScreen::closeScreenHandler, this));
+		comeBackSignal1 = comeBackBtn1->mouseUpEvent.connect(boost::bind(&ResultScreen::closeScreenHandler, this));
 		comeBackTimerStart();
 	}
 }
@@ -290,6 +301,7 @@ void ResultScreen::initPopup(int type)
 		socialPopup().show(type);	
 		disconnectButtons();
 		closeSocialPopupSignal = socialPopup().closeEvent.connect(boost::bind(&ResultScreen::closeSocialPopup, this));
+		console()<<"exit"<<endl;
 	}
 }
 
@@ -300,6 +312,7 @@ void ResultScreen::drawEmailPopup()
 
 void ResultScreen::drawSocialPopup()
 {
+	console()<<"socialPopup().draw()"<<endl;
 	socialPopup().draw();
 }
 
@@ -404,7 +417,7 @@ void ResultScreen::closeScreenHandler()
 void ResultScreen::animationLeaveLocationFinished() 
 {
 	_game->freezeLocation = false;
-	_game->changeState(IntroScreen::Instance());
+	//_game->changeState(IntroScreen::Instance());
 }
 
 void ResultScreen::mouseEvents(int type )
@@ -426,7 +439,7 @@ void ResultScreen::update()
 		closeScreenHandler();
 		return;
 	}
-
+	
 	switch (state)
 	{
 		case PHOTO_LOADING_FROM_DIRECTORY:
@@ -494,17 +507,23 @@ void ResultScreen::drawButtonsIfAllow()
 			facebookBtn->draw();
 			vkontakteBtn->draw();
 			gl::color(Color::white());
+			mailBtn->setScreenField(Vec2f(674.0f, 672.0f));
 		}
 		else
+		{
 			mailShift = Vec2f(-511.0f, 0.0f);
+			mailBtn->setScreenField(Vec2f(163.0f, 672.0f));
+		}
 	
 		gl::pushMatrices();
 			gl::translate(mailShift);
 			gl::color(ColorA(1.0f, 1.0f, 1.0f, alphaEmailAnimate));
-			gl::draw(emailtPhotoTextTex, Vec2f(690.0f, 512.0f));
-			mailBtn->draw();
-			gl::color(Color::white());
+			gl::draw(emailtPhotoTextTex, Vec2f(690.0f, 512.0f));			
 		gl::popMatrices();
+
+		mailBtn->draw();
+
+		gl::color(Color::white());
 
 		comeBackBtn->draw();
 	}
@@ -514,7 +533,7 @@ void ResultScreen::drawFadeOutIfAllow()
 {
 	if (isLeaveAnimation)
 	{
-		gl::color(ColorA(BLUE.r, BLUE.g, BLUE.b, alphaFinAnimate));	
+		gl::color(ColorA(BLUE_FADE.r, BLUE_FADE.g, BLUE_FADE.b, alphaFinAnimate));	
 		gl::drawSolidRect(getWindowBounds());
 		gl::color(ColorA(0,0,0,1));
 	}
@@ -523,19 +542,19 @@ void ResultScreen::drawFadeOutIfAllow()
 void ResultScreen::drawPhotoLoadingPreloader() 
 {
 	gl::color(ColorA(1, 1, 1, alphaAnimate));
-	Utils::textFieldDraw("Выгружаю фотографии... "+ to_string(photoMaker().getElapsedSeconds()),  fonts().getFont("Helvetica Neue", 46), Vec2f(40.f, 40.0f), ColorA(1.f, 1.f, 1.f, 1.f));
+	Utils::textFieldDraw("Выгружаю фотографии... "+ to_string(photoMaker().getElapsedSeconds()),  fonts().getFont("MaestroC", 114), Vec2f(510.f, 448.0f), ColorA(1.f, 1.f, 1.f, 1.f));
 }
 
 void ResultScreen::drawNetConnectionPreloader() 
 {
 	gl::color(ColorA(1, 1, 1, alphaAnimate));
-	Utils::textFieldDraw("Проверяю соединение... "+ to_string(server().getTimeoutSeconds()),  fonts().getFont("Helvetica Neue", 46), Vec2f(40.f, 40.0f), ColorA(1.f, 1.f, 1.f, 1.f));
+	Utils::textFieldDraw("Проверяю соединение... "+ to_string(server().getTimeoutSeconds()),  fonts().getFont("MaestroC", 114), Vec2f(510.f, 448.0f), ColorA(1.f, 1.f, 1.f, 1.f));
 }
 
 void ResultScreen::drawServerPreloader() 
 {	
 	gl::color(ColorA(1, 1, 1, alphaAnimate));	
-	Utils::textFieldDraw("Ожидаю сервер... " + to_string(server().getTimeoutSeconds()),  fonts().getFont("Helvetica Neue", 46), Vec2f(40.f, 40.0f), ColorA(1.f, 1.f, 1.f, 1.f));
+	Utils::textFieldDraw("Ожидаю сервер... " + to_string(server().getTimeoutSeconds()),  fonts().getFont("MaestroC", 114), Vec2f(510.f, 448.0f), ColorA(1.f, 1.f, 1.f, 1.f));
 }
 
 void ResultScreen::drawSendingToMailPreloader() 
@@ -546,8 +565,9 @@ void ResultScreen::drawSendingToMailPreloader()
 
 void ResultScreen::drawUpsetScreen() 
 {
-	Utils::textFieldDraw("Вы не угадали ни одной позы...(((",  fonts().getFont("Helvetica Neue", 46), Vec2f(40.f, 40.0f), ColorA(1.f, 0.f, 0.f, 1.f));
-	comeBackBtn->draw();
+	gl::draw(nothingCatTex, Vec2f(162.0f, 64.0f));
+	//Utils::textFieldDraw("Вы не угадали ни одной позы...(((",  fonts().getFont("Helvetica Neue", 46), Vec2f(40.f, 40.0f), ColorA(1.f, 0.f, 0.f, 1.f));
+	comeBackBtn1->draw();
 }
 
 void ResultScreen::drawErrorScreen() 
@@ -589,6 +609,7 @@ void ResultScreen::disconnectListeners()
 void ResultScreen::disconnectButtons()
 {
 	comeBackSignal.disconnect();
+	comeBackSignal1.disconnect();
 	fbSignal.disconnect();
 	vkSignal.disconnect();
 	mailSignal.disconnect();

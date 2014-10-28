@@ -3,6 +3,7 @@
 #include "cinder/gl/gl.h"
 #include "cinder/ip/Resize.h"
 #include "Params.h"
+#include "AssetsManager.h"
 
 using namespace  poseParams;
 
@@ -18,6 +19,7 @@ class PlayerData
 			bool	 isFocusError;
 			ci::gl::Texture imageTexture;
 			ci::gl::Texture displayingTexture;
+			ci::gl::Texture defaultTexture;
 			ci::ImageSourceRef imageSourceRef;	
 			ci::Vec2f translation;
 			float degree;
@@ -27,6 +29,7 @@ class PlayerData
 		static int	score;
 
 		static void initData();
+		static void setup();
 
 		static std::string getTexPath(int i);		
 		static ci::gl::Texture getDisplayingTexture(int i );
@@ -38,6 +41,9 @@ class PlayerData
 
 		static void  setRotation(int i, float _degree);
 		static float getRotation(int i);
+
+		static void  setDefaultTexture(int i, ci::gl::Texture tex);
+		static ci::gl::Texture getDefaultTexture(int i);
 
 	private :
 		static ci::Vec2f translation;

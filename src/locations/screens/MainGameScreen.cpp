@@ -259,7 +259,7 @@ void MainGameScreen::drawFadeOutIfAllow()
 {
 	if (isLeaveAnimation)
 	{
-		gl::color(ColorA(BLUE.r, BLUE.g, BLUE.b, alphaFinAnimate));	
+		gl::color(ColorA(BLUE_FADE.r, BLUE_FADE.g, BLUE_FADE.b, alphaFinAnimate));	
 		gl::drawSolidRect(getWindowBounds());
 		gl::color(Color::white());
 	}

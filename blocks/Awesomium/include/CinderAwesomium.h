@@ -48,7 +48,6 @@ inline bool isDirty( Awesomium::WebView* webview )
 	if( ! webview ) throw EmptyPointerException();
 
 	Awesomium::BitmapSurface* surface = (Awesomium::BitmapSurface*) webview->surface();
-	
 	if( ! surface ) return false; //throw EmptyPointerException();
 
 	return surface->is_dirty();

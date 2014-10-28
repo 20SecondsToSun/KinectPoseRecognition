@@ -469,22 +469,22 @@ const char* FaceTracker::Exception::what() const throw()
 
 FaceTracker::ExcFaceTrackerCreate::ExcFaceTrackerCreate() throw()
 {
-	sprintf( mMessage, "Unable to create face tracker." );
+	//sprintf( mMessage, "Unable to create face tracker." );
 }
 
 FaceTracker::ExcFaceTrackerCreateImage::ExcFaceTrackerCreateImage( long hr ) throw()
 {
-	sprintf( mMessage, "Unable to create face tracker image. Error: %i", hr );
+	//sprintf( mMessage, "Unable to create face tracker image. Error: %i", hr );
 }
 
 FaceTracker::ExcFaceTrackerCreateResult::ExcFaceTrackerCreateResult( long hr ) throw()
 {
-	sprintf( mMessage, "Unable to create face tracker result. Error: %i", hr );
+	//sprintf( mMessage, "Unable to create face tracker result. Error: %i", hr );
 }
 
 FaceTracker::ExcFaceTrackerInit::ExcFaceTrackerInit( long hr ) throw()
 {
-	sprintf( mMessage, "Unable to initialize face tracker. Error: %i", hr );
+	//sprintf( mMessage, "Unable to initialize face tracker. Error: %i", hr );
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////
@@ -1657,52 +1657,52 @@ const char* Device::Exception::what() const throw()
 
 Device::ExcDeviceCreate::ExcDeviceCreate( long hr, const string& id ) throw()
 {
-	sprintf( mMessage, "Unable to create device. ID or index: %s. Error: %i", id, hr );
+	//sprintf( mMessage, "Unable to create device. ID or index: %s. Error: %i", id, hr );
 }
 
 Device::ExcDeviceInit::ExcDeviceInit( long hr, const string& id ) throw()
 {
-	sprintf( mMessage, "Unable to initialize device. ID or index: %s. Error: %i", id, hr );
+	//sprintf( mMessage, "Unable to initialize device. ID or index: %s. Error: %i", id, hr );
 }
 
 Device::ExcDeviceInvalid::ExcDeviceInvalid( long hr, const string& id ) throw()
 {
-	sprintf( mMessage, "Invalid device ID or index: %s. Error: %i", id, hr );
+	//sprintf( mMessage, "Invalid device ID or index: %s. Error: %i", id, hr );
 }
 
 Device::ExcDeviceUnavailable::ExcDeviceUnavailable() throw()
 {
-	sprintf( mMessage, "No device available." );
+	//sprintf( mMessage, "No device available." );
 }
 
 Device::ExcGetCoordinateMapper::ExcGetCoordinateMapper( long hr, const string& id ) throw()
 {
-	sprintf( mMessage, "Unable to get coordinate mapper: %s. Error: %i", id, hr );
+	//sprintf( mMessage, "Unable to get coordinate mapper: %s. Error: %i", id, hr );
 }
 
 Device::ExcOpenStreamColor::ExcOpenStreamColor( long hr, const string& id ) throw()
 {
-	sprintf( mMessage, "Unable to open color stream: %s. Error: %i", hr );
+	//sprintf( mMessage, "Unable to open color stream: %s. Error: %i", hr );
 }
 
 Device::ExcOpenStreamDepth::ExcOpenStreamDepth( long hr, const string& id ) throw()
 {
-	sprintf( mMessage, "Unable to open depth stream. Error: %s: %i", hr );
+	//sprintf( mMessage, "Unable to open depth stream. Error: %s: %i", hr );
 }
 
 Device::ExcOpenStreamInfrared::ExcOpenStreamInfrared( long hr, const string& id ) throw()
 {
-	sprintf( mMessage, "Unable to open infrared stream. Error: %s: %i", hr );
+	//sprintf( mMessage, "Unable to open infrared stream. Error: %s: %i", hr );
 }
 
 Device::ExcStreamStart::ExcStreamStart( long hr, const string& id ) throw()
 {
-	sprintf( mMessage, "Unable to start streams: %s. Error: %i", hr );
+	//sprintf( mMessage, "Unable to start streams: %s. Error: %i", hr );
 }
 
 Device::ExcUserTrackingEnable::ExcUserTrackingEnable( long hr, const string& id ) throw()
 {
-	sprintf( mMessage, "Unable to enable user tracking: %s. Error: %i", hr );
+	//sprintf( mMessage, "Unable to enable user tracking: %s. Error: %i", hr );
 }
 }
  
