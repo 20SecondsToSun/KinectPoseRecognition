@@ -19,12 +19,12 @@ class GameControLScreen
 
 		static GameControLScreen& getInstance() { static GameControLScreen game; return game; };
 
-		static const int circlesNum = 4;
+		static const int circlesNum = 3;
 
 		Anim<float>	 alphaBubble, silhouetteAlpha, matchingPopupAlpha;
 		Anim<Vec2f> timerVec, plashkaVec, krugPercentAnimateVec;
 
-		Texture sidePlashka, krugPercent, sector, ciferblat, arrow, silhouette, percentTexure, matchingPopup;
+		Texture sidePlashka, krugPercent, sector, ciferblat, arrow, silhouette, percentTexure, matchingPopup, poseTestTex;
 
 		Font secondsFont, debugFontText, percentFont;		
 
@@ -55,6 +55,8 @@ class GameControLScreen
 			ciferblat     =  *AssetManager::getInstance()->getTexture( "images/diz/ciferblat.png" );
 			arrow         =  *AssetManager::getInstance()->getTexture( "images/diz/arrow.png" );
 			matchingPopup =  *AssetManager::getInstance()->getTexture( "images/diz/poseAlreadyBubble.png" );
+
+			poseTestTex   =  *AssetManager::getInstance()->getTexture( "images/Cat0.png" );
 
 
 			timerVec              = Vec2f(-300.0f, 1076.0f);
@@ -88,12 +90,20 @@ class GameControLScreen
 		void draw()
 		{
 			gl::pushMatrices();
-				gl::translate(kinect().getTranslation());
-				gl::scale(kinect().getScale());	
+				//gl::translate(kinect().getTranslation());
+				//gl::scale(kinect().getScale());	
+				gl::translate(Vec2f(0.0f, (1080.0f-1440.0f)*0.5));
 				gl::color(ColorA(1, 1, 1, silhouetteAlpha));			
 				if(currentPose)
 					currentPose->draw();
 			gl::popMatrices();
+
+			//gl::pushMatrices();
+			//	gl::draw(poseTestTex, Vec2f(0.0f, (1080.0f-1440.0f)*0.5));
+		//	gl::popMatrices();
+
+
+
 
 			gl::color(Color::white());		
 			gl::draw(sector, timerVec);		
@@ -145,19 +155,27 @@ class GameControLScreen
 			{
 				gl::pushMatrices();
 					gl::color(ColorA(1, 1, 1, matchingPopupAlpha));
-					gl::translate(981.0f, 440.0f);
+					gl::translate(1186.0f, 0.0f);
 					gl::draw(matchingPopup);
-					gl::translate(269.0f, 342.0f);
+					gl::translate(304.0f - 13, 368.0f);
 					int numActiveCircles = circlesNum*matchingProgress;
 					for (int i = 0; i < circlesNum; i++)
 					{
 						gl::pushMatrices();
-							gl::translate(20.0f + 60.0f*i, 0.0f);
-							if (i+1<=numActiveCircles)							
+							
+							if (i+1<=numActiveCircles)
+							{
+								gl::translate(13.0f + 68.0f*i, 0.0f);
 								gl::color(ColorA(196.0f/255.0f, 47.0f/255.0f, 57.0f/255.0f, matchingPopupAlpha));
+								gl::drawSolidCircle(Vec2f(0.0f, 0.0f), 24.0f, 20.0f);
+							}
 							else
+							{
+								gl::translate(13.0f + 68.0f*i, 0.0f);
 								gl::color(ColorA(223.0f/255.0f, 223.0f/255.0f, 223.0f/255.0f, matchingPopupAlpha));
-							gl::drawSolidCircle(Vec2f(0.0f, 0.0f), 20.0f, 20.0f);
+								gl::drawSolidCircle(Vec2f(0.0f, 0.0f), 13.0f, 20.0f);
+							}
+							
 						gl::popMatrices();
 					}
 				gl::popMatrices();
@@ -310,17 +328,19 @@ class GameControLScreen
 		{
 			if (progressInt <= 0)
 			{
-				if (matchingPopupAlpha > 0.0f)
-				{
-					timeline().apply( &matchingPopupAlpha, 0.0f, 0.4f, EaseInCubic() );
-				}
+				matchingPopupAlpha  = 0.0f;
+				//if (matchingPopupAlpha > 0.0f)
+				//{
+				//	timeline().apply( &matchingPopupAlpha, 0.0f, 0.4f, EaseInCubic() );
+				//}
 			}
 			else
 			{
-				if (matchingPopupAlpha <= 0.0f)
-				{
-					timeline().apply( &matchingPopupAlpha, 1.0f, 0.4f, EaseInCubic() );
-				}
+				matchingPopupAlpha = 1.0f;
+				//if (matchingPopupAlpha <= 0.0f)
+				//{
+				//	timeline().apply( &matchingPopupAlpha, 1.0f, 0.4f, EaseInCubic() );
+				//}
 			}
 
 			matchingProgress = progressInt;

@@ -9,6 +9,7 @@
 #include "ButtonTexture.h"
 #include "AssetsManager.h"
 #include "BubbleAnimator.h"
+#include "CatAnimator.h"
 #include "MainGameScreen.h"
 
 using namespace ci;
@@ -54,11 +55,9 @@ class IntroScreen : public Location
 		int						state, nextState;
 		std::string				debugString;
 	
-		ci::gl::Texture			cat, logo, text1, cat2, btnFon, paws,  instructionImage, lapaTv;
+		ci::gl::Texture			 logo, text1, cat2, btnFon, paws,  instructionImage, lapaTv;
 	
-		ButtonColor				 *comeBackBtn;
-
-		ButtonTex *startInstructionBtn, *startGameBtn;
+		ButtonTex *startInstructionBtn, *startGameBtn, *comeBackBtn;
 
 		ci::Anim<float>			alphaAnimate, catAnimate, logoAnimate, textAnimateAlpha;	
 		ci::Anim<ci::Vec2f>     cat2AnimateVec, instructBtnAnimateVec;	

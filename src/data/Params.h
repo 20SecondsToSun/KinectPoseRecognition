@@ -8,6 +8,8 @@
 #define kinectUsed
 //#define   recording
 #define debug	
+#define alwayswin	
+
 
 namespace colorsParams
 {
@@ -20,7 +22,7 @@ namespace colorsParams
 namespace photoParams
 {
 	const int   BIG_PHOTO_WIDTH    = 1000;
-	const int   BIG_PHOTO_HEIGHT   = 638;
+	const int   BIG_PHOTO_HEIGHT   = 563;
 }
 
 namespace photoMakerParams
@@ -49,8 +51,8 @@ namespace serverParams
 {
 	static const int	 SERVER_WAITING_TIME = 10;
 	const std::string    connectionTestURL	 =  "http://google.com";
-	const std::string    serverURL			 =  "http://catpos.familyagency.ru/utils/upload/";
-	const std::string    mailURL			 =  "http://catpos.familyagency.ru/utils/send2mail";
+	const std::string    serverURL			 =  "http://kotopoza.ru/utils/upload/";
+	const std::string    mailURL			 =  "http://kotopoza.ru/utils/send2mail";
 	const std::string    badTestURL			 =  "http://catpos.familyagency.ru/utils/upload1/";
 }
 

@@ -75,7 +75,7 @@ void ResultScreen::init( LocationEngine* game)
 	alphaEmailAnimate = 0.0f;
 	alphaFinAnimate = 0.0f;
 
-	#ifdef debug
+	/*#ifdef debug
 		PlayerData::playerData[0].pathHiRes = "IMG_0003.jpg";
 		PlayerData::playerData[1].pathHiRes = "IMG_0001.jpg";
 		PlayerData::playerData[2].pathHiRes = "IMG_0002.jpg";
@@ -94,7 +94,7 @@ void ResultScreen::init( LocationEngine* game)
 			PlayerData::playerData[i].isSuccess = true;	
 			PlayerData::playerData[i].storyCode = i;	
 		}
-	#endif	
+	#endif	*/
 
 	if(PlayerData::score != 0)
 	{
@@ -301,7 +301,6 @@ void ResultScreen::initPopup(int type)
 		socialPopup().show(type);	
 		disconnectButtons();
 		closeSocialPopupSignal = socialPopup().closeEvent.connect(boost::bind(&ResultScreen::closeSocialPopup, this));
-		console()<<"exit"<<endl;
 	}
 }
 
@@ -312,7 +311,6 @@ void ResultScreen::drawEmailPopup()
 
 void ResultScreen::drawSocialPopup()
 {
-	console()<<"socialPopup().draw()"<<endl;
 	socialPopup().draw();
 }
 
@@ -417,7 +415,7 @@ void ResultScreen::closeScreenHandler()
 void ResultScreen::animationLeaveLocationFinished() 
 {
 	_game->freezeLocation = false;
-	//_game->changeState(IntroScreen::Instance());
+	_game->changeState(IntroScreen::Instance());
 }
 
 void ResultScreen::mouseEvents(int type )

@@ -1,9 +1,9 @@
 #include "Params.h"
 
-float	Params::boxMaxErrorX = 350;
-float	Params::boxMaxErrorY= 350;
+float	Params::boxMaxErrorX = 150;
+float	Params::boxMaxErrorY= 150;
 float	Params::maxErrorBetweenJoints = 40;
-float	Params::percentForMatching = 0.9f;
+float	Params::percentForMatching = 0.7f;
 float 	Params::comeBackHomeTime = 20;
 bool	Params::isNetConnected = true;
 bool	Params::photoFromDirError = false;

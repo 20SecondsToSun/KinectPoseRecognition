@@ -25,7 +25,6 @@ class Saver
 		std::vector<Pose*> Saver::loadPoseBase();
 
 		bool	saveImageIntoBase(std::string mails,  ci::Surface  image);
-
 };
 
 inline Saver&	saver() { return Saver::getInstance(); };

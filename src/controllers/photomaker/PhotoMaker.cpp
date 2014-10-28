@@ -19,7 +19,7 @@ void PhotoMaker::loadFinalImages()
 			if (!PlayerData::playerData[i].isFocusError)
 			{
 				string  url = PlayerData::getTexPath(i) ;
-        		Texture tex = ph::fetchTexture(url);
+				Texture tex = ph::fetchTexture(url);
 
 				if (tex)
 				{
@@ -99,9 +99,11 @@ void PhotoMaker::resizeFinalImages()
 			cadrSurface.copyFrom(photoFromCameraSurface, Area(0, 0, getWindowWidth(), getWindowHeight()-trans.y), trans);
 			cadrSurface = Utils::resizeScreenshot(cadrSurface, (int32_t)BIG_PHOTO_WIDTH, (int32_t)BIG_PHOTO_HEIGHT);
 
+			//Surface comicsSurface = Surface();
+			//comicsSurface = Utils::resizeScreenshot(comicsSurface, (int32_t)BIG_PHOTO_WIDTH, (int32_t)BIG_PHOTO_HEIGHT);
+
 			drawToFBO(cadrSurface, recognitionGame().getPoseImageById(PlayerData::playerData[i].storyCode));
-			
-			mFbo.getTexture().setFlipped(true);
+			//mFbo.getTexture().setFlipped(true);
 			Surface comicsImage = Surface(mFbo.getTexture());
 
 			Surface displaySurface;			
@@ -152,8 +154,16 @@ void PhotoMaker::drawToFBO(Surface img, ci::gl::Texture comicsImage)
 	  gl::translate((float)BIG_PHOTO_WIDTH, 0.0f);
 	  gl::scale(-1.0f, 1.0f);
 	  gl::draw( img );		
-	  gl::draw(comicsImage);
+	  gl::popMatrices();
 
-	  gl::popMatrices();	
+	  gl::pushMatrices();
+		 // gl::translate(0.0f, 0.5*(float)BIG_PHOTO_HEIGHT);
+		 
+		 // gl::translate(0.0f, (float)BIG_PHOTO_HEIGHT);
+		 gl::setMatricesWindow( mFbo.getSize(), false);
+		 gl::scale((float)BIG_PHOTO_WIDTH/getWindowWidth(), (float)BIG_PHOTO_WIDTH/getWindowWidth());
+		 gl::draw(comicsImage);
+	  gl::popMatrices();
+
 	  gl::setViewport(saveView);
 }

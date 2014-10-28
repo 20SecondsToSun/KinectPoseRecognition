@@ -35,14 +35,16 @@ class Game
 
 		static Game& getInstance() { static Game game; return game; };
 		
-		static const int	STEP_BACK_TIME  = 4;	
+		static const int	STEP_BACK_TIME  = 2;	
 		static const int	PREGAME_TIME	= 2;
 		static const int	COUNTDOWN_TIME	= 3;
 		static const int	HINT_TIME		= 6;		
-		static const int	ONE_POSE_TIME	= 25;
+		//static const int	ONE_POSE_TIME	= 25;
 		static const int	RESULT_TIME		= 4;
 		static const int	COUNTERS_ANIM_TIME	= 2;
-		static const int	MATCHING_MAX_VALUE = 300;		
+		static const int	MATCHING_MAX_VALUE = 80;	
+
+		int				CURRENT_POSE_TIME;
 
 		int state;
 		bool isGameRunning, isPoseDetecting, winAnimationFinished;
@@ -59,9 +61,13 @@ class Game
 
 		ci::signals::connection quickAnimationFinishedSignal;
 
+		int poseNum;
+		
+
 		void setup()
 		{
 			poses = saver().loadPoseBase();
+			poseNum = 0;
 		}
 
 		void initnew()
@@ -73,6 +79,7 @@ class Game
 			level = 1;
 			poseCode = generatePoseCode();	
 			gameControls().setCurrentPose(poses[poseCode]);
+			CURRENT_POSE_TIME = poses[poseCode]->getPoseTime();
 
 			_stepBackTimer.start();
 		}
@@ -125,13 +132,24 @@ class Game
 
 		int generatePoseCode()
 		{
-			return level - 1; //TODO
+			int code = poseNum;
+			poseNum++;
+			if (poseNum > poses.size()-1)
+				poseNum = 0;
+
+			return code;//level - 1; //TODO
 		}			
 
 		void updateStepBackMessage() 
 		{
-			if(stepBackTimerFinished() && kinect().getSkeletsInFrame() > 0 && kinect().distanceToSkelet() > MIN_DISTANCE_TO_SKELET)
-			{				
+			updateGame();
+			
+			#ifdef debug
+				if(stepBackTimerFinished() || _stepBackTimer.isStopped()) 
+			#else
+				if((stepBackTimerFinished() || _stepBackTimer.isStopped()) && kinect().distanceToSkelet() > MIN_DISTANCE_TO_SKELET)
+			#endif
+			{
 				_preGameTimer.start();
 	
 				hintScreen().poseNum = level;
@@ -155,9 +173,9 @@ class Game
 		{	
 			if (countDownTimerIsFinished())
 			{
-				gameControls().setTime(ONE_POSE_TIME);
-				gameControls().setQuickAnimTime(ONE_POSE_TIME+ 40);
-				gameControls().setQuickAnimPosePercent(.45);	
+				gameControls().setTime(CURRENT_POSE_TIME);
+				gameControls().setQuickAnimTime(CURRENT_POSE_TIME+ 40);
+				gameControls().setQuickAnimPosePercent(.41);	
 				gameControls().showSilhouette();
 				
 				if (level == 1)
@@ -209,7 +227,7 @@ class Game
 			}
 			else
 			{
-				gameControls().setShowingTime(ONE_POSE_TIME - (int)_onePoseTimer.getSeconds());
+				gameControls().setShowingTime(CURRENT_POSE_TIME - (int)_onePoseTimer.getSeconds());
 				gameControls().setDetentionPercent(mathPercent);
 				checkPersonPose();
 			}
@@ -241,6 +259,7 @@ class Game
 				hintScreen().poseNum = level;
 				hintScreen().startReadySate();
 				gameControls().setCurrentPose(poses[poseCode]);
+				CURRENT_POSE_TIME = poses[poseCode]->getPoseTime();
 
 				state = PRE_GAME_INTRO;
 			}
@@ -339,7 +358,11 @@ class Game
 			if (isGameRunning)	
 			{
 				matchTemplate();
-				mathPercent = 1;//
+
+				#ifdef alwayswin
+					mathPercent = 1;//
+				#endif
+
 				if (mathPercent > Params::percentForMatching )		
 				{					
 					levelCompletion += 4;					
@@ -416,8 +439,8 @@ class Game
 				return;
 			}	
 
-			//computeMistakeWay1();
-			computeMistakeWay2();
+			computeMistakeWay1();
+			//computeMistakeWay2();
 		}
 		
 		void stopPersonChecking() 
@@ -580,7 +603,7 @@ class Game
 	
 		bool mainTimerIsFinished() 
 		{
-			if(!_onePoseTimer.isStopped() &&  _onePoseTimer.getSeconds() > ONE_POSE_TIME)
+			if(!_onePoseTimer.isStopped() &&  _onePoseTimer.getSeconds() > CURRENT_POSE_TIME)
 			{	
 				_onePoseTimer.stop();
 				return true;
@@ -604,9 +627,9 @@ class Game
 		//
 		///////////////////////////////////////////////////////////////////
 
-		void saveAsTemplate()
+		void saveAsTemplate(int num)
 		{
-			string poseName = "Cat1";// + 1;	
+			string poseName = "Cat" +to_string(num);// + 1;	
 			if (kinect().getCurrentSkelet().size() && kinect().getSilhouette()) 
 			{
 				Pose* pose = new Pose();

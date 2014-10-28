@@ -87,7 +87,8 @@ void QRcode::setTextureString(std::string str)
 }
 
 void QRcode::setLink(std::string link)
-{	
+{
+	console()<<"  link   "<<link<<endl;
 	url =  link;
 	url = url.substr(7);
 	console()<<"  url   "<<url<<endl;

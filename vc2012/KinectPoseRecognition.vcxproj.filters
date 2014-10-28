@@ -377,6 +377,9 @@
     <ClInclude Include="..\blocks\Awesomium\include\CinderAwesomium.h">
       <Filter>blocks\Cinder-Awesomium</Filter>
     </ClInclude>
+    <ClInclude Include="..\src\locations\screens\help\CatAnimator.h">
+      <Filter>Source Files\locations\screens\help</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Resources.rc">

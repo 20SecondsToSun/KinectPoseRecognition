@@ -92,6 +92,6 @@ class MainGameScreen : public Location
 
 		ci::Font debugFont26, debugFont46;
 		ci::Timer _missedTimer;		
-		ButtonColor *comeBackBtn;
+		ButtonTex *comeBackBtn;
 		ci::Anim<float> alphaFinAnimate, alphaFlashAnim;
 };

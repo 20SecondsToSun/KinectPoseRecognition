@@ -9,7 +9,7 @@
 #include "PlayerData.h"
 #include "Location.h"
 #include "Params.h"
-//#include "IntroScreen.h"
+#include "IntroScreen.h"
 #include "Server.h"
 #include "QRcode.h"
 #include "Popup.h"

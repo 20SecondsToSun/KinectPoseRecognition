@@ -49,6 +49,9 @@ std::vector<Pose*> Saver::loadPoseBase()
 				int tilt =  pose->getChild( "tilt" ).getValue<int>();
 				newPose->setKinectTilt(tilt);
 
+				int time =  pose->getChild( "time" ).getValue<int>();
+				newPose->setPoseTime(time);
+
 				gl::Texture tex;
 				try{
 					tex = loadImage(basePath /(name +".png"));			

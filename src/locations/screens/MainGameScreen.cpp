@@ -10,7 +10,6 @@ MainGameScreen MainGameScreen::MainGameScreenState;
 
 void MainGameScreen::setup()
 {
-	console()<<" setup--------------->"<<endl;
 	debugFont26 = *fonts().getFont("Helvetica Neue", 26);
 	debugFont46 = *fonts().getFont("Helvetica Neue", 66);	
 
@@ -24,7 +23,11 @@ void MainGameScreen::setup()
 	hintScreen().setup();
 	comicsScreen().setup();
 
-	comeBackBtn = new ButtonColor(Rectf(1520,980, 1920, 1080), RED, &debugFont26, "BACK");
+	Texture comeBackBtnTex   = *AssetManager::getInstance()->getTexture( "images/diz/toStart.png" );
+		
+	comeBackBtn = new ButtonTex(comeBackBtnTex,  "backtoStart");
+	comeBackBtn->setScreenField(Vec2f(0.0f, 1080.0f - 169.0f));
+	comeBackBtn->setDownState(comeBackBtnTex);
 }
 
 void MainGameScreen::init( LocationEngine* game)
@@ -65,7 +68,7 @@ void MainGameScreen::gotoFirstScreen()
 	{
 		animationLeaveLocationPrepare();
 
-		timeline().apply( &alphaFinAnimate,0.0f, 1.0f, 1.9f, EaseOutCubic() ).finishFn( [ & ]( )
+		timeline().apply( &alphaFinAnimate,0.0f, 1.0f, 0.9f, EaseOutCubic() ).finishFn( [ & ]( )
 		{
 			_game->freezeLocation = false;
 			_game->changeState(IntroScreen::Instance());
@@ -98,7 +101,7 @@ void MainGameScreen::gotoResultScreen()
 	{
 		animationLeaveLocationPrepare();
 
-		timeline().apply( &alphaFinAnimate, 0.0f, 1.0f, 1.9f, EaseOutCubic() ).finishFn( [ & ]( )
+		timeline().apply( &alphaFinAnimate, 0.0f, 1.0f, 0.9f, EaseOutCubic() ).finishFn( [ & ]( )
 		{
 			_game->freezeLocation = false;
 			_game->changeState(ResultScreen::Instance());	
@@ -188,7 +191,8 @@ void MainGameScreen::drawGame()
 	switch(recognitionGame().state)
 	{
 		case STEP_BACK_MESSAGE:
-			hintScreen().draw();		
+			hintScreen().draw();
+			comeBackBtn->draw();
 		break;
 		
 		case HINT_MESSAGE:			
@@ -229,9 +233,7 @@ void MainGameScreen::drawGame()
 			gameControls().draw();
 			drawPhotoFlash();
 		break;
-	}	
-
-	//comeBackBtn->draw();
+	}
 }
 
 void MainGameScreen::drawPoseComics()

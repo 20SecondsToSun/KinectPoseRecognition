@@ -19,16 +19,20 @@ class HintScreen
 		ci::Anim<ci::Vec2f>	 scaleComicsAnimate, positionComicsAnimate;
 		ci::Anim<float> rotationComicsAnimate;
 
-		ci::Anim<ci::Vec2f>	 catVec, arrowVec, arrowScale, bubbleScale;
+		ci::Anim<ci::Vec2f>	 catVec, arrowVec, bubbleScale;
+
+		ci::Vec2f arrowScale;
 
 		Texture hint3, bg, catImage, bubbleImage, arrowImage, screenshot, readyTex, titleNum, countDownTexture, levelNumTexture;
-		Texture shadowPreview, iconsPreview, failImage;
+		Texture shadowPreview, iconsPreview, failImage, bg_blue;
 
 		float tint_r, tint_g, tint_b;
 
 		int state, poseNum;
 
 		ci::Font countDownFont, levelNumFont;
+
+		int sign;
 
 		enum
 		{
@@ -65,6 +69,7 @@ class HintScreen
 			shadowPreview= *AssetManager::getInstance()->getTexture( "images/diz/shadowPr.png" );
 			iconsPreview = *AssetManager::getInstance()->getTexture( "images/diz/preview.png" );
 			failImage    = *AssetManager::getInstance()->getTexture( "images/fail.jpg" );
+			bg_blue		 = *AssetManager::getInstance()->getTexture( "images/diz/bg.jpg" );
 
 			countDownFont= Font(loadFile(getAssetPath("fonts/maestroc.ttf")), 650);
 			levelNumFont = Font(loadFile(getAssetPath("fonts/maestroc.ttf")), 63);
@@ -92,6 +97,8 @@ class HintScreen
 			param.scale = Vec2f(0.1f, 0.1f);
 			param.rotation = -2;
 			previewVec[2] = param;
+
+			sign = 1;
 		}
 
 		void draw()
@@ -115,10 +122,32 @@ class HintScreen
 				gl::color(ColorA(1, 1, 1, arrowAlpha));
 				gl::pushMatrices();
 					gl::translate(arrowVec);
+					gl::translate(-arrowImage.getWidth()*0.5f*arrowScale.x, -arrowImage.getHeight()*0.5f*arrowScale.x);
 					gl::scale(arrowScale);
+					//gl::translate(arrowImage.getWidth()*0.5f*arrowScale.x, arrowImage.getHeight()*0.5f*arrowScale.x);
+					
+					
 					gl::draw(arrowImage);
 				gl::popMatrices();
-				gl::color(Color::white());	
+				gl::color(Color::white());
+
+				if (arrowScale.x > 1.15f &&  sign == 1)
+				{					
+					sign = -1;
+				}
+				else if (arrowScale.x < 0.6f && sign == -1)
+				{				
+					sign = 1;
+				}
+
+				if (sign == 1)
+				{
+					arrowScale += Vec2f(0.08f, 0.08f);
+				}
+				else if (sign == -1)
+				{
+					arrowScale -= Vec2f(0.08f, 0.08f);
+				}
 			}
 			else if (state == SHOW_READY)
 			{
@@ -128,7 +157,8 @@ class HintScreen
 				}			
 
 				gl::color(ColorA(235/255.0, 237/255.0,238/255.0, alphaBg));				
-				gl::drawSolidRect(Rectf( 0.0f, 0.0f, getWindowWidth(), getWindowHeight()));				
+				//gl::drawSolidRect(Rectf( 0.0f, 0.0f, getWindowWidth(), getWindowHeight()));	
+				gl::draw(bg_blue);
 				gl::pushMatrices();
 					gl::translate(472, 416);
 					gl::draw(readyTex);
@@ -151,36 +181,28 @@ class HintScreen
 			}
 			else if (state == SHOW_NUMS)
 			{
-				gl::color(ColorA(235/255.0f, 237/255.0f, 238/255.0f, 1.0f));				
-				gl::drawSolidRect(Rectf( 0.0f, 0.0f, getWindowWidth(), getWindowHeight()));	
+				gl::color(ColorA(235/255.0f, 237/255.0f, 238/255.0f, 1.0f));	
+				gl::draw(bg_blue);
+				//gl::drawSolidRect(Rectf( 0.0f, 0.0f, getWindowWidth(), getWindowHeight()));	
 
-				gl::pushMatrices();
-					gl::translate(472, 416);
-					gl::color(ColorA(1, 1, 1, readyTextAlpha));		
-					gl::draw(readyTex);
-				gl::popMatrices();
+				gl::color(ColorA(1, 1, 1, readyTextAlpha));		
+				gl::draw(readyTex, Vec2f(472.0f, 416.0f));				
 				
-				gl::pushMatrices();
-					gl::translate(780, 222);
-					gl::color(ColorA(196/255.0f, 47/255.0f, 57/255.0f, startCounterAlpha));					
-					gl::draw(countDownTexture);
-				gl::popMatrices();
+				gl::color(ColorA(1.0f, 1.0f, 1.0f, startCounterAlpha));					
+				gl::draw(countDownTexture, Vec2f(780.0f, 212.0f));				
 				gl::color(Color::white());	
 
 				drawTitle();
-				drawPreview();
-				
+				drawPreview();		
 			}
 			else if (state == FADE_NUMS)
 			{
 				gl::color(ColorA(235/255.0f, 237/255.0f, 238/255.0f, alphaBg));
-				gl::drawSolidRect(Rectf( 0.0f, 0.0f, getWindowWidth(), getWindowHeight()));	
+				gl::draw(bg_blue);				
 				
-				gl::pushMatrices();
-					gl::translate(780.0f, 222.0f);
-					gl::color(ColorA(196/255.0f, 47/255.0f, 57/255.0f, alphaBg));
-					gl::draw(countDownTexture);
-				gl::popMatrices();	
+				gl::color(ColorA(1.0f, 1.0f, 1.0f, alphaBg));
+				gl::draw(countDownTexture, Vec2f(780.0f, 212.0f));	
+			
 				gl::color(ColorA(1,1,1, alphaBg));
 				drawTitle();
 
@@ -197,22 +219,17 @@ class HintScreen
 				gl::color(ColorA(235/255.0f, 237/255.0f, 238/255.0f, alphaBg));
 				gl::drawSolidRect(Rectf( 0.0f, 0.0f, getWindowWidth(), getWindowHeight()));	
 				
-				gl::pushMatrices();
-					gl::translate(780.0f, 222.0f);
-					gl::color(ColorA(196/255.0f, 47/255.0f, 57/255.0f, alphaBg));
-					gl::draw(countDownTexture);
-				gl::popMatrices();	
+				gl::color(ColorA(1.0f, 1.0f, 1.0f, alphaBg));
+				gl::draw(countDownTexture, Vec2f(780.0f, 212.0f));	
+
 				gl::color(ColorA(1.0f, 1.0f, 1.0f, alphaBg));
 				drawTitle();
 
 				gl::color(Color::white());
 				drawPreview(false);
 
-				gl::pushMatrices();
-					gl::color(ColorA(1.0f, 1.0f, 1.0f, alphaHint));
-					gl::translate(882.0f, 39.0f);
-					gl::draw(hint3);
-				gl::popMatrices();	
+				gl::color(ColorA(1.0f, 1.0f, 1.0f, alphaHint));
+				gl::draw(hint3, Vec2f(1090.0f, 0.0f));
 			}
 		}
 
@@ -262,9 +279,10 @@ class HintScreen
 			timeline().apply( &arrowAlpha, 0.0f, 1.0f, 0.8f, EaseInCubic() );	
 
 			arrowScale = Vec2f(1.0f, 1.0f);
+			sign = 1;
 
-			arrowVec = Vec2f(701.0f, 452.0f);
-			timeline().apply( &arrowVec,  Vec2f(701.0f, 472.0f), 0.7f, EaseOutCubic() );
+			arrowVec = Vec2f(901.0f, 552.0f);
+			timeline().apply( &arrowVec,  Vec2f(901.0f, 602.0f), 0.7f, EaseOutCubic() );
 		}
 
 		void startReadySate()
@@ -275,7 +293,7 @@ class HintScreen
 			if (poseNum == 1)
 			{
 				timeline().apply( &alphaBg, 0.0f, 1.0f, 0.9f, EaseInCubic() );
-				levelNumTexture = Utils::getTextField(to_string(poseNum), &levelNumFont, Color::white());
+				levelNumTexture = Utils::getTextField(to_string(poseNum), &levelNumFont, Color::black());
 			}
 			else
 			{
@@ -285,7 +303,7 @@ class HintScreen
 				timeline().apply( &rotationComicsAnimate, 0.0f             , previewVec[poseNum-2].rotation, 0.4f, EaseInCubic());
 
 				alphaBg = 1.0f;
-				levelNumTexture = Utils::getTextField(to_string(poseNum), &levelNumFont, Color::white());
+				levelNumTexture = Utils::getTextField(to_string(poseNum), &levelNumFont, Color::black());
 			}
 			
 			state = SHOW_READY;
@@ -298,13 +316,13 @@ class HintScreen
 			startCounterAlpha = 0.0f;
 			timeline().apply( &startCounterAlpha, 0.0f, 1.0f, 0.4f, EaseInCubic() ).delay(0.1f);
 
-			countDownTexture = Utils::getTextField("3", &countDownFont, Color(1,1,1));
+			countDownTexture = Utils::getTextField("3", &countDownFont, Color::white());
 			state = SHOW_NUMS;
 		}
 		
 		void updateCountDown(int time)
 		{		
-			countDownTexture = Utils::getTextField(to_string(time), &countDownFont, ColorA(196/255.0,47/255.0,57/255.0));
+			countDownTexture = Utils::getTextField(to_string(time), &countDownFont, Color::white());
 		}
 
 		void fadeCounter( )

@@ -10,7 +10,7 @@ namespace facebookDefaults
 	const std::string FACEBOOK_BASE_URL					= "https://graph.facebook.com/";
 
 	const std::string FACEBOOK_APP_ID					= "1437302953218656";
-	const std::string FACEBOOK_AUTH_URL					= "https://www.facebook.com/dialog/oauth?client_id="+ FACEBOOK_APP_ID + "&redirect_uri=https://www.facebook.com/connect/login_success.html&response_type=token&display=popup&scope=publish_actions,email,public_profile,user_friends,user_photos";
+	const std::string FACEBOOK_AUTH_URL					= "https://www.facebook.com/dialog/oauth?client_id="+ FACEBOOK_APP_ID + "&redirect_uri=http://familyagency.ru/&response_type=token&display=popup&scope=publish_actions,email,public_profile,user_friends,user_photos";
 	
 	const std::string FACEBOOK_FEED_URL					= FACEBOOK_BASE_URL + "me/feed";
 	const std::string FACEBOOK_APP_LOGOUT_URL			= FACEBOOK_BASE_URL + "me/permissions";

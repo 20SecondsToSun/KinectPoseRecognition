@@ -79,9 +79,8 @@ class Pose
 			//gl::color(Color(1.0f, 0.0f, 0.0f));
 			gl::draw(_imageTex);
 
-			drawBox()	;
-
-			drawAnchor();
+			//drawBox()	;
+			//drawAnchor();
 
 		};
 
@@ -204,6 +203,16 @@ class Pose
 			return tiltDegrees;
 		}
 
+		void setPoseTime(int32_t _time)
+		{
+			time = _time;
+		}
+
+		int32_t getPoseTime()
+		{
+			return time;
+		}
+
 	private:
 		std::string				name;
 		std::vector<ci::Vec3f>	rawPoints;
@@ -219,4 +228,5 @@ class Pose
 		ci::Vec2f			anchorPoint;
 
 		ci::gl::Texture		comics;
+		int					time;
 };

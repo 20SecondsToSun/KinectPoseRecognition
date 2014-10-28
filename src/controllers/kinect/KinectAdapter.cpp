@@ -26,11 +26,11 @@ void KinectAdapter::setActiveJoints()
 	jointToRecord.push_back(NUI_SKELETON_POSITION_HIP_CENTER);
 	jointToRecord.push_back(NUI_SKELETON_POSITION_SPINE);
 
-	/*jointToRecord.push_back(NUI_SKELETON_POSITION_KNEE_LEFT);
+	jointToRecord.push_back(NUI_SKELETON_POSITION_KNEE_LEFT);
 	jointToRecord.push_back(NUI_SKELETON_POSITION_KNEE_RIGHT);
 	jointToRecord.push_back(NUI_SKELETON_POSITION_ANKLE_LEFT);
 	 
-	jointToRecord.push_back(NUI_SKELETON_POSITION_ANKLE_RIGHT);*/
+	jointToRecord.push_back(NUI_SKELETON_POSITION_ANKLE_RIGHT);
 }
 
 void KinectAdapter::connect()
@@ -71,6 +71,9 @@ void KinectAdapter::update()
 		if (!reconnectTimer.isStopped())	
 			reconnectTimer.stop();		
 	}
+
+	if (!sleepTimer.isStopped() && sleepTimer.getSeconds() > sleepSeconds)
+		sleepTimer.stop();
 }
 
 void KinectAdapter::updateSkeletonData()
@@ -109,10 +112,19 @@ ci::Surface16u KinectAdapter::getSilhouette()
 
 int KinectAdapter::getSkeletsInFrame()
 {
+	if (!sleepTimer.isStopped())
+	{
+		if (sleepTimer.getSeconds()>sleepSeconds)
+			sleepTimer.stop();
+		else return 0;
+	}
+	
 	#ifdef debug
 		return 1; 
 	#endif
-	
+
+	//return 1;
+
 	if(getDepthChannel16u())
 		return MsKinect::calcNumUsersFromDepth(getDepthChannel16u());
 
@@ -121,7 +133,8 @@ int KinectAdapter::getSkeletsInFrame()
 
 float KinectAdapter::distanceToSkelet()
 {
-	return 1.5f;
+	if (currentSkelet.size() == 0 )  return 0;
+	return currentSkelet[0].z;
 }
 
 void KinectAdapter::draw()
@@ -156,14 +169,26 @@ void KinectAdapter::drawSkeletJoints()
 void KinectAdapter::drawUserMask()
 {
 	if(savePoseDepth)
-	{
+	{		
 		gl::color(Color::white());
 		gl::enableAlphaBlending();
 		
 		gl::pushMatrices();
 			gl::translate(viewShiftX, viewShiftY);
-			gl::scale(headScale, headScale);			
+			gl::scale(headScale, headScale);
+			//gl::draw(Texture(getSurface8u()));
 			gl::draw(Texture(savePoseDepth));
 		gl::popMatrices();
 	}
+}
+
+void KinectAdapter::sleep(int seconds)
+{
+	sleepSeconds = seconds;
+	sleepTimer.start();
+}
+
+void KinectAdapter::sleepKill( )
+{
+	sleepTimer.stop();
 }

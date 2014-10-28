@@ -186,6 +186,7 @@
     <ClInclude Include="..\src\locations\popup\EmailForm.h" />
     <ClInclude Include="..\src\locations\popup\Popup.h" />
     <ClInclude Include="..\src\locations\screens\help\BubbleAnimator.h" />
+    <ClInclude Include="..\src\locations\screens\help\CatAnimator.h" />
     <ClInclude Include="..\src\locations\screens\IntroScreen.h" />
     <ClInclude Include="..\src\locations\screens\MainGameScreen.h" />
     <ClInclude Include="..\src\locations\screens\ResultScreen.h" />

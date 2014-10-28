@@ -60,7 +60,7 @@ class ComicsScreen
 			gl::popMatrices();
 
 			gl::pushMatrices();
-				gl::translate(getWindowWidth() - 360.0, getWindowHeight() - 512.0);		
+				//gl::translate(getWindowWidth() - 360.0, getWindowHeight() - 512.0);		
 				gl::draw(poseTexture);
 			gl::popMatrices();
 		}

@@ -39,6 +39,9 @@ class KinectAdapter: public KinectBase
 
 		ci::Surface16u getSilhouette();
 
+		void sleep(int seconds);
+		void sleepKill();
+
 	private:
 
 		static KinectAdapter KinectAdapterState;	
@@ -49,6 +52,10 @@ class KinectAdapter: public KinectBase
 		void setActiveJoints();		
 		int bufferDisconnect;
 		std::vector<_NUI_SKELETON_POSITION_INDEX>			jointToRecord;
+
+		int sleepSeconds;
+
+		Timer sleepTimer;
 };
 
 inline KinectAdapter&	kinect() { return *KinectAdapter::Instance(); };
