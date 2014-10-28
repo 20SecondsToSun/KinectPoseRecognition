@@ -5,6 +5,21 @@ int PlayerData::score;
 ci::Surface PlayerData::finalImageSurface;
 ci::Vec2f PlayerData::translation;
 
+void PlayerData::setup()
+{	
+	setTranslation(0, Vec2f(36.5f, 128.5f));
+	setTranslation(1, Vec2f(23.0f, 144.0f));
+	setTranslation(2, Vec2f(40.0f, 86.5f));
+
+	setRotation(0, -2.0f);
+	setRotation(1, 0.5f);
+	setRotation(2, 1.0f);
+
+	setDefaultTexture(0,  *AssetManager::getInstance()->getTexture( "images/serverScreen/default1.png" ));
+	setDefaultTexture(1,  *AssetManager::getInstance()->getTexture( "images/serverScreen/default2.png" ));
+	setDefaultTexture(2,  *AssetManager::getInstance()->getTexture( "images/serverScreen/default3.png" ));
+}
+
 void PlayerData::initData()
 {
 	score = 0;
@@ -52,4 +67,14 @@ void  PlayerData::setRotation(int i, float _degree)
 float PlayerData::getRotation(int i)
 {
 	return playerData[i].degree;
+}
+
+void  PlayerData::setDefaultTexture(int i, ci::gl::Texture tex)
+{
+	playerData[i].defaultTexture = tex;
+}
+
+ci::gl::Texture PlayerData::getDefaultTexture(int i)
+{
+	return playerData[i].defaultTexture;
 }

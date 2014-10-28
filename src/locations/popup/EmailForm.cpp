@@ -24,9 +24,11 @@ void EmailForm::setup()
 
 	deleteAllLettersBtn = new ButtonTex(deleteAllTex, "deleteAll");	
 	deleteAllLettersBtn->setScreenField(Vec2f(1463.0f, 135.0f));	
+	deleteAllLettersBtn->setDownState(deleteAllTex); 
 
 	closeEmailBtn= new ButtonTex(closeEmailTex, "closeEmail");
 	closeEmailBtn->setScreenField( Vec2f(1778.0f, 88.0f));	
+	closeEmailBtn->setDownState(closeEmailTex);
 }
 
 void EmailForm::show()
@@ -51,6 +53,7 @@ void EmailForm::initHandlers()
 
 void EmailForm::closeSignalHandler()
 {
+	disconnectAll();
 	mode = CLOSE_MAIL;
 	hide();
 }
@@ -92,6 +95,7 @@ void EmailForm::keyboardTouchSignalHandler()
 		if (currentEmail.size() != 0)
 			addCurrentEmail(currentEmail);	
 
+		disconnectAll();
 		mode = SEND_MAIL;	
 		hide();
 		return;

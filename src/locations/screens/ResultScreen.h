@@ -9,7 +9,7 @@
 #include "PlayerData.h"
 #include "Location.h"
 #include "Params.h"
-#include "IntroScreen.h"
+//#include "IntroScreen.h"
 #include "Server.h"
 #include "QRcode.h"
 #include "Popup.h"
@@ -112,7 +112,7 @@ class ResultScreen : public Location
 
 		ButtonTex   *facebookBtn;
 		ButtonTex   *vkontakteBtn;
-		ButtonTex	*comeBackBtn;	
+		ButtonTex	*comeBackBtn, *comeBackBtn1;	
 		ButtonTex	*mailBtn;			
 
 		void	facebookBtnHandler();
@@ -128,7 +128,7 @@ class ResultScreen : public Location
 		ci::signals::connection closeEmailPopupSignal;
 		ci::signals::connection closeSocialPopupSignal;
 
-		ci::signals::connection	comeBackSignal;
+		ci::signals::connection	comeBackSignal, comeBackSignal1;
 		ci::signals::connection	fbSignal;
 		ci::signals::connection vkSignal;
 		ci::signals::connection mailSignal;
@@ -144,7 +144,7 @@ class ResultScreen : public Location
 		QRcode qrCode;	
 
 		Texture	postPhotoTextTex, emailtPhotoTextTex;
-		Texture	playMoreTex;	
+		Texture	playMoreTex, nothingCatTex;	
 
 		void	savePhotoToLocalBase();
 		void	sendPhotoToEmail();			
@@ -212,22 +212,24 @@ class PhotoRamki
 								gl::draw(PlayerData::getDisplayingTexture(i));
 							gl::popMatrices();
 						}
+						else
+						{	
+							gl::pushMatrices();	
+							if (i == 0)
+							{
+								gl::translate(Vec2f( 0.0f, -10.0f ));
+							}
+							else if (i == 2)
+							{
+								gl::translate(Vec2f( -10.0f, 0.0f ));
+							}
+							gl::draw(PlayerData::getDefaultTexture(i), PlayerData::getTranslation(i));
+							gl::popMatrices();
+						}
 						gl::draw( images[i]);
 				gl::popMatrices();
-			}		
-			
-			/*for (size_t  i = 0; i < POSE_IN_GAME_TOTAL; i++)
-			{
-				if(PlayerData::playerData[i].isSuccess )
-				{
-					gl::pushMatrices();
-						gl::translate(505.f*i, 200.0f );
-						gl::scale(0.5f, 0.5f);	
-						gl::color(ColorA(1.0f, 1.0f, 1.0f, alphaAnimateComics[i]));					
-						gl::draw( PlayerData::getDisplayingTexture(i));
-					gl::popMatrices();
-				}	
-			}*/
+			}
+
 			gl::color(Color::white());
 		}
 

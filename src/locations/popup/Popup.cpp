@@ -12,13 +12,15 @@ void	PopupBase::setup()
 	keyBoardMainBgTex = AssetManager::getInstance()->getTexture(  "keyboard/06_podl.jpg" );	
 
 	// set Awesomium logging to verbose
-	Awesomium::WebConfig cnf;
+	//Awesomium::WebConfig cnf;
 	//cnf.log_level = Awesomium::kLogLevel_Verbose;
-	Awesomium::WebPreferences pref;	
+	//Awesomium::WebPreferences pref;	
 	// initialize the Awesomium web engine
-	mWebCorePtr		= Awesomium::WebCore::Initialize( cnf );	
-	session			= mWebCorePtr->CreateWebSession(Awesomium::WSLit("soc"), pref);
-	mWebViewPtr		= mWebCorePtr->CreateWebView( getWindowWidth(), getWindowHeight(), session );	
+	mWebCorePtr		= Awesomium::WebCore::Initialize( Awesomium::WebConfig() );	
+	//session			= mWebCorePtr->CreateWebSession(Awesomium::WSLit("soc"), pref);
+	console()<<"--------start----------------"<<endl;
+	mWebViewPtr		= mWebCorePtr->CreateWebView( 500, 500);//, session );	
+	console()<<"--------fin----------------  "<<mWebViewPtr<<endl;
 
 	_vkontakteOffset			= Vec2f(0.0f, 1080.0f - 1754.0f + 674.0f);
 	vkontaktePopupAvailableArea = Area(0,  170, getWindowWidth(), 550);
@@ -50,32 +52,6 @@ void	PopupBase::reset()
 	isDrawing = false;	
 }
 
-//void	PopupBase::draw()
-//{
-//	if (isDrawing)
-//	{
-//		gl::color(ColorA(1.0f, 1.0f, 1.0f, 0.6f));
-//		gl::draw(screenShot);
-//		gl::color(ColorA(1.0f, 1.0f, 1.0f, 0.8f));
-//		gl::drawSolidRect(ci::app::getWindowBounds());
-//
-//		gl::color(Color(1.0f, 1.0f, 1.0f));
-//
-//		gl::pushMatrices();
-//			gl::translate(bgPosition);
-//			gl::color(bgColor);
-//			gl::draw(*keyBoardMainBgTex);				
-//		gl::popMatrices();
-//
-//		gl::pushMatrices();
-//				gl::translate(0.0f, 674.0f);
-//				gl::translate(bgPosition);
-//				touchKeyboard().draw();
-//				closeBtn->draw();	
-//		gl::popMatrices();
-//	}
-//}
-
 void PopupBase::show(int _type)
 {
 	socialServerStatus  = SERVER_STATUS_NONE;
@@ -106,12 +82,16 @@ void PopupBase::show(int _type)
 
 		//touchKeyBoard.setPosition( Vec2f(360.0f, HEIGHT - 484.0f));
 
-		if( mWebViewPtr )
-			mWebViewPtr->Resize(getWindowWidth(), 550 );
+		//if( mWebViewPtr )
+		//	mWebViewPtr->Resize(getWindowWidth(), 550 );
 	
 		console()<<" auth url :: "<<social->getAuthUrl()<<std::endl;
-		mWebViewPtr->LoadURL( Awesomium::WebURL( Awesomium::WSLit( social->getAuthUrl()) ) );
+		Awesomium::WebURL url( Awesomium::WSLit( "http://www.google.ru") );
+		console()<<" ------------- "<<std::endl;
+		mWebViewPtr->LoadURL( url);
+		console()<<" ------------- "<<std::endl;		
 		mWebViewPtr->Focus();
+		console()<<" ------------- 3"<<std::endl;		
 	}
 	else if (type == popupTypes::FACEBOOK)
 	{		
@@ -133,6 +113,7 @@ void PopupBase::show(int _type)
 		console()<<" auth url :: "<<social->getAuthUrl()<<std::endl;
 		mWebViewPtr->LoadURL( Awesomium::WebURL( Awesomium::WSLit( social->getAuthUrl()) ) );
 		mWebViewPtr->Focus();
+		
 	}
 }
 
@@ -228,8 +209,7 @@ void PopupBase::update()
 
 	// update the Awesomium engine
 	if(mWebCorePtr)
-	{
-		
+	{		
 		mWebCorePtr->Update();
 	}
 	console()<<" mWebCorePtr  "<<mWebCorePtr<<"  ph::awesomium::isDirty( mWebViewPtr )  "<< ph::awesomium::isDirty( mWebViewPtr )<<endl;
@@ -262,7 +242,8 @@ void PopupBase::update()
 			char anchr[1024];
 			mWebViewPtr->url().anchor().ToUTF8( anchr, 1024 );
 			std::string anchString( anchr );
-			std::size_t pos = anchString.find("access_token"); 			
+			std::size_t pos = anchString.find("access_token"); 		
+			ci::app::console()<<"  anchString "<<anchString<<std::endl;
 
 			if (pos == 0 && socialServerStatus == SERVER_STATUS_NONE) 	
 			{	
@@ -395,7 +376,7 @@ void PopupBase::draw()
 	gl::popMatrices();
 
 
-	console()<<" popupAnimationState============== "<<popupAnimationState<< " mWebTexture  "<<mWebTexture<<"  mWebViewPtr->IsLoading() "<<mWebViewPtr->IsLoading()<<endl;
+	console()<<" mWebTexture  "<<mWebTexture<<"  mWebViewPtr->IsLoading() "<<mWebViewPtr->IsLoading()<<endl;
 
 	if( popupAnimationState == POPUP_READY_STATE && mWebTexture && mWebViewPtr->IsLoading() == false )
 	{		

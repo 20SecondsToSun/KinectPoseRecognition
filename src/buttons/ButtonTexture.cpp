@@ -71,7 +71,6 @@ void ButtonTex::draw()
 			}
 			else
 			{	
-				console()<<" OVER:::::::::: "<<overColor<<endl;
 				gl::color(overColor);
 				gl::draw(texture);
 			}

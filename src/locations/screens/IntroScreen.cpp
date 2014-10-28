@@ -18,13 +18,11 @@ void IntroScreen::setup()
 	lapaTv   = *AssetManager::getInstance()->getTexture( "images/diz/lapa.png" );
 	text1 = *AssetManager::getInstance()->getTexture( "images/diz/nextText.png" );	
 	
-	console()<< "setup-------------------------->"<<endl;
 	bubbleAnimator().setup();
-	console()<< "setup-------------------------->"<<endl;
 	instructionImage  = *AssetManager::getInstance()->getTexture( "images/diz/instr.png" );
 
 	Font *btnFont = fonts().getFont("Helvetica Neue", 46);
-	console()<< "setup-------------------------->"<<endl;
+	
 	/////////////////////////////////
 	Texture startInstructionBtnTex   = *AssetManager::getInstance()->getTexture( "images/diz/btn_off.png" );
 	Texture startInstructionBtnTexUp   = *AssetManager::getInstance()->getTexture( "images/diz/btn_on.png" );
@@ -32,7 +30,7 @@ void IntroScreen::setup()
 	startInstructionBtn = new ButtonTex(startInstructionBtnTex,  "startInstruction");
 	startInstructionBtn->setScreenField(Vec2f(502.0f, 505.0f));
 	startInstructionBtn->setDownState(startInstructionBtnTexUp, Vec2f(0.0f, 5.0f));
-	console()<< "setup-------------------------->"<<endl;
+	
 	////////////////////////////////
 	Texture startGameBtnTex   = *AssetManager::getInstance()->getTexture( "images/diz/nextBtn1.png" );
 	Texture startGameBtnTexUp   = *AssetManager::getInstance()->getTexture( "images/diz/nextBtn2.png" );
@@ -40,10 +38,9 @@ void IntroScreen::setup()
 	startGameBtn = new ButtonTex(startGameBtnTex,  "startGame");
 	startGameBtn->setScreenField(Vec2f(953.0f, 626.0f));
 	startGameBtn->setDownState(startGameBtnTexUp);
-	console()<< "setup-------------------------->"<<endl;
+	
 	///////////////////////////////
 	comeBackBtn			= new ButtonColor(Rectf(1520.0f, 980.0f, 1920.0f, 1080.0f), RED, btnFont, "ÍÀÇÀÄ");
-	console()<< "setup-------------------------->"<<endl;
 }
 
 void IntroScreen::init( LocationEngine* game)
@@ -219,7 +216,7 @@ void IntroScreen::draw()
 
 	if(_game->freezeLocation)
 	{
-		gl::color(ColorA(BLUE.r, BLUE.g, BLUE.b, alphaAnimate));		
+		gl::color(ColorA(BLUE_FADE.r, BLUE_FADE.g, BLUE_FADE.b, alphaAnimate));		
 		gl::drawSolidRect(Rectf( 0.0f, 0.0f, getWindowWidth(), getWindowHeight()));
 		gl::color(Color::white());
 	}	
