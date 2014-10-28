@@ -7,16 +7,23 @@
 
 
 #include "LocationEngine.h"
-#include "IntroScreen.h"
+//#include "IntroScreen.h"
 //#include "MainGameScreen.h"
-#include "ResultScreen.h"
+//#include "ResultScreen.h"
 //#include "KinectAdapter.h"
 
-#include "Params.h"
-#include "Saver.h"
-#include "Utils.h"
-#include "PlayerData.h"
+//#include "Params.h"
+//#include "Saver.h"
+//#include "Utils.h"
+//#include "PlayerData.h"
+
 #include "Toucher.h"
+
+
+#include "Popup.h"
+#include "AssetsManager.h"
+#include "FontStore.h"
+#include "cinder/gl/Texture.h"
 
 using namespace ci;
 using namespace ci::app;
@@ -57,7 +64,6 @@ void KinectPoseRecognitionApp::setup()
 		setFullScreen(true);
 		hideCursor();
 	#endif
-	
 		
 
 	fonts().loadFont( loadFile(getAssetPath("fonts/Helvetica Neue Bold.ttf")), 46);
@@ -77,18 +83,16 @@ void KinectPoseRecognitionApp::setup()
 
     #ifndef recording
 		bg  = *AssetManager::getInstance()->getTexture( "images/diz/bg.jpg" );
-		saver().loadConfigData();
+		//saver().loadConfigData();
 
-		IntroScreen::Instance()->setup();
-		MainGameScreen::Instance()->setup();
-		ResultScreen::Instance()->setup();
-
-		//popup().start(popupTypes::EMAIL);	
+		//IntroScreen::Instance()->setup();
+		//MainGameScreen::Instance()->setup();
+		//ResultScreen::Instance()->setup();
 	#endif
 
 
 	#ifdef debug
-		PlayerData::score = 3;
+		/*PlayerData::score = 3;
 		mParams = params::InterfaceGl::create( getWindow(), "App parameters", toPixels( Vec2i( 500, 400 ) ) );
 		mParams->addParam( "boxMaxErrorX", &Params::boxMaxErrorX ).min( 5.f ).max( 50.5f ).step( 5.f );
 		mParams->addParam( "boxMaxErrorY", &Params::boxMaxErrorY ).min( 5.f ).max( 50.5f ).step( 5.f );
@@ -108,10 +112,7 @@ void KinectPoseRecognitionApp::setup()
 		mParams->addSeparator();
 		mParams->addParam( "Imitate_serverEmailSendError", &Params::serverEmailSendError );
 		mParams->addParam( "Imitate_serverEmailSendTimeout", &Params::serverEmailSendTimeout );
-		mParams->addSeparator();
-		//mParams->addParam( "kinect", &Params::serverEmailSendError );
-		//mParams->addParam( "Imitate_serverEmailSendTimeout", &Params::serverEmailSendTimeout );
-		//mParams->addParam( "recordingMode", &Params::recording );			
+		mParams->addSeparator();*/			
 	#endif
 
 
@@ -124,14 +125,18 @@ void KinectPoseRecognitionApp::setup()
 
 
   #ifndef recording
-		recognitionGame().setup();
-		game.init(getWindow());
-		game.changeState(IntroScreen::Instance());
+		//recognitionGame().setup();
+		//game.init(getWindow());
+		//game.changeState(IntroScreen::Instance());
 	#endif
 
 	poseNum = 0;
 
 	gl::enableAlphaBlending();	
+
+	socialPopup().setup();
+	socialPopup().show(popupTypes::FACEBOOK);	
+
 }
 
 void KinectPoseRecognitionApp::changeState()
@@ -156,14 +161,17 @@ void KinectPoseRecognitionApp::update()
 			}	
 		}	
 	#else	
-		game.update();
+		//game.update();
 	#endif
+
+	socialPopup().update();
 	
 }
 
 void KinectPoseRecognitionApp::draw()
 {
-	gl::clear( Color( 0, 0, 0 ) ); 	
+	gl::clear( Color( 0, 0, 0 ) ); 
+
 	
 	#ifdef recording
 	    cameraCanon().draw();
@@ -191,15 +199,14 @@ void KinectPoseRecognitionApp::draw()
 
 	#else
 		gl::draw(bg);
-		game.draw();
-		//popup().draw();
-		//kinect().draw();
-
+		//game.draw();
 	#endif	
 
 	#ifdef debug
-		mParams->draw();
+		//mParams->draw();
 	#endif
+
+	socialPopup().draw();
 
 	toucher().draw();
 }
@@ -210,8 +217,7 @@ void KinectPoseRecognitionApp::mouseDown( MouseEvent event )
 }
 
 void KinectPoseRecognitionApp::keyDown( KeyEvent event )
-{
-	
+{	
 	console()<< "   event.getChar() "<<event.getChar()<<endl;
 	int32_t angle = 0;
 	#ifdef recording	
@@ -257,20 +263,20 @@ void KinectPoseRecognitionApp::keyDown( KeyEvent event )
 		switch (event.getChar())
 		{ 
 			case '1':
-				game.changeState(IntroScreen::Instance());
+				//game.changeState(IntroScreen::Instance());
 			break;
 			case '2':
-				game.changeState(MainGameScreen::Instance());
+				//game.changeState(MainGameScreen::Instance());
 			break;
 			case '3':
-				game.changeState(ResultScreen::Instance());
+				//game.changeState(ResultScreen::Instance());
 			break;
 			case 'q':
 				shutdown();
 			break;
 			case '0':
 			#ifdef kinectUsed
-				kinect().Shutdown();
+				//kinect().Shutdown();
 			#endif
 			break;
 			
@@ -284,11 +290,11 @@ void KinectPoseRecognitionApp::shutdown()
 	console()<<"SHUTDOWN!!!!"<<endl;
 
 	#ifdef kinectUsed
-		kinect().Shutdown();
+		//kinect().Shutdown();
 	#endif
 	try
 	{
-		cameraCanon().shutdown();
+		//cameraCanon().shutdown();
 	}
 	catch(...)
 	{
@@ -297,7 +303,7 @@ void KinectPoseRecognitionApp::shutdown()
 
 	try
 	{
-		ResultScreen::Instance()->shutdown();	
+		//ResultScreen::Instance()->shutdown();	
 	}
 	catch(...)
 	{
@@ -305,9 +311,7 @@ void KinectPoseRecognitionApp::shutdown()
 	}
 		
 	//IntroScreen::Instance()->shutdown();
-	//MainGameScreen::Instance()->shutdown();
-	
-	
+	//MainGameScreen::Instance()->shutdown();	
 }
 #pragma warning(pop)
 CINDER_APP_NATIVE( KinectPoseRecognitionApp, RendererGl )

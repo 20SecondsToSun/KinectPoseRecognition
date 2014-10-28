@@ -76,7 +76,7 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
-      <AdditionalIncludeDirectories>..\include;..\..\..\\include;..\..\..\\boost;..\blocks\Cinder-KCB\src;..\blocks\Cinder-KCB\lib;$(KINECT_TOOLKIT_DIR)inc;$(KINECTSDK10_DIR)\inc;..\src;..\blocks\Cinder-CanonSdk\include;..\blocks\Cinder-CanonSdk\src;..\blocks\Cinder-CanonSdk\lib\EDSDK\Header;..\blocks\Cinder-Curl\src;..\src\buttons;..\src\controllers\assets;..\src\controllers\camera;..\src\controllers\fonts;..\src\controllers\kinect;..\src\controllers\photomaker;..\src\controllers\saver;..\src\controllers\server;..\src\data;..\src\game\graphicScene;..\src\game;..\src\graphics;..\src\locations\engine;..\src\locations\popup;..\src\locations\screens;..\src\math\splines;..\src\tools;..\src\touchKeyboard;..\src\locations\screens\help;..\src\social;..\blocks\Awesomium\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\include;..\..\..\\include;..\..\..\\boost;..\blocks\Cinder-KCB\src;..\blocks\Cinder-KCB\lib;$(KINECT_TOOLKIT_DIR)inc;$(KINECTSDK10_DIR)\inc;..\src;..\blocks\Cinder-CanonSdk\include;..\blocks\Cinder-CanonSdk\src;..\blocks\Cinder-CanonSdk\lib\EDSDK\Header;..\blocks\Cinder-Curl\src;..\src\buttons;..\src\controllers\assets;..\src\controllers\camera;..\src\controllers\fonts;..\src\controllers\kinect;..\src\controllers\photomaker;..\src\controllers\saver;..\src\controllers\server;..\src\data;..\src\game\graphicScene;..\src\game;..\src\graphics;..\src\locations\engine;..\src\locations\popup;..\src\locations\screens;..\src\math\splines;..\src\tools;..\src\touchKeyboard;..\src\locations\screens\help;..\src\social;..\blocks\Cinder-Awesomium\include</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;NOMINMAX;_WIN32_WINNT=0x0502;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <PrecompiledHeader>
@@ -94,7 +94,7 @@
       <AdditionalIncludeDirectories>"..\..\..\\include";..\include</AdditionalIncludeDirectories>
     </ResourceCompile>
     <Link>
-      <AdditionalDependencies>cinder-$(PlatformToolset).lib;Kinect10.lib;KinectCommonBridge.lib;FaceTrackLib.lib;OpenGL32.lib;..\blocks\Awesomium\build\lib\msw\awesomium.lib;..\blocks\Cinder-CanonSdk\lib\EDSDK\Library\EDSDK.lib;..\blocks\Cinder-Curl\lib\msw\libcurl.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>cinder-$(PlatformToolset).lib;Kinect10.lib;KinectCommonBridge.lib;FaceTrackLib.lib;OpenGL32.lib;..\blocks\Cinder-Awesomium\build\lib\msw\awesomium.lib;..\blocks\Cinder-CanonSdk\lib\EDSDK\Library\EDSDK.lib;..\blocks\Cinder-Curl\lib\msw\libcurl.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <GenerateDebugInformation>false</GenerateDebugInformation>
       <GenerateMapFile>true</GenerateMapFile>
       <SubSystem>Windows</SubSystem>
@@ -110,7 +110,7 @@
     <ResourceCompile Include="Resources.rc" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\blocks\Awesomium\src\CinderAwesomium.cpp" />
+    <ClCompile Include="..\blocks\Cinder-Awesomium\src\CinderAwesomium.cpp" />
     <ClCompile Include="..\blocks\Cinder-CanonSdk\src\CanonCamera.cpp" />
     <ClCompile Include="..\blocks\Cinder-CanonSdk\src\CinderCanon.cpp" />
     <ClCompile Include="..\blocks\Cinder-Curl\src\Curl.cpp" />
@@ -150,7 +150,7 @@
     <ClCompile Include="..\src\touchKeyboard\VirtualKeyboard.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\blocks\Awesomium\include\CinderAwesomium.h" />
+    <ClInclude Include="..\blocks\Cinder-Awesomium\include\CinderAwesomium.h" />
     <ClInclude Include="..\blocks\Cinder-CanonSdk\include\CanonCamera.h" />
     <ClInclude Include="..\blocks\Cinder-CanonSdk\include\CanonDebug.h" />
     <ClInclude Include="..\blocks\Cinder-CanonSdk\include\CinderCanon.h" />

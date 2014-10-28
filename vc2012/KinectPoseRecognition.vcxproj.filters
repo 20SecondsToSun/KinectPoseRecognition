@@ -219,7 +219,7 @@
     <ClCompile Include="..\src\social\Vkontakte.cpp">
       <Filter>Source Files\social</Filter>
     </ClCompile>
-    <ClCompile Include="..\blocks\Awesomium\src\CinderAwesomium.cpp">
+    <ClCompile Include="..\blocks\Cinder-Awesomium\src\CinderAwesomium.cpp">
       <Filter>blocks\Cinder-Awesomium</Filter>
     </ClCompile>
   </ItemGroup>
@@ -374,11 +374,11 @@
     <ClInclude Include="..\src\social\Vkontakte.h">
       <Filter>Source Files\social</Filter>
     </ClInclude>
-    <ClInclude Include="..\blocks\Awesomium\include\CinderAwesomium.h">
-      <Filter>blocks\Cinder-Awesomium</Filter>
-    </ClInclude>
     <ClInclude Include="..\src\locations\screens\help\CatAnimator.h">
       <Filter>Source Files\locations\screens\help</Filter>
+    </ClInclude>
+    <ClInclude Include="..\blocks\Cinder-Awesomium\include\CinderAwesomium.h">
+      <Filter>blocks\Cinder-Awesomium</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

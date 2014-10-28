@@ -1,6 +1,7 @@
 #include "Popup.h"
 
 using namespace ci;
+using namespace Awesomium;
 
 Awesomium::WebCore*		 PopupBase::mWebCorePtr;
 Awesomium::WebView*		 PopupBase::mWebViewPtr;
@@ -16,11 +17,37 @@ void	PopupBase::setup()
 	//cnf.log_level = Awesomium::kLogLevel_Verbose;
 	//Awesomium::WebPreferences pref;	
 	// initialize the Awesomium web engine
-	mWebCorePtr		= Awesomium::WebCore::Initialize( Awesomium::WebConfig() );	
+	//mWebCorePtr		= Awesomium::WebCore::Initialize( Awesomium::WebConfig() );	
 	//session			= mWebCorePtr->CreateWebSession(Awesomium::WSLit("soc"), pref);
 	console()<<"--------start----------------"<<endl;
-	mWebViewPtr		= mWebCorePtr->CreateWebView( 500, 500);//, session );	
-	console()<<"--------fin----------------  "<<mWebViewPtr<<endl;
+	//mWebViewPtr		= mWebCorePtr->CreateWebView( 500, 500);//, session );	
+	//console()<<"--------fin----------------  "<<mWebViewPtr<<endl;
+
+
+	// set Awesomium logging to verbose
+	WebConfig cnf;
+	//cnf.log_level = Awesomium::kLogLevel_Verbose;
+
+	
+	// initialize the Awesomium web engine
+	mWebCorePtr = WebCore::Initialize( cnf );
+	WebPreferences pref;	
+	session			= mWebCorePtr->CreateWebSession(Awesomium::WSLit("soc"), pref);
+
+	// create a webview
+	mWebViewPtr = mWebCorePtr->CreateWebView( getWindowWidth(), getWindowHeight(), session  );
+	//mWebViewPtr->LoadURL( Awesomium::WebURL( Awesomium::WSLit( "http://libcinder.org" ) ) );
+	//mWebViewPtr->Focus();
+
+
+
+
+
+
+
+
+
+
 
 	_vkontakteOffset			= Vec2f(0.0f, 1080.0f - 1754.0f + 674.0f);
 	vkontaktePopupAvailableArea = Area(0,  170, getWindowWidth(), 550);
@@ -54,6 +81,7 @@ void	PopupBase::reset()
 
 void PopupBase::show(int _type)
 {
+	
 	socialServerStatus  = SERVER_STATUS_NONE;
 	isTryFocusInLoginTextField = false;
 
@@ -61,7 +89,7 @@ void PopupBase::show(int _type)
 	isDrawing  = true;
 	screenShot = gl::Texture(ci::app::copyWindowSurface());	
 
-	touchKeyboard().setPosition( Vec2f(360.0f, getWindowHeight() - 504.0f));
+	//touchKeyboard().setPosition( Vec2f(360.0f, getWindowHeight() - 504.0f));
 
 	bgPosition =  Vec2f(0.0f, 0.0f);
 	bgColor =  ColorA(1.0f, 1.0f, 1.0f, 0.0f);
@@ -82,16 +110,13 @@ void PopupBase::show(int _type)
 
 		//touchKeyBoard.setPosition( Vec2f(360.0f, HEIGHT - 484.0f));
 
-		//if( mWebViewPtr )
-		//	mWebViewPtr->Resize(getWindowWidth(), 550 );
+		if( mWebViewPtr )
+			mWebViewPtr->Resize(getWindowWidth(), 550 );
 	
-		console()<<" auth url :: "<<social->getAuthUrl()<<std::endl;
-		Awesomium::WebURL url( Awesomium::WSLit( "http://www.google.ru") );
-		console()<<" ------------- "<<std::endl;
+		Awesomium::WebURL url( Awesomium::WSLit( social->getAuthUrl()) );
 		mWebViewPtr->LoadURL( url);
-		console()<<" ------------- "<<std::endl;		
 		mWebViewPtr->Focus();
-		console()<<" ------------- 3"<<std::endl;		
+
 	}
 	else if (type == popupTypes::FACEBOOK)
 	{		
@@ -205,14 +230,10 @@ void PopupBase::disconnectAll()
 
 void PopupBase::update()
 {
-	if (socialServerStatus == SERVER_STATUS_USER_REJECT) return;
+	//if (socialServerStatus == SERVER_STATUS_USER_REJECT) return;
+			
+	mWebCorePtr->Update();
 
-	// update the Awesomium engine
-	if(mWebCorePtr)
-	{		
-		mWebCorePtr->Update();
-	}
-	console()<<" mWebCorePtr  "<<mWebCorePtr<<"  ph::awesomium::isDirty( mWebViewPtr )  "<< ph::awesomium::isDirty( mWebViewPtr )<<endl;
 	// create or update our OpenGL Texture from the webview
 	if(mWebViewPtr && ph::awesomium::isDirty( mWebViewPtr ) ) 
 	{
@@ -234,6 +255,8 @@ void PopupBase::update()
 		char title[1024];
 		mWebViewPtr->title().ToUTF8( title, 1024 );
 	}
+
+	return;
 
 	if(mWebViewPtr)
 	{
@@ -327,8 +350,16 @@ void PopupBase::update()
 
 void PopupBase::draw()
 {
-	console()<<"popupAnimationState "<< mWebTexture<<endl;
-	
+	//console()<<"popupAnimationState "<< mWebTexture<<endl;
+	gl::clear(); 
+
+	if( mWebTexture )
+	{
+		gl::color( Color::white() );
+		gl::draw( mWebTexture );
+	}
+
+	return;
 	if (SERVER_STATUS_POSTING == socialServerStatus)
 	{		
 		//PopupMail::draw("SERVER_LOADING", postingWaitingText);
