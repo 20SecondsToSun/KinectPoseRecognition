@@ -18,5 +18,5 @@ class ButtonTex: public Button
 	private:
 		ci::gl::Texture downTexture;
 		ci::Vec2f		donwShiftVec;
-		bool isDown;
+		
 };

@@ -56,7 +56,7 @@ class Button
 		void MouseDown( ci::app::MouseEvent &event );
 		void MouseUp( ci::app::MouseEvent &event );
 		ci::app::WindowRef windowref;
-
+		bool isDown;
 	protected:
 		ci::Font*		textFont;
 		std::string		label;
@@ -72,4 +72,5 @@ class Button
 		ci::Anim<ci::ColorA> overTextColor;
 
 		bool		animate;
+		
 };

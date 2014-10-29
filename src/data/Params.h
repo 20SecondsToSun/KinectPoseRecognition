@@ -7,8 +7,8 @@
 
 #define kinectUsed
 //#define   recording
-#define debug	
-#define alwayswin	
+//#define debug	
+//#define alwayswin	
 
 
 namespace colorsParams

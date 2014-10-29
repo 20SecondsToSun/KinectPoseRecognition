@@ -9,6 +9,8 @@
 #include "cinder/app/AppBasic.h"
 #include "cinder/gl/Texture.h"
 
+
+
 namespace ph { namespace awesomium {
 
 // exceptions
@@ -87,14 +89,17 @@ inline void handleKeyUp( Awesomium::WebView *view, ci::app::KeyEvent event )
 //! sends a Cinder MouseMove event to the WebView
 inline void handleMouseMove( Awesomium::WebView *view, ci::app::MouseEvent event )
 {
-	view->InjectMouseMove( event.getX(), event.getY() );
+	//view->InjectMouseMove( event.getX(), event.getY() );
 }
 
 //! sends a Cinder MouseDown event to the WebView
 inline void handleMouseDown( Awesomium::WebView *view, ci::app::MouseEvent event )
 {
 	if( event.isLeft() )
+	{
+		view->InjectMouseMove( event.getX(), event.getY() );
 		view->InjectMouseDown( Awesomium::kMouseButton_Left );
+	}
 	else if( event.isMiddle() )
 		view->InjectMouseDown( Awesomium::kMouseButton_Middle );
 	else if( event.isRight() )
@@ -111,7 +116,10 @@ inline void handleMouseDrag( Awesomium::WebView *view, ci::app::MouseEvent event
 inline void handleMouseUp( Awesomium::WebView *view, ci::app::MouseEvent event )
 {
 	if( event.isLeft() )
+	{
+		view->InjectMouseMove( event.getX(), event.getY() );
 		view->InjectMouseUp( Awesomium::kMouseButton_Left );
+	}
 	else if( event.isMiddle() )
 		view->InjectMouseUp( Awesomium::kMouseButton_Middle );
 	else if( event.isRight() )

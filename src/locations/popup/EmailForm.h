@@ -14,6 +14,9 @@
 #include "AssetsManager.h"
 #include "ButtonTexture.h"
 #include "VirtualKeyboard.h"
+#include "Saver.h"
+#include "PlayerData.h"
+
 
 class EmailForm
 {
@@ -23,10 +26,9 @@ class EmailForm
 		void show();
 		void hide();
 		void draw();
-		void update();
 		void disconnectAll();
 
-		boost::signals2::signal<void(void)> closeEvent, sendEvent;
+		boost::signals2::signal<void(void)> closeEvent;
 		std::vector<std::string> getEmails();
 		std::string EmailForm::getEmailsInString();
 
@@ -34,12 +36,13 @@ class EmailForm
 
 	private :
 
-		enum closePopupMode {CLOSE_MAIL, SEND_MAIL};
+		enum closePopupMode {DEFAULT, CLOSE_MAIL, SEND_MAIL, SENDING_READY, EMAIL_ERROR};
 
 		ci::signals::connection	keyboardTouchSignal;
 		ci::signals::connection	deleteAllLettersSignal;
+		ci::signals::connection	serverSignalLoadingEmailCheck;		
 		ci::signals::connection	addEmailSignal;
-		ci::signals::connection	closeBtnSignal;
+		ci::signals::connection	closeBtnSignal, MouseUpCon;
 
 		ButtonTex				*closeEmailBtn;
 		ButtonTex				*deleteAllLettersBtn;
@@ -62,6 +65,9 @@ class EmailForm
 		void initHandlers();		
 		void closedHandler();
 
+		void sendToEmailHandler();
+		void savePhotoToLocalBase();
+		void serverLoadingEmailHandler();
 		
 		void addCurrentEmail(std::string _email);
 
@@ -69,6 +75,10 @@ class EmailForm
 		std::vector<std::string> emailVector;
 
 		int mode;
+
+		ci::gl::Texture *emailErr, *emailOk,  *preloader, *blue_bg, *red_bg;
+
+		void MouseDown( MouseEvent &event);
 
 };
 inline EmailForm&	emailPopup() { return EmailForm::getInstance(); };

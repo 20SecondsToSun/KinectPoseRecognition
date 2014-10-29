@@ -127,7 +127,7 @@ void MainGameScreen::animationLeaveLocationPrepare()
 
 void MainGameScreen::update() 
 {
-	cameraCanon().update();	
+	//cameraCanon().update();	
 	kinect().update();
 
 	deviceError = !cameraCanon().isConnected || !kinect().isConnected();

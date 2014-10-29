@@ -36,9 +36,7 @@ class ComicsScreen
 		}
 
 		void draw()
-		{
-			Rectf centeredRect = Rectf( 0,0, getWindowWidth(), getWindowHeight() ).getCenteredFit( getWindowBounds(),true );
-
+		{		
 			if (isGuess)
 			{		
 				drawPoseComics();	
@@ -46,7 +44,7 @@ class ComicsScreen
 			else
 			{
 				gl::color(ColorA(1, 1, 1, alphaAnim));	
-				gl::draw(failImage, centeredRect);
+				gl::draw(failImage);
 				gl::color(Color::white());
 			}
 		}

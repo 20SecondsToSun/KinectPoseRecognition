@@ -5,7 +5,7 @@ void QRcode::setup()
 	plashkaTex             = *AssetManager::getInstance()->getTexture("images/serverScreen/plashka.png");
 	loadPhotoText          = *AssetManager::getInstance()->getTexture("images/serverScreen/loadPhotoText.png");
 
-	startQRCodeHolderXY = Vec2f(1130.0f, 512.0f);	
+	startQRCodeHolderXY = Vec2f(1113.0f, 512.0f);	
 }
 
 void QRcode::reset()

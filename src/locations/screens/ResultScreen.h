@@ -15,7 +15,6 @@
 #include "Popup.h"
 #include "PhotoMaker.h"
 #include "TextureManager.h"
-#include "Saver.h"
 #include "EmailForm.h"
 
 using namespace ci;
@@ -64,29 +63,27 @@ class ResultScreen : public Location
 					LOADING_TO_SERVER_SUCCESS,
 					SAVING_LOCALY_SUCCESS,
 					LOADING_TO_SERVER_FAIL,
-					POPUP_MODE,
-					PHOTO_SENDING_TO_MAIL,
+					POPUP_MODE,			
 					ERROR_STATE,
 					POPUP_EMAIL,
 					DEFAULT_STATE
 				};
 
 		void	animationLeaveLocationFinished();	
+		void	animationLeaveLocationFinished1();	
 		void	animationPhotoSavedFinished();
 		void	animationStartFinished();
 		void	animationShowChekConnection();
 		void	animationHideChekConnection();
 		void	animationShowServerPhotoLoad();
 		void    animationHideServerPhotoLoad();
-		void	animationShowSendingToMailText();
-		void    animationShowSendingToMailTextOut();
 	
 		void	drawPhotoLoadingPreloader();
 		void	drawNetConnectionPreloader();
 		void	drawUpsetScreen();
 		void	drawErrorScreen();
 		void	drawServerPreloader(); 
-		void	drawSendingToMailPreloader();
+		
 		void	drawEmailPopup();
 		void	drawSocialPopup();
 		void	drawNothing();
@@ -113,12 +110,14 @@ class ResultScreen : public Location
 		ButtonTex   *facebookBtn;
 		ButtonTex   *vkontakteBtn;
 		ButtonTex	*comeBackBtn, *comeBackBtn1;	
-		ButtonTex	*mailBtn;			
+		ButtonTex	*mailBtn;	
+		ButtonTex	*backToStartBtn;
 
 		void	facebookBtnHandler();
 		void	vkBtnHandler();
 		void	openEmailBtnHandler();
 		void	closeScreenHandler();
+		void    backToStartHandler();
 		void	sendToEmailBtnHandler();
 	
 		ci::signals::connection serverSignalLoadingCheck;
@@ -127,6 +126,7 @@ class ResultScreen : public Location
 		ci::signals::connection photoLoadingFromDirErrorSignal;
 		ci::signals::connection closeEmailPopupSignal;
 		ci::signals::connection closeSocialPopupSignal;
+		ci::signals::connection backToStartSignal;
 
 		ci::signals::connection	comeBackSignal, comeBackSignal1;
 		ci::signals::connection	fbSignal;
@@ -145,9 +145,7 @@ class ResultScreen : public Location
 
 		Texture	postPhotoTextTex, emailtPhotoTextTex;
 		Texture	playMoreTex, nothingCatTex;	
-
-		void	savePhotoToLocalBase();
-		void	sendPhotoToEmail();			
+				
 
 		void (ResultScreen::* drawHandler)();
 };

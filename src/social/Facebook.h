@@ -21,8 +21,8 @@ namespace facebookParams
 {
 	const std::string ACCESS_TOKEN							= "access_token";
 	const std::string NULL_ALBUM_ID							= "-1";
-	const std::string ALBUM_NAME_DEFAULT				    = "Тойота Настроение";
-	const std::string STATUS_DEFAULT						= "#ТойотаНастроение";
+	const std::string ALBUM_NAME_DEFAULT				    = "Котопоза";
+	const std::string STATUS_DEFAULT						= "#Котопоза";
 }
 
 class Facebook: public SocShare

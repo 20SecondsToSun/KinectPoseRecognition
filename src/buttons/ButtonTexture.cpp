@@ -66,6 +66,7 @@ void ButtonTex::draw()
 			{
 				gl::pushMatrices();
 					gl::translate(donwShiftVec);
+					gl::color(overColor);
 					gl::draw(downTexture);	
 				gl::popMatrices();
 			}
@@ -78,7 +79,6 @@ void ButtonTex::draw()
 		else
 			gl::draw(texture);	
 
-		//gl::color(Color::white());
 		if (isTextField)
 		{
 			gl::pushMatrices();
@@ -87,4 +87,5 @@ void ButtonTex::draw()
 			gl::popMatrices();
 		}
 	gl::popMatrices();
+	gl::color(Color::white());
 }

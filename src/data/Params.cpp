@@ -4,7 +4,7 @@ float	Params::boxMaxErrorX = 150;
 float	Params::boxMaxErrorY= 150;
 float	Params::maxErrorBetweenJoints = 40;
 float	Params::percentForMatching = 0.7f;
-float 	Params::comeBackHomeTime = 20;
+float 	Params::comeBackHomeTime = 40;
 bool	Params::isNetConnected = true;
 bool	Params::photoFromDirError = false;
 

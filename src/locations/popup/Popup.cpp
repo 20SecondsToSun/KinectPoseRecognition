@@ -2,63 +2,41 @@
 
 using namespace ci;
 using namespace Awesomium;
+using namespace socialServerStatuses;
 
-Awesomium::WebCore*		 PopupBase::mWebCorePtr;
-Awesomium::WebView*		 PopupBase::mWebViewPtr;
-Awesomium::WebSession*   PopupBase::session;
+WebCore*		 PopupBase::mWebCorePtr;
+WebView*		 PopupBase::mWebViewPtr;
+WebSession*		 PopupBase::session;
 
 void	PopupBase::setup()
 {
-	closeBtn		  = new ButtonColor(Rectf(1700,100, 1900, 200), Color(1,0,0), fonts().getFont("Helvetica Neue", 26),	"ЗАКРЫТЬ");	
-	keyBoardMainBgTex = AssetManager::getInstance()->getTexture(  "keyboard/06_podl.jpg" );	
+	gl::Texture closeEmailTex = gl::Texture( loadImage( loadAsset("keyboard/closeEmail.png"  )));
+	closeBtn= new ButtonTex(closeEmailTex, "closeEmail");
+	closeBtn->setScreenField( Vec2f(1778.0f, 88.0f));	
+	closeBtn->setDownState(closeEmailTex);
 
-	// set Awesomium logging to verbose
-	//Awesomium::WebConfig cnf;
-	//cnf.log_level = Awesomium::kLogLevel_Verbose;
-	//Awesomium::WebPreferences pref;	
-	// initialize the Awesomium web engine
-	//mWebCorePtr		= Awesomium::WebCore::Initialize( Awesomium::WebConfig() );	
-	//session			= mWebCorePtr->CreateWebSession(Awesomium::WSLit("soc"), pref);
-	console()<<"--------start----------------"<<endl;
-	//mWebViewPtr		= mWebCorePtr->CreateWebView( 500, 500);//, session );	
-	//console()<<"--------fin----------------  "<<mWebViewPtr<<endl;
-
-
-	// set Awesomium logging to verbose
-	WebConfig cnf;
-	//cnf.log_level = Awesomium::kLogLevel_Verbose;
-
+	facebookOkTextTexture   = AssetManager::getInstance()->getTexture("images/social/fb_ok.png" );
+	facebookErrTextTexture  = AssetManager::getInstance()->getTexture("images/social/fb_err.png" );
+	vkontakteOkTextTexture  = AssetManager::getInstance()->getTexture("images/social/vk_ok.png" );
+	vkontakteErrTextTexture = AssetManager::getInstance()->getTexture("images/social/vk_err.png" );
+	keyBoardMainBgTex       = AssetManager::getInstance()->getTexture(  "keyboard/06_podl.jpg" );	
+	preloader = AssetManager::getInstance()->getTexture("images/social/preloader.png" );
+	blue_bg   = AssetManager::getInstance()->getTexture("images/social/blue_bg.png" );
+	red_bg    = AssetManager::getInstance()->getTexture("images/social/red_bg.png" );
 	
-	// initialize the Awesomium web engine
-	mWebCorePtr = WebCore::Initialize( cnf );
-	WebPreferences pref;	
-	session			= mWebCorePtr->CreateWebSession(Awesomium::WSLit("soc"), pref);
 
-	// create a webview
-	mWebViewPtr = mWebCorePtr->CreateWebView( getWindowWidth(), getWindowHeight(), session  );
-	//mWebViewPtr->LoadURL( Awesomium::WebURL( Awesomium::WSLit( "http://libcinder.org" ) ) );
-	//mWebViewPtr->Focus();
-
-
-
-
-
-
-
-
-
-
+	mWebCorePtr = WebCore::Initialize( WebConfig());	
+	session     = mWebCorePtr->CreateWebSession(Awesomium::WSLit("soc"), WebPreferences());	
+	mWebViewPtr = mWebCorePtr->CreateWebView( getWindowWidth(), getWindowHeight(), session);
 
 	_vkontakteOffset			= Vec2f(0.0f, 1080.0f - 1754.0f + 674.0f);
-	vkontaktePopupAvailableArea = Area(0,  170, getWindowWidth(), 550);
-	facebookPopupAvailableArea  = Area(746, 92, getWindowWidth(), 750);
+	vkontaktePopupAvailableArea = Area(0,  110, getWindowWidth(), 550);
+	facebookPopupAvailableArea  = Area(0, 50, getWindowWidth(), 550);
 
 	_facebookWindowHeight = 500;	
 	_facebookWindowWidth  = 700;
 
 	photoURLs.clear();
-
-
 
 	for (int i = 0; i < 3; i++)
 	{
@@ -69,25 +47,32 @@ void	PopupBase::setup()
 		{
 			photo_url.push_back( path[i]);
 			if (path[i] == '\\' ) photo_url.push_back( path[i]);
-		}		
+		}	
+		console()<< "url::  "<<photo_url<<endl;
 		photoURLs.push_back(photo_url);		
 	}
+
+	//touchKeyboard().setup(Vec2f(360.0f, getWindowHeight() - 504.0f));
+	//touchKeyboard().initKeyboard();
+
+	drawHandler  = &PopupBase::drawDef;
+	updateHandler = &PopupBase::updateDef;
 }
 
-void	PopupBase::reset()
+void PopupBase::reset()
 {
 	isDrawing = false;	
 }
 
 void PopupBase::show(int _type)
-{
-	
-	socialServerStatus  = SERVER_STATUS_NONE;
-	isTryFocusInLoginTextField = false;
-
+{	
+	socialServerStatus  = WAITING_FOR_NETWORK;
 	type = _type;
-	isDrawing  = true;
 	screenShot = gl::Texture(ci::app::copyWindowSurface());	
+	session->ClearCookies();
+
+	isTryFocusInLoginTextField = false;	
+	isDrawing  = true;	
 
 	//touchKeyboard().setPosition( Vec2f(360.0f, getWindowHeight() - 504.0f));
 
@@ -99,7 +84,6 @@ void PopupBase::show(int _type)
 
 	if (type == popupTypes::VKONTAKTE)
 	{	
-		console()<<" init Vkontakte "<<endl;
 		social = new Vkontakte();		
 		social->clear_token();	
 		socialServerSignalCon = social->serverHandler.connect( 
@@ -108,15 +92,16 @@ void PopupBase::show(int _type)
 
 		postingWaitingText = "Отправляем фотографии во ВКонтакте..";
 
-		//touchKeyBoard.setPosition( Vec2f(360.0f, HEIGHT - 484.0f));
+		touchKeyboard().setPosition( Vec2f(360.0f, 1080.0f - 484.0f));
 
 		if( mWebViewPtr )
-			mWebViewPtr->Resize(getWindowWidth(), 550 );
-	
-		Awesomium::WebURL url( Awesomium::WSLit( social->getAuthUrl()) );
-		mWebViewPtr->LoadURL( url);
+			mWebViewPtr->Resize(getWindowWidth(), 550 );	
+		
+		mWebViewPtr->LoadURL(  WebURL(WSLit( social->getAuthUrl())));
 		mWebViewPtr->Focus();
 
+		drawHandler  = &PopupBase::vkontakteDraw;
+		updateHandler = &PopupBase::vkontakteUpdate;
 	}
 	else if (type == popupTypes::FACEBOOK)
 	{		
@@ -135,11 +120,41 @@ void PopupBase::show(int _type)
 
 		_facebookOffset = Vec2f(0.5f * (getWindowWidth() - _facebookWindowWidth), 1080.0f - 1754.0f+674.0f+20.0f);
 	
-		console()<<" auth url :: "<<social->getAuthUrl()<<std::endl;
-		mWebViewPtr->LoadURL( Awesomium::WebURL( Awesomium::WSLit( social->getAuthUrl()) ) );
+		mWebViewPtr->LoadURL( WebURL( WSLit( social->getAuthUrl())));
 		mWebViewPtr->Focus();
-		
+
+		drawHandler  = &PopupBase::facebookDraw;
+		updateHandler = &PopupBase::facebookUpdate;
 	}
+}
+
+void PopupBase::update()
+{
+	mWebCorePtr->Update();
+
+	if(mWebViewPtr && ph::awesomium::isDirty( mWebViewPtr ) ) 
+	{		
+		try
+		{
+			gl::Texture::Format fmt; 
+			fmt.setMagFilter( GL_NEAREST );
+			mWebTexture = ph::awesomium::toTexture( mWebViewPtr, fmt );			
+		}
+		catch( const std::exception &e ) {
+			console() << e.what() << std::endl;
+		}
+
+		char title[1024];
+		mWebViewPtr->title().ToUTF8( title, 1024 );
+	}
+
+	if(mWebViewPtr)
+			(this->*updateHandler)();
+}
+
+void PopupBase::draw()
+{
+	(this->*drawHandler)();		
 }
 
 void PopupBase::initHandlers()
@@ -147,26 +162,25 @@ void PopupBase::initHandlers()
 	keyboardTouchSignal = touchKeyboard().keyboardTouchSignal.connect(boost::bind(&PopupBase::keyboardTouchSignalHandler, this));
 	closeBtnSignal =  closeBtn->mouseDownEvent.connect(boost::bind(&PopupBase::hide, this));
 
-	popupAnimationState = POPUP_READY_STATE;
-	//touchKeyBoard.initKeyboard();
+	MouseDownCon   = getWindow()->getSignalMouseDown().connect( std::bind( &PopupBase::MouseDown, this, std::placeholders::_1 ) );
+	MouseUpCon	   = getWindow()->getSignalMouseUp().connect(   std::bind( &PopupBase::MouseUp,   this, std::placeholders::_1 ) );
+	KeyDownCon	   = getWindow()->getSignalKeyDown().connect(   std::bind( &PopupBase::KeyDown,	  this, std::placeholders::_1 ) );		
 }
-
 
 void PopupBase::socialServerSignal()
 {
 	if (social->getResponse() == "OK")
-		socialServerStatus = SERVER_STATUS_POST_READY;
+		socialServerStatus = POST_READY;
 	else 
-		socialServerStatus = SERVER_STATUS_POST_ERROR;
+		socialServerStatus = POST_ERROR;
 }
 
 void PopupBase::keyboardTouchSignalHandler()
 {
 	if ( touchKeyboard().isBackCode())
 	{	
-		// if focus not in textInput return else means goint to previous web page
-		if(mWebViewPtr->focused_element_type()!=3 && 
-		   mWebViewPtr->focused_element_type()!=4 ) return;
+		if(mWebViewPtr->focused_element_type()!= 3 && 
+		   mWebViewPtr->focused_element_type()!= 4 ) return;
 
 		KeyEvent key = VirtualKeyboard::imitate_BACKSPACE_KEY_EVENT();
 		ph::awesomium::handleKeyDown( mWebViewPtr, key );
@@ -199,13 +213,14 @@ void PopupBase::keyboardTouchSignalHandler()
 
 void PopupBase::hide()
 {
+	disconnectAll();
 	timeline().apply( &bgPosition,Vec2f(0.0f, 0.0f), 0.6f, EaseInQuart()).finishFn( bind( &PopupBase::closedHandler, this ) );		
-	timeline().apply( &bgColor, ColorA(1.0f, 1.0f, 1.0f, 0.4f), 0.5f, EaseInQuart()).delay(0.4f);
+	timeline().apply( &bgColor, ColorA(1.0f, 1.0f, 1.0f, 0.1f), 0.5f, EaseInQuart()).delay(0.4f);
 }
 
 void	PopupBase::closedHandler()
 {
-	disconnectAll();
+	//disconnectAll();
 	closeEvent();
 }
 
@@ -213,232 +228,309 @@ void PopupBase::disconnectAll()
 {
 	closeBtnSignal.disconnect();
 	keyboardTouchSignal.disconnect();
+
+
+	MouseUpCon.disconnect( );
+	MouseDownCon.disconnect();
+	KeyDownCon.disconnect();
+
 	isDrawing = false;	
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-void PopupBase::update()
+void PopupBase::MouseDown( MouseEvent &event )
 {
-	//if (socialServerStatus == SERVER_STATUS_USER_REJECT) return;
-			
-	mWebCorePtr->Update();
-
-	// create or update our OpenGL Texture from the webview
-	if(mWebViewPtr && ph::awesomium::isDirty( mWebViewPtr ) ) 
+	if (socialServerStatus == POST_READY || socialServerStatus == POST_ERROR)
 	{
-		console()<<" try  "<<endl;
-		try {
-			// set texture filter to NEAREST if you don't intend to transform (scale, rotate) it
-			gl::Texture::Format fmt; 
-			fmt.setMagFilter( GL_NEAREST );
-
-			// get the texture using a handy conversion function
-			mWebTexture = ph::awesomium::toTexture( mWebViewPtr, fmt );
-			console()<<"UPDATE TEXTURE!!"<<std::endl;
-		}
-		catch( const std::exception &e ) {
-			console() << e.what() << std::endl;
-		}
-
-		// update the window title to reflect the loaded content
-		char title[1024];
-		mWebViewPtr->title().ToUTF8( title, 1024 );
+		hide();
+		return;
 	}
 
-	return;
-
-	if(mWebViewPtr)
-	{
-		if (type == popupTypes::FACEBOOK)
-		{		
-			char anchr[1024];
-			mWebViewPtr->url().anchor().ToUTF8( anchr, 1024 );
-			std::string anchString( anchr );
-			std::size_t pos = anchString.find("access_token"); 		
-			ci::app::console()<<"  anchString "<<anchString<<std::endl;
-
-			if (pos == 0 && socialServerStatus == SERVER_STATUS_NONE) 	
-			{	
-				std::string delimiter		= "&";
-				std::string token			= anchString.substr(0, anchString.find(delimiter)); 
-				social->access_token		=  token.substr(13);				
-				socialServerStatus			= SERVER_STATUS_POSTING;		
-			
-				social->postPhoto(photoURLs, "#Котопоза");
-				//social->postStatus( "#ТойотаНастроение");
-			}	
-			else
-			{
-				char query[1024];
-				mWebViewPtr->url().query().ToUTF8( query, 1024 );
-				std::string queryString( query );
-				std::size_t pos_denied = queryString.find("error_reason=user_denied"); 
-				if (pos_denied <1000)
-				{
-					socialServerStatus = SERVER_STATUS_USER_REJECT;
-					//removeHandlers();
-					//hide();				
-				}
-			}			
-		}	
-		else if (type == popupTypes::VKONTAKTE)
-		{
-			char anchr[1024];
-			mWebViewPtr->url().anchor().ToUTF8( anchr, 1024 );
-			std::string anchString( anchr );
-			std::size_t pos = anchString.find("access"); 
-			console()<<" socialServerStatus "<<pos<<" -- "<<socialServerStatus<<endl;
-			if (pos==0 && socialServerStatus == SERVER_STATUS_NONE) 	
-			{	
-				std::string delimiter = "&";
-				std::string token = anchString.substr(0, anchString.find(delimiter));
-				social->access_token = token.substr(13);
-				socialServerStatus  = SERVER_STATUS_POSTING;
-
-				//social->postStatus( "#ТойотаНастроение тест");
-				social->postPhoto(photoURLs, "#Котопоза");
-			}
-			else 
-			{
-				std::size_t pos_denied = anchString.find("User denied your request"); 
-				if (pos_denied <1000)
-				{
-					socialServerStatus = SERVER_STATUS_USER_REJECT;
-					//removeHandlers();
-					hide();
-				}			
-			}
-		}
+	if (type == popupTypes::VKONTAKTE && vkontaktePopupAvailableArea.contains(event.getPos()))
+	{			
+		MouseEvent mEvent = VirtualKeyboard::inititateMouseEvent(event.getPos() -_vkontakteOffset);
+		ph::awesomium::handleMouseDown( mWebViewPtr, mEvent );		
+	}
+	else if (type == popupTypes::FACEBOOK && facebookPopupAvailableArea.contains(event.getPos()))
+	{	
+		MouseEvent mEvent = VirtualKeyboard::inititateMouseEvent(event.getPos() -_facebookOffset);
+		ph::awesomium::handleMouseDown( mWebViewPtr, mEvent );	
 	}
 
-	if (!isTryFocusInLoginTextField)
-	{
-		if( mWebTexture&& mWebViewPtr->IsLoading() == false )
-		{
-			MouseEvent mEvent;
-			Vec2f coords;
+	console()<< "  coord  :: "<< event.getPos()<<endl;
+}
 
-			if (type == popupTypes::VKONTAKTE)
-			{
-				coords = Vec2f(932.0f, 246.0f);
-				mEvent = VirtualKeyboard::inititateMouseEvent(coords);
-
-			}
-			else if (type == popupTypes::FACEBOOK)
-			{
-				coords = Vec2f(886.0f, 113.0f);
-				mEvent = VirtualKeyboard::inititateMouseEvent(coords);
-			}
-
-			isTryFocusInLoginTextField = true;
-			ph::awesomium::handleMouseDown( mWebViewPtr, mEvent );
-			ph::awesomium::handleMouseUp( mWebViewPtr, mEvent );			
-		}
+void PopupBase::MouseUp( MouseEvent &event )
+{
+	if (type == popupTypes::VKONTAKTE && 
+		vkontaktePopupAvailableArea.contains(event.getPos()))
+	{					
+		MouseEvent mEvent = VirtualKeyboard::inititateMouseEvent(event.getPos() -_vkontakteOffset);
+		ph::awesomium::handleMouseUp( mWebViewPtr, mEvent );	
+	}
+	else if (type == popupTypes::FACEBOOK && 
+			facebookPopupAvailableArea.contains(event.getPos()))
+	{		
+		MouseEvent mEvent = VirtualKeyboard::inititateMouseEvent(event.getPos() -_facebookOffset);
+		ph::awesomium::handleMouseUp( mWebViewPtr, mEvent );		
 	}
 }
 
-void PopupBase::draw()
+void PopupBase::KeyDown( KeyEvent event )
+{	
+	ph::awesomium::handleKeyDown( mWebViewPtr, event );
+}
+
+void PopupBase::vkontakteUpdate()
 {
-	//console()<<"popupAnimationState "<< mWebTexture<<endl;
-	gl::clear(); 
-
-	if( mWebTexture )
-	{
-		gl::color( Color::white() );
-		gl::draw( mWebTexture );
-	}
-
-	return;
-	if (SERVER_STATUS_POSTING == socialServerStatus)
-	{		
-		//PopupMail::draw("SERVER_LOADING", postingWaitingText);
+	if(socialServerStatus == USER_REJECT || socialServerStatus == POSTING || socialServerStatus == POST_READY || socialServerStatus == POST_ERROR)
 		return;
-	}
-	else if (SERVER_STATUS_POST_READY == socialServerStatus)
-	{
-		if (type == popupTypes::VKONTAKTE)
-		{
-			//PopupMail::draw("SERVER_OK_VK");
-		}
-		else if (type == popupTypes::FACEBOOK)
-		{	//PopupMail::draw("SERVER_OK_FB");
-		}
-		return;
-	}
-	else if (SERVER_STATUS_POST_ERROR == socialServerStatus)
-	{
+
+	char anchr[1024];
+	mWebViewPtr->url().anchor().ToUTF8( anchr, 1024 );
+	string anchString( anchr );
+	size_t pos = anchString.find("access"); 
 		
-		if (type == popupTypes::VKONTAKTE)
+	if (pos==0 && socialServerStatus == WAITING_FOR_NETWORK) 	
+	{	
+		string delimiter = "&";
+		string token = anchString.substr(0, anchString.find(delimiter));
+		social->access_token = token.substr(13);
+		socialServerStatus  = POSTING;
+
+		//social->postStatus( "#ТойотаНастроение тест");
+		social->postPhoto(photoURLs, "#Котопоза");
+	}
+	else 
+	{
+		size_t pos_denied = anchString.find("User denied your request"); 
+		if (pos_denied <1000)
 		{
-			//PopupMail::draw("SERVER_ERROR_VK");
-		}
-		else  if (type == popupTypes::FACEBOOK)
-		{
-			//PopupMail::draw("SERVER_ERROR_FB");	
-		}
+			socialServerStatus = USER_REJECT;
+			hide();
+		}		
+	}
+
+	if(!isTryFocusInLoginTextField && mWebTexture && mWebViewPtr->IsLoading() == false )
+	{
+		MouseEvent mEvent= VirtualKeyboard::inititateMouseEvent(Vec2f(932.0f, 246.0f));	
+		isTryFocusInLoginTextField = true;
+		ph::awesomium::handleMouseDown( mWebViewPtr, mEvent );
+		ph::awesomium::handleMouseUp( mWebViewPtr, mEvent );
+	}
+
+}
+void PopupBase::vkontakteDraw()
+{
+	if (socialServerStatus == POSTING)
+	{
+		drawPreloaderAtCenter();
+		return;
+	}
+	else if (socialServerStatus == POST_READY)
+	{
+		gl::color(bgColor);
+		drawVkontaktePosted();
+		return;
+	}
+	else if (socialServerStatus == POST_ERROR)
+	{
+		gl::color(bgColor);
+		drawVkontakteError();
 		return;
 	}
 
-	gl::pushMatrices();
-		gl::translate(bgPosition);
-		gl::color(bgColor);
-		gl::draw(*keyBoardMainBgTex);
-	//	gl::pushMatrices();
-	//		if (type == popupTypes::VKONTAKTE || type == popupTypes::FACEBOOK)
-	//		{
-	//			//gl::translate(360.0f, 1270.0f);
-	//		}		
-	//		touchKeyboard().draw();
-	//	gl::popMatrices();	
-		gl::translate(0.0f, 674.0f);
-		touchKeyboard().draw();
-		closeBtn->draw();	
-	gl::popMatrices();
+	drawKeyboard();
 
-
-	console()<<" mWebTexture  "<<mWebTexture<<"  mWebViewPtr->IsLoading() "<<mWebViewPtr->IsLoading()<<endl;
-
-	if( popupAnimationState == POPUP_READY_STATE && mWebTexture && mWebViewPtr->IsLoading() == false )
-	{		
+	if( mWebTexture  && !mWebViewPtr->IsLoading() && socialServerStatus != USER_REJECT)
+	{
 		gl::pushMatrices();			
 			gl::translate(bgPosition);
-			gl::translate(0.0f, 674.0f);	
-			if (type == popupTypes::FACEBOOK)
-			{
-				gl::color( Color::hex(0x4e4e4e) );
-				gl::drawSolidRect(Rectf(0.0f, 0.0f, getWindowWidth(), _facebookWindowHeight + 40.0f));	
-				gl::translate(0.5f*(getWindowWidth() - mWebTexture.getWidth()), 20.0f);				
-			}
+			gl::translate(0.0f, 674.0f);		
+			gl::translate(0.5f*(getWindowWidth() - mWebTexture.getWidth()), 0.0f);
 			gl::color(bgColor);
+			gl::draw( mWebTexture );
+		gl::popMatrices();
+	}
+	else
+	{
+		drawPreloader();
+	}
+
+	//gl::drawSolidRect(vkontaktePopupAvailableArea);
+
+	drawcloseBtn();
+}
+
+
+void PopupBase::facebookUpdate()
+{
+	if(socialServerStatus == USER_REJECT || socialServerStatus == POSTING || socialServerStatus == POST_READY || socialServerStatus == POST_ERROR)
+		return;
+
+	char anchr[1024];
+	mWebViewPtr->url().anchor().ToUTF8( anchr, 1024 );
+	string anchString( anchr );
+	size_t pos = anchString.find("access_token"); 		
+		
+	if (pos == 0 && socialServerStatus == WAITING_FOR_NETWORK) 	
+	{	
+		string delimiter		= "&";
+		string token			= anchString.substr(0, anchString.find(delimiter)); 
+		social->access_token		=  token.substr(13);				
+		socialServerStatus			= POSTING;		
 			
+		social->postPhoto(photoURLs, "#Котопоза");
+		//social->postStatus( "#ТойотаНастроение");
+	}	
+	else 
+	{
+		char query[1024];
+		mWebViewPtr->url().query().ToUTF8( query, 1024 );
+		string queryString( query );
+		size_t pos_denied = queryString.find("error_reason=user_denied"); 
+		if (queryString.size() == 0 ||pos_denied <1000)
+		{
+			socialServerStatus = USER_REJECT;
+			hide();
+		}
+	}
+
+	if(!isTryFocusInLoginTextField && mWebTexture && mWebViewPtr->IsLoading() == false )
+	{
+		MouseEvent mEvent= VirtualKeyboard::inititateMouseEvent(Vec2f(947.0f, 118.0f));
+		isTryFocusInLoginTextField = true;
+		ph::awesomium::handleMouseDown( mWebViewPtr, mEvent );
+		ph::awesomium::handleMouseUp( mWebViewPtr, mEvent );
+	}
+}
+
+void PopupBase::facebookDraw()
+{
+	if (socialServerStatus == POSTING)
+	{
+		drawPreloaderAtCenter();
+		return;
+	}
+	else if (socialServerStatus == POST_READY)
+	{
+		gl::color(bgColor);
+		drawFacebookPosted();
+		return;
+	}
+	else if (socialServerStatus == POST_ERROR)
+	{
+		gl::color(bgColor);
+		drawFacebookError();
+		return;
+	}
+
+	drawKeyboard();
+
+	if( mWebTexture  && !mWebViewPtr->IsLoading() && socialServerStatus != USER_REJECT)
+	{
+		gl::pushMatrices();			
+			gl::translate(bgPosition);
+			gl::translate(0.0f, 674.0f);		
+			gl::color( Color::hex(0x4e4e4e) );
+			gl::drawSolidRect(Rectf(0.0f, 0.0f, getWindowWidth(), _facebookWindowHeight + 40.0f));	
+			gl::translate(0.5f*(getWindowWidth() - mWebTexture.getWidth()), 20.0f);
+			gl::color(bgColor);			
 			gl::draw( mWebTexture );
 		gl::popMatrices();		
 	}
 	else
 	{
-		gl::pushMatrices();
-			gl::color(bgColor);
-			gl::translate(bgPosition);
-			gl::translate(950.0f, 674.0f+150.0f);
-			//PreloaderCircle::draw();
-		gl::popMatrices();
+		drawPreloader();
 	}
 
+	drawcloseBtn();
+}
+
+void PopupBase::drawFacebookPosted()
+{
+	gl::draw(*blue_bg);
+	gl::draw(*facebookOkTextTexture, Vec2f((getWindowWidth() - 891.0f)*0.5f, (getWindowHeight() - 564.0f)*0.5f ));
+}
+
+void PopupBase::drawFacebookError()
+{
+	gl::draw(*red_bg);
+	gl::draw(*facebookErrTextTexture, Vec2f((getWindowWidth() - 711.0f)*0.5f, (getWindowHeight() - 541.0f)*0.5f ));
+}
+
+void PopupBase::drawVkontaktePosted()
+{
+	gl::draw(*blue_bg);
+	gl::draw(*vkontakteOkTextTexture, Vec2f((getWindowWidth() - 891.0f)*0.5f, (getWindowHeight() - 564.0f)*0.5f ));	
+}
+
+void PopupBase::drawVkontakteError()
+{
+	gl::draw(*red_bg);
+	gl::draw(*vkontakteErrTextTexture, Vec2f((getWindowWidth() -711.0f)*0.5f, (getWindowHeight() - 541.0f)*0.5f ));
+}
+
+void PopupBase::drawKeyboard()
+{
 	gl::pushMatrices();
-		gl::translate(bgPosition);		
-		gl::translate(Vec2f(0.0f, 674.0f));	
-		gl::color(ColorA(1.0f, 1.0f, 1.0f, 1.0f));
-		//closePopup.draw();
+		gl::translate(bgPosition);
+		gl::color(bgColor);
+		gl::draw(*keyBoardMainBgTex);
+		gl::translate(0.0f, 674.0f);
+		touchKeyboard().draw();		
 	gl::popMatrices();
+}
+
+void PopupBase::drawcloseBtn()
+{
+	gl::pushMatrices();
+		gl::translate(bgPosition);
+		gl::color(bgColor);		
+		gl::translate(0.0f, 674.0f);
+		closeBtn->draw();	
+	gl::popMatrices();
+}
+
+void PopupBase::drawPreloader()
+{
+	gl::pushMatrices();
+		gl::color(bgColor);
+		gl::translate(bgPosition);
+		gl::translate(950.0f, 674.0f+150.0f);
+		gl::pushModelView();	
+		gl::scale( 0.5f, 0.5f );
+		gl::rotate( 180.0f * float( getElapsedSeconds() ) );
+		gl::translate( -0.5f * Vec2f(151.0f, 151.0f ) );		
+		gl::color( Color::white() );
+		gl::draw( *preloader );
+		gl::popModelView();
+	gl::popMatrices();
+}
+
+void PopupBase::drawPreloaderAtCenter()
+{
+	gl::draw(*blue_bg);	
+	gl::Texture text= Utils::getTextField(postingWaitingText, fonts().getFont("Myriad Pro", 70), Color::white());
+	gl::draw(text, Vec2f(0.5f*(getWindowWidth() - text.getWidth()), 375.0f));
+
+	gl::pushMatrices();
+		gl::color(bgColor);
+		gl::translate(bgPosition);
+		gl::translate(950.0f, 974.0f+250.0f);
+		gl::pushModelView();	
+		gl::scale( 0.5f, 0.5f );
+		gl::rotate( 180.0f * float( getElapsedSeconds() ) );
+		gl::translate( -0.5f * Vec2f(151.0f, 151.0f ) );		
+		gl::color( Color::white() );
+		gl::draw( *preloader );
+		gl::popModelView();
+	gl::popMatrices();
+}
+
+void PopupBase::updateDef()
+{
+}
+
+void PopupBase::drawDef()
+{
 }

@@ -55,22 +55,24 @@ void Button::addEventListener(int type)
 	{
 		case MOUSE_DOWN:			
 			if (!MouseDownCon.connected())
-				MouseDownCon   = windowref->getSignalMouseDown().connect( std::bind( &Button::MouseDown, this, std::placeholders::_1 ) );
+				MouseDownCon   = windowref->getSignalMouseDown().connect( std::bind( &Button::MouseDown, this, std::placeholders::_1 ));
 		break;
 	}	
 }
 
 void Button::setScreenField(Vec2f vec)
 {
-	field = Rectf(vec.x,vec.y,vec.x+texture.getWidth(),vec.y+texture.getHeight());	
+	field = Rectf(vec.x, vec.y, vec.x + texture.getWidth(),vec.y + texture.getHeight());	
 }
 
 void Button::down()
 {	
+	isDown = true;
 	animate = true;
-	timeline().apply( &overColor,  Color::hex(0x9dc9f6), Color::white() , 0.5f, EaseInBack()).finishFn( [ & ]( )
+	timeline().apply( &overColor,  Color::hex(0x9dc9f6), Color::white() , 0.5f, EaseInBack()).finishFn( [ & ]()
 	{
 		animate = false;
+		 isDown= false;
 	});	
 }
 
@@ -97,7 +99,7 @@ float Button::getY()
 
 float Button::getHeight()
 {
-	return field.y2-field.y1;
+	return field.y2 - field.y1;
 }
 
 string  Button::getBtnId()
@@ -112,7 +114,7 @@ void  Button::setBtnId(string value)
 		code = value;
 		TextLayout simple;
 		simple.setFont( *textFont );	
-		simple.setColor( Color::black());
+		simple.setColor(Color::black());
 		simple.addLine(Utils::cp1251_to_utf8(value.c_str()));		
 		textTexture = gl::Texture( simple.render( true, false ) );	
 	}
