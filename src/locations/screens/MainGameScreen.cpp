@@ -212,7 +212,9 @@ void MainGameScreen::drawGame()
 
 		case MAIN_GAME:			
 			gameControls().draw();
-			hintScreen().draw();			
+			hintScreen().draw();
+			recognitionGame().drawJoints();
+			
 		break;
 
 		case SHOW_GAME_RESULT:				

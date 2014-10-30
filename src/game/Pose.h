@@ -23,6 +23,7 @@ class Pose
 		void	setPoints(std::vector<ci::Vec3f> _rawPoints)
 		{ 
 			rawPoints = _rawPoints;
+			//initColors();
 		};
 
 		void	setPointColor(int i, Color color)
@@ -78,7 +79,7 @@ class Pose
 		{ 
 			//gl::color(Color(1.0f, 0.0f, 0.0f));
 			gl::draw(_imageTex);
-
+		//	drawPoints();
 			//drawBox()	;
 			//drawAnchor();
 
@@ -102,6 +103,7 @@ class Pose
 				gl::color(colors[j]);
 				gl::drawSolidCircle( Vec2f(rawPoints[j].x, rawPoints[j].y), 3);	
 				gl::popMatrices();
+				gl::color(Color::white());
 			}
 		};
 

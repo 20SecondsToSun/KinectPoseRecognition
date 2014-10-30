@@ -285,7 +285,6 @@ int Curl::writer( char *data, size_t size, size_t nmemb, string *buffer )
 
 void Curl::clean( )
 {
-	console()<<"  CURL:::::::::::::::::   "<<curl<<endl;
 	curl_easy_cleanup( curl );	
 }
 

@@ -1,8 +1,8 @@
 #include "Params.h"
 
-float	Params::boxMaxErrorX = 150;
-float	Params::boxMaxErrorY= 150;
-float	Params::maxErrorBetweenJoints = 40;
+float	Params::boxMaxErrorX = 15;
+float	Params::boxMaxErrorY= 15;
+float	Params::maxErrorBetweenJoints = 10;
 float	Params::percentForMatching = 0.7f;
 float 	Params::comeBackHomeTime = 40;
 bool	Params::isNetConnected = true;

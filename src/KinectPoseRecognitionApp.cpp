@@ -58,7 +58,6 @@ void KinectPoseRecognitionApp::setup()
 		setFullScreen(true);
 		hideCursor();
 	#endif
-		
 
 	fonts().loadFont( loadFile(getAssetPath("fonts/Helvetica Neue Bold.ttf")), 46);
 	fonts().loadFont( loadFile(getAssetPath("fonts/Helvetica Neue Bold.ttf")), 26);
@@ -69,31 +68,25 @@ void KinectPoseRecognitionApp::setup()
 	fonts().loadFont( loadFile(getAssetPath("fonts/Helvetica Neue Light.ttf")), 62);
 	fonts().loadFont( loadFile(getAssetPath("fonts/MyriadPro-Bold.ttf")), 70 );
 	fonts().loadFont( loadFile(getAssetPath("fonts/MyriadPro-Bold.ttf")), 26);
-
-	
 	fonts().listFonts();
 
 	hintFont = *fonts().getFont("Helvetica Neue", 46);
-	state    = "ChooseMode";
-
-	
+	state    = "ChooseMode";	
 
     #ifndef recording
 		bg  = *AssetManager::getInstance()->getTexture( "images/diz/bg.jpg" );
 		saver().loadConfigData();
-
 		IntroScreen::Instance()->setup();
 		MainGameScreen::Instance()->setup();
 		ResultScreen::Instance()->setup();
 	#endif
 
-
-	#ifdef debug
-		PlayerData::score = 3;
+	#ifdef paramsDraw
+	//	PlayerData::score = 3;
 		mParams = params::InterfaceGl::create( getWindow(), "App parameters", toPixels( Vec2i( 500, 400 ) ) );
-		mParams->addParam( "boxMaxErrorX", &Params::boxMaxErrorX ).min( 5.f ).max( 50.5f ).step( 5.f );
-		mParams->addParam( "boxMaxErrorY", &Params::boxMaxErrorY ).min( 5.f ).max( 50.5f ).step( 5.f );
-		mParams->addParam( "maxErrorBetweenJoints", &Params::maxErrorBetweenJoints ).min( 10.f ).max( 200.0f ).step( 10.f );
+		mParams->addParam( "boxMaxErrorX", &Params::boxMaxErrorX ).min( 1.f ).max( 50.5f ).step( 1.f );
+		mParams->addParam( "boxMaxErrorY", &Params::boxMaxErrorY ).min( 1.f ).max( 50.5f ).step( 1.f );
+		mParams->addParam( "maxErrorBetweenJoints", &Params::maxErrorBetweenJoints ).min( 1.f ).max( 20.0f ).step( 1.f );
 		mParams->addParam( "percentForMatching", &Params::percentForMatching ).min( 0.1f ).max( 0.9f ).step( .1f );
 		mParams->addSeparator();
 		mParams->addParam( "isConnected", &Params::isNetConnected );
@@ -128,9 +121,7 @@ void KinectPoseRecognitionApp::setup()
 	#endif
 
 	poseNum = 0;
-
-	gl::enableAlphaBlending();	
-	
+	gl::enableAlphaBlending();
 }
 
 void KinectPoseRecognitionApp::changeState()
@@ -194,7 +185,7 @@ void KinectPoseRecognitionApp::draw()
 		game.draw();
 	#endif	
 
-	#ifdef debug
+	#ifdef paramsDraw
 		mParams->draw();
 	#endif
 	toucher().draw();
@@ -242,13 +233,9 @@ void KinectPoseRecognitionApp::keyDown( KeyEvent event )
 					state = "ChooseMode";	
 					kinect().startTracking();
 				break;
-
 			 #endif
 		}
-	  
-
 	#else
-
 		switch (event.getChar())
 		{ 
 			case '1':
@@ -268,10 +255,8 @@ void KinectPoseRecognitionApp::keyDown( KeyEvent event )
 				kinect().Shutdown();
 			#endif
 			break;
-			
 		}
 	#endif
-	
 }
 
 void KinectPoseRecognitionApp::shutdown()

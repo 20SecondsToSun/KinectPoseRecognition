@@ -464,7 +464,7 @@ class Game
 
 				if (mistake > Params::maxErrorBetweenJoints) 
 				{
-					currentPose.setPointColor(j, Color(1,1,1));
+					currentPose.setPointColor(j, Color::white());
 					//mathPercent = 0;
 					//return;
 					//break;
@@ -481,7 +481,7 @@ class Game
 
 			double kv = BOX_SCALE*BOX_SCALE;
 			double half_diagonal = 0.5f * sqrt(kv + kv); 
-			mathPercent = 1.0f - (min_dist/half_diagonal);	
+			mathPercent = 1.0f - (min_dist / half_diagonal);	
 
 			mathPercent < 0.0f ? mathPercent = 0 : mathPercent = mathPercent;
 		}
@@ -532,6 +532,18 @@ class Game
 		{
 			return (Vec2f(vec1.x, vec1.y) - Vec2f(vec2.x, vec2.y) ).length();
 		}
+		
+		void drawJoints()
+		{
+			gl::pushMatrices();
+				gl::translate( kinect().viewShiftX,  kinect().viewShiftY);
+				gl::scale( kinect().headScale,  kinect().headScale);
+				currentPose.drawPoints();
+				currentPose.drawBox();
+				currentPose.drawAnchor();
+			gl::popMatrices();
+		}
+
 
 		///////////////////////////////////////////////////////////////////
 		//

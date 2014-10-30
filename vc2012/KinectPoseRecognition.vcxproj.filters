@@ -25,12 +25,6 @@
     <Filter Include="blocks\Canon-SDK">
       <UniqueIdentifier>{2097e27a-2c65-41c4-b64e-ea8cdea9f564}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\math">
-      <UniqueIdentifier>{3b44d9bd-af72-4fbd-9b70-37e71c24afa3}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\math\splines">
-      <UniqueIdentifier>{abc54ea4-bb6e-4026-9d50-858704fd3ad5}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Source Files\buttons">
       <UniqueIdentifier>{bae6e77f-2aaf-4480-82af-0ac866145743}</UniqueIdentifier>
     </Filter>
@@ -128,15 +122,6 @@
     </ClCompile>
     <ClCompile Include="..\blocks\Cinder-Curl\src\FtpManager.cpp">
       <Filter>blocks\Cinder-Curl</Filter>
-    </ClCompile>
-    <ClCompile Include="..\src\math\splines\ofxMSASpline2D.cpp">
-      <Filter>Source Files\math\splines</Filter>
-    </ClCompile>
-    <ClCompile Include="..\src\math\splines\ofxMSASpline3D.cpp">
-      <Filter>Source Files\math\splines</Filter>
-    </ClCompile>
-    <ClCompile Include="..\src\math\splines\ofxMSASurface3D.cpp">
-      <Filter>Source Files\math\splines</Filter>
     </ClCompile>
     <ClCompile Include="..\src\buttons\Button.cpp">
       <Filter>Source Files\buttons</Filter>
@@ -250,27 +235,6 @@
     </ClInclude>
     <ClInclude Include="..\blocks\Cinder-Curl\src\FtpManager.h">
       <Filter>blocks\Cinder-Curl</Filter>
-    </ClInclude>
-    <ClInclude Include="..\src\math\splines\ofxMSASpline.h">
-      <Filter>Source Files\math\splines</Filter>
-    </ClInclude>
-    <ClInclude Include="..\src\math\splines\ofxMSASpline1D.h">
-      <Filter>Source Files\math\splines</Filter>
-    </ClInclude>
-    <ClInclude Include="..\src\math\splines\ofxMSASpline2D.h">
-      <Filter>Source Files\math\splines</Filter>
-    </ClInclude>
-    <ClInclude Include="..\src\math\splines\ofxMSASpline3D.h">
-      <Filter>Source Files\math\splines</Filter>
-    </ClInclude>
-    <ClInclude Include="..\src\math\splines\ofxMSASplineInterpolationTypes.h">
-      <Filter>Source Files\math\splines</Filter>
-    </ClInclude>
-    <ClInclude Include="..\src\math\splines\ofxMSASplineTemplate.h">
-      <Filter>Source Files\math\splines</Filter>
-    </ClInclude>
-    <ClInclude Include="..\src\math\splines\ofxMSASurface3D.h">
-      <Filter>Source Files\math\splines</Filter>
     </ClInclude>
     <ClInclude Include="..\src\buttons\Button.h">
       <Filter>Source Files\buttons</Filter>

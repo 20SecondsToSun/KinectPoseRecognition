@@ -76,7 +76,7 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
-      <AdditionalIncludeDirectories>..\include;..\..\..\\include;..\..\..\\boost;..\blocks\Cinder-KCB\src;..\blocks\Cinder-KCB\lib;$(KINECT_TOOLKIT_DIR)inc;$(KINECTSDK10_DIR)\inc;..\src;..\blocks\Cinder-CanonSdk\include;..\blocks\Cinder-CanonSdk\src;..\blocks\Cinder-CanonSdk\lib\EDSDK\Header;..\blocks\Cinder-Curl\src;..\src\buttons;..\src\controllers\assets;..\src\controllers\camera;..\src\controllers\fonts;..\src\controllers\kinect;..\src\controllers\photomaker;..\src\controllers\saver;..\src\controllers\server;..\src\data;..\src\game\graphicScene;..\src\game;..\src\graphics;..\src\locations\engine;..\src\locations\popup;..\src\locations\screens;..\src\math\splines;..\src\tools;..\src\touchKeyboard;..\src\locations\screens\help;..\src\social;..\blocks\Cinder-Awesomium\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\include;..\..\..\\include;..\..\..\\boost;..\blocks\Cinder-KCB\src;..\blocks\Cinder-KCB\lib;$(KINECT_TOOLKIT_DIR)inc;$(KINECTSDK10_DIR)\inc;..\src;..\blocks\Cinder-CanonSdk\include;..\blocks\Cinder-CanonSdk\src;..\blocks\Cinder-CanonSdk\lib\EDSDK\Header;..\blocks\Cinder-Curl\src;..\src\buttons;..\src\controllers\assets;..\src\controllers\camera;..\src\controllers\fonts;..\src\controllers\kinect;..\src\controllers\photomaker;..\src\controllers\saver;..\src\controllers\server;..\src\data;..\src\game\graphicScene;..\src\game;..\src\graphics;..\src\locations\engine;..\src\locations\popup;..\src\locations\screens;..\src\tools;..\src\touchKeyboard;..\src\locations\screens\help;..\src\social;..\blocks\Cinder-Awesomium\include</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;NOMINMAX;_WIN32_WINNT=0x0502;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <PrecompiledHeader>
@@ -140,9 +140,6 @@
     <ClCompile Include="..\src\locations\screens\IntroScreen.cpp" />
     <ClCompile Include="..\src\locations\screens\MainGameScreen.cpp" />
     <ClCompile Include="..\src\locations\screens\ResultScreen.cpp" />
-    <ClCompile Include="..\src\math\splines\ofxMSASpline2D.cpp" />
-    <ClCompile Include="..\src\math\splines\ofxMSASpline3D.cpp" />
-    <ClCompile Include="..\src\math\splines\ofxMSASurface3D.cpp" />
     <ClCompile Include="..\src\social\Facebook.cpp" />
     <ClCompile Include="..\src\social\SocialShare.cpp" />
     <ClCompile Include="..\src\social\Vkontakte.cpp" />
@@ -190,13 +187,6 @@
     <ClInclude Include="..\src\locations\screens\IntroScreen.h" />
     <ClInclude Include="..\src\locations\screens\MainGameScreen.h" />
     <ClInclude Include="..\src\locations\screens\ResultScreen.h" />
-    <ClInclude Include="..\src\math\splines\ofxMSASpline.h" />
-    <ClInclude Include="..\src\math\splines\ofxMSASpline1D.h" />
-    <ClInclude Include="..\src\math\splines\ofxMSASpline2D.h" />
-    <ClInclude Include="..\src\math\splines\ofxMSASpline3D.h" />
-    <ClInclude Include="..\src\math\splines\ofxMSASplineInterpolationTypes.h" />
-    <ClInclude Include="..\src\math\splines\ofxMSASplineTemplate.h" />
-    <ClInclude Include="..\src\math\splines\ofxMSASurface3D.h" />
     <ClInclude Include="..\src\social\Facebook.h" />
     <ClInclude Include="..\src\social\SocialShare.h" />
     <ClInclude Include="..\src\social\Vkontakte.h" />
