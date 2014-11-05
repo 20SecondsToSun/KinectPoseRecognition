@@ -62,12 +62,23 @@ class Game
 		ci::signals::connection quickAnimationFinishedSignal;
 
 		int poseNum;
+
+		float weightJoints[8];
 		
 
 		void setup()
 		{
 			poses = saver().loadPoseBase();
 			poseNum = 0;
+
+			weightJoints[0] = 0.1;
+			weightJoints[1] = 0.1;
+			weightJoints[2] = 0.05;
+			weightJoints[3] = 0.05;
+			weightJoints[4] = 0.3;
+			weightJoints[5] = 0.05;
+			weightJoints[6] = 0.05;
+			weightJoints[7] = 0.3;
 		}
 
 		void initnew()
@@ -79,7 +90,7 @@ class Game
 			level = 1;
 			poseCode = generatePoseCode();	
 			gameControls().setCurrentPose(poses[poseCode]);
-			CURRENT_POSE_TIME = poses[poseCode]->getPoseTime();
+			CURRENT_POSE_TIME = 40;//poses[poseCode]->getPoseTime();
 
 			_stepBackTimer.start();
 		}
@@ -132,8 +143,7 @@ class Game
 
 		int generatePoseCode()
 		{
-			int code = poseNum;
-			poseNum++;
+			int code = poseNum++;			
 			if (poseNum > poses.size()-1)
 				poseNum = 0;
 
@@ -174,8 +184,8 @@ class Game
 			if (countDownTimerIsFinished())
 			{
 				gameControls().setTime(CURRENT_POSE_TIME);
-				gameControls().setQuickAnimTime(CURRENT_POSE_TIME+ 40);
-				gameControls().setQuickAnimPosePercent(.41);	
+				gameControls().setQuickAnimTime(CURRENT_POSE_TIME + 40);
+				gameControls().setQuickAnimPosePercent(.41f);	
 				gameControls().showSilhouette();
 				
 				if (level == 1)
@@ -259,7 +269,7 @@ class Game
 				hintScreen().poseNum = level;
 				hintScreen().startReadySate();
 				gameControls().setCurrentPose(poses[poseCode]);
-				CURRENT_POSE_TIME = poses[poseCode]->getPoseTime();
+				CURRENT_POSE_TIME = 40;//poses[poseCode]->getPoseTime();
 
 				state = PRE_GAME_INTRO;
 			}
@@ -332,6 +342,7 @@ class Game
 		void checkPersonPose() 
 		{
 			updateGame();
+			//return;
 	
 			if ( getPoseProgress() >= MATCHING_MAX_VALUE + 10)//state == MAIN_GAME)/// getPoseProgress() >= MATCHING_MAX_VALUE)
 			{
@@ -360,7 +371,7 @@ class Game
 				matchTemplate();
 
 				#ifdef alwayswin
-					mathPercent = 1;//
+					mathPercent = 1;
 				#endif
 
 				if (mathPercent > Params::percentForMatching )		
@@ -374,18 +385,18 @@ class Game
 					else
 						levelCompletion = 0;					
 				}
-				gameControls().showMatching((float)levelCompletion/MATCHING_MAX_VALUE);
+				gameControls().showMatching((float)levelCompletion / MATCHING_MAX_VALUE);
 			}	
 		}
 
 		void setPlayerOnePoseGuess(std::string pathToHiRes = "") 
 		{			
-			PlayerData::score++;			
+			PlayerData::score++;
 			PlayerData::playerData[level-1 ].isFocusError = false;
-			PlayerData::playerData[level-1 ].isSuccess	 = true;
-			PlayerData::playerData[level-1 ].pathHiRes	 =  pathToHiRes;
-			PlayerData::playerData[level-1 ].screenshot	 = cameraCanon().getSurface();
-			PlayerData::playerData[level-1 ].storyCode	 = poseCode;			
+			PlayerData::playerData[level-1 ].isSuccess	  = true;
+			PlayerData::playerData[level-1 ].pathHiRes	  =  pathToHiRes;
+			PlayerData::playerData[level-1 ].screenshot	  = cameraCanon().getSurface();
+			PlayerData::playerData[level-1 ].storyCode	  = poseCode;
 		}
 		
 		float getPoseProgress() 
@@ -422,9 +433,15 @@ class Game
 		{
 			foundPose = NULL;
 
-			currentPose.setPoints(kinect().getCurrentSkelet());
-			currentPose.createBoundingBox();
-			currentPose.createNormalizePoints();
+			#ifdef algo1
+				currentPose.setPoints(kinect().getCurrentSkelet());
+				currentPose.createNormalizePoints0();
+			#endif
+
+			//currentPose.setDrawPoints(kinect().getCurrentRawSkelet());
+			
+			//currentPose.createSkeletBoundingBox(kinect().getSkeletWidth(), kinect().getSkeletHeight());
+			
 			currentPose.initColors();
 
 			if(!isPointsSizeEqual(*poses[poseCode], currentPose))
@@ -433,14 +450,21 @@ class Game
 				return;
 			}	
 
-			if (!isAnchorPointsMatch(*poses[poseCode], currentPose))
+			/*if (!isAnchorPointsMatch(*poses[poseCode], currentPose))
 			{
 				mathPercent = 0;
 				return;
-			}	
-
-			computeMistakeWay1();
-			//computeMistakeWay2();
+			}*/
+					
+			//if (Params::computeMistakeAlgo == 1)
+			//{
+			//	computeMistakeWay1();
+			//}
+			//else
+			#ifdef algo1
+				computeMistakeWay1();
+			#endif
+	
 		}
 		
 		void stopPersonChecking() 
@@ -450,28 +474,40 @@ class Game
 			isGameRunning = false;			
 		}
 
-		void computeMistakeWay1()
+		void computeMistakeWay2()
 		{
 			double min_dist			 = FLT_MAX;	
 			double maxErrorToDiscard = 1000;
 			double sum_mistake		 = 0;
+			int countMistake = 0;
 
 			for(size_t j = 0, len = currentPose.getNormalizePoints().size(); j < len ; ++j) 
 			{
 				double mistake = calculateDistanceBetweenPoints(poses[poseCode]->getNormalizePoints()[j], currentPose.getNormalizePoints()[j]);
 	
 				sum_mistake += mistake;
-
+				//console()<< " mistake     "<<mistake<<endl;
 				if (mistake > Params::maxErrorBetweenJoints) 
 				{
-					currentPose.setPointColor(j, Color::white());
+					
+					//countMistake++;
 					//mathPercent = 0;
 					//return;
 					//break;
 				}
+				else
+				{
+					currentPose.setPointColor(j, ColorA(1.0f, 1.0f, 1.0f, 0.0f));
+				}
 			}
 
-			double dist = sum_mistake/currentPose.getNormalizePoints().size();
+			if (countMistake> 3) 
+			{
+				mathPercent = 0.0f;
+				return;
+			}
+
+			double dist = sum_mistake / currentPose.getNormalizePoints().size();
 
 			if(dist >= 0 && dist < min_dist) 
 			{
@@ -486,28 +522,44 @@ class Game
 			mathPercent < 0.0f ? mathPercent = 0 : mathPercent = mathPercent;
 		}
 
-		void computeMistakeWay2()
+		void computeMistakeWay1()
 		{
 			mathPercent = 0.0f;
 			size_t len = currentPose.getNormalizePoints().size();
-			double onePart = 100.0 / len;
+			double onePart = 0;
 
+		    console()<<" ==================================  "<<endl;
 			for(size_t j = 0; j < len ; ++j) 
 			{
 				double mistake = calculateDistanceBetweenPoints(poses[poseCode]->getNormalizePoints()[j], currentPose.getNormalizePoints()[j]);
 				double onePartPercent = 0;
+				double onePart = weightJoints[j];
 
-				if (mistake >= Params::maxErrorBetweenJoints) 
+				
+				console()<<" mistake ::  "<<mistake<<endl;
+				if (mistake >= Params::maxErrorBetweenJoints)
 				{
-					onePartPercent = 0;
+					onePartPercent = 0.0f;
+				}
+				else if (mistake < Params::minErrorBetweenJoints)
+				{
+					currentPose.setPointColor(j, ColorA(1.0f, 1.0f, 1.0f, 0.0f));
+					onePartPercent = onePart;
+					console()<<"  onePartPercent "<<onePartPercent<<endl;
 				}
 				else
-				{			
-					onePartPercent = onePart * (1-mistake/Params::maxErrorBetweenJoints);
+				{
+					currentPose.setPointColor(j, ColorA(1.0f, 1.0f, 1.0f, 0.0f));					
+					onePartPercent = onePart * (1 - mistake / (Params::maxErrorBetweenJoints - Params::minErrorBetweenJoints));
+					console()<<" onePart ::  "<<onePart<<"  onePartPercent "<<onePartPercent<<endl;
 				}
+				
 				mathPercent += onePartPercent;
 			}
-			mathPercent *=0.01f;
+
+			//mathPercent *= 0.01f;
+			//mathPercent < 0  ? mathPercent = 0 : mathPercent = mathPercent;
+			//console()<<"mathPercent :---: "<<mathPercent<<endl;
 		}
 
 		double getMatchPercent()
@@ -530,20 +582,19 @@ class Game
 
 		double calculateDistanceBetweenPoints(Vec3f vec1, Vec3f vec2)
 		{
-			return (Vec2f(vec1.x, vec1.y) - Vec2f(vec2.x, vec2.y) ).length();
+			return abs((Vec2f(vec1.x, vec1.y) - Vec2f(vec2.x, vec2.y) ).length());
 		}
 		
 		void drawJoints()
 		{
-			gl::pushMatrices();
+			gl::pushMatrices();				
 				gl::translate( kinect().viewShiftX,  kinect().viewShiftY);
 				gl::scale( kinect().headScale,  kinect().headScale);
 				currentPose.drawPoints();
-				currentPose.drawBox();
-				currentPose.drawAnchor();
+				poses[poseCode]->drawPoints();
 			gl::popMatrices();
-		}
 
+		}
 
 		///////////////////////////////////////////////////////////////////
 		//
@@ -564,16 +615,21 @@ class Game
 		
 		bool stepBackTimerFinished() 
 		{
+			if (_stepBackTimer.isStopped()) 
+				return true;
+
 			if (!_stepBackTimer.isStopped() &&  _stepBackTimer.getSeconds() > STEP_BACK_TIME)
 			{	
 				_stepBackTimer.stop();
 				return true;
 			}
-			return false;
-		}
+			return false;		}
 
 		bool hintTimerFinished() 
 		{
+			if (_hintTimer.isStopped()) 
+				return true;
+
 			if (!_hintTimer.isStopped() &&  _hintTimer.getSeconds() > HINT_TIME)
 			{	
 				_hintTimer.stop();
@@ -583,28 +639,37 @@ class Game
 		}
 
 		bool preGameTimerIsFinished() 
-		{	
+		{
+			if (_preGameTimer.isStopped()) 
+				return true;
+
 			if(!_preGameTimer.isStopped() &&  _preGameTimer.getSeconds() > PREGAME_TIME)
 			{	
 				_preGameTimer.stop();
-				return true;
-			}
-			return false;
-		}
-
-		bool countDownTimerIsFinished() 
-		{
-			if (!_countDownTimer.isStopped() &&  _countDownTimer.getSeconds() > COUNTDOWN_TIME)
-			{					
-				_countDownTimer.stop();
 				return true;
 			}
 			
 			return false;
 		}
 
+		bool countDownTimerIsFinished() 
+		{
+			if (_countDownTimer.isStopped()) 
+				return true;
+
+			if (!_countDownTimer.isStopped() &&  _countDownTimer.getSeconds() > COUNTDOWN_TIME)
+			{					
+				_countDownTimer.stop();
+				return true;
+			}			
+			return false;
+		}
+
 		bool countersAnimateDownTimerIsFinished() 
 		{	
+			if (_countersAnimTimer.isStopped()) 
+				return true;
+
 			if(!_countersAnimTimer.isStopped()	  &&  _countersAnimTimer.getSeconds() > COUNTERS_ANIM_TIME)
 			{	
 				_countersAnimTimer.stop();
@@ -615,6 +680,9 @@ class Game
 	
 		bool mainTimerIsFinished() 
 		{
+			if (_onePoseTimer.isStopped()) 
+				return true;
+
 			if(!_onePoseTimer.isStopped() &&  _onePoseTimer.getSeconds() > CURRENT_POSE_TIME)
 			{	
 				_onePoseTimer.stop();
@@ -625,6 +693,9 @@ class Game
 
 		bool showGameResultTimeIsFinished() 
 		{
+			if (_resultTimer.isStopped()) 
+				return true;
+
 			if(!_resultTimer.isStopped() &&  _resultTimer.getSeconds() > RESULT_TIME)
 			{	
 				_resultTimer.stop();
@@ -641,7 +712,7 @@ class Game
 
 		void saveAsTemplate(int num)
 		{
-			string poseName = "Cat" +to_string(num);// + 1;	
+			string poseName = "Cat" + to_string(num); // + 1;	
 			if (kinect().getCurrentSkelet().size() && kinect().getSilhouette()) 
 			{
 				Pose* pose = new Pose();
@@ -649,6 +720,8 @@ class Game
 				pose->setPoints(kinect().getCurrentSkelet());
 				pose->setKinectTilt(kinect().getTilt());
 				pose->setImage(kinect().getSilhouette());
+				pose->setTime(30);
+				pose->setComicsName("default");
 				saver().savePoseIntoBase(pose);		
 			}
 		}

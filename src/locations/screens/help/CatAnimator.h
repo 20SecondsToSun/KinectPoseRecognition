@@ -13,8 +13,8 @@ class CatAnimator
 
 		static CatAnimator& getInstance() { static CatAnimator game; return game; };
 
-		static const int ONE_CHANGE_TIME = 4;
-		static const int TOTAL_CATS   = 3;
+		static const int ONE_CHANGE_TIME = 6;
+		static const int TOTAL_CATS = 5;
 
 		struct cat
 		{
@@ -34,29 +34,35 @@ class CatAnimator
 				cat item;
 				item.finPos = Vec2f(0.0f, 0.0f);
 				item.startPos = Vec2f(0.0f, 0.0f);
-				item.texture   = *AssetManager::getInstance()->getTexture( "images/diz/cat"+to_string(1)+".png" );
+				item.texture   = *AssetManager::getInstance()->getTexture( "images/diz/introcat/cat"+to_string(i+1)+".png" );
 				catVector.push_back(item);
 			}
 
 			catVector[0].startPos = Vec2f(-537.0f, 410.0f);
 			catVector[0].finPos = Vec2f(0.0f, 410.0f);
 
-			catVector[1].startPos = Vec2f(-537.0f, 410.0f);
-			catVector[1].finPos = Vec2f(0.0f, 410.0f);
+			catVector[1].startPos = Vec2f(1253.0f, -537.0f);
+			catVector[1].finPos = Vec2f(1253.0f, 0.0f);
 
-			catVector[2].startPos = Vec2f(-537.0f, 410.0f);
-			catVector[2].finPos = Vec2f(0.0f, 410.0f);
+			catVector[2].startPos = Vec2f( 1427.0f, 1080.0f);
+			catVector[2].finPos = Vec2f( 1427.0f, 583.0f);
+
+			catVector[3].startPos = Vec2f(636.0f, 1080.0f);
+			catVector[3].finPos = Vec2f(636.0f, 905.0f);
+
+			catVector[4].startPos = Vec2f(-623.0f, -541.0f);
+			catVector[4].finPos = Vec2f(0.0f, 0.0f);
 		}
 
 		void draw()
 		{
-			gl::draw(catVector[index].texture, curPos);			
+			gl::draw(catVector[index].texture, curPos);
 		}
 
 		void init()
 		{
 			index = 0;
-			curPos = catVector[index].startPos ;
+			curPos = catVector[index].startPos;
 			timer.start();
 			timeline().apply( &curPos, catVector[index].startPos, catVector[index].finPos, 0.9f, EaseInOutQuart() ).delay(0.5f);
 		}
@@ -73,7 +79,8 @@ class CatAnimator
 		void animationFin()
 		{
 			index = nextIndex();		
-			timer.start();			
+			timer.start();	
+			curPos = catVector[index].startPos;
 			timeline().apply( &curPos, catVector[index].startPos, catVector[index].finPos, 0.9f, EaseInOutQuart() ).delay(0.5f);
 		}
 

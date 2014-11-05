@@ -1,0 +1,5 @@
+{
+   "standID" : "1wcdde",
+   "netConnection": true,
+   "algo": 1
+}

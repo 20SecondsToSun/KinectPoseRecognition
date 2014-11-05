@@ -14,7 +14,7 @@ class BubbleAnimator
 		static BubbleAnimator& getInstance() { static BubbleAnimator game; return game; };
 
 		static const int ONE_CHANGE_TIME = 4;
-		static const int TOTAL_BUBBLES   = 3;
+		static const int TOTAL_BUBBLES   = 2;
 
 		struct bubble
 		{
@@ -35,7 +35,8 @@ class BubbleAnimator
 				item.texture   = *AssetManager::getInstance()->getTexture( "images/diz/bubble"+to_string(1)+".png" );
 				bubbleVector.push_back(item);
 			}
-			bubbleVector[0].pos = Vec2f(44, 72);
+			bubbleVector[0].pos = Vec2f(44.0f, 72.0f);
+			bubbleVector[1].pos = Vec2f(1194.0f, 15.0f);
 		}
 
 		void draw()

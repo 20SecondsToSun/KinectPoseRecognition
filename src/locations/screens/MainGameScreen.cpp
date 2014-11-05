@@ -186,7 +186,12 @@ void MainGameScreen::drawDeviceError()
 
 void MainGameScreen::drawGame() 
 {
-	cameraCanon().draw();	
+	cameraCanon().draw();
+
+	#ifdef debug
+		kinect().draw();
+	#endif // debug
+
 
 	switch(recognitionGame().state)
 	{

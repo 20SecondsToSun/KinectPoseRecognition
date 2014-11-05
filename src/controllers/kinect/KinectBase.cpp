@@ -24,7 +24,7 @@ void KinectBase::kinectConnect()
 {
 	try 
 	{
-		console()<<" TEY CONNECT>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> "<<endl;
+		console()<<" TRY CONNECT>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> "<<endl;
 		mDevice->start(deviceOptions);		
 		_isConnected = true;
 		kinectConnectedEvent();
@@ -138,8 +138,15 @@ void KinectBase::Shutdown()
 }
 
 void KinectBase::drawKinectCameraColorSurface()
-{
-
+{	
+	if (mFrame.getColorSurface())
+	{
+		gl::pushMatrices();
+			gl::translate(viewShiftX, viewShiftY);
+			gl::scale(headScale, headScale);		
+			gl::draw(mFrame.getColorSurface());
+		gl::popMatrices();
+	}
 }
 
 void KinectBase::calculateAspects()

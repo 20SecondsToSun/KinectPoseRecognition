@@ -40,8 +40,16 @@ std::vector<Pose*> Saver::loadPoseBase()
 				}
 
 				newPose->setPoints(points);	
-				newPose->createBoundingBox();
-				newPose->createNormalizePoints();				
+				#ifdef algo1
+					newPose->createNormalizePoints0();	
+				#endif
+
+				#ifdef algo2
+					newPose->createSelfSkeletBoundingBox();		
+					newPose->createNormalizePoints();	
+				#endif				
+
+				newPose->setRedColors();
 
 				string name =  pose->getChild( "name" ).getValue<string>();
 				newPose->setName(name);
@@ -93,7 +101,9 @@ void Saver::savePoseIntoBase(Pose* pose)
 
 	JsonTree onePoseJson;
 	onePoseJson.addChild( JsonTree( "name", poseName ) );		
-	onePoseJson.addChild( JsonTree( "tilt", pose->getKinectTilt()));	
+	onePoseJson.addChild( JsonTree( "tilt", pose->getKinectTilt()));
+	onePoseJson.addChild( JsonTree( "time", pose->getPoseTime()));	
+	onePoseJson.addChild( JsonTree( "comics", pose->getComicsName()));	
 
 	JsonTree gesturesDataJson = JsonTree::makeArray( "data" );
 
@@ -202,12 +212,11 @@ void Saver::loadConfigData()
 		 doc = JsonTree(loadFile(filepath));
 		 Params::standID =  doc.getChild( "standID" ).getValue<string>() ;
 		 Params::isNetConnected =  doc.getChild( "netConnection" ).getValue<bool>() ;
-
-		 console()<<"PARAMS :: "<<Params::standID<<"  "<< Params::isNetConnected <<std::endl;
+		 Params::computeMistakeAlgo =  doc.getChild( "algo" ).getValue<int>() ;
+		 console()<<"PARAMS :: "<<Params::standID<<" isNetConnected "<< Params::isNetConnected <<" computeMistakeAlgo "<<Params::computeMistakeAlgo<<std::endl;
 	}
 	catch(...)
 	{
 		
 	}
-
 }

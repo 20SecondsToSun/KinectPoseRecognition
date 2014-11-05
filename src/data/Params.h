@@ -6,10 +6,14 @@
 #include "FontStore.h"
 
 #define kinectUsed
-//#define   recording
+//#define recording
 #define debug	
-#define alwayswin
+#define halfskelet	
+
+//#define alwayswin
 //#define paramsDraw	
+
+#define algo1
 
 
 namespace colorsParams
@@ -28,7 +32,7 @@ namespace photoParams
 
 namespace photoMakerParams
 {
-	const int				  MAX_WAITING_FROM_DIR_TIME				= 7;
+	const int MAX_WAITING_FROM_DIR_TIME = 7;
 }
 
 namespace poseParams
@@ -38,14 +42,14 @@ namespace poseParams
 	static const std::string  DATA_BASE_NAME					= "poses.json";
 	static const std::string  JSON_STORAGE_FOLDER				= "poses";
 
-	const float				  MIN_DISTANCE_TO_SKELET			= 1.3f;
+	const float MIN_DISTANCE_TO_SKELET = 1.3f;
 }
 
 namespace popupTypes
 {
-	static const int  FACEBOOK		= 0;
-	static const int  VKONTAKTE		= 1;
-	static const int  EMAIL			= 3;
+	static const int  FACEBOOK = 0;
+	static const int  VKONTAKTE = 1;
+	static const int  EMAIL = 3;
 }
 
 namespace serverParams
@@ -61,20 +65,19 @@ class Params
 {
 	public:	
 
-		static float	boxMaxErrorX;//50
+		static float	boxMaxErrorX;
 		static float	boxMaxErrorY;
-		static float	maxErrorBetweenJoints;//1000
+		static float	maxErrorBetweenJoints;
+		static float	minErrorBetweenJoints;
 		static float	percentForMatching;
-		//static bool		recording;
-
+	
 		static float	comeBackHomeTime;
 		static fs::path	getPhotosStorageDirectory();
 		static fs::path	getTempPhotoSavePath(int i);
 		static fs::path	getTempStorageDirectory();		
 		static fs::path	getFinalImageStoragePath();
 		static fs::path	getConfigStoragePath();
-		static fs::path	getBaseStoragePath();
-		
+		static fs::path	getBaseStoragePath();		
 
 		static bool		isNetConnected;
 		static bool		photoFromDirError;
@@ -87,6 +90,8 @@ class Params
 
 		static bool		serverEmailSendError;
 		static bool		serverEmailSendTimeout;
+
+		static int		computeMistakeAlgo;
 
 		static std::string	standID;
 };

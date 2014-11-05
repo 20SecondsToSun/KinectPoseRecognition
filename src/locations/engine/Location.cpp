@@ -31,7 +31,8 @@ bool Location::isComeBackTimerKinectFired()
 	}
 	else if (isPeopleInFrame == false)
 	{
-		returnTimer.start();
+		if (returnTimer.isStopped())
+			returnTimer.start();
 	}
 
 	return false;

@@ -203,7 +203,6 @@ void KinectPoseRecognitionApp::keyDown( KeyEvent event )
 	#ifdef recording	
 	   switch (event.getChar())
 		{ 
-		/*	*/
 			case '0':
 				angle = kinect().getTilt() + 1;
 				kinect().setTilt(angle);
@@ -284,6 +283,7 @@ void KinectPoseRecognitionApp::shutdown()
 		console()<<"ResultScreen::Instance()->shutdown()error!!!!"<<endl;
 	}
 		
+	quit();
 	//IntroScreen::Instance()->shutdown();
 	//MainGameScreen::Instance()->shutdown();	
 }

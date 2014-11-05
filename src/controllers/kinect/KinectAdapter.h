@@ -37,16 +37,34 @@ class KinectAdapter: public KinectBase
 			return currentSkelet;
 		};
 
+		std::vector<ci::Vec3f> getCurrentRawSkelet()
+		{
+			return currentRawSkelet;
+		}
+
+		double getSkeletHeight()
+		{
+			return skeletFullHeight;
+		}
+
+		double getSkeletWidth()
+		{
+			return skeletFullWidth;
+		}
+
 		ci::Surface16u getSilhouette();
 
 		void sleep(int seconds);
 		void sleepKill();
 
+		double skeletFullHeight;
+		double skeletFullWidth;
+
 	private:
 
 		static KinectAdapter KinectAdapterState;	
 
-		std::vector<ci::Vec3f> currentSkelet;		
+		std::vector<ci::Vec3f> currentSkelet, currentRawSkelet;		
 		void drawUserMask();		
 		Surface16u savePoseDepth;		
 		void setActiveJoints();		

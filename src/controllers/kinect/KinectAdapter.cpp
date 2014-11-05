@@ -14,23 +14,27 @@ void KinectAdapter::setup()
 }
 
 void KinectAdapter::setActiveJoints()
-{
-	jointToRecord.push_back(NUI_SKELETON_POSITION_HEAD);
-	jointToRecord.push_back(NUI_SKELETON_POSITION_SHOULDER_CENTER);
-	jointToRecord.push_back(NUI_SKELETON_POSITION_SHOULDER_LEFT);
-	jointToRecord.push_back(NUI_SKELETON_POSITION_SHOULDER_RIGHT);
-	jointToRecord.push_back(NUI_SKELETON_POSITION_ELBOW_LEFT);
-	jointToRecord.push_back(NUI_SKELETON_POSITION_ELBOW_RIGHT);
-	jointToRecord.push_back(NUI_SKELETON_POSITION_WRIST_LEFT);
-	jointToRecord.push_back(NUI_SKELETON_POSITION_WRIST_RIGHT);	
-	jointToRecord.push_back(NUI_SKELETON_POSITION_HIP_CENTER);
-	jointToRecord.push_back(NUI_SKELETON_POSITION_SPINE);
+{	
+    //jointToRecord.push_back(NUI_SKELETON_POSITION_HIP_CENTER);
+	jointToRecord.push_back(NUI_SKELETON_POSITION_SHOULDER_CENTER);// 0.1
+	jointToRecord.push_back(NUI_SKELETON_POSITION_HEAD);	//.1
 
-	jointToRecord.push_back(NUI_SKELETON_POSITION_KNEE_LEFT);
-	jointToRecord.push_back(NUI_SKELETON_POSITION_KNEE_RIGHT);
-	jointToRecord.push_back(NUI_SKELETON_POSITION_ANKLE_LEFT);
-	 
-	jointToRecord.push_back(NUI_SKELETON_POSITION_ANKLE_RIGHT);
+	jointToRecord.push_back(NUI_SKELETON_POSITION_SHOULDER_LEFT);//0.05
+	jointToRecord.push_back(NUI_SKELETON_POSITION_ELBOW_LEFT);//0.05
+
+	jointToRecord.push_back(NUI_SKELETON_POSITION_WRIST_LEFT);//0.3
+
+	jointToRecord.push_back(NUI_SKELETON_POSITION_SHOULDER_RIGHT);//0.05	
+	jointToRecord.push_back(NUI_SKELETON_POSITION_ELBOW_RIGHT);	//0.05
+
+	jointToRecord.push_back(NUI_SKELETON_POSITION_WRIST_RIGHT);//	0.3
+
+	#ifndef halfskelet	
+		jointToRecord.push_back(NUI_SKELETON_POSITION_KNEE_LEFT);
+		jointToRecord.push_back(NUI_SKELETON_POSITION_ANKLE_LEFT);
+		jointToRecord.push_back(NUI_SKELETON_POSITION_KNEE_RIGHT);	
+		jointToRecord.push_back(NUI_SKELETON_POSITION_ANKLE_RIGHT);
+	#endif	
 }
 
 void KinectAdapter::connect()
@@ -68,6 +72,7 @@ void KinectAdapter::update()
 	else
 	{
 		_isConnected = true;
+
 		if (!reconnectTimer.isStopped())	
 			reconnectTimer.stop();		
 	}
@@ -81,24 +86,66 @@ void KinectAdapter::updateSkeletonData()
 	if (!isTracking || !_isConnected) return;
 
 	currentSkelet.clear();
+	currentRawSkelet.clear();
+	
+
+	//console()<<"================================"<<endl;
 	
 	for ( const auto& skeleton : mFrame.getSkeletons() ) 
-	{	
+	{
 		if (skeleton.size() == 0 ) continue;
-		
+
+		skeletFullHeight = 0;
+		skeletFullWidth = 0;
+		Vec3f sholderVec, hipCenterVec, elbowLeftVec, sholderLeftVec;
+
 		for (size_t i = 0, len = jointToRecord.size(); i < len; i++)
 		{
-			if(skeleton.find(jointToRecord[i]) != skeleton.end())
+			if (skeleton.find(jointToRecord[i]) != skeleton.end())
 			{
 				const MsKinect::Bone& bone = skeleton.find(jointToRecord[i])->second;
+
+				Vec2f v0 = mDevice->mapSkeletonCoordToColor( bone.getPosition() );
+				auto  z = skeleton.at( bone.getStartJoint()).getPosition().z;
 				
-				Vec2f v0				= mDevice->mapSkeletonCoordToColor( bone.getPosition() );
-				auto  z					= skeleton.at( bone.getStartJoint()).getPosition().z;			
-				currentSkelet.push_back(Vec3f(v0.x, v0.y, z));	
+				Vec3f jnt = bone.getPosition();
+
+				currentRawSkelet.push_back(bone.getPosition());
+				currentSkelet.push_back( Vec3f(v0.x, v0.y, z));
+				//jnt =   Vec3f(v0.x, v0.y, z);
+				//
+				//if (jointToRecord[i] == NUI_SKELETON_POSITION_HIP_CENTER)
+				//	hipCenterVec  = jnt;
+				//else if (jointToRecord[i] == NUI_SKELETON_POSITION_SHOULDER_CENTER)
+				//{
+				//	sholderVec  = jnt;
+				//	//skeletFullHeight += hipCenterVec.distance(jnt);
+				//}
+				//else if (jointToRecord[i] == NUI_SKELETON_POSITION_HEAD)
+				//{
+				//	skeletFullHeight += sholderVec.distance(jnt);
+				//}
+				//else if (jointToRecord[i] == NUI_SKELETON_POSITION_SHOULDER_LEFT)
+				//{
+				//	skeletFullWidth += sholderVec.distance(jnt);
+				//	sholderLeftVec = jnt;
+				//}
+				//else if (jointToRecord[i] == NUI_SKELETON_POSITION_ELBOW_LEFT)
+				//{
+				//	skeletFullWidth += sholderLeftVec.distance(jnt);
+				//	elbowLeftVec = jnt;
+				//}
+				//else if (jointToRecord[i] == NUI_SKELETON_POSITION_WRIST_LEFT)
+				//{
+				//	skeletFullWidth += elbowLeftVec.distance(jnt);
+				//}				
+
 			}
 		}
+		
+		skeletFullWidth *= 2;
 
-		if (currentSkelet.size()!= 0 ) break;
+		break;
 	}
 	
 	if(getSurface8u() && getDepthChannel16u() && currentSkelet.size()!=0 && mDevice->isCapturing())	
@@ -112,29 +159,39 @@ ci::Surface16u KinectAdapter::getSilhouette()
 
 int KinectAdapter::getSkeletsInFrame()
 {
+	int peopleInFrame = 0 ;
+
 	if (!sleepTimer.isStopped())
 	{
-		if (sleepTimer.getSeconds()>sleepSeconds)
+		if (sleepTimer.getSeconds() > sleepSeconds)
 			sleepTimer.stop();
-		else return 0;
+
+		peopleInFrame =  0;
 	}
-	
-	#ifdef debug
-		return 1; 
-	#endif
+	else if(getDepthChannel16u())
+	{
+		peopleInFrame = MsKinect::calcNumUsersFromDepth(getDepthChannel16u());
+	}
 
-	//return 1;
+	/*#ifdef debug
+		peopleInFrame = 1; 
+	#endif*/
 
-	if(getDepthChannel16u())
-		return MsKinect::calcNumUsersFromDepth(getDepthChannel16u());
-
-	return 0;
+	return peopleInFrame;
 }
 
 float KinectAdapter::distanceToSkelet()
 {
-	if (currentSkelet.size() == 0 )  return 0;
-	return currentSkelet[0].z;
+	float distance;
+
+	if (currentSkelet.size() == 0) 
+	{
+		distance = 0;
+	}
+	else
+		currentSkelet[0].z;
+
+	return distance;
 }
 
 void KinectAdapter::draw()
@@ -143,13 +200,13 @@ void KinectAdapter::draw()
 
 	#ifdef recording	
 		//gl::color(ColorA(1,1,1,0.5));
-		//drawKinectCameraColorSurface();
+		drawKinectCameraColorSurface();
 		//gl::color(ColorA(1,1,1, 1));
 		
 		drawUserMask();
 		drawSkeletJoints();	
 	#else 	
-		//drawKinectCameraColorSurface();
+		drawKinectCameraColorSurface();
 		//drawLoadedPoses();
 		drawSkeletJoints();
 	#endif

@@ -81,14 +81,14 @@ void IntroScreen::inviteAnimateParam()
 
 void IntroScreen::initInstructionParam()
 {
-	lapaTvAnimateVec = Vec2f(83.0f, 1080.0f);
+	lapaTvAnimateVec = Vec2f(123.0f, 1080.0f);
 	startBtnAnimateVec = Vec2f(0.0f, 1080.0f);
-	timeline().apply( &lapaTvAnimateVec, Vec2f(83.0f, 69.0f), 0.9f, EaseInOutQuart() );
+	timeline().apply( &lapaTvAnimateVec, Vec2f(123.0f, 209.0f), 0.9f, EaseInOutQuart() );
 	timeline().apply( &startBtnAnimateVec, Vec2f(0.0f, 0.0f), 0.9f, EaseInOutQuart() );
 
-	textAnimateVec = Vec2f(991.0f, 92.0f);
+	textAnimateVec = Vec2f(995.0f, 72.0f);
 	textAnimateAlpha = 0.0f;
-	timeline().apply( &textAnimateVec, Vec2f(990.0f, 106.0f),  0.9f, EaseInOutQuart() );
+	timeline().apply( &textAnimateVec, Vec2f(995.0f, 178.0f),  0.9f, EaseInOutQuart() );
 	timeline().apply( &textAnimateAlpha, 1.0f,  0.9f, EaseInOutQuart() );
 }
 
@@ -175,7 +175,7 @@ void IntroScreen::update()
 {	
 	#ifdef kinectUsed
 		isPeopleInFrame = kinect().getSkeletsInFrame()!=0;
-	#endif	
+	#endif		
 
 	if(_game->freezeLocation) return;
 
@@ -251,8 +251,6 @@ void IntroScreen::drawInviteElements()
 		startInstructionBtn->draw();
 		gl::draw(paws, Vec2f(435.0f, 429.0f));
 	gl::popMatrices();
-
-	//comeBackBtn->draw();
 }
 
 void IntroScreen::drawIstructionElements() 
@@ -308,6 +306,7 @@ void IntroScreen::animationFinished()
 			catAnimator().kill();
 			kinect().sleepKill();
 			drawHandler = &IntroScreen::drawInviteElements;
+			
 		break;
 
 		case SHOW_INSTRUCTION:	
@@ -317,10 +316,8 @@ void IntroScreen::animationFinished()
 			if (!comeBackBtnSignal.connected())
 				comeBackBtnSignal  = comeBackBtn->mouseDownEvent.connect(boost::bind(&IntroScreen::gotoFirstScreen, this));
 
-			bubbleAnimator().kill();
-			
-			startInstructionBtnSignal.disconnect();
-
+			bubbleAnimator().kill();			
+			startInstructionBtnSignal.disconnect();			
 			drawHandler = &IntroScreen::drawIstructionElements;
 		break;
 

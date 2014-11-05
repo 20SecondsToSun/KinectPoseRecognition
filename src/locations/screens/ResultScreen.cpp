@@ -271,7 +271,7 @@ void ResultScreen::connectButtons()
 	timeline().apply( &alphaSocialAnimate, 1.0f, 0.9f, EaseOutCubic() );
 
 	if (alphaEmailAnimate <= 0.0f)
-	timeline().apply( &alphaEmailAnimate, 1.0f, 0.9f, EaseOutCubic() ).delay(0.4);
+	timeline().apply( &alphaEmailAnimate, 1.0f, 0.9f, EaseOutCubic() ).delay(0.4f);
 
 	console()<<"BUTTONS INIT ............. "<<endl;	
 }
