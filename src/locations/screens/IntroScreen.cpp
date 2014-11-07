@@ -185,7 +185,7 @@ void IntroScreen::update()
 			if (isPeopleInFrame)
 				gotoInviteScreen();
 		
-			#ifdef debug
+			#ifdef drawTimer
 				debugString = "";
 			#endif
 			catAnimator().update();
@@ -195,7 +195,7 @@ void IntroScreen::update()
 			if (isComeBackTimerKinectFired())			
 				gotoFirstScreen();
 			
-			#ifdef debug
+			#ifdef drawTimer
 				debugString = to_string(getSecondsToComeBack());	
 			#endif
 			bubbleAnimator().update();
@@ -204,7 +204,7 @@ void IntroScreen::update()
 		case SHOW_INSTRUCTION:			
 			if (isComeBackTimerTouchFired())
 				gotoFirstScreen();
-			#ifdef debug
+			#ifdef drawTimer
 				debugString = to_string(getSecondsToComeBack());	
 			#endif
 		break;
@@ -218,7 +218,7 @@ void IntroScreen::draw()
 
 	(this->*drawHandler)();
 
-	#ifdef debug
+	#ifdef drawTimer
 		Utils::textFieldDraw(debugString,  fonts().getFont("Helvetica Neue", 46), Vec2f(40.f, 40.0f), RED);
 	#endif	
 

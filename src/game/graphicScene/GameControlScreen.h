@@ -50,10 +50,10 @@ class GameControLScreen
 		void setup()
 		{
 			sidePlashka   =  *AssetManager::getInstance()->getTexture( "images/diz/sidePlashka.jpg");
-			krugPercent   =  *AssetManager::getInstance()->getTexture( "images/diz/krugPercent.png");
-			sector		  =  *AssetManager::getInstance()->getTexture( "images/diz/sector.png");
-			ciferblat     =  *AssetManager::getInstance()->getTexture( "images/diz/ciferblat.png");
-			arrow         =  *AssetManager::getInstance()->getTexture( "images/diz/arrow.png");
+			//krugPercent   =  *AssetManager::getInstance()->getTexture( "images/diz/krugPercent.png");
+			//sector		  =  *AssetManager::getInstance()->getTexture( "images/diz/sector.png");
+			//ciferblat     =  *AssetManager::getInstance()->getTexture( "images/diz/ciferblat.png");
+			//arrow         =  *AssetManager::getInstance()->getTexture( "images/diz/arrow.png");
 			matchingPopup =  *AssetManager::getInstance()->getTexture( "images/diz/poseAlreadyBubble.png");
 
 			poseTestTex   =  *AssetManager::getInstance()->getTexture( "images/Cat0.png");
@@ -79,17 +79,28 @@ class GameControLScreen
 			state = HIDING;
 		}
 
+		void init()
+		{
+			state = HIDING;
+			timerVec              = Vec2f(1458.0f, 1080.0f);
+			plashkaVec            = Vec2f(1920.0f, 0.0f);
+			krugPercentAnimateVec = Vec2f(300.0f, 0.0f);
+			silhouetteAlpha = 0;
+		}
+
 		void draw()
 		{
 			gl::pushMatrices();
-				#ifdef debug
+				/*#ifdef debug
 					gl::translate( kinect().viewShiftX,  kinect().viewShiftY);
 					gl::scale( kinect().headScale,  kinect().headScale);
 					gl::color(ColorA(1.0f, 1.0f, 1.0f, silhouetteAlpha));
 				#else
 					gl::translate(Vec2f(0.0f, (1080.0f - 1440.0f) * 0.5f));
 					gl::color(ColorA(1.0f, 1.0f, 1.0f, silhouetteAlpha));
-				#endif	
+				#endif	*/
+				gl::translate(Vec2f(0.0f, (1080.0f - 1440.0f) * 0.5f));
+				gl::color(ColorA(1.0f, 1.0f, 1.0f, silhouetteAlpha));
 				if(currentPose)
 					currentPose->draw();
 			gl::popMatrices();
@@ -119,7 +130,7 @@ class GameControLScreen
 				gl::draw(timer_bubble);
 				string sec = to_string(showingSeconds);
 				if (sec.size()<2)
-					sec = "0"+sec;
+					sec = "0" + sec;
 				gl::Texture time = Utils::getTextField("00:" + sec, &secondsFont, Color::hex(0xc42f39));
 				gl::translate(Vec2f(46.0f, 13.0f));				
 				gl::draw(time);//, Vec2f(10.0f + 0.5f*(125 - time.getWidth()), 0.0f));
@@ -138,7 +149,7 @@ class GameControLScreen
 					gl::translate(5.0f,palkaPosition);				
 					gl::draw(palka);
 				gl::popMatrices();
-				gl::translate(5.0f,1028.0f);
+				gl::translate(5.0f,1023.0f);
 				gl::draw(popka);
 			gl::popMatrices();
 		/*
@@ -322,7 +333,7 @@ class GameControLScreen
 			if(percentMatching>=100)
 				percentMatching -= 1;
 
-			palkaPosition = 864 + (8 - 864) * percent;
+			palkaPosition = 884 + (8 - 884) * percent;
 		}
 
 		void showSilhouette()

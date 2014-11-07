@@ -1,5 +1,13 @@
 {
-   "standID" : "1wcdde",
+   "standID" : 1,
    "netConnection": true,
-   "algo": 1
+   "algo": 1,
+   "minError": 30,
+   "maxError": 50,
+   "drawPoints": true,
+   "fullskelet": true,
+   "percents" : [0.05, 0.15, 0.05, 0.05, 0.15, 0.05, 0.05, 0.15, 0.05, 0.1, 0.05, 0.1]
 }
+
+// шея
+// рука

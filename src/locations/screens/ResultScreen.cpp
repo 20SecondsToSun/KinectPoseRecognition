@@ -81,10 +81,11 @@ void ResultScreen::init( LocationEngine* game)
 	alphaEmailAnimate = 0.0f;
 	alphaFinAnimate = 0.0f;
 
-	/*#ifdef debug
-		PlayerData::playerData[0].pathHiRes = "IMG_0003.jpg";
-		PlayerData::playerData[1].pathHiRes = "IMG_0001.jpg";
-		PlayerData::playerData[2].pathHiRes = "IMG_0002.jpg";
+	#ifdef debug
+		PlayerData::score = 3;
+		PlayerData::playerData[0].pathHiRes = "level1.jpg";
+		PlayerData::playerData[1].pathHiRes = "level2.jpg";
+		PlayerData::playerData[2].pathHiRes = "level3.jpg";
 
 		if (Params::photoFromDirError)
 			PlayerData::playerData[0].pathHiRes = "IMG_00.jpg";
@@ -100,7 +101,7 @@ void ResultScreen::init( LocationEngine* game)
 			PlayerData::playerData[i].isSuccess = true;	
 			PlayerData::playerData[i].storyCode = i;	
 		}
-	#endif	*/
+	#endif	
 
 	if(PlayerData::score != 0)
 	{
@@ -108,7 +109,7 @@ void ResultScreen::init( LocationEngine* game)
 		state = INIT_STATE;
 		photoLoadingFromDirSignal = photoMaker().photoLoadEvent.connect(boost::bind(&ResultScreen::photoLoadedFromDirHandler, this));	
 		photoLoadingFromDirErrorSignal = photoMaker().photoLoadErrorEvent.connect(boost::bind(&ResultScreen::photoLoadeFromDirErrorHandler, this));	
-		timeline().apply( &alphaAnimate, 0.0f, 1.0f, 0.9f, EaseOutCubic() ).finishFn( bind( &ResultScreen::animationStartFinished, this ) );		
+		timeline().apply( &alphaAnimate, 0.0f, 0.2f, 0.9f, EaseOutCubic() ).finishFn( bind( &ResultScreen::animationStartFinished, this ) );		
 	}
 	else
 	{
@@ -132,8 +133,15 @@ void ResultScreen::photoLoadedFromDirHandler()
 
 	photoLoadingFromDirSignal.disconnect();
 	photoLoadingFromDirErrorSignal.disconnect();
-	photoMaker().resizeFinalImages();
-	timeline().apply( &alphaAnimate, 0.0f, 0.9f, EaseOutCubic() ).finishFn( bind( &ResultScreen::animationPhotoSavedFinished, this ) ).delay(0.3f);
+	bool isFBOCrashed = photoMaker().resizeFinalImages();
+
+	if (isFBOCrashed == false)
+		timeline().apply( &alphaAnimate, 0.0f, 0.2f, EaseOutCubic()).finishFn( bind( &ResultScreen::animationPhotoSavedFinished, this ) ).delay(0.3f);
+	else
+	{
+		photoLoadeFromDirErrorHandler();
+	}
+
 }
 
 void ResultScreen::photoLoadeFromDirErrorHandler()
@@ -154,16 +162,19 @@ void ResultScreen::animationPhotoSavedFinished()
 	if (Params::isNetConnected == false)
 	{
 		state = NET_OFF_LOCATION_READY;	
+		canShowResultImages = true;	
+		photoRamki().initAnimationParams();
 		_game->freezeLocation = false;	
 		connectButtons();
 		comeBackTimerStart();	
+		drawHandler= &ResultScreen::drawNothing;
 	}
 	else
 	{	
 		_game->freezeLocation = true;
 		drawHandler = &ResultScreen::drawNetConnectionPreloader;
 		state = CHECKING_NET_CONNECTION;	
-		timeline().apply( &alphaAnimate, 0.0f, 1.0f, 0.9f, EaseOutCubic() ).finishFn( bind( &ResultScreen::animationShowChekConnection, this ) );		
+		timeline().apply( &alphaAnimate, 0.0f, 1.0f, 0.2f, EaseOutCubic() ).finishFn( bind( &ResultScreen::animationShowChekConnection, this ) );		
 	}
 }
 
@@ -179,7 +190,7 @@ void ResultScreen::serverSignalConnectionCheckHandler()
 {
 	server().stopTimeout();
 	serverSignalConnectionCheck.disconnect();
-	timeline().apply( &alphaAnimate, 0.0f, 0.9f, EaseOutCubic() ).finishFn( bind( &ResultScreen::animationHideChekConnection, this ) );
+	timeline().apply( &alphaAnimate, 0.0f, 0.2f, EaseOutCubic() ).finishFn( bind( &ResultScreen::animationHideChekConnection, this ) );
 }
 
 void ResultScreen::animationHideChekConnection()
@@ -192,13 +203,14 @@ void ResultScreen::animationHideChekConnection()
 		state = NET_OFF_LOCATION_READY;	
 		connectButtons();
 		comeBackTimerStart();	
+		drawHandler= &ResultScreen::drawNothing;
 	}
 	else
 	{
 		_game->freezeLocation = true;	
 		state = PHOTO_LOADING_TO_SERVER;
 		drawHandler = &ResultScreen::drawServerPreloader;
-		timeline().apply( &alphaAnimate, 0.0f, 1.0f, 0.9f, EaseOutCubic() ).finishFn( bind( &ResultScreen::animationShowServerPhotoLoad, this ) );	
+		timeline().apply( &alphaAnimate, 0.0f, 1.0f, 0.2f, EaseOutCubic() ).finishFn( bind( &ResultScreen::animationShowServerPhotoLoad, this ) );	
 	}
 }
 
@@ -232,9 +244,9 @@ void ResultScreen::animationHideServerPhotoLoad()
 	{
 		state = LOADING_TO_SERVER_FAIL;			
 	}
-
 	connectButtons();
 	comeBackTimerStart();	
+	drawHandler= &ResultScreen::drawNothing;
 }
 
 void ResultScreen::serverTimeoutHandler()
@@ -250,6 +262,7 @@ void ResultScreen::serverTimeoutHandler()
 
 	connectButtons();
 	comeBackTimerStart();	
+	drawHandler= &ResultScreen::drawNothing;
 }
 
 void ResultScreen::connectButtons()
@@ -427,7 +440,7 @@ void ResultScreen::draw()
 
 	drawFadeOutIfAllow();
 
-	#ifdef debug
+	#ifdef drawTimer
 		if (!returnTimer.isStopped())
 		{	
 			string debugString = to_string(getSecondsToComeBack());
@@ -498,20 +511,25 @@ void ResultScreen::drawFadeOutIfAllow()
 
 void ResultScreen::drawPhotoLoadingPreloader() 
 {
-	gl::color(ColorA(1, 1, 1, alphaAnimate));
-	Utils::textFieldDraw("Выгружаю фотографии... "+ to_string(photoMaker().getElapsedSeconds()),  fonts().getFont("MaestroC", 114), Vec2f(510.f, 448.0f), ColorA(1.f, 1.f, 1.f, 1.f));
+	//gl::color(ColorA(1, 1, 1, alphaAnimate));
+	//Utils::textFieldDraw("Выгружаю фотографии... "+ to_string(photoMaker().getElapsedSeconds()),  fonts().getFont("MaestroC", 114), Vec2f(510.f, 448.0f), ColorA(1.f, 1.f, 1.f, 1.f));
+	Utils::textFieldDraw("Сохраняю фотографии",  fonts().getFont("MaestroC", 114), Vec2f(510.f, 448.0f), ColorA(1.f, 1.f, 1.f, 1.f));
 }
 
 void ResultScreen::drawNetConnectionPreloader() 
 {
-	gl::color(ColorA(1, 1, 1, alphaAnimate));
-	Utils::textFieldDraw("Проверяю соединение... "+ to_string(server().getTimeoutSeconds()),  fonts().getFont("MaestroC", 114), Vec2f(510.f, 448.0f), ColorA(1.f, 1.f, 1.f, 1.f));
+	//gl::color(ColorA(1, 1, 1, alphaAnimate));
+	//Utils::textFieldDraw("Проверяю соединение... "+ to_string(server().getTimeoutSeconds()),  fonts().getFont("MaestroC", 114), Vec2f(510.f, 448.0f), ColorA(1.f, 1.f, 1.f, 1.f));
+	Utils::textFieldDraw("Сохраняю фотографии",  fonts().getFont("MaestroC", 114), Vec2f(510.f, 448.0f), ColorA(1.f, 1.f, 1.f, 1.f));
+
 }
 
 void ResultScreen::drawServerPreloader() 
 {	
-	gl::color(ColorA(1, 1, 1, alphaAnimate));	
-	Utils::textFieldDraw("Ожидаю сервер... " + to_string(server().getTimeoutSeconds()),  fonts().getFont("MaestroC", 114), Vec2f(510.f, 448.0f), ColorA(1.f, 1.f, 1.f, 1.f));
+	//gl::color(ColorA(1, 1, 1, alphaAnimate));	
+	//Utils::textFieldDraw("Ожидаю сервер... " + to_string(server().getTimeoutSeconds()),  fonts().getFont("MaestroC", 114), Vec2f(510.f, 448.0f), ColorA(1.f, 1.f, 1.f, 1.f));
+	Utils::textFieldDraw("Сохраняю фотографии",  fonts().getFont("MaestroC", 114), Vec2f(510.f, 448.0f), ColorA(1.f, 1.f, 1.f, 1.f));
+
 }
 
 void ResultScreen::drawUpsetScreen() 
@@ -523,7 +541,7 @@ void ResultScreen::drawUpsetScreen()
 
 void ResultScreen::drawErrorScreen() 
 {
-	Utils::textFieldDraw("Что-то пошло не так...",  fonts().getFont("MaestroC", 114), Vec2f(510.f, 448.0f), ColorA(1.f, 1.f, 1.f, 1.f));
+	Utils::textFieldDraw("Что-то пошло не так...\nЕсли ситуация повторится,\nперезапустите программу",  fonts().getFont("MaestroC", 114), Vec2f(510.f, 348.0f), ColorA(1.f, 1.f, 1.f, 1.f));
 	comeBackBtn->draw();
 	backToStartBtn->draw();
 }

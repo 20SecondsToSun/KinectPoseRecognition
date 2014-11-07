@@ -22,7 +22,7 @@ bool	FontStore::addFont( ci::Font* font, float size )
 
 	// check if font family is already known
 	std::string family = font->getName();
-	ci::app::console()<<" family-------->  "<<family;
+	//ci::app::console()<<" family-------->  "<<family;
 	if( ! hasFont( family, size ) ) {
 		mFonts[std::make_pair(family,size)] = font;
 		return true;

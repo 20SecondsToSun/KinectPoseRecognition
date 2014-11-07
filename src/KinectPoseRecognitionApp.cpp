@@ -31,22 +31,30 @@ class KinectPoseRecognitionApp : public AppNative
 		void			mouseDown( MouseEvent event );
 		void			update();
 		void			draw();
-		void			shutdown();
+		void			my_shutdown();
+
+		void	plusBtnHandler();
+		void	minusBtnHandler();
+		void	closeBtnHandler();
 
 		static const int secondsToRec = 7;	
 		 
 		ci::Font		hintFont;
 		Timer			saveTimer;
 		string			state;
-
 		int poseNum;
-
 		gl::Texture	bg;
 
 	private:
 		LocationEngine	game;
 		params::InterfaceGlRef	mParams;
 		void	changeState();
+
+
+		ButtonColor	  *plusBtn, *minusBtn, *closeBtn;
+		ci::signals::connection plusBtnSignal, minusBtnSignal, closeBtnSignal;
+
+		Texture *helpForRec, helpTex1, helpTex2, helpTex3, helpTex4;
 };
 
 void KinectPoseRecognitionApp::setup()
@@ -68,14 +76,16 @@ void KinectPoseRecognitionApp::setup()
 	fonts().loadFont( loadFile(getAssetPath("fonts/Helvetica Neue Light.ttf")), 62);
 	fonts().loadFont( loadFile(getAssetPath("fonts/MyriadPro-Bold.ttf")), 70 );
 	fonts().loadFont( loadFile(getAssetPath("fonts/MyriadPro-Bold.ttf")), 26);
-	fonts().listFonts();
+
+	//fonts().listFonts();
 
 	hintFont = *fonts().getFont("Helvetica Neue", 46);
-	state    = "ChooseMode";	
+	state    = "ChooseMode";
+
+	saver().loadConfigData();
 
     #ifndef recording
-		bg  = *AssetManager::getInstance()->getTexture( "images/diz/bg.jpg" );
-		saver().loadConfigData();
+		bg  = *AssetManager::getInstance()->getTexture( "images/diz/bg.jpg" );		
 		IntroScreen::Instance()->setup();
 		MainGameScreen::Instance()->setup();
 		ResultScreen::Instance()->setup();
@@ -106,11 +116,19 @@ void KinectPoseRecognitionApp::setup()
 	#endif
 
 
-	#ifdef recording	
+	#ifdef recording
+		setFullScreen(true);
+		helpTex1 = loadImage(getAppPath()/"data/poses/test/Cat0.png");		
+		helpTex2 = loadImage(getAppPath()/"data/poses/test/Cat1.png");		
+		helpTex3 = loadImage(getAppPath()/"data"/"poses"/"test"/"Cat2.png");	
+		helpTex4 = loadImage(getAppPath()/"data"/"poses"/"test"/"Cat3.png");
+		console()<<"test ok"<<endl;
+		helpForRec = NULL;
 		cameraCanon().setup();
 		cameraCanon().live();
 		kinect().setup();
 		kinect().startTracking();
+		poseNum = 0;
 	#endif
 
 
@@ -120,8 +138,39 @@ void KinectPoseRecognitionApp::setup()
 		game.changeState(IntroScreen::Instance());
 	#endif
 
-	poseNum = 0;
 	gl::enableAlphaBlending();
+
+
+	#ifdef calibration
+		setFullScreen(true);
+		plusBtn = new ButtonColor(Rectf(10, 10, 110, 110), Color::hex(0xff0000), fonts().getFont("Helvetica Neue", 66), "+");
+		plusBtnSignal = plusBtn->mouseDownEvent.connect(boost::bind(&KinectPoseRecognitionApp::plusBtnHandler, this));
+
+		minusBtn = new ButtonColor(Rectf(150, 10, 260, 110), Color::hex(0xff0000), fonts().getFont("Helvetica Neue", 66), "-");
+		minusBtnSignal = minusBtn->mouseDownEvent.connect(boost::bind(&KinectPoseRecognitionApp::minusBtnHandler, this));
+
+		closeBtn = new ButtonColor(Rectf(1700, 10, 1860, 160), Color::hex(0xff0000), fonts().getFont("Helvetica Neue", 66), "exit");
+		closeBtnSignal = closeBtn->mouseDownEvent.connect(boost::bind(&KinectPoseRecognitionApp::closeBtnHandler, this));
+	#endif
+}
+
+void KinectPoseRecognitionApp::plusBtnHandler()
+{
+	int32_t angle = kinect().getTilt() + 1;
+	//console()<<"angel:: "<<angle<<endl;
+	kinect().setTilt(angle);
+}
+
+void KinectPoseRecognitionApp::minusBtnHandler()
+{
+	int32_t angle = kinect().getTilt() - 1;
+	//console()<<"angel:: "<<angle<<endl;
+	kinect().setTilt(angle);
+}
+
+void KinectPoseRecognitionApp::closeBtnHandler()
+{
+	my_shutdown();
 }
 
 void KinectPoseRecognitionApp::changeState()
@@ -130,8 +179,7 @@ void KinectPoseRecognitionApp::changeState()
 }
 
 void KinectPoseRecognitionApp::update()
-{
-	cameraCanon().update();
+{	
 	 #ifdef recording	
 		kinect().update();
 		kinect().updateSkeletonData();
@@ -167,7 +215,7 @@ void KinectPoseRecognitionApp::draw()
 
 			if (state == "ChooseMode")
 			{
-				Utils::textFieldDraw("Для записи позы жми 1 \nДля теста игры жми 2", &hintFont, Vec2f(400.f, getWindowHeight()*0.5f), colorZhint);
+				Utils::textFieldDraw("Для записи позы жми 1", &hintFont, Vec2f(400.f, getWindowHeight()*0.5f), colorZhint);
 			}
 			else if (state == "RecordingPose")
 			{
@@ -188,6 +236,24 @@ void KinectPoseRecognitionApp::draw()
 	#ifdef paramsDraw
 		mParams->draw();
 	#endif
+		
+	#ifdef calibration	
+		gl::enableAlphaBlending();
+		plusBtn->draw();
+		minusBtn->draw();
+		closeBtn->draw();
+	#endif
+
+	#ifdef recording	
+		if (helpForRec)
+		{
+			gl::pushMatrices();
+			gl::translate(Vec2f(0.0f, (1080.0f - 1440.0f) * 0.5f));
+			gl::draw(*helpForRec);
+			gl::popMatrices();
+		}
+	#endif
+
 	toucher().draw();
 }
 
@@ -198,28 +264,33 @@ void KinectPoseRecognitionApp::mouseDown( MouseEvent event )
 
 void KinectPoseRecognitionApp::keyDown( KeyEvent event )
 {	
-	console()<< "   event.getChar() "<<event.getChar()<<endl;
+//	console()<< "  event.getChar() "<<event.getChar()<<endl;
+
+	console()<< "  event.getCode() "<<event.getCode()<<endl;
+
+	if( event.getCode() == app::KeyEvent::KEY_ESCAPE ) 
+	{
+		my_shutdown();
+		return;
+	}
+
+	#ifdef calibration	
+		if( event.getCode() == 61) 
+			plusBtnHandler();
+		else if( event.getCode() == 45) 
+			minusBtnHandler();
+	 #endif
+
 	int32_t angle = 0;
 	#ifdef recording	
-	   switch (event.getChar())
-		{ 
-			case '0':
-				angle = kinect().getTilt() + 1;
-				kinect().setTilt(angle);
-			break;
-			case '9':
-				angle = kinect().getTilt() - 1;
-				kinect().setTilt(angle);
-			break;
-			case 'q':			
-				shutdown();			
-			break;
+	   switch (event.getCode())
+		{ 		
 			 #ifndef calibration
-				case '1':
+				case 49:
 					state = "RecordingPose";			
 					saveTimer.start();
 				break;
-				case '3':
+				case 51:
 					if (state == "SaveOrNot")	
 					{		
 						recognitionGame().saveAsTemplate(poseNum);
@@ -228,9 +299,28 @@ void KinectPoseRecognitionApp::keyDown( KeyEvent event )
 					state = "ChooseMode";	
 					kinect().startTracking();
 				break;
-				case '4':			
+				case 52:			
 					state = "ChooseMode";	
 					kinect().startTracking();
+				break;
+
+				case 113:
+					helpForRec = &helpTex1;
+				break;
+
+				case 119:
+					helpForRec = &helpTex2;
+				break;
+
+				case 101:
+					helpForRec = &helpTex3;
+				break;
+
+				case 114:
+					helpForRec = &helpTex4;
+				break;
+				case 116:
+					helpForRec = NULL;
 				break;
 			 #endif
 		}
@@ -245,26 +335,25 @@ void KinectPoseRecognitionApp::keyDown( KeyEvent event )
 			break;
 			case '3':
 				game.changeState(ResultScreen::Instance());
-			break;
-			case 'q':
-				shutdown();
-			break;
-			case '0':
-			#ifdef kinectUsed
-				kinect().Shutdown();
-			#endif
-			break;
+			break;			
 		}
 	#endif
 }
 
-void KinectPoseRecognitionApp::shutdown()
-{
-	console()<<"SHUTDOWN!!!!"<<endl;
-
+void KinectPoseRecognitionApp::my_shutdown()
+{	
 	#ifdef kinectUsed
+	try
+	{
+		console()<<"try kinect shutdown"<<endl;
 		kinect().Shutdown();
+	}
+	catch(...)
+	{
+		console()<<"kinect shutdown error!!!!"<<endl;
+	}
 	#endif
+
 	try
 	{
 		cameraCanon().shutdown();
@@ -276,16 +365,24 @@ void KinectPoseRecognitionApp::shutdown()
 
 	try
 	{
-		ResultScreen::Instance()->shutdown();	
+		//ResultScreen::Instance()->shutdown();	
+		//IntroScreen::Instance()->shutdown();
+		//MainGameScreen::Instance()->shutdown();	
 	}
 	catch(...)
 	{
 		console()<<"ResultScreen::Instance()->shutdown()error!!!!"<<endl;
 	}
+
+	#ifdef calibration
+		closeBtnSignal.disconnect();
+		minusBtnSignal.disconnect();
+		plusBtnSignal.disconnect();
+	#endif
+	
 		
 	quit();
-	//IntroScreen::Instance()->shutdown();
-	//MainGameScreen::Instance()->shutdown();	
 }
+
 #pragma warning(pop)
 CINDER_APP_NATIVE( KinectPoseRecognitionApp, RendererGl )

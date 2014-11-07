@@ -29,12 +29,13 @@ void KinectAdapter::setActiveJoints()
 
 	jointToRecord.push_back(NUI_SKELETON_POSITION_WRIST_RIGHT);//	0.3
 
-	#ifndef halfskelet	
+	if (Params::isFullSkelet)
+	{
 		jointToRecord.push_back(NUI_SKELETON_POSITION_KNEE_LEFT);
 		jointToRecord.push_back(NUI_SKELETON_POSITION_ANKLE_LEFT);
 		jointToRecord.push_back(NUI_SKELETON_POSITION_KNEE_RIGHT);	
 		jointToRecord.push_back(NUI_SKELETON_POSITION_ANKLE_RIGHT);
-	#endif	
+	}
 }
 
 void KinectAdapter::connect()
@@ -86,7 +87,7 @@ void KinectAdapter::updateSkeletonData()
 	if (!isTracking || !_isConnected) return;
 
 	currentSkelet.clear();
-	currentRawSkelet.clear();
+	//currentRawSkelet.clear();
 	
 
 	//console()<<"================================"<<endl;
@@ -108,9 +109,9 @@ void KinectAdapter::updateSkeletonData()
 				Vec2f v0 = mDevice->mapSkeletonCoordToColor( bone.getPosition() );
 				auto  z = skeleton.at( bone.getStartJoint()).getPosition().z;
 				
-				Vec3f jnt = bone.getPosition();
+				//Vec3f jnt = bone.getPosition();
 
-				currentRawSkelet.push_back(bone.getPosition());
+			//	currentRawSkelet.push_back(bone.getPosition());
 				currentSkelet.push_back( Vec3f(v0.x, v0.y, z));
 				//jnt =   Vec3f(v0.x, v0.y, z);
 				//
@@ -189,7 +190,9 @@ float KinectAdapter::distanceToSkelet()
 		distance = 0;
 	}
 	else
-		currentSkelet[0].z;
+	{
+		distance = currentSkelet[1].z;
+	}
 
 	return distance;
 }
@@ -200,17 +203,19 @@ void KinectAdapter::draw()
 
 	#ifdef recording	
 		//gl::color(ColorA(1,1,1,0.5));
-		drawKinectCameraColorSurface();
+
+		// drawKinectCameraColorSurface();
 		//gl::color(ColorA(1,1,1, 1));
 		
 		drawUserMask();
 		drawSkeletJoints();	
-	#else 	
+	#endif
+
+	#ifdef debug	
 		drawKinectCameraColorSurface();
-		//drawLoadedPoses();
-		drawSkeletJoints();
 	#endif
 }
+
 
 void KinectAdapter::drawSkeletJoints()
 {

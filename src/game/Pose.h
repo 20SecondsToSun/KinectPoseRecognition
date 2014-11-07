@@ -161,6 +161,16 @@ class Pose
 			return _timeForPose;
 		}
 
+		void setPercent(int val)  
+		{
+			_matchPercent = val;
+		}
+
+		int getPercent()  
+		{
+			return _matchPercent;
+		}		
+
 		void setComicsName(std::string val)  
 		{
 			_comicsName = val;
@@ -324,12 +334,12 @@ class Pose
 
 		void setPoseTime(int32_t _time)
 		{
-			time = _time;
+			_timeForPose = _time;
 		}
 
 		int32_t getPoseTime()
 		{
-			return time;
+			return _timeForPose;
 		}
 
 	private:
@@ -348,6 +358,6 @@ class Pose
 		ci::gl::Texture comics;
 
 		std::string _comicsName;
-		int _timeForPose;
+		int _timeForPose, _matchPercent;
 		int time;
 };

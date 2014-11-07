@@ -29,7 +29,7 @@ class PhotoMaker
 		void stopTimer();
 		int  getElapsedSeconds();
 		void loadFinalImages();
-		void resizeFinalImages();
+		bool resizeFinalImages();
 
 		photoCreateSignal photoLoadEvent, photoLoadErrorEvent;
 

@@ -22,10 +22,11 @@ void Server::sendPhotoThreadHandler()
 {	
 	isPhotoSendingToServer = true;	
 	DataSourceRef urlRequest =	loadFile( photoPath);
-	string loadingString =  toBase64(Buffer(urlRequest)) + to_string(638) +",1";
+	string loadingString =  toBase64(Buffer(urlRequest)) + to_string(photoParams::BIG_PHOTO_HEIGHT) +"," + to_string(Params::standID);
 
-	ci::app::console()<<".............  "<<loadingString<<endl;
-
+	ci::app::console()<<".............  "<<endl;
+	ci::app::console()<<loadingString<<endl;
+	ci::app::console()<<".............  "<<endl;
 	string status;			
 
 	#ifdef debug	

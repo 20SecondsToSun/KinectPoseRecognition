@@ -7,14 +7,14 @@
 
 #define kinectUsed
 //#define recording
-#define debug	
-#define halfskelet	
+//#define calibration
+
+//#define debug	
 
 //#define alwayswin
 //#define paramsDraw	
-
+#define drawTimer
 #define algo1
-
 
 namespace colorsParams
 {
@@ -70,6 +70,8 @@ class Params
 		static float	maxErrorBetweenJoints;
 		static float	minErrorBetweenJoints;
 		static float	percentForMatching;
+
+		static float	weightJoints[12];
 	
 		static float	comeBackHomeTime;
 		static fs::path	getPhotosStorageDirectory();
@@ -77,7 +79,8 @@ class Params
 		static fs::path	getTempStorageDirectory();		
 		static fs::path	getFinalImageStoragePath();
 		static fs::path	getConfigStoragePath();
-		static fs::path	getBaseStoragePath();		
+		static fs::path	getBaseStoragePath();	
+		static fs::path	getPoseSavingPath();
 
 		static bool		isNetConnected;
 		static bool		photoFromDirError;
@@ -90,8 +93,10 @@ class Params
 
 		static bool		serverEmailSendError;
 		static bool		serverEmailSendTimeout;
-
+		static bool		isFullSkelet;
+		static bool		isPointsDraw;
+		
 		static int		computeMistakeAlgo;
 
-		static std::string	standID;
+		static int	standID;
 };

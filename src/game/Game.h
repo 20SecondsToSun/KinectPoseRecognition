@@ -45,6 +45,7 @@ class Game
 		static const int	MATCHING_MAX_VALUE = 80;	
 
 		int				CURRENT_POSE_TIME;
+		int				CURRENT_MATCHING_PERCENT;
 
 		int state;
 		bool isGameRunning, isPoseDetecting, winAnimationFinished;
@@ -63,7 +64,7 @@ class Game
 
 		int poseNum;
 
-		float weightJoints[8];
+		//float weightJoints[12];
 		
 
 		void setup()
@@ -71,14 +72,19 @@ class Game
 			poses = saver().loadPoseBase();
 			poseNum = 0;
 
-			weightJoints[0] = 0.1;
-			weightJoints[1] = 0.1;
-			weightJoints[2] = 0.05;
-			weightJoints[3] = 0.05;
-			weightJoints[4] = 0.3;
-			weightJoints[5] = 0.05;
-			weightJoints[6] = 0.05;
-			weightJoints[7] = 0.3;
+			//weightJoints[0] = 0.05;//шея
+			//weightJoints[1] = 0.15;//голова
+			//weightJoints[2] = 0.05;
+			//weightJoints[3] = 0.05;
+			//weightJoints[4] = 0.15;//запястье левое
+			//weightJoints[5] = 0.05;
+			//weightJoints[6] = 0.05;
+			//weightJoints[7] = 0.15;//запястье правое
+
+			//weightJoints[8] = 0.05;// ступня левая
+			//weightJoints[9] = 0.1;
+			//weightJoints[10] = 0.05;
+			//weightJoints[11] = 0.1;// ступня правая
 		}
 
 		void initnew()
@@ -90,7 +96,8 @@ class Game
 			level = 1;
 			poseCode = generatePoseCode();	
 			gameControls().setCurrentPose(poses[poseCode]);
-			CURRENT_POSE_TIME = 40;//poses[poseCode]->getPoseTime();
+			CURRENT_POSE_TIME = poses[poseCode]->getPoseTime();
+			CURRENT_MATCHING_PERCENT = poses[poseCode]->getPercent();
 
 			_stepBackTimer.start();
 		}
@@ -269,8 +276,8 @@ class Game
 				hintScreen().poseNum = level;
 				hintScreen().startReadySate();
 				gameControls().setCurrentPose(poses[poseCode]);
-				CURRENT_POSE_TIME = 40;//poses[poseCode]->getPoseTime();
-
+				CURRENT_POSE_TIME = poses[poseCode]->getPoseTime();
+				CURRENT_MATCHING_PERCENT= poses[poseCode]->getPercent();
 				state = PRE_GAME_INTRO;
 			}
 		}
@@ -344,7 +351,7 @@ class Game
 			updateGame();
 			//return;
 	
-			if ( getPoseProgress() >= MATCHING_MAX_VALUE + 10)//state == MAIN_GAME)/// getPoseProgress() >= MATCHING_MAX_VALUE)
+			if ( getPoseProgress() >= CURRENT_MATCHING_PERCENT + 10)//state == MAIN_GAME)/// getPoseProgress() >= MATCHING_MAX_VALUE)
 			{
 				gameControls().showMatching(1.0f);
 				isPoseDetecting		 = true;
@@ -385,7 +392,7 @@ class Game
 					else
 						levelCompletion = 0;					
 				}
-				gameControls().showMatching((float)levelCompletion / MATCHING_MAX_VALUE);
+				gameControls().showMatching((float)levelCompletion / CURRENT_MATCHING_PERCENT);
 			}	
 		}
 
@@ -533,7 +540,7 @@ class Game
 			{
 				double mistake = calculateDistanceBetweenPoints(poses[poseCode]->getNormalizePoints()[j], currentPose.getNormalizePoints()[j]);
 				double onePartPercent = 0;
-				double onePart = weightJoints[j];
+				double onePart = Params::weightJoints[j];
 
 				
 				console()<<" mistake ::  "<<mistake<<endl;
@@ -623,7 +630,8 @@ class Game
 				_stepBackTimer.stop();
 				return true;
 			}
-			return false;		}
+			return false;	
+		}
 
 		bool hintTimerFinished() 
 		{
@@ -721,6 +729,7 @@ class Game
 				pose->setKinectTilt(kinect().getTilt());
 				pose->setImage(kinect().getSilhouette());
 				pose->setTime(30);
+				pose->setPercent(80);
 				pose->setComicsName("default");
 				saver().savePoseIntoBase(pose);		
 			}

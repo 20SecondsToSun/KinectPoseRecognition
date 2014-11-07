@@ -69,9 +69,11 @@ int PhotoMaker::getElapsedSeconds()
 		return photoMakerParams::MAX_WAITING_FROM_DIR_TIME;
 }
 
-void PhotoMaker::resizeFinalImages()
+bool PhotoMaker::resizeFinalImages()
 {
-	mFbo					= gl::Fbo( BIG_PHOTO_WIDTH, BIG_PHOTO_HEIGHT);
+	bool fboCrashed = false;
+
+	mFbo = gl::Fbo( BIG_PHOTO_WIDTH, BIG_PHOTO_HEIGHT);
 
 	Vec2f  trans;//
 	try
@@ -101,8 +103,15 @@ void PhotoMaker::resizeFinalImages()
 
 			//Surface comicsSurface = Surface();
 			//comicsSurface = Utils::resizeScreenshot(comicsSurface, (int32_t)BIG_PHOTO_WIDTH, (int32_t)BIG_PHOTO_HEIGHT);
-
-			drawToFBO(cadrSurface, recognitionGame().getPoseImageById(PlayerData::playerData[i].storyCode));
+			try
+			{
+				drawToFBO(cadrSurface, recognitionGame().getPoseImageById(PlayerData::playerData[i].storyCode));
+			}
+			catch(...)
+			{
+				fboCrashed = true;
+				break;
+			}
 			//mFbo.getTexture().setFlipped(true);
 			Surface comicsImage = Surface(mFbo.getTexture());
 
@@ -135,10 +144,14 @@ void PhotoMaker::resizeFinalImages()
 		}
 	}
 
-	PlayerData::finalImageSurface = finalImage;
-
-	fs::path path = Params::getFinalImageStoragePath();
-	writeImage( path, finalImage);
+	if (fboCrashed == false) 
+	{
+		PlayerData::finalImageSurface = finalImage;
+		fs::path path = Params::getFinalImageStoragePath();
+		writeImage( path, finalImage);
+	}
+	
+	return fboCrashed;
 }
 
 void PhotoMaker::drawToFBO(Surface img, ci::gl::Texture comicsImage)

@@ -2,7 +2,7 @@
 
 float	Params::boxMaxErrorX = 15.0f;
 float	Params::boxMaxErrorY= 15.0f;
-float	Params::maxErrorBetweenJoints = 100.0f;
+float	Params::maxErrorBetweenJoints = 40.0f;
 float	Params::minErrorBetweenJoints = 10.0f;
 
 float	Params::percentForMatching = 0.75f;
@@ -18,11 +18,15 @@ bool	Params::serverConnectionCheckTimeout = false;
 
 bool	Params::serverEmailSendError = false;
 bool	Params::serverEmailSendTimeout = false;
+bool	Params::isFullSkelet = true;
+bool	Params::isPointsDraw = true;
 
 int	Params::computeMistakeAlgo = 1;
 
+float	Params::weightJoints[12];
 
-std::string	Params::standID = "-1";
+
+int	Params::standID = -1;
 
 fs::path		Params::getPhotosStorageDirectory()
 {
@@ -53,3 +57,9 @@ fs::path		Params::getBaseStoragePath()
 {
 	return getAppPath()/"data"/poseParams::JSON_STORAGE_FOLDER;
 }
+
+fs::path		Params::getPoseSavingPath()
+{
+	return getAppPath()/"data/poses/savingPose";
+}
+

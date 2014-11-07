@@ -56,6 +56,7 @@ void MainGameScreen::init( LocationEngine* game)
 
 	photoFlashSignal	  = recognitionGame().photoFlashEvent.connect(boost::bind(&MainGameScreen::photoFlashHandler, this));	
 
+	gameControls().init();
 	hintScreen().init();
 	recognitionGame().initnew();
 }
@@ -127,7 +128,7 @@ void MainGameScreen::animationLeaveLocationPrepare()
 
 void MainGameScreen::update() 
 {
-	//cameraCanon().update();	
+	cameraCanon().update();	
 	kinect().update();
 
 	deviceError = !cameraCanon().isConnected || !kinect().isConnected();
@@ -218,7 +219,9 @@ void MainGameScreen::drawGame()
 		case MAIN_GAME:			
 			gameControls().draw();
 			hintScreen().draw();
-			recognitionGame().drawJoints();
+
+			if (Params::isPointsDraw)
+				recognitionGame().drawJoints();
 			
 		break;
 
