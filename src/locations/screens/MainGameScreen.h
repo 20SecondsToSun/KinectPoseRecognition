@@ -19,6 +19,7 @@
 
 using namespace ci;
 using namespace ci::app;
+using namespace ci::signals;
 using namespace gl;
 using namespace std;
 
@@ -45,20 +46,20 @@ class MainGameScreen : public Location
 
 	private:
 
-		static const int MAX_MISSED_TIME	= 20;	
+		static const int MAX_MISSED_TIME	= 20;
 
-		LocationEngine*			_game;
-		static MainGameScreen	MainGameScreenState;
+		LocationEngine* _game;
+		static MainGameScreen MainGameScreenState;
 
 		void kinectMissPersonHandler();
 		void photoFlashHandler();
 		void checkPersonMissed();
-		bool personisFound();		
+		bool personisFound();
 
 		bool showGameResultTimeIsFinished();
 		void gotoResultScreen();
 		
-		void drawGame();				
+		void drawGame();
 		void drawPreReadyCounterBox();
 		void drawPoseSilhouette();
 		
@@ -77,21 +78,19 @@ class MainGameScreen : public Location
 		void removeTimers();
 		void removeHandlers();
 
-		ci::signals::connection comeBackBtnSignal;
-		ci::signals::connection cameraConnectionSignal;
-		ci::signals::connection kinectConnectionSignal;
-		ci::signals::connection kinectMissPersonSignal;
-		ci::signals::connection kinectFindPersonSignal;
-		ci::signals::connection gotoResultScreenSignal;	
-		ci::signals::connection photoFlashSignal;	
-		
+		connection comeBackBtnSignal;
+		connection cameraConnectionSignal;
+		connection kinectConnectionSignal;
+		connection kinectMissPersonSignal;
+		connection kinectFindPersonSignal;
+		connection gotoResultScreenSignal;
+		connection photoFlashSignal;
 
 		void gotoFirstScreen();
 		bool isLeaveAnimation;
 		bool deviceError;
-
-		ci::Font debugFont26, debugFont46;
-		ci::Timer _missedTimer;		
+		
+		Timer _missedTimer;
 		ButtonTex *comeBackBtn;
-		ci::Anim<float> alphaFinAnimate, alphaFlashAnim;
+		Anim<float> alphaFinAnimate, alphaFlashAnim;
 };

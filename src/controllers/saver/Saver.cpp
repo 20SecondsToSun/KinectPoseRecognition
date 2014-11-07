@@ -135,6 +135,7 @@ void Saver::savePoseIntoBase(Pose* pose)
 
 bool Saver::saveImageIntoBase(string mails,  ci::Surface  image)
 {
+	bool isSave = true;
 	time_t     now = time(0);
 	struct tm  tstruct;
 	tstruct = *localtime(&now);
@@ -166,7 +167,9 @@ bool Saver::saveImageIntoBase(string mails,  ci::Surface  image)
 			image_path = getAppPath()/dirname/(to_string(getImagesInDir(dir_path))+".jpg");
 			//console()<<"image path:: "<<image_path<<endl;
 			writeImage( image_path, image);
-		}		
+		}	
+		else
+			isSave = false;
 	}
 	else
 	{		
@@ -178,14 +181,14 @@ bool Saver::saveImageIntoBase(string mails,  ci::Surface  image)
 				//console()<<"image path:: "<<image_path<<endl;
 				writeImage( image_path, image);
 			}
+			else
+				isSave = false;
 		}
-		else
-		{
-			//console()<<"dir not created error!!!! "<<endl;
-		}		
+		else		
+			isSave = false;
 	}
 
-	return true;
+	return isSave;
 }
 
 bool Saver::checkFile(fs::path filepath, string mails)

@@ -31,7 +31,7 @@ class ComicsScreen
 		}
 
 		void show()
-		{			
+		{
 			timeline().apply( &alphaAnim, 0.0f, 1.0f, 0.9f, EaseOutCubic() );
 		}
 
@@ -43,7 +43,7 @@ class ComicsScreen
 			}
 			else
 			{
-				gl::color(ColorA(1, 1, 1, alphaAnim));	
+				gl::color(ColorA(1.0f, 1.0f, 1.0f, alphaAnim));	
 				gl::draw(failImage);
 				gl::color(Color::white());
 			}

@@ -121,8 +121,7 @@ void KinectPoseRecognitionApp::setup()
 		helpTex1 = loadImage(getAppPath()/"data/poses/test/Cat0.png");		
 		helpTex2 = loadImage(getAppPath()/"data/poses/test/Cat1.png");		
 		helpTex3 = loadImage(getAppPath()/"data"/"poses"/"test"/"Cat2.png");	
-		helpTex4 = loadImage(getAppPath()/"data"/"poses"/"test"/"Cat3.png");
-		console()<<"test ok"<<endl;
+		helpTex4 = loadImage(getAppPath()/"data"/"poses"/"test"/"Cat3.png");		
 		helpForRec = NULL;
 		cameraCanon().setup();
 		cameraCanon().live();

@@ -6,6 +6,7 @@
 
 using namespace ci;
 using namespace gl;
+using namespace std;
 
 class BubbleAnimator
 {
@@ -18,13 +19,13 @@ class BubbleAnimator
 
 		struct bubble
 		{
-			ci::Vec2f pos;
-			ci::gl::Texture texture;
+			Vec2f pos;
+			Texture texture;
 		};
-		std::vector<bubble> bubbleVector;
-		ci::Timer timer;
-		int index;
-		ci::Anim<float>	 alphaBubble;
+		vector<bubble> bubbleVector;
+		Timer timer;
+		int   index;
+		Anim<float>	 alphaBubble;
 
 		void setup()
 		{

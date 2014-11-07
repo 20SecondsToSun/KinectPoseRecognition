@@ -241,6 +241,29 @@ void CinderCanon::endLiveView()
     bIsLiveView = false;
 }
 
+void CinderCanon::extendShutDownTimer()
+{
+	try 
+	{
+		// always causes EDS_ERR_DEVICE_BUSY, even with live view disabled or a delay
+		// but if it's not here, then the camera shuts down after 5 minutes.
+		console()<<"try to extended timer !!!!"<<endl;
+		auto err =sendCommand(mCamera, kEdsCameraCommand_ExtendShutDownTimer, 0);
+
+		if(err == EDS_ERR_OK)
+		{
+			console()<<"NO SHUT OFF!!!!"<<endl;
+		}	
+		else
+			console()<<"((((((((("<<endl;
+	} 
+	catch (...) 
+	{
+		console() << "Error while sending kEdsCameraCommand_ExtendShutDownTimer with Eds::SendStatusCommand: " << endl;
+	}
+}
+
+
 EdsError CinderCanon::downloadEvfData( EdsCameraRef camera )
 {
     if( !bIsLiveView ){
@@ -484,6 +507,16 @@ EdsError EDSCALLBACK CinderCanon::handleStateEvent(
             // Connection with camera lost (maybe power off?)
 		case kEdsStateEvent_Shutdown: {
 //			shutdown();
+			console()<<"CAMERA SHUTDOWN!!!!!!!!!!!!"<<endl<<getElapsedSeconds()<<endl;
+			if (SingletonPhotoHandler)         
+			{
+				SingletonPhotoHandler->handleStateEvent(inEvent);
+			}
+			break;
+		}
+
+		case kEdsStateEvent_WillSoonShutDown: {
+			console()<<"WILL SOOOOOOOOON OFFFFFFFFFFFFFFFFFFFFFFF!!!!!!!!!!!!"<<endl<<getElapsedSeconds()<<endl;
 			if (SingletonPhotoHandler)         
 			{
 				SingletonPhotoHandler->handleStateEvent(inEvent);

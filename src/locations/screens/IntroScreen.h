@@ -45,17 +45,17 @@ class IntroScreen : public Location
 					 START_GAME,
 					 ANIMATE_TO_SHOW_INVITE};
 
-		LocationEngine*			_game;
-		static IntroScreen		IntroScreenState;	
+		LocationEngine*	 _game;
+		static IntroScreen IntroScreenState;	
 
 		ci::signals::connection startInstructionBtnSignal;
 		ci::signals::connection startGameBtnSignal;
 		ci::signals::connection comeBackBtnSignal;
 
-		int						state, nextState;
-		std::string				debugString;
+		int state, nextState;
+		string debugString;
 	
-		ci::gl::Texture			 logo, text1, cat2, btnFon, paws,  instructionImage, lapaTv;
+		Texture logo, text1, cat2, btnFon, paws,  instructionImage, lapaTv;
 	
 		ButtonTex *startInstructionBtn, *startGameBtn, *comeBackBtn;
 

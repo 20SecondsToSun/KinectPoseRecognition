@@ -1,12 +1,12 @@
 {
    "standID" : 1,
-   "netConnection": true,
+   "netConnection": false,
    "algo": 1,
    "minError": 30,
    "maxError": 50,
    "drawPoints": true,
    "fullskelet": true,
-   "percents" : [0.05, 0.15, 0.05, 0.05, 0.15, 0.05, 0.05, 0.15, 0.05, 0.1, 0.05, 0.1]
+   "percents" : [0.05, 0.05, 0.05, 0.05, 0.15, 0.05, 0.05, 0.15, 0.05, 0.15, 0.05, 0.15]
 }
 
 // шея

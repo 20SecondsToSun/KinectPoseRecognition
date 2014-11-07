@@ -10,9 +10,6 @@ MainGameScreen MainGameScreen::MainGameScreenState;
 
 void MainGameScreen::setup()
 {
-	debugFont26 = *fonts().getFont("Helvetica Neue", 26);
-	debugFont46 = *fonts().getFont("Helvetica Neue", 66);	
-
 	cameraCanon().setup();
 	cameraCanon().live();
 
@@ -23,6 +20,7 @@ void MainGameScreen::setup()
 	hintScreen().setup();
 	comicsScreen().setup();
 
+	/////////////////////////////////
 	Texture comeBackBtnTex   = *AssetManager::getInstance()->getTexture( "images/diz/toStart.png" );
 		
 	comeBackBtn = new ButtonTex(comeBackBtnTex,  "backtoStart");
@@ -181,8 +179,9 @@ void MainGameScreen::drawDeviceError()
 		if(!_missedTimer.isStopped()) 
 				_missedTimer.stop();		
 	}
-	
-	Utils::textFieldDraw(errorDeviceMessage, &debugFont26, Vec2f(10.0f, 10.0f), ColorA(1.f, 1.f, 1.f, 1.f));
+
+	Texture errorTexure = Utils::getTextField(errorDeviceMessage, fonts().getFont("MaestroC", 114),  Color::white());	
+	gl::draw(errorTexure, Vec2f(0.5f*(1920.0f - errorTexure.getWidth()), 348.0f));
 }
 
 void MainGameScreen::drawGame() 

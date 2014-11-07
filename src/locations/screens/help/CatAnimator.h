@@ -6,6 +6,7 @@
 
 using namespace ci;
 using namespace gl;
+using namespace std;
 
 class CatAnimator
 {
@@ -18,14 +19,14 @@ class CatAnimator
 
 		struct cat
 		{
-			ci::Vec2f  startPos, finPos, curPos;
-			ci::gl::Texture texture;
+			Vec2f  startPos, finPos, curPos;
+			Texture texture;
 		};
 
-		std::vector<cat> catVector;
-		ci::Timer timer;
-		int index;
-		ci::Anim<ci::Vec2f>	 curPos;
+		vector<cat> catVector;
+		Timer timer;
+		int   index;
+		Anim<Vec2f>	 curPos;
 
 		void setup()
 		{
@@ -34,7 +35,7 @@ class CatAnimator
 				cat item;
 				item.finPos = Vec2f(0.0f, 0.0f);
 				item.startPos = Vec2f(0.0f, 0.0f);
-				item.texture   = *AssetManager::getInstance()->getTexture( "images/diz/introcat/cat"+to_string(i+1)+".png" );
+				item.texture   = *AssetManager::getInstance()->getTexture( "images/diz/introcat/cat" + to_string(i+1) + ".png" );
 				catVector.push_back(item);
 			}
 

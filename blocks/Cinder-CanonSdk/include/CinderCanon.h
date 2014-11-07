@@ -78,6 +78,7 @@ public:
     
     bool setup(PhotoHandler * photoHandler, int cameraIndex = 0 );
     void shutdown();
+	void extendShutDownTimer();
     
     EdsError startLiveView();
     void endLiveView();

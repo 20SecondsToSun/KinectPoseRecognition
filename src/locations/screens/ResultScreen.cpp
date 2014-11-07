@@ -51,8 +51,6 @@ void ResultScreen::setup()
 
 	nothingCatTex           = *AssetManager::getInstance()->getTexture("images/serverScreen/nothingCat.png");
 
-
-	
 	photoRamki().setup();
 	socialPopup().setup();
 	emailPopup().setup();
@@ -74,8 +72,7 @@ void ResultScreen::init( LocationEngine* game)
 
 	qrCode.reset();
 	socialPopup().reset();
-	server().reset();
-	
+	server().reset();	
 
 	alphaSocialAnimate = 0.0f;
 	alphaEmailAnimate = 0.0f;
@@ -141,7 +138,6 @@ void ResultScreen::photoLoadedFromDirHandler()
 	{
 		photoLoadeFromDirErrorHandler();
 	}
-
 }
 
 void ResultScreen::photoLoadeFromDirErrorHandler()
@@ -312,7 +308,8 @@ void ResultScreen::initPopup(int type)
 		state = POPUP_EMAIL;	
 
 		emailPopup().show();
-		closeEmailPopupSignal = emailPopup().closeEvent.connect(boost::bind(&ResultScreen::closeEmailPopup, this));		
+		closeEmailPopupSignal = emailPopup().closeEvent.connect(boost::bind(&ResultScreen::closeEmailPopup, this));	
+		errorSavingEmailPopupSignal = emailPopup().errorSavingToBaseEvent.connect(boost::bind(&ResultScreen::errorSavingEmailHandler, this));		
 		disconnectButtons();
 	}
 	else if (type == popupTypes::VKONTAKTE || type == popupTypes::FACEBOOK)
@@ -323,6 +320,7 @@ void ResultScreen::initPopup(int type)
 		socialPopup().show(type);	
 		disconnectButtons();
 		closeSocialPopupSignal = socialPopup().closeEvent.connect(boost::bind(&ResultScreen::closeSocialPopup, this));
+		errorSavingEmailPopupSignal = emailPopup().errorSavingToBaseEvent.connect(boost::bind(&ResultScreen::errorSavingEmailHandler, this));		
 	}
 }
 
@@ -341,15 +339,34 @@ void ResultScreen::closeEmailPopup()
 	drawHandler= &ResultScreen::drawNothing;
 	state = DEFAULT_STATE;		
 	closeEmailPopupSignal.disconnect();	
+	errorSavingEmailPopupSignal.disconnect();	
 	emailPopup().disconnectAll();
 	connectButtons();	
+}
+
+void ResultScreen::errorSavingEmailHandler()
+{
+	drawHandler = &ResultScreen::drawErrorScreen;
+	state = ERROR_STATE;
+
+	canShowResultImages = false;	
+	isButtonsInit = false;
+
+	closeEmailPopupSignal.disconnect();	
+	errorSavingEmailPopupSignal.disconnect();	
+	emailPopup().disconnectAll();
+	
+	comeBackSignal = comeBackBtn->mouseUpEvent.connect(boost::bind(&ResultScreen::closeScreenHandler, this));
+	backToStartSignal = backToStartBtn->mouseUpEvent.connect(boost::bind(&ResultScreen::backToStartHandler, this));
+
+	comeBackTimerStart();
 }
 
 void ResultScreen::closeSocialPopup()
 {
 	state = DEFAULT_STATE;	
 	drawHandler= &ResultScreen::drawNothing;
-	closeSocialPopupSignal.disconnect();
+	closeSocialPopupSignal.disconnect();	
 	socialPopup().disconnectAll();
 	connectButtons();	
 }
@@ -541,7 +558,7 @@ void ResultScreen::drawUpsetScreen()
 
 void ResultScreen::drawErrorScreen() 
 {
-	Utils::textFieldDraw("Что-то пошло не так...\nЕсли ситуация повторится,\nперезапустите программу",  fonts().getFont("MaestroC", 114), Vec2f(510.f, 348.0f), ColorA(1.f, 1.f, 1.f, 1.f));
+	Utils::textFieldDraw("Что-то пошло не так...\nЕсли ситуация повторится,\nперезапустите программу",  fonts().getFont("MaestroC", 114), Vec2f(510.f, 348.0f), Color::white());
 	comeBackBtn->draw();
 	backToStartBtn->draw();
 }
@@ -566,6 +583,7 @@ void ResultScreen::disconnectListeners()
 
 	closeSocialPopupSignal.disconnect();
 	closeEmailPopupSignal.disconnect();
+	errorSavingEmailPopupSignal.disconnect();
 	sendToMailSignal.disconnect();	
 	emailPopup().disconnectAll();
 	socialPopup().disconnectAll();

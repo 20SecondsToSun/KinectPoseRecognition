@@ -59,6 +59,11 @@ EdsError CanonCamera::startLiveView() {
 void CanonCamera::endLiveView() {
     mCanon.endLiveView();
 }
+
+void CanonCamera::extendShutDownTimer() {
+    mCanon.extendShutDownTimer();
+}
+
 void CanonCamera::toggleLiveView() {
     if(isLiveViewing()) mCanon.endLiveView();
     else mCanon.startLiveView();

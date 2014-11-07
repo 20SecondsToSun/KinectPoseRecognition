@@ -259,5 +259,12 @@ void CameraAdapter::handleStateEvent(EdsUInt32 inEvent)
 	{
 		mCamera.endLiveView();
 		isConnected = false;
-	}	
+	}
+	else if (kEdsStateEvent_WillSoonShutDown == inEvent)
+	{
+		//if (mCamera.isBusy())
+		console()<<"mCamera.isBusy() "<<mCamera.isBusy()<<endl;
+
+		mCamera.extendShutDownTimer();
+	}
 }

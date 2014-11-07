@@ -13,15 +13,13 @@ void EmailForm::setup()
 	emailLineTex = AssetManager::getInstance()->getTexture( "keyboard/emailLine.png"  );
 	closeEmailTex = gl::Texture( loadImage( loadAsset("keyboard/closeEmail.png"  )));
 	deleteAllTex  = gl::Texture( loadImage(getAssetPath("keyboard/deleteAll.png"  )));
-	addEmailTex   = gl::Texture( loadImage( loadAsset( "keyboard/addEmail.png"  )));	
-
+	addEmailTex   = gl::Texture( loadImage( loadAsset( "keyboard/addEmail.png"  )));
 
 	emailOk   = AssetManager::getInstance()->getTexture("images/social/email_ok.png" );
 	emailErr  = AssetManager::getInstance()->getTexture("images/social/email_err.png" );	
 	preloader = AssetManager::getInstance()->getTexture("images/social/preloader.png" );
 	blue_bg   = AssetManager::getInstance()->getTexture("images/social/blue_bg.png" );
-	red_bg    = AssetManager::getInstance()->getTexture("images/social/red_bg.png" );
-	
+	red_bg    = AssetManager::getInstance()->getTexture("images/social/red_bg.png" );	
 
 	emailInputFont			= *fonts().getFont("Myriad Pro", 70);
 	emailAddFont			= *fonts().getFont("Myriad Pro", 26);
@@ -58,13 +56,11 @@ void EmailForm::initHandlers()
 	keyboardTouchSignal = touchKeyboard().keyboardTouchSignal.connect(boost::bind(&EmailForm::keyboardTouchSignalHandler, this));
 	closeBtnSignal =  closeEmailBtn->mouseDownEvent.connect(boost::bind(&EmailForm::closeSignalHandler, this));
 	deleteAllLettersSignal = deleteAllLettersBtn->mouseDownEvent.connect(boost::bind(&EmailForm::deleteAllLettersHandler, this));
-	addEmailSignal		=  addEmailBtn->mouseDownEvent.connect(boost::bind(&EmailForm::addEmailHandler, this));
-	
+	addEmailSignal		=  addEmailBtn->mouseDownEvent.connect(boost::bind(&EmailForm::addEmailHandler, this));	
 }
 
 void EmailForm::MouseDown( MouseEvent &event)
 {
-	console()<<" mode ::  "<<mode<<endl;
 	if (mode == SENDING_READY)
 	{
 		hide();
@@ -149,9 +145,12 @@ void EmailForm::sendToEmailHandler()
 	}
 	else
 	{
-		savePhotoToLocalBase();
-		mode = SENDING_READY;
-		MouseUpCon	   = getWindow()->getSignalMouseDown().connect(   std::bind( &EmailForm::MouseDown,   this, std::placeholders::_1 ) );
+		if (savePhotoToLocalBase())
+		{
+			setSendingReadyHandlers();
+		}
+		else
+			errorSavingToBaseEvent();
 	}
 }
 
@@ -161,23 +160,33 @@ void EmailForm::serverLoadingEmailHandler()
 
 	if (server().isEmailSent == false)
 	{	
-		savePhotoToLocalBase();
+		if (savePhotoToLocalBase())
+		{
+			setSendingReadyHandlers();
+		}
+		else
+			errorSavingToBaseEvent();
 	}
 	else
 	{
 		console()<<"SERVER SAVE MAILS!!!!! "<<endl;
+		setSendingReadyHandlers();
 	}
+}
 
+void EmailForm::setSendingReadyHandlers()
+{
 	mode = SENDING_READY;
 	MouseUpCon	   = getWindow()->getSignalMouseDown().connect(   std::bind( &EmailForm::MouseDown,   this, std::placeholders::_1 ) );
 }
 
-void EmailForm::savePhotoToLocalBase()
+bool EmailForm::savePhotoToLocalBase()
 {
-	console()<<"SERVER ERROR. SAVE LOCALY "<<emailPopup().getEmailsInString()<<endl;
+	console()<<"SERVER ERROR. TRY TO SAVE LOCALY "<<emailPopup().getEmailsInString()<<endl;
 	bool status = saver().saveImageIntoBase(emailPopup().getEmailsInString(), PlayerData::finalImageSurface);
+	console()<<" status------------>  "<<status<<endl;
+	return status;
 }
-
 
 std::vector<std::string> EmailForm::getEmails()
 {
@@ -237,7 +246,6 @@ void EmailForm::addEmailHandler()
 		mode = EMAIL_ERROR;
 		disconnectAll();
 		MouseUpCon	   = getWindow()->getSignalMouseDown().connect(   std::bind( &EmailForm::MouseDown,   this, std::placeholders::_1 ) );
-		
 	}
 	else
 	{
@@ -372,8 +380,7 @@ void EmailForm::draw()
 			deleteAllLettersBtn->draw();
 
 		closeEmailBtn->draw();
-	gl::popMatrices();	
-
+	gl::popMatrices();
 
 	if (mode == EMAIL_ERROR)
 	{

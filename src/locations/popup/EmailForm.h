@@ -17,7 +17,6 @@
 #include "Saver.h"
 #include "PlayerData.h"
 
-
 class EmailForm
 {
 	public:
@@ -28,7 +27,7 @@ class EmailForm
 		void draw();
 		void disconnectAll();
 
-		boost::signals2::signal<void(void)> closeEvent;
+		boost::signals2::signal<void(void)> closeEvent, errorSavingToBaseEvent;
 		std::vector<std::string> getEmails();
 		std::string EmailForm::getEmailsInString();
 
@@ -66,8 +65,9 @@ class EmailForm
 		void closedHandler();
 
 		void sendToEmailHandler();
-		void savePhotoToLocalBase();
+		bool savePhotoToLocalBase();
 		void serverLoadingEmailHandler();
+		void setSendingReadyHandlers();
 		
 		void addCurrentEmail(std::string _email);
 

@@ -1,4 +1,5 @@
 #pragma once
+
 #include "cinder/Timeline.h"
 #include "cinder/gl/Texture.h"
 #include "cinder/Timer.h"
@@ -19,6 +20,7 @@
 
 using namespace ci;
 using namespace ci::app;
+using namespace ci::signals;
 using namespace gl;
 using namespace std;
 
@@ -54,7 +56,7 @@ class ResultScreen : public Location
 		enum states {	INIT_STATE,
 					PHOTO_LOADING_TO_SERVER,
 					PHOTO_CREATE_COMICS, 
-					PHOTO_LOADING_FROM_DIRECTORY,					
+					PHOTO_LOADING_FROM_DIRECTORY,
 					SERVER_EMAIL_ERROR,
 					SERVER_INTERNET_ERROR,
 					SORRY_GO_HOME,
@@ -69,8 +71,8 @@ class ResultScreen : public Location
 					DEFAULT_STATE
 				};
 
-		void	animationLeaveLocationFinished();	
-		void	animationLeaveLocationFinished1();	
+		void	animationLeaveLocationFinished();
+		void	animationLeaveLocationFinished1();
 		void	animationPhotoSavedFinished();
 		void	animationStartFinished();
 		void	animationShowChekConnection();
@@ -98,6 +100,7 @@ class ResultScreen : public Location
 		void	serverLoadingPhotoHandler();	
 		void	serverLoadingEmailHandler();
 		void	serverTimeoutHandler();
+		void    errorSavingEmailHandler();
 
 		void	connectButtons();
 		void	disconnectButtons();
@@ -120,32 +123,32 @@ class ResultScreen : public Location
 		void    backToStartHandler();
 		void	sendToEmailBtnHandler();
 	
-		ci::signals::connection serverSignalLoadingCheck;
-		ci::signals::connection serverSignalLoadingEmailCheck;
-		ci::signals::connection photoLoadingFromDirSignal;
-		ci::signals::connection photoLoadingFromDirErrorSignal;
-		ci::signals::connection closeEmailPopupSignal;
-		ci::signals::connection closeSocialPopupSignal;
-		ci::signals::connection backToStartSignal;
+		connection serverSignalLoadingCheck;
+		connection serverSignalLoadingEmailCheck;
+		connection photoLoadingFromDirSignal;
+		connection photoLoadingFromDirErrorSignal;
+		connection closeEmailPopupSignal;
+		connection closeSocialPopupSignal;
+		connection errorSavingEmailPopupSignal;
+		connection backToStartSignal;
 
-		ci::signals::connection	comeBackSignal, comeBackSignal1;
-		ci::signals::connection	fbSignal;
-		ci::signals::connection vkSignal;
-		ci::signals::connection mailSignal;
-		ci::signals::connection serverTimeoutCheck;
-		ci::signals::connection sendToMailSignal;
-		ci::signals::connection serverSignalConnectionCheck;
+		connection	comeBackSignal, comeBackSignal1;
+		connection	fbSignal;
+		connection vkSignal;
+		connection mailSignal;
+		connection serverTimeoutCheck;
+		connection sendToMailSignal;
+		connection serverSignalConnectionCheck;
 
-		ci::Anim<float> alphaAnimate, alphaFinAnimate;	
-		ci::Anim<float> alphaSocialAnimate, alphaEmailAnimate;		
+		Anim<float> alphaAnimate, alphaFinAnimate;
+		Anim<float> alphaSocialAnimate, alphaEmailAnimate;
 
 		bool canShowResultImages, isButtonsInit, isLeaveAnimation;
 
-		QRcode qrCode;	
+		QRcode qrCode;
 
 		Texture	postPhotoTextTex, emailtPhotoTextTex;
-		Texture	playMoreTex, nothingCatTex;	
-				
+		Texture	playMoreTex, nothingCatTex;
 
 		void (ResultScreen::* drawHandler)();
 };

@@ -212,7 +212,7 @@ void KinectAdapter::draw()
 	#endif
 
 	#ifdef debug	
-		drawKinectCameraColorSurface();
+		//drawKinectCameraColorSurface();
 	#endif
 }
 

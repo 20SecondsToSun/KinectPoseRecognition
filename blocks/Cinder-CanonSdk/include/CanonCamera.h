@@ -54,6 +54,7 @@ public:
     void reset();
     void stop();
     void shutdown();
+	void extendShutDownTimer();
     
     EdsError startLiveView();
     void endLiveView();
