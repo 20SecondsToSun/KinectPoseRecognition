@@ -78,7 +78,7 @@ void ResultScreen::init( LocationEngine* game)
 	alphaEmailAnimate = 0.0f;
 	alphaFinAnimate = 0.0f;
 
-	#ifdef debug
+/*	#ifdef debug
 		PlayerData::score = 3;
 		PlayerData::playerData[0].pathHiRes = "level1.jpg";
 		PlayerData::playerData[1].pathHiRes = "level2.jpg";
@@ -98,7 +98,7 @@ void ResultScreen::init( LocationEngine* game)
 			PlayerData::playerData[i].isSuccess = true;	
 			PlayerData::playerData[i].storyCode = i;	
 		}
-	#endif	
+	#endif*/	
 
 	if(PlayerData::score != 0)
 	{

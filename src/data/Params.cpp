@@ -6,7 +6,7 @@ float	Params::maxErrorBetweenJoints = 40.0f;
 float	Params::minErrorBetweenJoints = 10.0f;
 
 float	Params::percentForMatching = 0.75f;
-float 	Params::comeBackHomeTime = 40;
+float 	Params::comeBackHomeTime = 40.0f;
 bool	Params::isNetConnected = true;
 bool	Params::photoFromDirError = false;
 
@@ -22,44 +22,41 @@ bool	Params::isFullSkelet = true;
 bool	Params::isPointsDraw = true;
 
 int	Params::computeMistakeAlgo = 1;
+int	Params::standID = -1;
 
 float	Params::weightJoints[12];
 
-
-int	Params::standID = -1;
-
-fs::path		Params::getPhotosStorageDirectory()
+fs::path Params::getPhotosStorageDirectory()
 {
 	return getAppPath()/"Documents"/"Canon Pictures";
 }
 
-fs::path		Params::getTempStorageDirectory()
+fs::path Params::getTempStorageDirectory()
 {
 	return getAppPath()/"data"/"temp";
 }
 
-fs::path		Params::getTempPhotoSavePath(int i)
+fs::path Params::getTempPhotoSavePath(int i)
 {
 	return Params::getTempStorageDirectory() / fs::path( "level"+to_string(i+1) +".jpg");	
 }
 
-fs::path		Params::getFinalImageStoragePath()
+fs::path Params::getFinalImageStoragePath()
 {
 	return getAppPath()/"data"/"temp"/ fs::path( "finalimage.jpg");
 }
 
-fs::path		Params::getConfigStoragePath()
+fs::path Params::getConfigStoragePath()
 {
 	return getAppPath()/"data"/ fs::path( "data.txt");
 }
 
-fs::path		Params::getBaseStoragePath()
+fs::path Params::getBaseStoragePath()
 {
 	return getAppPath()/"data"/poseParams::JSON_STORAGE_FOLDER;
 }
 
-fs::path		Params::getPoseSavingPath()
+fs::path Params::getPoseSavingPath()
 {
 	return getAppPath()/"data/poses/savingPose";
 }
-

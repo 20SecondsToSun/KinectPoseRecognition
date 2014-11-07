@@ -18,7 +18,7 @@ void PhotoMaker::loadFinalImages()
 		{
 			if (!PlayerData::playerData[i].isFocusError)
 			{
-				string  url = PlayerData::getTexPath(i) ;
+				string  url = PlayerData::getTexPath(i);
 				Texture tex = ph::fetchTexture(url);
 
 				if (tex)
@@ -34,7 +34,7 @@ void PhotoMaker::loadFinalImages()
 		}
 	}
 
-	if (totalLoaded == PlayerData::score)
+	if (totalLoaded == PlayerData::photosWithoutError)
 	{
 		photoLoadEvent();
 		stopTimer();
@@ -94,15 +94,32 @@ bool PhotoMaker::resizeFinalImages()
 	{
 		if (PlayerData::playerData[i].isSuccess)
 		{
-			Texture photoFromCameraTex = PlayerData::playerData[i].imageTexture;
+			Texture photoFromCameraTex;
+
+			if (!PlayerData::playerData[i].isFocusError)
+			{
+				photoFromCameraTex = PlayerData::playerData[i].imageTexture;
+			}
+			else
+			{
+				photoFromCameraTex = PlayerData::playerData[i].screenshot;
+			}
+
 			Surface photoFromCameraSurface = Surface(photoFromCameraTex);
 		
 			Surface cadrSurface = Surface(getWindowWidth(),  getWindowHeight(), true);
-			cadrSurface.copyFrom(photoFromCameraSurface, Area(0, 0, getWindowWidth(), getWindowHeight()-trans.y), trans);
+
+			if (!PlayerData::playerData[i].isFocusError)
+			{
+				cadrSurface.copyFrom(photoFromCameraSurface, Area(0, 0, getWindowWidth(), getWindowHeight()-trans.y), trans);
+			}
+			else
+			{
+				cadrSurface = Surface(photoFromCameraTex);
+			}
+
 			cadrSurface = Utils::resizeScreenshot(cadrSurface, (int32_t)BIG_PHOTO_WIDTH, (int32_t)BIG_PHOTO_HEIGHT);
 
-			//Surface comicsSurface = Surface();
-			//comicsSurface = Utils::resizeScreenshot(comicsSurface, (int32_t)BIG_PHOTO_WIDTH, (int32_t)BIG_PHOTO_HEIGHT);
 			try
 			{
 				drawToFBO(cadrSurface, recognitionGame().getPoseImageById(PlayerData::playerData[i].storyCode));
@@ -112,10 +129,11 @@ bool PhotoMaker::resizeFinalImages()
 				fboCrashed = true;
 				break;
 			}
-			//mFbo.getTexture().setFlipped(true);
+		
 			Surface comicsImage = Surface(mFbo.getTexture());
 
-			Surface displaySurface;			
+			Surface displaySurface;
+
 			if (i == 0)
 			{
 				displaySurface = Utils::resizeScreenshot(comicsImage, (int32_t)560, (int32_t)314);
@@ -160,19 +178,17 @@ void PhotoMaker::drawToFBO(Surface img, ci::gl::Texture comicsImage)
       mFbo.bindFramebuffer();
 	  Area saveView = getViewport();
       gl::setViewport(mFbo.getBounds());
+
 	  gl::pushMatrices();
-      gl::setMatricesWindow( mFbo.getSize(), false);
-      gl::clear( Color::black());
-	  gl::enableAlphaBlending();  
-	  gl::translate((float)BIG_PHOTO_WIDTH, 0.0f);
-	  gl::scale(-1.0f, 1.0f);
-	  gl::draw( img );		
+		  gl::setMatricesWindow( mFbo.getSize(), false);
+		  gl::clear( Color::black());
+		  gl::enableAlphaBlending();  
+		  gl::translate((float)BIG_PHOTO_WIDTH, 0.0f);
+		  gl::scale(-1.0f, 1.0f);
+		  gl::draw( img );		
 	  gl::popMatrices();
 
 	  gl::pushMatrices();
-		 // gl::translate(0.0f, 0.5*(float)BIG_PHOTO_HEIGHT);
-		 
-		 // gl::translate(0.0f, (float)BIG_PHOTO_HEIGHT);
 		 gl::setMatricesWindow( mFbo.getSize(), false);
 		 gl::scale((float)BIG_PHOTO_WIDTH/getWindowWidth(), (float)BIG_PHOTO_WIDTH/getWindowWidth());
 		 gl::draw(comicsImage);

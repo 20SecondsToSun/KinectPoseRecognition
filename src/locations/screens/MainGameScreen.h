@@ -46,7 +46,7 @@ class MainGameScreen : public Location
 
 	private:
 
-		static const int MAX_MISSED_TIME	= 20;
+		static const int MAX_MISSED_TIME = 20;
 
 		LocationEngine* _game;
 		static MainGameScreen MainGameScreenState;
@@ -58,6 +58,8 @@ class MainGameScreen : public Location
 
 		bool showGameResultTimeIsFinished();
 		void gotoResultScreen();
+
+		void cameraConnectedHandler();
 		
 		void drawGame();
 		void drawPreReadyCounterBox();

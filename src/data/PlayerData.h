@@ -26,7 +26,8 @@ class PlayerData
 		};
 
 		static OnePlayerPoseData playerData[POSE_IN_GAME_TOTAL];
-		static int	score;
+		static int score;
+		static int photosWithoutError;
 
 		static void initData();
 		static void setup();

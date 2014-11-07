@@ -37,18 +37,16 @@ class KinectBase
 	
 		MsKinect::DeviceRef		mDevice;
 		MsKinect::DeviceOptions deviceOptions;
-		MsKinect::Frame			mFrame;	
-
-		long frameID, lastFrameId;
-
-		void	swapTracking()	;		
+		MsKinect::Frame			mFrame;
+	
+		void	swapTracking();
 		void	stopTracking();
 		void	startTracking();
 
 		ci::gl::TextureRef	getColorTexRef();
 		ci::gl::TextureRef	getDepthTexRef();
-		ci::gl::Texture getColorTex();		
-		ci::Surface8u getSurface8u();		
+		ci::gl::Texture getColorTex();
+		ci::Surface8u getSurface8u();
 		ci::Channel16u getDepthChannel16u();
 			
 		Rectf	getColorResolutionRectf();
@@ -67,7 +65,7 @@ class KinectBase
 		float	headScale;
 		int		viewWidth, viewHeight;
 		float	viewShiftX, viewShiftY; 
-		bool	isTracking;			
+		bool	isTracking;
 		
 		ci::Timer	reconnectTimer;
 
@@ -77,7 +75,6 @@ class KinectBase
 	protected:
 		bool	_isConnected;
 
-	private:		
-		int32_t	currentKinectTiltInDegrees;	
-		
+	private:
+		int32_t	currentKinectTiltInDegrees;
 };

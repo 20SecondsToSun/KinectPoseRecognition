@@ -24,7 +24,7 @@ void MainGameScreen::setup()
 	Texture comeBackBtnTex   = *AssetManager::getInstance()->getTexture( "images/diz/toStart.png" );
 		
 	comeBackBtn = new ButtonTex(comeBackBtnTex,  "backtoStart");
-	comeBackBtn->setScreenField(Vec2f(0.0f, 1080.0f - 169.0f));
+	comeBackBtn->setScreenField(Vec2f(0.0f, 958.0f));
 	comeBackBtn->setDownState(comeBackBtnTex);
 }
 
@@ -33,12 +33,12 @@ void MainGameScreen::init( LocationEngine* game)
 	_game = game;	
 
 	isLeaveAnimation = false;
-	deviceError = false;	
+	deviceError = false;
 
 	comeBackBtnSignal	   = comeBackBtn->mouseDownEvent.connect(boost::bind(&MainGameScreen::gotoFirstScreen, this));
 
 	cameraCanon().reset();
-	cameraConnectionSignal = cameraCanon().cameraConnectedEvent.connect(boost::bind(&MainGameScreen::gotoFirstScreen, this));
+	cameraConnectionSignal = cameraCanon().cameraConnectedEvent.connect(boost::bind(&MainGameScreen::cameraConnectedHandler, this));
 
 	kinectMissPersonSignal = kinect().kinectMissPersonEvent.connect(boost::bind(&MainGameScreen::kinectMissPersonHandler, this));	
 	kinectConnectionSignal = kinect().kinectConnectedEvent.connect(boost::bind(&MainGameScreen::gotoFirstScreen, this));
@@ -59,19 +59,22 @@ void MainGameScreen::init( LocationEngine* game)
 	recognitionGame().initnew();
 }
 
+void MainGameScreen::cameraConnectedHandler() 
+{
+	gotoFirstScreen();
+}
+
 void MainGameScreen::gotoFirstScreen() 
 {	
-	deviceError = !cameraCanon().isConnected || !kinect().isConnected();
-
-	if(!isLeaveAnimation && !deviceError)
+	if(!isLeaveAnimation && cameraCanon().isConnected && kinect().isConnected())
 	{
 		animationLeaveLocationPrepare();
-
+		alphaFinAnimate = 0.0f;
 		timeline().apply( &alphaFinAnimate,0.0f, 1.0f, 0.9f, EaseOutCubic() ).finishFn( [ & ]( )
 		{
 			_game->freezeLocation = false;
 			_game->changeState(IntroScreen::Instance());
-		});
+		}).delay(0.5);
 	}
 }
 
@@ -110,7 +113,8 @@ void MainGameScreen::gotoResultScreen()
 
 void MainGameScreen::photoFlashHandler() 
 {
-	timeline().apply(&alphaFlashAnim, 1.0f,  0.0f, 1.1f , EaseInCubic()).delay(0.4).finishFn( [ & ]( )
+	alphaFlashAnim = 1.0f;
+	timeline().apply(&alphaFlashAnim, 1.0f,  0.0f, 1.1f , EaseInCubic()).delay(0.4f).finishFn( [ & ]( )
 	{
 		recognitionGame().flashAnimationFinished();
 	});	
@@ -126,26 +130,28 @@ void MainGameScreen::animationLeaveLocationPrepare()
 
 void MainGameScreen::update() 
 {
-	cameraCanon().update();	
+	cameraCanon().update();
 	kinect().update();
 
-	deviceError = !cameraCanon().isConnected || !kinect().isConnected();
-
+	if(!deviceError)
+		deviceError = !cameraCanon().isConnected || !kinect().isConnected();
+	
 	if(deviceError == false)	
 		recognitionGame().update();
+	//else
 }
 
 void MainGameScreen::draw() 
 {
 	gl::enableAlphaBlending();		
 
-	if (deviceError) 
+	if(deviceError == false)	
 	{
-		drawDeviceError();
+		drawGame();
 	}
 	else
 	{	
-		drawGame();
+		drawDeviceError();
 	}
 
 	drawFadeOutIfAllow();

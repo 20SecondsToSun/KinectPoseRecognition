@@ -27,6 +27,7 @@ namespace gameStates
 }
 
 using namespace ci;
+using namespace std;
 using namespace gameStates;
 
 class Game
@@ -38,21 +39,23 @@ class Game
 		static const int	STEP_BACK_TIME  = 2;	
 		static const int	PREGAME_TIME	= 2;
 		static const int	COUNTDOWN_TIME	= 3;
-		static const int	HINT_TIME		= 6;		
-		//static const int	ONE_POSE_TIME	= 25;
+		static const int	HINT_TIME		= 6;
 		static const int	RESULT_TIME		= 4;
 		static const int	COUNTERS_ANIM_TIME	= 2;
-		static const int	MATCHING_MAX_VALUE = 80;	
+
+		static const int	LEVEL_PASS_INC	= 4;
+		static const int	LEVEL_PASS_DEC	= 6;
 
 		int				CURRENT_POSE_TIME;
 		int				CURRENT_MATCHING_PERCENT;
 
+
 		int state;
 		bool isGameRunning, isPoseDetecting, winAnimationFinished;
-		ci::Timer  _preGameTimer, _onePoseTimer, _resultTimer, _stepBackTimer, _hintTimer, _countDownTimer, _countersAnimTimer;
+		Timer  _preGameTimer, _onePoseTimer, _resultTimer, _stepBackTimer, _hintTimer, _countDownTimer, _countersAnimTimer;
 		
 		Pose* foundPose, currentPose;
-		std::vector<Pose*> poses;
+		vector<Pose*> poses;
 
 		int poseCode, level, levelCompletion;
 		float mathPercent;		
@@ -64,27 +67,10 @@ class Game
 
 		int poseNum;
 
-		//float weightJoints[12];
-		
-
 		void setup()
 		{
 			poses = saver().loadPoseBase();
 			poseNum = 0;
-
-			//weightJoints[0] = 0.05;//шея
-			//weightJoints[1] = 0.15;//голова
-			//weightJoints[2] = 0.05;
-			//weightJoints[3] = 0.05;
-			//weightJoints[4] = 0.15;//запястье левое
-			//weightJoints[5] = 0.05;
-			//weightJoints[6] = 0.05;
-			//weightJoints[7] = 0.15;//запястье правое
-
-			//weightJoints[8] = 0.05;// ступня левая
-			//weightJoints[9] = 0.1;
-			//weightJoints[10] = 0.05;
-			//weightJoints[11] = 0.1;// ступня правая
 		}
 
 		void initnew()
@@ -151,7 +137,7 @@ class Game
 		int generatePoseCode()
 		{
 			int code = poseNum++;			
-			if (poseNum > poses.size()-1)
+			if (poseNum > poses.size() - 1)
 				poseNum = 0;
 
 			return code;//level - 1; //TODO
@@ -162,16 +148,16 @@ class Game
 			updateGame();
 			
 			#ifdef debug
-				if(stepBackTimerFinished() || _stepBackTimer.isStopped()) 
+				if(stepBackTimerFinished()) 
 			#else
-				if((stepBackTimerFinished() || _stepBackTimer.isStopped()) && kinect().distanceToSkelet() > MIN_DISTANCE_TO_SKELET)
+				if(stepBackTimerFinished() && kinect().distanceToSkelet() > MIN_DISTANCE_TO_SKELET)
 			#endif
 			{
 				_preGameTimer.start();
 	
 				hintScreen().poseNum = level;
 				hintScreen().startReadySate();
-				state = PRE_GAME_INTRO;					
+				state = PRE_GAME_INTRO;
 			}
 		}
 
@@ -287,7 +273,7 @@ class Game
 			if(showGameResultTimeIsFinished())
 			{
 				_resultTimer.stop();
-				state = MAKE_SCREENSHOOT;			
+				state = MAKE_SCREENSHOOT;
 			}
 		}
 
@@ -295,12 +281,13 @@ class Game
 		{
 			if (cameraCanon().checkIfDownloaded())
 			{
-				setPlayerOnePoseGuess(cameraCanon().getpathToDownloadedPhoto());			
+				console()<<"path ::: "<<cameraCanon().getpathToDownloadedPhoto()<<endl;
+				setPlayerOnePoseGuess(cameraCanon().getpathToDownloadedPhoto());
 				checkAnimationFinished();
 			}
 			else if (cameraCanon().checkIfError())
 			{
-				setPlayerOnePoseGuess();
+				setPlayerOnePoseGuess("", true);
 				checkAnimationFinished();
 			}
 		}
@@ -349,9 +336,8 @@ class Game
 		void checkPersonPose() 
 		{
 			updateGame();
-			//return;
 	
-			if ( getPoseProgress() >= CURRENT_MATCHING_PERCENT + 10)//state == MAIN_GAME)/// getPoseProgress() >= MATCHING_MAX_VALUE)
+			if ( getPoseProgress() >= CURRENT_MATCHING_PERCENT + 10)
 			{
 				gameControls().showMatching(1.0f);
 				isPoseDetecting		 = true;
@@ -373,39 +359,30 @@ class Game
 		{
 			kinect().updateSkeletonData();
 			
-			if (isGameRunning)	
+			if (isGameRunning)
 			{
 				matchTemplate();
 
 				#ifdef alwayswin
 					mathPercent = 1;
 				#endif
+				//mathPercent = 1;
 
-				if (mathPercent > Params::percentForMatching )		
-				{					
-					levelCompletion += 4;					
+				if (mathPercent > Params::percentForMatching )
+				{
+					levelCompletion += LEVEL_PASS_INC;
 				}
 				else
 				{
-					if(levelCompletion - 6 >=0)
-						levelCompletion -= 6;
+					if(levelCompletion - LEVEL_PASS_DEC >= 0 )
+						levelCompletion -= LEVEL_PASS_DEC;
 					else
-						levelCompletion = 0;					
+						levelCompletion = 0;
 				}
 				gameControls().showMatching((float)levelCompletion / CURRENT_MATCHING_PERCENT);
 			}	
 		}
 
-		void setPlayerOnePoseGuess(std::string pathToHiRes = "") 
-		{			
-			PlayerData::score++;
-			PlayerData::playerData[level-1 ].isFocusError = false;
-			PlayerData::playerData[level-1 ].isSuccess	  = true;
-			PlayerData::playerData[level-1 ].pathHiRes	  =  pathToHiRes;
-			PlayerData::playerData[level-1 ].screenshot	  = cameraCanon().getSurface();
-			PlayerData::playerData[level-1 ].storyCode	  = poseCode;
-		}
-		
 		float getPoseProgress() 
 		{
 			return floor(levelCompletion);
@@ -439,139 +416,59 @@ class Game
 		void matchTemplate()
 		{
 			foundPose = NULL;
-
-			#ifdef algo1
-				currentPose.setPoints(kinect().getCurrentSkelet());
-				currentPose.createNormalizePoints0();
-			#endif
-
-			//currentPose.setDrawPoints(kinect().getCurrentRawSkelet());
 			
-			//currentPose.createSkeletBoundingBox(kinect().getSkeletWidth(), kinect().getSkeletHeight());
-			
+			currentPose.setPoints(kinect().getCurrentSkelet());
+			currentPose.createNormalizePoints0();
 			currentPose.initColors();
 
 			if(!isPointsSizeEqual(*poses[poseCode], currentPose))
 			{
-				mathPercent = 0;
+				mathPercent = 0.0f;
 				return;
-			}	
-
-			/*if (!isAnchorPointsMatch(*poses[poseCode], currentPose))
-			{
-				mathPercent = 0;
-				return;
-			}*/
-					
-			//if (Params::computeMistakeAlgo == 1)
-			//{
-			//	computeMistakeWay1();
-			//}
-			//else
-			#ifdef algo1
-				computeMistakeWay1();
-			#endif
-	
+			}
+			
+			computeMistakeWay1();
 		}
 		
 		void stopPersonChecking() 
 		{
 			_onePoseTimer.stop();
 			_resultTimer.start();
-			isGameRunning = false;			
-		}
-
-		void computeMistakeWay2()
-		{
-			double min_dist			 = FLT_MAX;	
-			double maxErrorToDiscard = 1000;
-			double sum_mistake		 = 0;
-			int countMistake = 0;
-
-			for(size_t j = 0, len = currentPose.getNormalizePoints().size(); j < len ; ++j) 
-			{
-				double mistake = calculateDistanceBetweenPoints(poses[poseCode]->getNormalizePoints()[j], currentPose.getNormalizePoints()[j]);
-	
-				sum_mistake += mistake;
-				//console()<< " mistake     "<<mistake<<endl;
-				if (mistake > Params::maxErrorBetweenJoints) 
-				{
-					
-					//countMistake++;
-					//mathPercent = 0;
-					//return;
-					//break;
-				}
-				else
-				{
-					currentPose.setPointColor(j, ColorA(1.0f, 1.0f, 1.0f, 0.0f));
-				}
-			}
-
-			if (countMistake> 3) 
-			{
-				mathPercent = 0.0f;
-				return;
-			}
-
-			double dist = sum_mistake / currentPose.getNormalizePoints().size();
-
-			if(dist >= 0 && dist < min_dist) 
-			{
-				min_dist = dist;
-				foundPose = poses[poseCode];
-			}
-
-			double kv = BOX_SCALE*BOX_SCALE;
-			double half_diagonal = 0.5f * sqrt(kv + kv); 
-			mathPercent = 1.0f - (min_dist / half_diagonal);	
-
-			mathPercent < 0.0f ? mathPercent = 0 : mathPercent = mathPercent;
+			isGameRunning = false;
 		}
 
 		void computeMistakeWay1()
 		{
 			mathPercent = 0.0f;
-			size_t len = currentPose.getNormalizePoints().size();
-			double onePart = 0;
 
-		    console()<<" ==================================  "<<endl;
-			for(size_t j = 0; j < len ; ++j) 
+		 	for(size_t j = 0, len = currentPose.getNormalizePoints().size(); j < len ; ++j) 
 			{
 				double mistake = calculateDistanceBetweenPoints(poses[poseCode]->getNormalizePoints()[j], currentPose.getNormalizePoints()[j]);
 				double onePartPercent = 0;
 				double onePart = Params::weightJoints[j];
-
 				
-				console()<<" mistake ::  "<<mistake<<endl;
 				if (mistake >= Params::maxErrorBetweenJoints)
 				{
-					onePartPercent = 0.0f;
+					onePartPercent = 0;
 				}
 				else if (mistake < Params::minErrorBetweenJoints)
 				{
 					currentPose.setPointColor(j, ColorA(1.0f, 1.0f, 1.0f, 0.0f));
 					onePartPercent = onePart;
-					console()<<"  onePartPercent "<<onePartPercent<<endl;
 				}
 				else
 				{
 					currentPose.setPointColor(j, ColorA(1.0f, 1.0f, 1.0f, 0.0f));					
 					onePartPercent = onePart * (1 - mistake / (Params::maxErrorBetweenJoints - Params::minErrorBetweenJoints));
-					console()<<" onePart ::  "<<onePart<<"  onePartPercent "<<onePartPercent<<endl;
 				}
 				
 				mathPercent += onePartPercent;
 			}
-
-			//mathPercent *= 0.01f;
-			//mathPercent < 0  ? mathPercent = 0 : mathPercent = mathPercent;
-			//console()<<"mathPercent :---: "<<mathPercent<<endl;
 		}
 
 		double getMatchPercent()
 		{
-			return mathPercent*100;
+			return mathPercent * 100;
 		}
 
 		bool isPointsSizeEqual(Pose pose1, Pose pose2)
@@ -591,6 +488,18 @@ class Game
 		{
 			return abs((Vec2f(vec1.x, vec1.y) - Vec2f(vec2.x, vec2.y) ).length());
 		}
+
+		void setPlayerOnePoseGuess(std::string pathToHiRes = "" , bool _focusError = false) 
+		{	
+			PlayerData::score++;
+			PlayerData::playerData[level-1].isFocusError  = _focusError;
+			PlayerData::playerData[level-1].isSuccess	  = true;
+			PlayerData::playerData[level-1].pathHiRes	  =  pathToHiRes;
+			PlayerData::playerData[level-1].screenshot	  = cameraCanon().getSurface();
+			PlayerData::playerData[level-1].storyCode	  = poseCode;
+
+			if (_focusError == false) PlayerData::photosWithoutError++;
+		}
 		
 		void drawJoints()
 		{
@@ -600,7 +509,6 @@ class Game
 				currentPose.drawPoints();
 				poses[poseCode]->drawPoints();
 			gl::popMatrices();
-
 		}
 
 		///////////////////////////////////////////////////////////////////
@@ -737,3 +645,52 @@ class Game
 };
 
 inline Game&	recognitionGame() { return Game::getInstance(); };
+
+
+	//void computeMistakeWay2()
+	//	{
+	//		double min_dist			 = FLT_MAX;	
+	//		double maxErrorToDiscard = 1000;
+	//		double sum_mistake		 = 0;
+	//		int countMistake = 0;
+
+	//		for(size_t j = 0, len = currentPose.getNormalizePoints().size(); j < len ; ++j) 
+	//		{
+	//			double mistake = calculateDistanceBetweenPoints(poses[poseCode]->getNormalizePoints()[j], currentPose.getNormalizePoints()[j]);
+	//
+	//			sum_mistake += mistake;
+	//			//console()<< " mistake     "<<mistake<<endl;
+	//			if (mistake > Params::maxErrorBetweenJoints) 
+	//			{
+	//				
+	//				//countMistake++;
+	//				//mathPercent = 0;
+	//				//return;
+	//				//break;
+	//			}
+	//			else
+	//			{
+	//				currentPose.setPointColor(j, ColorA(1.0f, 1.0f, 1.0f, 0.0f));
+	//			}
+	//		}
+
+	//		if (countMistake> 3) 
+	//		{
+	//			mathPercent = 0.0f;
+	//			return;
+	//		}
+
+	//		double dist = sum_mistake / currentPose.getNormalizePoints().size();
+
+	//		if(dist >= 0 && dist < min_dist) 
+	//		{
+	//			min_dist = dist;
+	//			foundPose = poses[poseCode];
+	//		}
+
+	//		double kv = BOX_SCALE*BOX_SCALE;
+	//		double half_diagonal = 0.5f * sqrt(kv + kv); 
+	//		mathPercent = 1.0f - (min_dist / half_diagonal);	
+
+	//		mathPercent < 0.0f ? mathPercent = 0 : mathPercent = mathPercent;
+	//	}

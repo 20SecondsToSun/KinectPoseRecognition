@@ -54,6 +54,8 @@ class IntroScreen : public Location
 
 		int state, nextState;
 		string debugString;
+
+		bool deviceError;
 	
 		Texture logo, text1, cat2, btnFon, paws,  instructionImage, lapaTv;
 	

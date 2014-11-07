@@ -10,7 +10,7 @@ void KinectAdapter::setup()
 	setActiveJoints();
 	setDevice();
 	calculateAspects();
-	connect();
+	kinectConnect();
 }
 
 void KinectAdapter::setActiveJoints()
@@ -38,45 +38,13 @@ void KinectAdapter::setActiveJoints()
 	}
 }
 
-void KinectAdapter::connect()
-{	
-	#ifdef kinectUsed
-		kinectConnect();
-	#endif	
-}
-
 void KinectAdapter::update() 
 {
-	_isConnected = (lastFrameId != frameID);
-	lastFrameId = frameID;
+	bool prevConnectedValue = _isConnected;
+	_isConnected = mDevice->isDeviceRunning();
 
-	_isConnected ? bufferDisconnect = 0 :bufferDisconnect++;
-
-	if (bufferDisconnect > 60)
-	{
-		_isConnected = false;
-
-		if(!reconnectTimer.isStopped())
-		{
-			if(reconnectTimer.getSeconds()> 5)
-			{
-				reconnectTimer.stop();
-				bufferDisconnect = 0;
-				connect();
-			}
-		}
-		else
-		{
-			reconnectTimer.start();
-		}
-	}
-	else
-	{
-		_isConnected = true;
-
-		if (!reconnectTimer.isStopped())	
-			reconnectTimer.stop();		
-	}
+	if (prevConnectedValue == false && _isConnected == true)
+		kinectConnectedEvent();
 
 	if (!sleepTimer.isStopped() && sleepTimer.getSeconds() > sleepSeconds)
 		sleepTimer.stop();

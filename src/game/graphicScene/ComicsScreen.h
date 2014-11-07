@@ -15,35 +15,35 @@ using namespace std;
 
 class ComicsScreen
 {
-	public:	
+	public:
 
 		static ComicsScreen& getInstance() { static ComicsScreen game; return game; };
 	
 		bool isGuess;
 		Texture comicsTexture, poseTexture, failImage;
-		ci::Anim<float> alphaAnim;
+		Anim<float> alphaAnim;
 
 		void setup()
 		{
-			failImage    = *AssetManager::getInstance()->getTexture( "images/fail.jpg" );			
+			failImage    = *AssetManager::getInstance()->getTexture( "images/fail.jpg" );
 			alphaAnim = 0;
 			isGuess = false;
 		}
 
 		void show()
 		{
-			timeline().apply( &alphaAnim, 0.0f, 1.0f, 0.9f, EaseOutCubic() );
+			timeline().apply( &alphaAnim, 0.0f, 1.0f, 0.9f, EaseOutCubic());
 		}
 
 		void draw()
-		{		
+		{
 			if (isGuess)
-			{		
-				drawPoseComics();	
+			{
+				drawPoseComics();
 			}
 			else
 			{
-				gl::color(ColorA(1.0f, 1.0f, 1.0f, alphaAnim));	
+				gl::color(ColorA(1.0f, 1.0f, 1.0f, alphaAnim));
 				gl::draw(failImage);
 				gl::color(Color::white());
 			}
@@ -57,10 +57,7 @@ class ComicsScreen
 				gl::draw(comicsTexture);
 			gl::popMatrices();
 
-			gl::pushMatrices();
-				//gl::translate(getWindowWidth() - 360.0, getWindowHeight() - 512.0);		
-				gl::draw(poseTexture);
-			gl::popMatrices();
+			gl::draw(poseTexture);
 		}
 };
 

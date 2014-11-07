@@ -31,7 +31,7 @@ class KinectPoseRecognitionApp : public AppNative
 		void			mouseDown( MouseEvent event );
 		void			update();
 		void			draw();
-		void			my_shutdown();
+		void			shutdown();
 
 		void	plusBtnHandler();
 		void	minusBtnHandler();
@@ -156,20 +156,18 @@ void KinectPoseRecognitionApp::setup()
 void KinectPoseRecognitionApp::plusBtnHandler()
 {
 	int32_t angle = kinect().getTilt() + 1;
-	//console()<<"angel:: "<<angle<<endl;
 	kinect().setTilt(angle);
 }
 
 void KinectPoseRecognitionApp::minusBtnHandler()
 {
-	int32_t angle = kinect().getTilt() - 1;
-	//console()<<"angel:: "<<angle<<endl;
+	int32_t angle = kinect().getTilt() - 1;	
 	kinect().setTilt(angle);
 }
 
 void KinectPoseRecognitionApp::closeBtnHandler()
 {
-	my_shutdown();
+	shutdown();
 }
 
 void KinectPoseRecognitionApp::changeState()
@@ -269,7 +267,7 @@ void KinectPoseRecognitionApp::keyDown( KeyEvent event )
 
 	if( event.getCode() == app::KeyEvent::KEY_ESCAPE ) 
 	{
-		my_shutdown();
+		quit();
 		return;
 	}
 
@@ -339,7 +337,7 @@ void KinectPoseRecognitionApp::keyDown( KeyEvent event )
 	#endif
 }
 
-void KinectPoseRecognitionApp::my_shutdown()
+void KinectPoseRecognitionApp::shutdown()
 {	
 	#ifdef kinectUsed
 	try
@@ -378,9 +376,6 @@ void KinectPoseRecognitionApp::my_shutdown()
 		minusBtnSignal.disconnect();
 		plusBtnSignal.disconnect();
 	#endif
-	
-		
-	quit();
 }
 
 #pragma warning(pop)

@@ -350,13 +350,8 @@ void CinderCanon::downloadImage(EdsDirectoryItemRef dirItem, PhotoHandler * phot
 	}
 	
 	// Created file stream to download image.
-    string downloadDest = "/tmp/canon_1";
-    if (photoHandler)
-    {
-        downloadDest = photoHandler->photoDownloadDirectory();
-    }
-    fs::path downloadPath = fs::path(downloadDest) / string(dir_item_info.szFileName);
-	photoFileName = string(dir_item_info.szFileName);;
+    fs::path downloadPath = photoHandler->photoDownloadDirectory() / string(dir_item_info.szFileName);
+	photoFileName = string(dir_item_info.szFileName);
 
 	if(err == EDS_ERR_OK) {
 		err = EdsCreateFileStream(downloadPath.generic_string().c_str(),
@@ -436,7 +431,7 @@ void CinderCanon::downloadImage(EdsDirectoryItemRef dirItem, PhotoHandler * phot
     
     if (err != EDS_ERR_OK)
     {
-        downloadDest = "";
+       // downloadDest = "";
     }
 
     if (photoHandler)

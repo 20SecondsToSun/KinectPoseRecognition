@@ -8,26 +8,21 @@ void KinectBase::setDevice()
 	deviceOptions.enableDepth(true);
 	deviceOptions.setDepthResolution(DEPTH_RESOLUTION);
 	deviceOptions.setColorResolution(COLOR_RESOLUTION);	
-	deviceOptions.setSkeletonSelectionMode(MsKinect::SkeletonSelectionMode::SkeletonSelectionModeClosest1);
-
-	lastFrameId = frameID = -1;
+	deviceOptions.setSkeletonSelectionMode(MsKinect::SkeletonSelectionMode::SkeletonSelectionModeClosest1);	
 
 	mDevice = MsKinect::Device::create();	
 	mDevice->connectEventHandler( [ & ]( MsKinect::Frame frame )
 	{
-		mFrame = frame;	
-		frameID = frame.getFrameId();		
+		mFrame = frame;
 	} );
 }
 
 void KinectBase::kinectConnect()
-{
+{	
 	try 
 	{
-		console()<<" TRY CONNECT>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> "<<endl;
-		mDevice->start(deviceOptions);		
+		mDevice->start(deviceOptions);
 		_isConnected = true;
-		kinectConnectedEvent();
 	} 
 	catch ( MsKinect::Device::ExcDeviceCreate ex )
 	{
@@ -66,7 +61,6 @@ void KinectBase::setTilt(int32_t angleInDegrees)
 {
 	currentKinectTiltInDegrees = angleInDegrees;	
 	mDevice->setTilt(currentKinectTiltInDegrees);
-	//console()<<"currentKinectTiltInDegrees:::::::::::::::::::::::::::  "<<mDevice->getTilt()<<endl;
 }
 
 int32_t KinectBase::getTilt()

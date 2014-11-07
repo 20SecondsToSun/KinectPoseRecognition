@@ -60,7 +60,7 @@ class PhotoHandler
     
 		virtual void photoTaken(EdsDirectoryItemRef directoryItem, EdsError error) = 0;
 		virtual void photoDownloaded(const std::string & downloadPath, EdsError error) = 0;
-		virtual std::string photoDownloadDirectory() = 0;
+		virtual fs::path photoDownloadDirectory() = 0;
 		virtual std::string photoCameraReadyLiveView() = 0;
 		virtual void photoCameraError( EdsError err) = 0;
 		virtual void handleStateEvent(EdsUInt32 inEvent) = 0;

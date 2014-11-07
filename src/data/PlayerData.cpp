@@ -2,6 +2,8 @@
 
 PlayerData::OnePlayerPoseData PlayerData::playerData[POSE_IN_GAME_TOTAL];
 int PlayerData::score;
+int PlayerData::photosWithoutError;
+
 ci::Surface PlayerData::finalImageSurface;
 ci::Vec2f PlayerData::translation;
 
@@ -23,6 +25,7 @@ void PlayerData::setup()
 void PlayerData::initData()
 {
 	score = 0;
+	photosWithoutError = 0;
 
 	for (int i = 0; i < POSE_IN_GAME_TOTAL; i++)
 	{

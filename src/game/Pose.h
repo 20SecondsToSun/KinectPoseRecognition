@@ -227,7 +227,7 @@ class Pose
 			//gl::color(Color(0.0f, 1.0f, 0.0f));	
 			gl::pushMatrices();	
 			//gl::scale(200, 200);
-			gl::drawStrokedRect(Rectf(boundingBox.x, boundingBox.y, boundingBox.x+boundingBox.w,  boundingBox.y+boundingBox.h));	
+			gl::drawStrokedRect(Rectf((float)boundingBox.x, (float)boundingBox.y, (float)(boundingBox.x+boundingBox.w),  (float)(boundingBox.y+boundingBox.h)));	
 			gl::popMatrices();
 		}
 

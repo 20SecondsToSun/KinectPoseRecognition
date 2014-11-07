@@ -56,6 +56,7 @@ void CameraAdapter::update()
 		else reconnectTimer.start();
 	}
 }
+
 void CameraAdapter::calculateAspects()
 {
 	if (!isAspectsCompute)
@@ -73,7 +74,7 @@ void CameraAdapter::calculateAspects()
 		{ 
 			viewWidth = getWindowWidth();
 			viewHeight = int(viewWidth / aspect);	
-			scaleFactor  = viewWidth/ mCamera.getLiveSurface().getWidth();
+			scaleFactor  = viewWidth / mCamera.getLiveSurface().getWidth();
 		}
 	
 		viewShiftX =float( 0.5 * (getWindowWidth()  - viewWidth));
@@ -210,14 +211,14 @@ void CameraAdapter::photoTaken(EdsDirectoryItemRef directoryItem, EdsError error
 void CameraAdapter::photoDownloaded(const std::string & downloadPath, EdsError error)
 {
 	//console()<<" ==   downloadedImage  = "<<mCamera.getCannon().getFileName()<<std::endl;	
-   userPhotoFileName = mCamera.getCannon().getFileName();
+   userPhotoFileName = photoDownloadDirectory().string() +"\\"+ mCamera.getCannon().getFileName();
    userPhotoIsDownloaded = true;	
 }
 
 // Delegate method to tell the canon where to download the full-res image.
-std::string CameraAdapter::photoDownloadDirectory()
+fs::path CameraAdapter::photoDownloadDirectory()
 {
-    return mPhotoDownloadFolder.generic_string();
+    return getAppPath()/"data"/"hiResPhotos";////mPhotoDownloadFolder.generic_string();
 }
 
 // Delegate method when camera ready
@@ -253,8 +254,6 @@ std::string CameraAdapter::photoCameraReadyLiveView()
 }
 void CameraAdapter::handleStateEvent(EdsUInt32 inEvent)
 {
-	//console()<<"STSWITCH OFF??  "<< std::endl;
-
 	if (kEdsStateEvent_Shutdown == inEvent)
 	{
 		mCamera.endLiveView();
@@ -262,9 +261,7 @@ void CameraAdapter::handleStateEvent(EdsUInt32 inEvent)
 	}
 	else if (kEdsStateEvent_WillSoonShutDown == inEvent)
 	{
-		//if (mCamera.isBusy())
 		console()<<"mCamera.isBusy() "<<mCamera.isBusy()<<endl;
-
 		mCamera.extendShutDownTimer();
 	}
 }

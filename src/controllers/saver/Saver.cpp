@@ -14,6 +14,10 @@ std::vector<Pose*> Saver::loadPoseBase()
 		if (fs::is_regular_file(*it))
 		{
 			JsonTree doc;
+
+			if (it->path().extension() != ".json") 
+				continue;
+
 			try{
 				 doc = JsonTree(loadFile(basePath / it->path().filename().string()));
 			}

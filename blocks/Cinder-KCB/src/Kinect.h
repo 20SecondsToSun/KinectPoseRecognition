@@ -540,13 +540,16 @@ public:
 	}
 	//! Sets frame event handler. Signature is void( Frame ).
 	void								connectEventHandler( const std::function<void ( Frame )>& eventHandler );
+
+	bool								isDeviceRunning();
 protected:
 	static const int32_t				WAIT_TIME = 100;
 
 	Device();
 	
 	void								init( bool reset = false );
-	virtual void						update();
+	virtual void						update();	
+	bool								_isDeviceRunning;
 
 	std::function<void ( Frame frame )>	mEventHandler;
 	

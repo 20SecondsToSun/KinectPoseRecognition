@@ -61,7 +61,7 @@ class CameraAdapter :public canon::PhotoHandler
 		ci::Surface8u		getSurface();
 
 		ci::Vec2f			getSurfaceTranslate();
-		double				scaleFactor;
+		float				scaleFactor;
 		ci::Vec2f			translateSurface;
 	
 	protected:
@@ -78,7 +78,7 @@ class CameraAdapter :public canon::PhotoHandler
 
 		Surface8u lastFrame;
 		
-		 std::string photoDownloadDirectory();
+		 fs::path photoDownloadDirectory();
 		 std::string photoCameraReadyLiveView();
 
 		 double			viewShiftX, viewShiftY;

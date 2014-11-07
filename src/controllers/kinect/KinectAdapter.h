@@ -27,7 +27,6 @@ class KinectAdapter: public KinectBase
 		void drawSkeletJoints();
 
 		void update();
-		void connect();
 		void updateSkeletonData();
 
 		float distanceToSkelet();

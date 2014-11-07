@@ -45,14 +45,13 @@ void IntroScreen::setup()
 	Texture comeBackBtnTex   = *AssetManager::getInstance()->getTexture( "images/diz/toStart.png" );
 		
 	comeBackBtn = new ButtonTex(comeBackBtnTex,  "backtoStart");
-	comeBackBtn->setScreenField(Vec2f(0.0f, 911.0f));
+	comeBackBtn->setScreenField(Vec2f(0.0f, 958.0f));
 	comeBackBtn->setDownState(comeBackBtnTex);
 }
 
 void IntroScreen::init( LocationEngine* game)
 {	
-	_game = game;
-	drawHandler = &IntroScreen::drawInitElements;
+	_game = game;	
 	state = INIT;	
 
 	_game->freezeLocation = false;
@@ -60,11 +59,16 @@ void IntroScreen::init( LocationEngine* game)
 	
 	kinect().sleep(2);
 	initAnimateParam();
+
+	deviceError = false;
+
+	drawHandler = &IntroScreen::drawInitElements;
 }
 
 void IntroScreen::initAnimateParam()
 {
 	catAnimator().init();
+	logoAnimate =  -1180.0f;
 	timeline().apply( &logoAnimate, -1180.0f, 0.0f,  0.9f, EaseInOutQuart() );	
 }
 
@@ -86,7 +90,7 @@ void IntroScreen::initInstructionParam()
 
 void IntroScreen::startInstructionBtnDown()
 {	
-	if(!_game->freezeLocation)
+	if(!_game->freezeLocation && !deviceError)
 	{
 		initInstructionParam();
 		nextState = SHOW_INSTRUCTION;		
@@ -96,7 +100,7 @@ void IntroScreen::startInstructionBtnDown()
 
 void IntroScreen::startGameBtnDown()
 {
-	if(!_game->freezeLocation)
+	if(!_game->freezeLocation && !deviceError)
 	{
 		nextState = START_GAME;			
 		changeState();
@@ -137,7 +141,7 @@ void IntroScreen::mouseEvents(int type)
 {	
 	MouseEvent event = _game->getMouseEvent();	
 
-	if (!_game->freezeLocation && event.isLeft() && type == MouseEvents::MOUSE_UP)
+	if (!_game->freezeLocation && event.isLeft() && type == MouseEvents::MOUSE_UP && !deviceError)
 	{
 		if(state == INIT)
 			gotoInviteScreen();
@@ -164,10 +168,17 @@ void IntroScreen::keyEvents()
 }
 
 void IntroScreen::update() 
-{	
+{
+	kinect().update();
+
+	deviceError = !kinect().isConnected();
+
+	if (deviceError) return;
+
 	#ifdef kinectUsed
 		isPeopleInFrame = kinect().getSkeletsInFrame()!=0;
 	#endif		
+		console()<<"isPeopleInFrame"<<isPeopleInFrame<<endl;
 
 	if(_game->freezeLocation) return;
 
@@ -214,6 +225,13 @@ void IntroScreen::draw()
 	gl::enableAlphaBlending();	
 	gl::color( Color::white());
 
+	if (deviceError)
+	{
+		Texture errorTexure = Utils::getTextField("ÊÈÍÅÊÒ ÂÛÊËÞ×ÅÍ", fonts().getFont("MaestroC", 114),  Color::white());	
+		gl::draw(errorTexure, Vec2f(0.5f*(1920.0f - errorTexure.getWidth()), 348.0f));
+		return;
+	}
+
 	(this->*drawHandler)();
 
 	#ifdef drawTimer
@@ -223,7 +241,7 @@ void IntroScreen::draw()
 	if(_game->freezeLocation)
 	{
 		gl::color(ColorA(BLUE_FADE.r, BLUE_FADE.g, BLUE_FADE.b, alphaAnimate));		
-		gl::drawSolidRect(Rectf( 0.0f, 0.0f, getWindowWidth(), getWindowHeight()));
+		gl::drawSolidRect(Rectf( 0.0f, 0.0f, (float)getWindowWidth(), (float)getWindowHeight()));
 		gl::color(Color::white());
 	}	
 }

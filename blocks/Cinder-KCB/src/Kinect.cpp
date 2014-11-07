@@ -1565,9 +1565,18 @@ void Device::stop()
 	init( true );
 }
 
+bool Device::isDeviceRunning()
+{
+	return _isDeviceRunning;
+}
+
 void Device::update()
 {
+	//console()<<"check handler"<< <<endl;
+	_isDeviceRunning = KinectGetKinectSensorStatus(mDeviceOptions.getDeviceHandle()) == 1;
+
 	if ( !KinectAllFramesReady( mDeviceOptions.getDeviceHandle() ) ) {
+		
 		return;
 	}
 

@@ -74,9 +74,9 @@ Texture* AssetManager::getTexture( string url, bool loadInThread ){
         }else{
             try{               
                  // try to load relative to app
-				console()<<"TRY LOAD TEXTURE ..  "<< url <<std::endl;
-				 mTextureAssets[url] = Texture( loadImage( loadAsset( url ) ) ); 
-				 console()<<"OK ..  "<< url <<std::endl;
+				//console()<<"TRY LOAD TEXTURE ..  "<< url <<std::endl;
+				mTextureAssets[url] = Texture( loadImage( loadAsset( url ) ) ); 
+				// console()<<"OK ..  "<< url <<std::endl;
             }
 			catch(...)
 			{

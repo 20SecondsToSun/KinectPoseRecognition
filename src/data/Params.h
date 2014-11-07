@@ -13,8 +13,7 @@
 
 //#define alwayswin
 //#define paramsDraw	
-#define drawTimer
-#define algo1
+//#define drawTimer
 
 namespace colorsParams
 {
@@ -98,5 +97,5 @@ class Params
 		
 		static int		computeMistakeAlgo;
 
-		static int	standID;
+		static int		standID;
 };
