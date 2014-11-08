@@ -1,3 +1,5 @@
+#pragma warning(push)
+#pragma warning(disable: 4244)
 #include "EmailForm.h"
 #include <ctype.h>
 #include <boost/algorithm/string.hpp>
@@ -95,7 +97,7 @@ void EmailForm::keyboardTouchSignalHandler()
 	if (touchKeyboard().isMailCode())
 	{
 		if (currentEmail.size() == 0) return;	
-				
+
 		if(currentEmail[currentEmail.size() - 1] =='@')
 		{
 			currentEmail = currentEmail + lastCode;
@@ -115,12 +117,12 @@ void EmailForm::keyboardTouchSignalHandler()
 			mode = EMAIL_ERROR;
 			disconnectAll();
 			MouseUpCon	   = getWindow()->getSignalMouseDown().connect(   std::bind( &EmailForm::MouseDown,   this, std::placeholders::_1 ) );
-			
+
 			return;
 		}
 		if (currentEmail.size() != 0)
 			addCurrentEmail(currentEmail);			
-		
+
 		sendToEmailHandler();
 		return;
 	}
@@ -140,7 +142,7 @@ void EmailForm::sendToEmailHandler()
 	{
 		serverSignalLoadingEmailCheck = server().sendToMailEvent.connect( 
 			boost::bind(&EmailForm::serverLoadingEmailHandler, this) 
-		);
+			);
 		server().sendToMail(getEmailsInString());
 	}
 	else
@@ -239,7 +241,7 @@ void EmailForm::addEmailHandler()
 {
 	if (currentEmail.size() == 0)
 	{
-		
+
 	}
 	else if (Utils::isValidEmail(currentEmail) == false)
 	{
@@ -259,11 +261,11 @@ void EmailForm::drawEmailInput()
 	_text.setFont( emailInputFont );
 	_text.setColor( Color::white());	
 	_text.addLine(currentEmail);	
-	 gl::Texture textTexture = gl::Texture( _text.render( true, false ) );
+	gl::Texture textTexture = gl::Texture( _text.render( true, false ) );
 
-	 Vec2f _scale = Vec2f(1.0f,1.0f);
-	
-	 if (textTexture.getWidth() > 1050.0f)
+	Vec2f _scale = Vec2f(1.0f,1.0f);
+
+	if (textTexture.getWidth() > 1050.0f)
 	{
 		float sc = 1050.0f / textTexture.getWidth();
 		_scale= Vec2f(sc, sc);		
@@ -273,11 +275,11 @@ void EmailForm::drawEmailInput()
 
 	gl::color(ColorA(1.0f, 1.0f, 1.0f, 1.0f));
 	gl::pushMatrices();		
-		gl::translate(Vec2f(391.0f, coordy));
-		gl::scale(_scale);
-		gl::draw(textTexture);
-		gl::translate(Vec2f(textTexture.getWidth(),0.0f));
-		if ((int)getElapsedSeconds() % 2 == 0 )
+	gl::translate(Vec2f(391.0f, coordy));
+	gl::scale(_scale);
+	gl::draw(textTexture);
+	gl::translate(Vec2f(textTexture.getWidth(),0.0f));
+	if ((int)getElapsedSeconds() % 2 == 0 )
 		gl::drawSolidRect(Rectf(0.0f, 0.0f, 8.0f, textTexture.getHeight()));
 	gl::popMatrices();
 }
@@ -298,8 +300,8 @@ void EmailForm::drawAdditionEmails()
 		gl::color(Color::white());
 
 		gl::pushMatrices();
-				gl::translate(Vec2f(393.0f + 1108.0f -textTexture.getWidth() ,246.0f + i *(textTexture.getHeight() + 3.0f)));				
-				gl::draw(textTexture);
+		gl::translate(Vec2f(393.0f + 1108.0f -textTexture.getWidth() ,246.0f + i *(textTexture.getHeight() + 3.0f)));				
+		gl::draw(textTexture);
 		gl::popMatrices();
 	}
 }
@@ -316,7 +318,7 @@ void EmailForm::addCurrentEmail(string _email)
 void EmailForm::draw()
 {
 	gl::color(Color(1.0f, 1.0f, 1.0f));
-	
+
 	if (mode == SEND_MAIL)
 	{
 		gl::color(bgColor);
@@ -325,16 +327,16 @@ void EmailForm::draw()
 		gl::draw(text, Vec2f(0.5f*(getWindowWidth() - text.getWidth()), 375.0f));
 
 		gl::pushMatrices();
-			gl::color(bgColor);
-			gl::translate(bgPosition);
-			gl::translate(950.0f, 974.0f+250.0f);
-			gl::pushModelView();	
-			gl::scale( 0.5f, 0.5f );
-			gl::rotate( 180.0f * float( getElapsedSeconds() ) );
-			gl::translate( -0.5f * Vec2f(151.0f, 151.0f ) );		
-			gl::color( Color::white() );
-			gl::draw( *preloader );
-			gl::popModelView();
+		gl::color(bgColor);
+		gl::translate(bgPosition);
+		gl::translate(950.0f, 974.0f+250.0f);
+		gl::pushModelView();	
+		gl::scale( 0.5f, 0.5f );
+		gl::rotate( 180.0f * float( getElapsedSeconds() ) );
+		gl::translate( -0.5f * Vec2f(151.0f, 151.0f ) );		
+		gl::color( Color::white() );
+		gl::draw( *preloader );
+		gl::popModelView();
 		gl::popMatrices();
 		return;
 	}
@@ -348,38 +350,38 @@ void EmailForm::draw()
 	}
 
 	gl::pushMatrices();
-		gl::translate(bgPosition);
-		gl::color(bgColor);
-		gl::draw(*keyBoardMainBgTex);
-		gl::translate(0.0f, 1754.0f - 1080.0f);
-		drawEmailInput();
-		drawAdditionEmails();
+	gl::translate(bgPosition);
+	gl::color(bgColor);
+	gl::draw(*keyBoardMainBgTex);
+	gl::translate(0.0f, 1754.0f - 1080.0f);
+	drawEmailInput();
+	drawAdditionEmails();
 	gl::popMatrices();
 
 	gl::pushMatrices();
-			gl::translate(0.0f, 674.0f);
-			gl::translate(bgPosition);
-			touchKeyboard().draw();
+	gl::translate(0.0f, 674.0f);
+	gl::translate(bgPosition);
+	touchKeyboard().draw();
 	gl::popMatrices();	
 
 	gl::pushMatrices();
-		gl::translate(bgPosition);
-		gl::translate(Vec2f(0.0f, 674.0f));
-		gl::color(ColorA(1.0f, 1.0f, 1.0f, 1.0f));
-		addEmailBtn->draw();
-		
-		gl::color(Color::white());
-		gl::pushMatrices();
-				gl::translate(Vec2f(393.0f, 206.0f));
-				gl::draw(*emailLineTex);
-		gl::popMatrices();
+	gl::translate(bgPosition);
+	gl::translate(Vec2f(0.0f, 674.0f));
+	gl::color(ColorA(1.0f, 1.0f, 1.0f, 1.0f));
+	addEmailBtn->draw();
 
-		gl::color(ColorA(1.0f, 1.0f, 1.0f, 1.0f));
+	gl::color(Color::white());
+	gl::pushMatrices();
+	gl::translate(Vec2f(393.0f, 206.0f));
+	gl::draw(*emailLineTex);
+	gl::popMatrices();
 
-		if (currentEmail != "")
-			deleteAllLettersBtn->draw();
+	gl::color(ColorA(1.0f, 1.0f, 1.0f, 1.0f));
 
-		closeEmailBtn->draw();
+	if (currentEmail != "")
+		deleteAllLettersBtn->draw();
+
+	closeEmailBtn->draw();
 	gl::popMatrices();
 
 	if (mode == EMAIL_ERROR)
@@ -389,3 +391,4 @@ void EmailForm::draw()
 		gl::draw(*emailErr, Vec2f((getWindowWidth() - 711.0f)*0.5f, (getWindowHeight() - 460.0f)*0.5f ));		
 	}
 }
+#pragma warning(pop)

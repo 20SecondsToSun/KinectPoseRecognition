@@ -13,66 +13,61 @@ using namespace std;
 
 class KinectAdapter: public KinectBase
 {
-	public:
-		
-		void setup();
-		void draw();
+public:
 
-		static KinectAdapter* Instance()
-		{
-			return &KinectAdapterState;
-		}
+	void setup();
+	void draw();
 
-		int getSkeletsInFrame();
-		void drawSkeletJoints();
+	static KinectAdapter* Instance()
+	{
+		return &KinectAdapterState;
+	}
 
-		void update();
-		void updateSkeletonData();
+	int getSkeletsInFrame();
+	void drawSkeletJoints();
 
-		float distanceToSkelet();
+	void update();
+	void updateSkeletonData();
 
-		std::vector<ci::Vec3f> getCurrentSkelet()
-		{
-			return currentSkelet;
-		};
+	float distanceToSkelet();
 
-		std::vector<ci::Vec3f> getCurrentRawSkelet()
-		{
-			return currentRawSkelet;
-		}
+	std::vector<ci::Vec3f> getCurrentSkelet()
+	{
+		return currentSkelet;
+	};		
 
-		double getSkeletHeight()
-		{
-			return skeletFullHeight;
-		}
+	double getSkeletHeight()
+	{
+		return skeletFullHeight;
+	}
 
-		double getSkeletWidth()
-		{
-			return skeletFullWidth;
-		}
+	double getSkeletWidth()
+	{
+		return skeletFullWidth;
+	}
 
-		ci::Surface16u getSilhouette();
+	ci::Surface16u getSilhouette();
 
-		void sleep(int seconds);
-		void sleepKill();
+	void sleep(int seconds);
+	void sleepKill();
 
-		double skeletFullHeight;
-		double skeletFullWidth;
+	double skeletFullHeight;
+	double skeletFullWidth;
 
-	private:
+private:
 
-		static KinectAdapter KinectAdapterState;	
+	static KinectAdapter KinectAdapterState;	
 
-		std::vector<ci::Vec3f> currentSkelet, currentRawSkelet;		
-		void drawUserMask();		
-		Surface16u savePoseDepth;		
-		void setActiveJoints();		
-		int bufferDisconnect;
-		std::vector<_NUI_SKELETON_POSITION_INDEX>			jointToRecord;
+	std::vector<ci::Vec3f> currentSkelet;		
+	void drawUserMask();		
+	Surface16u savePoseDepth;		
+	void setActiveJoints();		
+	int bufferDisconnect;
+	std::vector<_NUI_SKELETON_POSITION_INDEX> jointToRecord;
 
-		int sleepSeconds;
+	int sleepSeconds;
 
-		Timer sleepTimer;
+	Timer sleepTimer;
 };
 
 inline KinectAdapter&	kinect() { return *KinectAdapter::Instance(); };

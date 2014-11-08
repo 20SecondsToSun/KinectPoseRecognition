@@ -19,11 +19,13 @@ void IntroScreen::setup()
 
 	instructionImage  = *AssetManager::getInstance()->getTexture( "images/diz/instr.png" );
 
+	bg  = *AssetManager::getInstance()->getTexture( "images/diz/bg.jpg" );		
+
 	bubbleAnimator().setup();
 	catAnimator().setup();	
 
 	Font *btnFont = fonts().getFont("Helvetica Neue", 46);
-	
+
 	/////////////////////////////////
 	Texture startInstructionBtnTex   = *AssetManager::getInstance()->getTexture( "images/diz/btn_off.png" );
 	Texture startInstructionBtnTexUp   = *AssetManager::getInstance()->getTexture( "images/diz/btn_on.png" );
@@ -31,19 +33,19 @@ void IntroScreen::setup()
 	startInstructionBtn = new ButtonTex(startInstructionBtnTex,  "startInstruction");
 	startInstructionBtn->setScreenField(Vec2f(502.0f, 505.0f));
 	startInstructionBtn->setDownState(startInstructionBtnTexUp, Vec2f(0.0f, 5.0f));
-	
+
 	////////////////////////////////
 	Texture startGameBtnTex   = *AssetManager::getInstance()->getTexture( "images/diz/nextBtn1.png" );
 	Texture startGameBtnTexUp   = *AssetManager::getInstance()->getTexture( "images/diz/nextBtn2.png" );
-	
+
 	startGameBtn = new ButtonTex(startGameBtnTex,  "startGame");
 	startGameBtn->setScreenField(Vec2f(953.0f, 626.0f));
 	startGameBtn->setDownState(startGameBtnTexUp);
-	
+
 	///////////////////////////////
-	
+
 	Texture comeBackBtnTex   = *AssetManager::getInstance()->getTexture( "images/diz/toStart.png" );
-		
+
 	comeBackBtn = new ButtonTex(comeBackBtnTex,  "backtoStart");
 	comeBackBtn->setScreenField(Vec2f(0.0f, 958.0f));
 	comeBackBtn->setDownState(comeBackBtnTex);
@@ -56,7 +58,7 @@ void IntroScreen::init( LocationEngine* game)
 
 	_game->freezeLocation = false;
 	isPeopleInFrame = false;	
-	
+
 	kinect().sleep(2);
 	initAnimateParam();
 
@@ -151,20 +153,20 @@ void IntroScreen::mouseEvents(int type)
 
 void IntroScreen::keyEvents()
 {
-	#ifdef debug
-		KeyEvent _event = _game->getKeyEvent();
+#ifdef debug
+	KeyEvent _event = _game->getKeyEvent();
 
-		switch (_event.getChar())
-		{       
-			case 'z':
-				isPeopleInFrame = true;				
-			break;
+	switch (_event.getChar())
+	{       
+	case 'z':
+		isPeopleInFrame = true;				
+		break;
 
-			case 'x':
-			    isPeopleInFrame = false;
-			break;
-		 }
-	 #endif
+	case 'x':
+		isPeopleInFrame = false;
+		break;
+	}
+#endif
 }
 
 void IntroScreen::update() 
@@ -175,46 +177,45 @@ void IntroScreen::update()
 
 	if (deviceError) return;
 
-	#ifdef kinectUsed
-		isPeopleInFrame = kinect().getSkeletsInFrame()!=0;
-	#endif		
-		console()<<"isPeopleInFrame"<<isPeopleInFrame<<endl;
+#ifdef kinectUsed
+	isPeopleInFrame = kinect().getSkeletsInFrame()!=0;
+#endif
 
 	if(_game->freezeLocation) return;
 
 	switch (state)
 	{
-		case INIT:
-			if (isPeopleInFrame)
-				gotoInviteScreen();
-		
-			catAnimator().update();
+	case INIT:
+		if (isPeopleInFrame)
+			gotoInviteScreen();
 
-			#ifdef drawTimer
-				debugString = "";
-			#endif
+		catAnimator().update();
+
+#ifdef drawTimer
+		debugString = "";
+#endif
 
 		break;
 
-		case SHOW_INVITE:			
-			if (isComeBackTimerKinectFired())			
-				gotoFirstScreen();
+	case SHOW_INVITE:			
+		if (isComeBackTimerKinectFired())			
+			gotoFirstScreen();
 
-			bubbleAnimator().update();
+		bubbleAnimator().update();
 
-			#ifdef drawTimer
-				debugString = to_string(getSecondsToComeBack());	
-			#endif
-			
+#ifdef drawTimer
+		debugString = to_string(getSecondsToComeBack());	
+#endif
+
 		break;
 
-		case SHOW_INSTRUCTION:			
-			if (isComeBackTimerTouchFired())
-				gotoFirstScreen();
+	case SHOW_INSTRUCTION:			
+		if (isComeBackTimerTouchFired())
+			gotoFirstScreen();
 
-			#ifdef drawTimer
-				debugString = to_string(getSecondsToComeBack());	
-			#endif
+#ifdef drawTimer
+		debugString = to_string(getSecondsToComeBack());	
+#endif
 
 		break;
 	}	
@@ -234,17 +235,18 @@ void IntroScreen::draw()
 
 	(this->*drawHandler)();
 
-	#ifdef drawTimer
-		Utils::textFieldDraw(debugString,  fonts().getFont("Helvetica Neue", 46), Vec2f(40.0f, 40.0f), RED);
-	#endif	
+#ifdef drawTimer
+	Utils::textFieldDraw(debugString,  fonts().getFont("Helvetica Neue", 46), Vec2f(40.0f, 40.0f), RED);
+#endif	
 
 	if(_game->freezeLocation)
 	{
-		gl::color(ColorA(BLUE_FADE.r, BLUE_FADE.g, BLUE_FADE.b, alphaAnimate));		
-		gl::drawSolidRect(Rectf( 0.0f, 0.0f, (float)getWindowWidth(), (float)getWindowHeight()));
+		gl::color(ColorA(1.0f, 1.0f, 1.0f, alphaAnimate));
+		gl::draw(bg);
 		gl::color(Color::white());
-	}	
+	}
 }
+
 
 void IntroScreen::drawInitElements()
 {	
@@ -257,15 +259,15 @@ void IntroScreen::drawInviteElements()
 	bubbleAnimator().draw();
 
 	gl::pushMatrices();
-		gl::translate(cat2AnimateVec);
-		gl::draw(cat2);
-		gl::draw(btnFon, Vec2f(29.0f, 353.0f));	
+	gl::translate(cat2AnimateVec);
+	gl::draw(cat2);
+	gl::draw(btnFon, Vec2f(29.0f, 353.0f));	
 	gl::popMatrices();
 
 	gl::pushMatrices();
-		gl::translate(instructBtnAnimateVec);
-		startInstructionBtn->draw();
-		gl::draw(paws, Vec2f(435.0f, 429.0f));
+	gl::translate(instructBtnAnimateVec);
+	startInstructionBtn->draw();
+	gl::draw(paws, Vec2f(435.0f, 429.0f));
 	gl::popMatrices();
 }
 
@@ -274,22 +276,22 @@ void IntroScreen::drawIstructionElements()
 	gl::draw(lapaTv, lapaTvAnimateVec);	
 
 	gl::pushMatrices();
-		gl::translate(startBtnAnimateVec);
-		startGameBtn->draw();
+	gl::translate(startBtnAnimateVec);
+	startGameBtn->draw();
 	gl::popMatrices();
 
 	gl::color(ColorA(1.0f, 1.0f, 1.0f, textAnimateAlpha));
 	gl::draw(text1, textAnimateVec);
 
 	gl::color(Color::white());
-	
+
 	comeBackBtn->draw();
 }
 
 void IntroScreen::changeState() 
 {
 	_game->freezeLocation = true;
-	timeline().apply( &alphaAnimate,  0.0f, 1.0f, 0.4f, EaseOutCubic() ).finishFn( bind( &IntroScreen::animationFinished, this ) );
+	timeline().apply(&alphaAnimate,  0.0f, 1.0f, 0.55f, EaseOutQuart() ).finishFn( bind( &IntroScreen::animationFinished, this));
 }
 
 void IntroScreen::animationFinished() 
@@ -298,42 +300,42 @@ void IntroScreen::animationFinished()
 
 	switch (nextState)
 	{
-		case INIT:
-			startInstructionBtnSignal.disconnect();
-			comeBackBtnSignal.disconnect();
-			startGameBtnSignal.disconnect();	
-			bubbleAnimator().kill();
-			
-			drawHandler = &IntroScreen::drawInitElements;
+	case INIT:
+		startInstructionBtnSignal.disconnect();
+		comeBackBtnSignal.disconnect();
+		startGameBtnSignal.disconnect();	
+		bubbleAnimator().kill();
+
+		drawHandler = &IntroScreen::drawInitElements;
 		break;
 
-		case SHOW_INVITE:	
-			if (!startInstructionBtnSignal.connected())
-				startInstructionBtnSignal = startInstructionBtn->mouseUpEvent.connect(boost::bind(&IntroScreen::startInstructionBtnDown, this));
+	case SHOW_INVITE:	
+		if (!startInstructionBtnSignal.connected())
+			startInstructionBtnSignal = startInstructionBtn->mouseUpEvent.connect(boost::bind(&IntroScreen::startInstructionBtnDown, this));
 
-			startGameBtnSignal.disconnect();
-			comeBackBtnSignal.disconnect();
+		startGameBtnSignal.disconnect();
+		comeBackBtnSignal.disconnect();
 
-			catAnimator().kill();
-			kinect().sleepKill();
-			drawHandler = &IntroScreen::drawInviteElements;
-			
+		catAnimator().kill();
+		kinect().sleepKill();
+		drawHandler = &IntroScreen::drawInviteElements;
+
 		break;
 
-		case SHOW_INSTRUCTION:	
-			if (!startGameBtnSignal.connected())
-				startGameBtnSignal		  = startGameBtn->mouseDownEvent.connect(boost::bind(&IntroScreen::startGameBtnDown, this));
+	case SHOW_INSTRUCTION:	
+		if (!startGameBtnSignal.connected())
+			startGameBtnSignal = startGameBtn->mouseDownEvent.connect(boost::bind(&IntroScreen::startGameBtnDown, this));
 
-			if (!comeBackBtnSignal.connected())
-				comeBackBtnSignal  = comeBackBtn->mouseDownEvent.connect(boost::bind(&IntroScreen::gotoFirstScreen, this));
+		if (!comeBackBtnSignal.connected())
+			comeBackBtnSignal  = comeBackBtn->mouseDownEvent.connect(boost::bind(&IntroScreen::gotoFirstScreen, this));
 
-			bubbleAnimator().kill();
-			startInstructionBtnSignal.disconnect();
-			drawHandler = &IntroScreen::drawIstructionElements;
+		bubbleAnimator().kill();
+		startInstructionBtnSignal.disconnect();
+		drawHandler = &IntroScreen::drawIstructionElements;
 		break;
 
-		case START_GAME:
-			_game->changeState(MainGameScreen::Instance());
+	case START_GAME:
+		_game->changeState(MainGameScreen::Instance());
 		break;
 	}
 

@@ -14,27 +14,21 @@ class PhotoMaker
 {
 	typedef boost::signals2::signal<void(void )> photoCreateSignal;	
 
-	private:
-		ci::gl::Fbo	 mFbo;
-		void drawToFBO(ci::Surface img, ci::gl::Texture comicsImage);
+private:
+	ci::gl::Fbo	 mFbo;
+	ci::Timer	dirUploadTimer;
+	void drawToFBO(ci::Surface img, ci::gl::Texture comicsImage);
 
-	public:
-		// singleton implementation
-		static PhotoMaker& getInstance() { 
-			static PhotoMaker pht; 
-			return pht; 
-		};
+public:
+	static PhotoMaker& getInstance() { static PhotoMaker pht; return pht; };
 
-		void startTimer();
-		void stopTimer();
-		int  getElapsedSeconds();
-		void loadFinalImages();
-		bool resizeFinalImages();
+	void startTimer();
+	void stopTimer();
+	int  getElapsedSeconds();
+	void loadFinalImages();
+	bool resizeFinalImages();
 
-		photoCreateSignal photoLoadEvent, photoLoadErrorEvent;
-
-		ci::Timer	dirUploadTimer;
-
+	photoCreateSignal photoLoadEvent, photoLoadErrorEvent;
 };
 
 inline PhotoMaker&	photoMaker() { return PhotoMaker::getInstance(); };

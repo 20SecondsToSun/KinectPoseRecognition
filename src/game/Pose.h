@@ -1,4 +1,6 @@
 #pragma once
+#pragma warning(push)
+#pragma warning(disable: 4244)
 
 #include "Params.h"
 
@@ -361,3 +363,4 @@ class Pose
 		int _timeForPose, _matchPercent;
 		int time;
 };
+#pragma warning(pop)

@@ -9,7 +9,7 @@
 //#define recording
 //#define calibration
 
-//#define debug	
+#define debug	
 
 //#define alwayswin
 //#define paramsDraw	

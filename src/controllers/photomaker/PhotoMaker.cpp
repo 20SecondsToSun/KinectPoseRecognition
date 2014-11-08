@@ -106,7 +106,7 @@ bool PhotoMaker::resizeFinalImages()
 			}
 
 			Surface photoFromCameraSurface = Surface(photoFromCameraTex);
-		
+
 			Surface cadrSurface = Surface(getWindowWidth(),  getWindowHeight(), true);
 
 			if (!PlayerData::playerData[i].isFocusError)
@@ -129,7 +129,7 @@ bool PhotoMaker::resizeFinalImages()
 				fboCrashed = true;
 				break;
 			}
-		
+
 			Surface comicsImage = Surface(mFbo.getTexture());
 
 			Surface displaySurface;
@@ -168,31 +168,31 @@ bool PhotoMaker::resizeFinalImages()
 		fs::path path = Params::getFinalImageStoragePath();
 		writeImage( path, finalImage);
 	}
-	
+
 	return fboCrashed;
 }
 
 void PhotoMaker::drawToFBO(Surface img, ci::gl::Texture comicsImage)
 {
-      gl::SaveFramebufferBinding bindingSaver;
-      mFbo.bindFramebuffer();
-	  Area saveView = getViewport();
-      gl::setViewport(mFbo.getBounds());
+	gl::SaveFramebufferBinding bindingSaver;
+	mFbo.bindFramebuffer();
+	Area saveView = getViewport();
+	gl::setViewport(mFbo.getBounds());
 
-	  gl::pushMatrices();
-		  gl::setMatricesWindow( mFbo.getSize(), false);
-		  gl::clear( Color::black());
-		  gl::enableAlphaBlending();  
-		  gl::translate((float)BIG_PHOTO_WIDTH, 0.0f);
-		  gl::scale(-1.0f, 1.0f);
-		  gl::draw( img );		
-	  gl::popMatrices();
+	gl::pushMatrices();
+	gl::setMatricesWindow( mFbo.getSize(), false);
+	gl::clear( Color::black());
+	gl::enableAlphaBlending();  
+	gl::translate((float)BIG_PHOTO_WIDTH, 0.0f);
+	gl::scale(-1.0f, 1.0f);
+	gl::draw( img );		
+	gl::popMatrices();
 
-	  gl::pushMatrices();
-		 gl::setMatricesWindow( mFbo.getSize(), false);
-		 gl::scale((float)BIG_PHOTO_WIDTH/getWindowWidth(), (float)BIG_PHOTO_WIDTH/getWindowWidth());
-		 gl::draw(comicsImage);
-	  gl::popMatrices();
+	gl::pushMatrices();
+	gl::setMatricesWindow( mFbo.getSize(), false);
+	gl::scale((float)BIG_PHOTO_WIDTH/getWindowWidth(), (float)BIG_PHOTO_WIDTH/getWindowWidth());
+	gl::draw(comicsImage);
+	gl::popMatrices();
 
-	  gl::setViewport(saveView);
+	gl::setViewport(saveView);
 }

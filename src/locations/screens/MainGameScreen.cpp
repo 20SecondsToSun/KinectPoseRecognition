@@ -1,3 +1,6 @@
+#pragma warning(push)
+#pragma warning(disable: 4244)
+
 #include "MainGameScreen.h"
 #include "Game.h"
 
@@ -10,6 +13,8 @@ MainGameScreen MainGameScreen::MainGameScreenState;
 
 void MainGameScreen::setup()
 {
+	bg  = *AssetManager::getInstance()->getTexture( "images/diz/bg.jpg" );
+
 	cameraCanon().setup();
 	cameraCanon().live();
 
@@ -276,8 +281,10 @@ void MainGameScreen::drawFadeOutIfAllow()
 {
 	if (isLeaveAnimation)
 	{
-		gl::color(ColorA(BLUE_FADE.r, BLUE_FADE.g, BLUE_FADE.b, alphaFinAnimate));	
-		gl::drawSolidRect(getWindowBounds());
+		//gl::color(ColorA(BLUE_FADE.r, BLUE_FADE.g, BLUE_FADE.b, alphaFinAnimate));	
+		//gl::drawSolidRect(getWindowBounds());
+		gl::color(ColorA(1.0f, 1.0f, 1.0f, alphaFinAnimate));
+		gl::draw(bg);
 		gl::color(Color::white());
 	}
 }
@@ -305,3 +312,4 @@ void MainGameScreen::removeHandlers()
 	kinectFindPersonSignal.disconnect();
 	gotoResultScreenSignal.disconnect();
 }
+#pragma warning(pop)

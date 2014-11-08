@@ -95,4 +95,5 @@ class MainGameScreen : public Location
 		Timer _missedTimer;
 		ButtonTex *comeBackBtn;
 		Anim<float> alphaFinAnimate, alphaFlashAnim;
+		Texture bg;
 };

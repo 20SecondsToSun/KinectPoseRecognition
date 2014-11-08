@@ -1,4 +1,6 @@
 #pragma once
+#pragma warning(push)
+#pragma warning(disable: 4244)
 
 #include "cinder/Cinder.h"
 #include "cinder/app/AppBasic.h"
@@ -98,7 +100,7 @@ class GameControLScreen
 				gl::draw(time);
 				gl::Texture percent = Utils::getTextField(to_string(percentMatching), &percentFont,  Color::white());
 				gl::color(Color::hex(0xc42f39));
-				gl::translate(0.0, -200.0f );
+				gl::translate(0.0f, -200.0f );
 				gl::draw(percent);
 			gl::popMatrices();
 
@@ -122,7 +124,7 @@ class GameControLScreen
 					gl::translate(Vec2f(1267.0f, 53.0f));
 					gl::draw(matchingPopup);
 					gl::translate(253.0f - 13.0f, 357.0f);
-					int numActiveCircles = circlesNum*matchingProgress;
+					int numActiveCircles = circlesNum * matchingProgress;
 					for (int i = 0; i < circlesNum; i++)
 					{
 						gl::pushMatrices();
@@ -282,3 +284,5 @@ class GameControLScreen
 };
 
 inline GameControLScreen&	gameControls() { return GameControLScreen::getInstance(); };
+
+#pragma warning(pop)

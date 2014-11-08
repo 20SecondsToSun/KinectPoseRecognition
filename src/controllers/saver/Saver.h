@@ -7,24 +7,18 @@
 
 class Saver
 {
-	private:
-		Saver() {};
-		~Saver() {};
-		bool	checkFile(fs::path filepath, std::string mails);
-		int		getImagesInDir(fs::path dir_path);
-		
-	public:
-		// singleton implementation
-		static Saver& getInstance() { 
-			static Saver saver; 
-			return saver; 
-		};
+private:
+	bool	checkFile(fs::path filepath, std::string mails);
+	int		getImagesInDir(fs::path dir_path);
 
-		void savePoseIntoBase(Pose* pose);
-		void loadConfigData();
-		std::vector<Pose*> Saver::loadPoseBase();
+public:
+	static Saver& getInstance() { static Saver saver; return saver; };
 
-		bool	saveImageIntoBase(std::string mails,  ci::Surface  image);
+	void savePoseIntoBase(Pose* pose);
+	void loadConfigData();
+	std::vector<Pose*> Saver::loadPoseBase();
+
+	bool saveImageIntoBase(std::string mails,  ci::Surface  image);
 };
 
 inline Saver&	saver() { return Saver::getInstance(); };

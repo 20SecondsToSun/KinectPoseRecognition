@@ -148,7 +148,7 @@ class ResultScreen : public Location
 		QRcode qrCode;
 
 		Texture	postPhotoTextTex, emailtPhotoTextTex;
-		Texture	playMoreTex, nothingCatTex;
+		Texture	playMoreTex, nothingCatTex, bg;
 
 		void (ResultScreen::* drawHandler)();
 };

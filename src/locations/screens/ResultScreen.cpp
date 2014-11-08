@@ -12,6 +12,8 @@ void ResultScreen::setup()
 {
 	Font *btnFont = fonts().getFont("Helvetica Neue", 46);
 
+	bg  = *AssetManager::getInstance()->getTexture( "images/diz/bg.jpg" );
+
 	Texture emailBtnTex   = *AssetManager::getInstance()->getTexture("images/serverScreen/mailBtn.png");
 	mailBtn = new ButtonTex(emailBtnTex,  "E-mail");
 	mailBtn->setScreenField(Vec2f(674.0f, 672.0f));
@@ -25,7 +27,7 @@ void ResultScreen::setup()
 	Texture comeBackBtnTex   = *AssetManager::getInstance()->getTexture( "images/diz/toStart.png" );
 		
 	backToStartBtn = new ButtonTex(comeBackBtnTex,  "backtoStart");
-	backToStartBtn->setScreenField(Vec2f(0.0f, 1080.0f - 169.0f));
+	backToStartBtn->setScreenField(Vec2f(0.0f, 958.0f));
 	backToStartBtn->setDownState(comeBackBtnTex);
 
 	Texture facebookBtnTex   = *AssetManager::getInstance()->getTexture("images/serverScreen/fb_off.png");
@@ -520,9 +522,11 @@ void ResultScreen::drawFadeOutIfAllow()
 {
 	if (isLeaveAnimation)
 	{
-		gl::color(ColorA(BLUE_FADE.r, BLUE_FADE.g, BLUE_FADE.b, alphaFinAnimate));	
-		gl::drawSolidRect(getWindowBounds());
-		gl::color(ColorA(0,0,0,1));
+		//gl::color(ColorA(BLUE_FADE.r, BLUE_FADE.g, BLUE_FADE.b, alphaFinAnimate));	
+		//gl::drawSolidRect(getWindowBounds());
+		gl::color(ColorA(1.0f, 1.0f, 1.0f, alphaFinAnimate));
+		gl::draw(bg);
+		gl::color(Color::white());
 	}
 }
 

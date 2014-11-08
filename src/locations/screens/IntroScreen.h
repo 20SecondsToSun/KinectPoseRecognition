@@ -12,6 +12,8 @@
 #include "CatAnimator.h"
 #include "MainGameScreen.h"
 
+#include "cinder/gl/Fbo.h"
+
 using namespace ci;
 using namespace ci::app;
 using namespace gl;
@@ -19,66 +21,66 @@ using namespace std;
 
 class IntroScreen : public Location
 {
-	public:
-		void setup();
-		void init( LocationEngine* game);
-		void cleanup();
+public:
+	void setup();
+	void init( LocationEngine* game);
+	void cleanup();
 
-		void pause(){};
-		void resume(){};
+	void pause(){};
+	void resume(){};
 
-		void handleEvents(){};
-		void mouseEvents(int type);
-		void update();
-		void keyEvents();
-		void draw();
+	void handleEvents(){};
+	void mouseEvents(int type);
+	void update();
+	void keyEvents();
+	void draw();
 
-		static IntroScreen* Instance() {
-			return &IntroScreenState;
-		}
+	static IntroScreen* Instance() {
+		return &IntroScreenState;
+	}
 
-	private:	
+private:	
 
-		enum states {INIT, 
-					 SHOW_INVITE,  
-					 SHOW_INSTRUCTION,
-					 START_GAME,
-					 ANIMATE_TO_SHOW_INVITE};
+	enum states {INIT, 
+		SHOW_INVITE,  
+		SHOW_INSTRUCTION,
+		START_GAME,
+		ANIMATE_TO_SHOW_INVITE};
 
-		LocationEngine*	 _game;
-		static IntroScreen IntroScreenState;	
+	LocationEngine*	 _game;
+	static IntroScreen IntroScreenState;	
 
-		ci::signals::connection startInstructionBtnSignal;
-		ci::signals::connection startGameBtnSignal;
-		ci::signals::connection comeBackBtnSignal;
+	ci::signals::connection startInstructionBtnSignal;
+	ci::signals::connection startGameBtnSignal;
+	ci::signals::connection comeBackBtnSignal;
 
-		int state, nextState;
-		string debugString;
+	int state, nextState;
+	string debugString;
 
-		bool deviceError;
-	
-		Texture logo, text1, cat2, btnFon, paws,  instructionImage, lapaTv;
-	
-		ButtonTex *startInstructionBtn, *startGameBtn, *comeBackBtn;
+	bool deviceError;
 
-		ci::Anim<float>			alphaAnimate, catAnimate, logoAnimate, textAnimateAlpha;	
-		ci::Anim<ci::Vec2f>     cat2AnimateVec, instructBtnAnimateVec;	
-		ci::Anim<ci::Vec2f>     lapaTvAnimateVec, startBtnAnimateVec, textAnimateVec;
+	Texture logo, text1, cat2, btnFon, paws,  instructionImage, lapaTv, bg;
 
-		void	startInstructionBtnDown();
-		void	startGameBtnDown();
-		void	drawInitElements();
-		void	drawInviteElements();
-		void    drawIstructionElements();
-		void	animationFinished();
-		void	changeState();
+	ButtonTex *startInstructionBtn, *startGameBtn, *comeBackBtn;
 
-		void initInstructionParam();
-		void initAnimateParam();
-		void inviteAnimateParam();
+	ci::Anim<float> alphaAnimate, catAnimate, logoAnimate, textAnimateAlpha;	
+	ci::Anim<ci::Vec2f> cat2AnimateVec, instructBtnAnimateVec;	
+	ci::Anim<ci::Vec2f> lapaTvAnimateVec, startBtnAnimateVec, textAnimateVec;
 
-		void gotoFirstScreen();
-		void gotoInviteScreen();
+	void	startInstructionBtnDown();
+	void	startGameBtnDown();
+	void	drawInitElements();
+	void	drawInviteElements();
+	void    drawIstructionElements();
+	void	animationFinished();
+	void	changeState();
 
-		void (IntroScreen::* drawHandler)();
+	void initInstructionParam();
+	void initAnimateParam();
+	void inviteAnimateParam();
+
+	void gotoFirstScreen();
+	void gotoInviteScreen();
+
+	void (IntroScreen::* drawHandler)();	
 };

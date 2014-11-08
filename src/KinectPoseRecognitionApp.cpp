@@ -15,9 +15,7 @@
 #include "Saver.h"
 #include "Utils.h"
 #include "PlayerData.h"
-
 #include "Toucher.h"
-
 
 using namespace ci;
 using namespace ci::app;

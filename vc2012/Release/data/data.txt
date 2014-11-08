@@ -1,6 +1,6 @@
 {
    "standID" : 1,
-   "netConnection": false,
+   "netConnection": true,
    "algo": 1,
    "minError": 30,
    "maxError": 50,

@@ -19,40 +19,31 @@ std::vector<Pose*> Saver::loadPoseBase()
 				continue;
 
 			try{
-				 doc = JsonTree(loadFile(basePath / it->path().filename().string()));
+				doc = JsonTree(loadFile(basePath / it->path().filename().string()));
 			}
 			catch(...)
 			{
 				continue;
 			}
-			
+
 			JsonTree poses( doc.getChild( "poses" ) );
 
 			for( JsonTree::ConstIter pose = poses.begin(); pose != poses.end(); ++pose ) 
 			{
 				Pose* newPose = new Pose();	
 				vector<Vec3f> points;
-			
-				JsonTree datas =JsonTree( pose->getChild( "data" ));
-				for( JsonTree::ConstIter data = datas.begin(); data != datas.end(); ++data ) {		
 
+				JsonTree datas =JsonTree( pose->getChild( "data" ));
+				for( JsonTree::ConstIter data = datas.begin(); data != datas.end(); ++data )
+				{
 					float x =  data->getChild( "x" ).getValue<float>();
 					float y =  data->getChild( "y" ).getValue<float>();
 					float z =  data->getChild( "z" ).getValue<float>();
-
 					points.push_back(Vec3f(x, y, z));
 				}
 
-				newPose->setPoints(points);	
-				#ifdef algo1
-					newPose->createNormalizePoints0();	
-				#endif
-
-				#ifdef algo2
-					newPose->createSelfSkeletBoundingBox();		
-					newPose->createNormalizePoints();	
-				#endif				
-
+				newPose->setPoints(points);
+				newPose->createNormalizePoints0();
 				newPose->setRedColors();
 
 				string name =  pose->getChild( "name" ).getValue<string>();
@@ -66,7 +57,7 @@ std::vector<Pose*> Saver::loadPoseBase()
 
 				int percent =  pose->getChild( "percent" ).getValue<int>();
 				newPose->setPercent(percent);
-			
+
 				gl::Texture tex;
 				try{
 					tex = loadImage(basePath /(name +".png"));			
@@ -116,7 +107,7 @@ void Saver::savePoseIntoBase(Pose* pose)
 	JsonTree gesturesDataJson = JsonTree::makeArray( "data" );
 
 	auto points		  =  pose->getPoints();
-	
+
 	for (size_t j = 0, ilen = points.size() ; j < ilen; j++)
 	{
 		JsonTree point;
@@ -132,7 +123,7 @@ void Saver::savePoseIntoBase(Pose* pose)
 
 	string jsonName = poseName + ".json";	
 	doc.write( writeFile( basePath / jsonName ), JsonTree::WriteOptions() );
-	
+
 	string genericName = poseName + ".png";	
 	writeImage(  basePath / genericName, pose->getImage());
 }
@@ -163,13 +154,12 @@ bool Saver::saveImageIntoBase(string mails,  ci::Surface  image)
 
 	string hours =  to_string(tstruct.tm_hour)+":"+to_string(tstruct.tm_min)+":"+to_string(tstruct.tm_sec);
 	string saveString = hours+";"+mails+"\n";
-	
+
 	if(fs::is_directory(dir_path))
 	{
 		if (checkFile(file_path, saveString))
 		{
 			image_path = getAppPath()/dirname/(to_string(getImagesInDir(dir_path))+".jpg");
-			//console()<<"image path:: "<<image_path<<endl;
 			writeImage( image_path, image);
 		}	
 		else
@@ -182,7 +172,6 @@ bool Saver::saveImageIntoBase(string mails,  ci::Surface  image)
 			if (checkFile(file_path, saveString))
 			{
 				image_path = getAppPath()/dirname/(to_string(getImagesInDir(dir_path))+".jpg");
-				//console()<<"image path:: "<<image_path<<endl;
 				writeImage( image_path, image);
 			}
 			else
@@ -198,7 +187,7 @@ bool Saver::saveImageIntoBase(string mails,  ci::Surface  image)
 bool Saver::checkFile(fs::path filepath, string mails)
 {
 	FILE* file= fopen(filepath.string().c_str(), "a");
-	
+
 	if (file!=NULL)
 	{
 		fputs ((mails).c_str(),file);
@@ -229,30 +218,26 @@ void Saver::loadConfigData()
 	JsonTree doc;
 
 	try{
-		 doc = JsonTree(loadFile(filepath));
-		 Params::standID =  doc.getChild( "standID" ).getValue<int>() ;
-		 Params::isNetConnected =  doc.getChild( "netConnection" ).getValue<bool>() ;
-		 Params::isFullSkelet =  doc.getChild( "fullskelet" ).getValue<bool>() ;
-		 Params::isPointsDraw =  doc.getChild( "drawPoints" ).getValue<bool>() ;
-		 Params::computeMistakeAlgo =  doc.getChild( "algo" ).getValue<int>() ;
+		doc = JsonTree(loadFile(filepath));
+		Params::standID =  doc.getChild( "standID" ).getValue<int>() ;
+		Params::isNetConnected =  doc.getChild( "netConnection" ).getValue<bool>() ;
+		Params::isFullSkelet =  doc.getChild( "fullskelet" ).getValue<bool>() ;
+		Params::isPointsDraw =  doc.getChild( "drawPoints" ).getValue<bool>() ;
+		Params::computeMistakeAlgo =  doc.getChild( "algo" ).getValue<int>() ;
 
-		 Params::maxErrorBetweenJoints =  doc.getChild( "maxError" ).getValue<int>() ;
-		 Params::minErrorBetweenJoints =  doc.getChild( "minError" ).getValue<int>() ;
+		Params::maxErrorBetweenJoints =  doc.getChild( "maxError" ).getValue<int>() ;
+		Params::minErrorBetweenJoints =  doc.getChild( "minError" ).getValue<int>() ;
 
+		JsonTree datas =JsonTree( doc.getChild( "percents" ));
 
-		 JsonTree datas =JsonTree( doc.getChild( "percents" ));
-
-		 int i = 0;
-		for( JsonTree::ConstIter data = datas.begin(); data != datas.end(); ++data ) 
-		{
+		int i = 0;
+		for( JsonTree::ConstIter data = datas.begin(); data != datas.end(); ++data )		
 			Params::weightJoints[i++] = data->getValue<float>();
-			//console()<<"i::: "<<data->getValue<float>()<<endl;
-		}
 
-		 console()<<"PARAMS :: "<<Params::standID<<" isNetConnected "<< Params::isNetConnected <<" computeMistakeAlgo "<<Params::computeMistakeAlgo<<std::endl;
+		console()<<"PARAMS :: "<<Params::standID<<" isNetConnected "<< Params::isNetConnected <<" computeMistakeAlgo "<<Params::computeMistakeAlgo<<std::endl;
 	}
 	catch(...)
 	{
-		
+
 	}
 }
