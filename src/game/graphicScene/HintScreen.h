@@ -23,8 +23,8 @@ public:
 
 	Vec2f arrowScale;
 
-	Texture hint3, bg, catImage, bubbleImage, arrowImage, screenshot, readyTex, titleNum, countDownTexture, levelNumTexture;
-	Texture iconsPreview, failImage, bg_blue;
+	Texture hint3, bg, catImage, bubbleImage, arrowImage, screenshot, readyTex, /*titleNum,*/ countDownTexture, levelNumTexture;
+	Texture /*iconsPreview,*/ failImage, bg_blue;
 
 	float tint_r, tint_g, tint_b;
 
@@ -64,8 +64,8 @@ public:
 		bubbleImage = *AssetManager::getInstance()->getTexture( "images/diz/bubble2.png" );
 		arrowImage  = *AssetManager::getInstance()->getTexture( "images/diz/arrow2.png" );
 		readyTex    = *AssetManager::getInstance()->getTexture( "images/diz/readyText.png" );
-		titleNum    = *AssetManager::getInstance()->getTexture( "images/diz/pozaTitle.png" );
-		iconsPreview = *AssetManager::getInstance()->getTexture( "images/diz/preview.png" );
+		//titleNum    = *AssetManager::getInstance()->getTexture( "images/diz/pozaTitle.png" );
+		//iconsPreview = *AssetManager::getInstance()->getTexture( "images/diz/preview.png" );
 		failImage    = *AssetManager::getInstance()->getTexture( "images/fail.jpg" );
 		bg_blue		 = *AssetManager::getInstance()->getTexture( "images/diz/bg.jpg" );
 
@@ -158,8 +158,8 @@ public:
 			gl::draw(readyTex);
 			gl::popMatrices();
 
-			drawTitle();
-			drawPreview();
+			//drawTitle();
+			//drawPreview();
 			gl::color(Color::white());
 
 			if (poseNum > 1)
@@ -187,11 +187,11 @@ public:
 			gl::draw(readyTex, Vec2f(472.0f, 416.0f));
 
 			gl::color(ColorA(1.0f, 1.0f, 1.0f, startCounterAlpha));
-			gl::draw(countDownTexture, Vec2f(780.0f, 212.0f));
+			gl::draw(countDownTexture, Vec2f(780.0f, 152.0f));
 			gl::color(Color::white());
 
-			drawTitle();
-			drawPreview();		
+			//drawTitle();
+			//drawPreview();		
 		}
 		else if (state == FADE_NUMS)
 		{
@@ -222,7 +222,7 @@ public:
 	{			
 		gl::pushMatrices();
 		gl::translate(780.0f, 107.0f);
-		gl::draw(titleNum);
+		//gl::draw(titleNum);
 		gl::translate(262.0f, 9.0f);
 		gl::draw(levelNumTexture);
 		gl::popMatrices();
@@ -230,7 +230,7 @@ public:
 
 	void drawPreview(bool isShadow = true)
 	{	
-		gl::draw(iconsPreview, Vec2f(19.0f, 15.0f));
+		//gl::draw(iconsPreview, Vec2f(19.0f, 15.0f));
 
 		for (int i = 0; i < poseNum - 1; i++)
 		{

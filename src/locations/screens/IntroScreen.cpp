@@ -156,20 +156,8 @@ void IntroScreen::mouseEvents(int type)
 
 void IntroScreen::keyEvents()
 {
-#ifdef debug
 	KeyEvent _event = _game->getKeyEvent();
 
-	switch (_event.getChar())
-	{       
-	case 'z':
-		isPeopleInFrame = true;
-		break;
-
-	case 'x':
-		isPeopleInFrame = false;
-		break;
-	}
-#endif
 }
 
 void IntroScreen::update() 

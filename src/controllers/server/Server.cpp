@@ -24,17 +24,21 @@ void Server::sendPhotoThreadHandler()
 	DataSourceRef urlRequest =	loadFile( photoPath);
 	string loadingString =  toBase64(Buffer(urlRequest)) + to_string(photoParams::BIG_PHOTO_HEIGHT) +"," + to_string(Params::standID);
 
-	ci::app::console()<<".............  "<<endl;
+	ci::app::console()<<"................."<<endl;
 	ci::app::console()<<loadingString<<endl;
-	ci::app::console()<<".............  "<<endl;
+	ci::app::console()<<"................."<<endl;
 	string status;			
 
-	#ifdef debug	
+	#ifdef testServer	
 		if(Params::serverPhotoLoadTimeout)
-			status =  Curl::postImage(  serverParams::badTestURL, loadingString);
-		else if(Params::serverPhotoLoadError)			
-		   status = "ERROR";	
-		else
+		{
+			//status =  Curl::postImage(  serverParams::badTestURL, loadingString);
+		}
+		else if(Params::serverPhotoLoadError)
+		{
+		  // status = "ERROR";
+		}
+		//else
 		  status =  Curl::postImage(  serverParams::serverURL, loadingString);
 	#else
 		status  =  Curl::postImage(  serverParams::serverURL, loadingString);
@@ -111,6 +115,7 @@ void Server::abortLoading()
 	else if (isMailSending)
 	{
 		isMailSending = false;
+		//sendToMailThread->join();
 	}
 }
 
@@ -122,18 +127,18 @@ void Server::checkConnection( )
 
 void Server::checkConnectionThreadHandler( )
 {
-	isCheckingConnection = true;
+	/*isCheckingConnection = true;
 	string status;
-	#ifdef debug	
+	#ifdef testServer	
 		if(Params::serverConnectionCheckTimeout)
 			status = Curl::get(serverParams::badTestURL);	
 		else if(Params::serverConnectionCheckError)			
 		   status = "ERROR";	
 		else
 		  status = Curl::get(serverParams::connectionTestURL);
-	#else
-		status = Curl::get(serverParams::connectionTestURL);	
-	#endif
+	#else*/
+	string status = Curl::get(serverParams::connectionTestURL);	
+	//#endif
 
 	isConnected = (status != "ERROR");		
 	serverCheckConnectionEvent();
@@ -154,17 +159,22 @@ void Server::sendToMailThreadHandler(string allEmails)
 	strings.insert(pair<string, string>( "id" ,     sessionId));
 	strings.insert(pair<string, string>( "email" ,  allEmails));
 
+	//;
 	string status;
 
-	#ifdef debug	
+	#ifdef testServer	
 		if(Params::serverEmailSendTimeout)
-			status =  Curl::post(serverParams::badTestURL, strings);
-		else if(Params::serverEmailSendError)			
-		   status = "ERROR";	
-		else
+		{
+			//status =  Curl::post(serverParams::badTestURL, strings);
+		}
+		else if(Params::serverEmailSendError)
+		{
+		  // status = "ERROR";
+		}
+		//else
 		  status =  Curl::post(serverParams::mailURL, strings);
 	#else
-		status =  Curl::post(serverParams::mailURL, strings);
+		 status =  Curl::post(serverParams::mailURL, strings);
 	#endif	
 
 	JsonTree jTree;
@@ -187,8 +197,8 @@ void Server::sendToMailThreadHandler(string allEmails)
 std::string   Server::sendVkSharePlus()
 {	
 	std::map<string,string> strings;
-	strings.insert(pair<string, string>( "action" , "cnt"));
-	strings.insert(pair<string, string>( "cnt" ,     "1"));
+	//strings.insert(pair<string, string>( "action" , "cnt"));
+	strings.insert(pair<string, string>( "id" ,   to_string(Params::standID)));
 	strings.insert(pair<string, string>( "type" ,  "vk"));
 	string request =  Curl::post( serverParams::shareSaveURL, strings);
 
@@ -196,9 +206,9 @@ std::string   Server::sendVkSharePlus()
 
 	try 
 	{
-		console()<<"Try to Vkontakte PLUS   "<<endl;
+		console()<<"Try to Vkontakte PLUS   "<<request<<endl;
 		jTree = JsonTree(request);
-		console()<<"VKONTAKTE PLUS   "<< jTree.getChild("cnt").getValue()<<std::endl;
+		console()<<"VKONTAKTE PLUS   "<< jTree.getChild("success").getValue()<<std::endl;
 		return SERVER_OK;
 	}
 	catch(...)
@@ -212,8 +222,8 @@ std::string   Server::sendVkSharePlus()
 std::string   Server::sendFbSharePlus()
 {	
 	std::map<string,string> strings;
-	strings.insert(pair<string, string>( "action" , "cnt"));
-	strings.insert(pair<string, string>( "cnt" ,     "1"));
+	//strings.insert(pair<string, string>( "action" , "cnt"));
+	strings.insert(pair<string, string>( "id" ,   to_string(Params::standID)));
 	strings.insert(pair<string, string>( "type" ,  "fb"));
 	string request =  Curl::post( serverParams::shareSaveURL, strings);
 
@@ -221,9 +231,9 @@ std::string   Server::sendFbSharePlus()
 
 	try 
 	{
-		console()<<"Try to Facebook PLUS   "<<endl;
+		console()<<"Try to Facebook PLUS   "<<request<<endl;
 		jTree = JsonTree(request);
-		console()<<"Facebook PLUS   "<< jTree.getChild("cnt").getValue()<<std::endl;
+		console()<<"Facebook PLUS   "<< jTree.getChild("success").getValue()<<std::endl;
 		return SERVER_OK;
 	}
 	catch(...)

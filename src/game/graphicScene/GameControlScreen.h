@@ -58,8 +58,8 @@ class GameControlScreen
 			timer_bubble   =  *AssetManager::getInstance()->getTexture( "images/diz/time_bubble.png");
 			popka		   =  *AssetManager::getInstance()->getTexture( "images/diz/popka.jpg");
 
-			timerVec       = Vec2f(1458.0f, 1080.0f);
-			plashkaVec     = Vec2f(1920.0f, 0.0f);
+			timerVec        = Vec2f(1458.0f, 1080.0f);
+			plashkaVec      = Vec2f(1920.0f, 0.0f);
 			silhouetteAlpha = 0.0f;
 
 			secondsFont   = Font(loadFile(getAssetPath("fonts/maestroc.ttf")), 120);
@@ -275,11 +275,7 @@ class GameControlScreen
 
 		void showSilhouette()
 		{
-			#ifdef debug
-				timeline().apply( &silhouetteAlpha, 0.0f, 0.6f, 0.4f, EaseInCubic() );
-			#else
-				timeline().apply( &silhouetteAlpha, 0.0f, 1.0f, 0.4f, EaseInCubic() );
-			#endif
+			timeline().apply( &silhouetteAlpha, 0.0f, 1.0f, 0.4f, EaseInCubic());
 		}
 
 		void setCurrentPose(Pose *pose)

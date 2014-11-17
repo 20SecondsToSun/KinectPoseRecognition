@@ -10,11 +10,15 @@ void KinectBase::setDevice()
 	deviceOptions.setColorResolution(COLOR_RESOLUTION);	
 	deviceOptions.setSkeletonSelectionMode(MsKinect::SkeletonSelectionMode::SkeletonSelectionModeClosest1);	
 
+	deviceOptions.setSkeletonTransform(MsKinect::SkeletonTransform::TRANSFORM_SMOOTH);
+
 	mDevice = MsKinect::Device::create();	
 	mDevice->connectEventHandler( [ & ]( MsKinect::Frame frame )
 	{
 		mFrame = frame;
 	} );
+
+	console()<<"SKELETON TRANSFORM!!!!!!!!!!!!!!!!  "<<deviceOptions.getSkeletonTransform()<<endl;	
 }
 
 void KinectBase::kinectConnect()

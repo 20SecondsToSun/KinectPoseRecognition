@@ -13,7 +13,8 @@
 
 namespace gameStates
 {
-	enum states {
+	enum states
+	{
 		NONE, 
 		STEP_BACK_MESSAGE,
 		HINT_MESSAGE,
@@ -57,6 +58,7 @@ public:
 	int CURRENT_POSE_TIME;
 	int CURRENT_MATCHING_PERCENT;
 	int state;
+	int allHumanPointsInScreenRectStable;
 
 	bool isGameRunning, isPoseDetecting, winAnimationFinished, _onePoseTimerPause;
 	Timer  _preGameTimer, _onePoseTimer, _resultTimer, _stepBackTimer, _hintTimer;
@@ -77,14 +79,22 @@ public:
 
 	ci::signals::connection quickAnimationFinishedSignal;
 	
-	bool testPercent100;	
+	bool testPercent100, isHandsUp;	
 	string debugString;
+
+	std::vector<ci::Vec3f> skelet;
 
 	void setup()
 	{
 		poses = saver().loadPoseBase();
 		poseNum = 0;
 		testPercent100 = false;
+
+		kinect().gestureEvent.connect( [ & ]( )
+		{
+			console()<<"up--------------------------->  "<<endl;
+			isHandsUp = true;
+		});	
 	}
 
 	void initnew()
@@ -102,6 +112,9 @@ public:
 
 	void update()
 	{
+		kinect().updateSkeletonData();
+		skelet = kinect().getCurrentSkelet();
+
 		switch(state)
 		{
 		case STEP_BACK_MESSAGE:
@@ -149,15 +162,16 @@ public:
 			break;
 		}
 	}
-
+	
 	void updateStepBackMessage() 
 	{
-		kinect().updateSkeletonData();
-
-		if (allStpeBackConditionsGood())
+			if (allStpeBackConditionsGood())
 		{			
 			hintScreen().startHandsAwaiting();
 			_handsUpAwaitingTimer.start();
+			kinect().enbleGestures();
+			isHandsUp = false;
+			allHumanPointsInScreenRectStable = 0;
 			state = HANDS_UP_AWAITING;
 		}
 		else if(isTimerFinished(_stepBackTimer, STEP_BACK_TIME))
@@ -168,33 +182,38 @@ public:
 
 	bool allStpeBackConditionsGood()
 	{
-#ifdef debug
-		return isTimerFinished(_stepBackEnsureTimer, STEP_BACK_ENSURE_TIME)
+		//return true;
+		return isTimerFinished(_stepBackEnsureTimer, STEP_BACK_ENSURE_TIME) 
 			&& kinect().isDistanceOk()
 			&& kinect().allHumanPointsInScreenRect()
-			&& kinect().isHeapInRect(Rectf(300.0f, 0.0f, 1620.0f, 1920.0f); 
-#else
-		return isTimerFinished(_stepBackEnsureTimer, STEP_BACK_ENSURE_TIME) 
-			&& kinect().isDistanceOk() 
-			&& kinect().allHumanPointsInScreenRect()
-			&& kinect().isHeapInRect(Rectf(300.0f, 0.0f, 1620.0f, 1920.0f); 
-#endif
+			&& kinect().isHeapInRect(Rectf(100.0f, 0.0f, 1820.0f, 1080.0f));
 	}
 
 	void updateHandsAwaiting() 
 	{
-		kinect().updateSkeletonData();
+		if(!kinect().allHumanPointsInScreenRect())
+			allHumanPointsInScreenRectStable++; 
 
-		#ifdef debug
-			if(true)
-		#else
-			if (kinect().isDistanceOk() && kinect().isHandsUp())
-		#endif		
+
+		if (!kinect().isDistanceOk() || allHumanPointsInScreenRectStable > 10)
+		{
+			_stepBackTimer.start();
+			_handsUpAwaitingTimer.stop();
+			kinect().disableGestures();
+			hintScreen().init();
+			state = STEP_BACK_MESSAGE;
+		}
+		else if (isTimerFinished(_handsUpAwaitingTimer, HANDS_UP_AWAITINTING_TIME))
+		{
+			gotoFirstScreenEvent();
+			kinect().disableGestures();		
+		}
+		else if (isHandsUp)
 		{
 			scaleAccordingUserHeight = 1.0f;
 
-			int etalonHeight    =  kinect().getEtalonHeightInPixelsAccordingDepth();
-			int userHeight      =  kinect().userHeightInPixels();
+			float etalonHeight    =  kinect().getEtalonHeightInPixelsAccordingDepth();
+			float userHeight      =  kinect().userHeightInPixels();
 			//float distance      =  kinect().distanceToSkelet();
 			//float userHeightRaw =  kinect().userHeightRaw();
 
@@ -203,6 +222,8 @@ public:
 			else
 				scaleAccordingUserHeight = 1.0f;
 
+			debugString = "SCALE: " + to_string(scaleAccordingUserHeight) +"\nuserHeight: "+ to_string((int)userHeight)+"\netalonHeight: "+ to_string((int)etalonHeight);
+			
 			hintScreen().poseNum = level;
 			hintScreen().startReadySate();
 
@@ -213,18 +234,15 @@ public:
 			gameControls().setPoseShift(poses[poseCode]->getPoseShift());
 
 			_preGameTimer.start();
+			kinect().disableGestures();
 			state = PRE_GAME_INTRO;
-		}
-		else if (isTimerFinished(_handsUpAwaitingTimer, HANDS_UP_AWAITINTING_TIME))
-		{
-			gotoFirstScreenEvent();
-		}
-		else
-		{
-			//allHumanPointsInGame();
-			//float  userHeight = 0;//floor(currentPose.calculateUserHeight());
-			//debugString = " curHeight:  "+ to_string(userHeight) + " |||| distance: "+to_string( kinect().distanceToSkelet());
-		}
+		}		
+		//else
+		//{
+		//	//allHumanPointsInGame();
+		//	//float  userHeight = 0;//floor(currentPose.calculateUserHeight());
+		//	//debugString = " curHeight:  "+ to_string(userHeight) + " |||| distance: "+to_string( kinect().distanceToSkelet());
+		//}
 	}
 	
 	void updatePreGameIntro() 
@@ -389,10 +407,14 @@ public:
 		{
 			comicsScreen().comicsTexture = PlayerData::playerData[level-1].screenshot;
 			comicsScreen().poseTexture   = getPoseImage();
-		}			
-		comicsScreen().show();
-
-		state = SHOW_GAME_RESULT;	
+			comicsScreen().show();
+			state = SHOW_GAME_RESULT;	
+		}
+		else
+		{
+			state = NONE;
+			gotoResultScreenEvent();
+		}
 	}
 
 	void flashAnimationFinished()
@@ -636,13 +658,16 @@ public:
 
 	void drawCurrentPlayerJoints()
 	{
-		if (kinect().getCurrentSkelet().size() == 0)
+		if (skelet.size() == 0)
 			return;
 
 		// current player points
 		gl::pushMatrices();
 		gl::translate( kinect().viewShiftX,  kinect().viewShiftY);
 		gl::scale( kinect().headScale,  kinect().headScale);
+		currentPose.setPoints(skelet);
+		currentPose.createNormalizePoints0();
+		currentPose.initColors();
 		currentPose.drawPoints();
 		gl::popMatrices();
 		Utils::textFieldDraw(debugString,  fonts().getFont("Helvetica Neue", 46), Vec2f(40.0f, 40.0f), Color(1.0f, 0.0f, 0.0f));

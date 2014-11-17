@@ -546,14 +546,14 @@ void ResultScreen::drawPhotoLoadingPreloader()
 {
 	//gl::color(ColorA(1, 1, 1, alphaAnimate));
 	//Utils::textFieldDraw("Выгружаю фотографии... "+ to_string(photoMaker().getElapsedSeconds()),  fonts().getFont("MaestroC", 114), Vec2f(510.f, 448.0f), ColorA(1.f, 1.f, 1.f, 1.f));
-	Utils::textFieldDraw("Сохраняю фотографии",  fonts().getFont("MaestroC", 114), Vec2f(510.f, 448.0f), ColorA(1.f, 1.f, 1.f, 1.f));
+	Utils::textFieldDraw("Сохраняю фотографию",  fonts().getFont("MaestroC", 114), Vec2f(510.f, 448.0f), ColorA(1.f, 1.f, 1.f, 1.f));
 }
 
 void ResultScreen::drawNetConnectionPreloader() 
 {
 	//gl::color(ColorA(1, 1, 1, alphaAnimate));
 	//Utils::textFieldDraw("Проверяю соединение... "+ to_string(server().getTimeoutSeconds()),  fonts().getFont("MaestroC", 114), Vec2f(510.f, 448.0f), ColorA(1.f, 1.f, 1.f, 1.f));
-	Utils::textFieldDraw("Сохраняю фотографии",  fonts().getFont("MaestroC", 114), Vec2f(510.f, 448.0f), ColorA(1.f, 1.f, 1.f, 1.f));
+	Utils::textFieldDraw("Сохраняю фотографию",  fonts().getFont("MaestroC", 114), Vec2f(510.f, 448.0f), ColorA(1.f, 1.f, 1.f, 1.f));
 
 }
 
@@ -561,7 +561,7 @@ void ResultScreen::drawServerPreloader()
 {	
 	//gl::color(ColorA(1, 1, 1, alphaAnimate));	
 	//Utils::textFieldDraw("Ожидаю сервер... " + to_string(server().getTimeoutSeconds()),  fonts().getFont("MaestroC", 114), Vec2f(510.f, 448.0f), ColorA(1.f, 1.f, 1.f, 1.f));
-	Utils::textFieldDraw("Сохраняю фотографии",  fonts().getFont("MaestroC", 114), Vec2f(510.f, 448.0f), ColorA(1.f, 1.f, 1.f, 1.f));
+	Utils::textFieldDraw("Сохраняю фотографию",  fonts().getFont("MaestroC", 114), Vec2f(510.f, 448.0f), ColorA(1.f, 1.f, 1.f, 1.f));
 
 }
 

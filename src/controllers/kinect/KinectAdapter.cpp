@@ -36,7 +36,7 @@ void KinectAdapter::setActiveJoints()
 	jointToRecord.push_back(NUI_SKELETON_POSITION_KNEE_RIGHT);	
 	jointToRecord.push_back(NUI_SKELETON_POSITION_ANKLE_RIGHT);
 
-	SKELET_SIZE = jointToRecord.size();
+	SKELET_SIZE = 12;//jointToRecord.size();
 
 	HEAD_INDEX = 1;
 	ANKLE_RIGHT_INDEX = 11;
@@ -54,6 +54,22 @@ void KinectAdapter::setActiveJoints()
 	humanGrowthPoints.push_back(NUI_SKELETON_POSITION_KNEE_LEFT);
 	humanGrowthPoints.push_back(NUI_SKELETON_POSITION_ANKLE_LEFT);
 	//humanGrowthPoints.push_back(NUI_SKELETON_POSITION_FOOT_LEFT);
+}
+
+void KinectAdapter::enbleGestures()
+{
+	_gestureEnable = true;
+	_handsUpGestureSignal = _handsUpGesture.gestureRecognizedEvent.connect( [ & ]( )
+	{
+		gestureEvent();
+	});	
+}
+
+void KinectAdapter::disableGestures()
+{
+	_gestureEnable = false;
+	if (_handsUpGestureSignal.connected())
+		_handsUpGestureSignal.disconnect();
 }
 
 void KinectAdapter::update() 
@@ -75,7 +91,7 @@ void KinectAdapter::updateSkeletonData()
 	currentSkelet.clear();
 	rawCurrentSkelet.clear();
 
-	for (const auto& skeleton : mFrame.getSkeletons()) 
+	for ( const auto& skeleton : mFrame.getSkeletons() ) 
 	{
 		if (skeleton.size() == 0 ) continue;
 
@@ -88,18 +104,18 @@ void KinectAdapter::updateSkeletonData()
 			{
 				const MsKinect::Bone& bone = joint->second;
 
-				if(NUI_SKELETON_POSITION_TRACKED != bone.getTrackingState())
-				{
-					notTrackedPointsCount++;
-					if (notTrackedPointsCount > 4)
-					{
-						currentSkelet.clear();
-						break;
-					}
-				}
+				//if(NUI_SKELETON_POSITION_TRACKED != bone.getTrackingState())
+				//{
+				//	notTrackedPointsCount++;
+				//	if (notTrackedPointsCount > 4)
+				//	{
+				//		//currentSkelet.clear();
+				//		//break;
+				//	}
+				//}
 
 				Vec2f v0 = mDevice->mapSkeletonCoordToColor( bone.getPosition());
-				auto  z  = skeleton.at( bone.getStartJoint()).getPosition().z;
+				auto  z = skeleton.at( bone.getStartJoint()).getPosition().z;
 				currentSkelet.push_back( Vec3f(v0.x, v0.y, z));
 			}
 		}
@@ -118,6 +134,11 @@ void KinectAdapter::updateSkeletonData()
 				}				
 				rawCurrentSkelet.push_back( bone.getPosition());
 			}
+		}
+
+		if (_gestureEnable)
+		{
+			_handsUpGesture.update(skeleton);
 		}
 
 		break;
@@ -155,36 +176,20 @@ int KinectAdapter::getSkeletsInFrame()
 	return peopleInFrame;
 }
 
-SkeletJoints KinectAdapter::getCurrentSkelet()
-{
-	return currentSkelet;
-};
-
-bool KinectAdapter::isHeapInRect( Rectf rect) 
-{
-	if (rawCurrentSkelet.size())
-	{
-		Vec2f v0 = mDevice->mapSkeletonCoordToColor(rawCurrentSkelet[0]);
-		return rect.contains(v0);
-	}
-
-	return false;
-}
-
 bool KinectAdapter::allHumanPointsInScreenRect() 
 {
-	SkeletJoints skelet = currentSkelet;
-
-	if (skelet.size() == SKELET_SIZE)
+	if (currentSkelet.size() == SKELET_SIZE)
 	{
-		Vec3f head = skelet[HEAD_INDEX];
+		Vec3f head = currentSkelet[HEAD_INDEX];
 		float posHeadY = headScale * head.y + viewShiftY;
 
-		Vec3f leftFoot = skelet[ANKLE_LEFT_INDEX];
-		Vec3f rightFoot = skelet[ANKLE_RIGHT_INDEX];
+		Vec3f leftFoot = currentSkelet[ANKLE_LEFT_INDEX];
+		Vec3f rightFoot = currentSkelet[ANKLE_RIGHT_INDEX];
 
 		float leftFootY = headScale * leftFoot.y + viewShiftY;
 		float rightFootY = headScale * rightFoot.y + viewShiftY;
+
+		// console()<<" leftFootY "<<leftFootY<<" rightFootY "<<rightFootY<<endl;
 
 		if (posHeadY > 0.0f && leftFootY <= SCREEN_HEIGHT && rightFootY <= SCREEN_HEIGHT)
 			return true;
@@ -209,7 +214,6 @@ float KinectAdapter::calculateHumanGrowsScaleTo180sm()
 
 	return scaleAccordingUserHeight;
 }
-
 
 float KinectAdapter::getEtalonHeightInPixelsAccordingDepth()
 {
@@ -366,6 +370,17 @@ bool KinectAdapter::isHandsUp()
 		if (leftHand.y < headPosition.y || rightHand.y < headPosition.y)
 			return true;
 	}
+	return false;
+}
+
+bool KinectAdapter::isHeapInRect( Rectf rect) 
+{
+	if (rawCurrentSkelet.size())
+	{
+		Vec2f v0 = mDevice->mapSkeletonCoordToColor(rawCurrentSkelet[0]);
+		return rect.contains(v0);
+	}
+
 	return false;
 }
 

@@ -5,7 +5,7 @@
 #include "cinder/gl/Texture.h"
 #include "cinder/Timer.h"
 #include "Kinect.h"
-#include "Params.h"
+
 
 using namespace ci;
 using namespace ci::app;
@@ -34,6 +34,7 @@ class KinectBase
 		boost::signals2::signal<void(void)> kinectConnectedEvent;
 		boost::signals2::signal<void(void)> kinectMissPersonEvent;
 		boost::signals2::signal<void(void)> kinectFindPersonEvent;
+		boost::signals2::signal<void(void)> gestureEvent;
 	
 		MsKinect::DeviceRef		mDevice;
 		MsKinect::DeviceOptions deviceOptions;
@@ -72,8 +73,19 @@ class KinectBase
 		ci::Vec2f getTranslation();
 		ci::Vec2f getScale();
 
+		void enbleGestures()
+		{
+			_gestureEnable = true;
+		}
+
+		void disableGestures()
+		{
+			_gestureEnable = false;
+		}
+
 	protected:
 		bool	_isConnected;
+		bool _gestureEnable;
 
 	private:
 		int32_t	currentKinectTiltInDegrees;

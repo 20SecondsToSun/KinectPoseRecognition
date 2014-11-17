@@ -94,6 +94,12 @@
     <Filter Include="blocks\Cinder-Awesomium">
       <UniqueIdentifier>{8b1e07e7-a11d-4467-9e2f-3f95f11ff831}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\controllers\kinect\gestures">
+      <UniqueIdentifier>{0f02ba75-08b1-448b-893e-74809f3f3a85}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\controllers\kinect\gestures\handsUpGesture">
+      <UniqueIdentifier>{a2e28778-8c31-466c-a4ad-12c23e7cfc1b}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\src\KinectPoseRecognitionApp.cpp">
@@ -346,6 +352,15 @@
     </ClInclude>
     <ClInclude Include="..\src\controllers\saver\GameScoreSaver.h">
       <Filter>Source Files\controllers\saver</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\controllers\kinect\gestures\handsUpGesture\HandsUpGesture.h">
+      <Filter>Source Files\controllers\kinect\gestures\handsUpGesture</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\controllers\kinect\gestures\KinectGestureBase.h">
+      <Filter>Source Files\controllers\kinect\gestures</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\controllers\kinect\gestures\KinectGestureSegment.h">
+      <Filter>Source Files\controllers\kinect\gestures</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

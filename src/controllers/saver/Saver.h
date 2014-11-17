@@ -16,6 +16,7 @@ public:
 
 	void savePoseIntoBase(Pose* pose);
 	void loadConfigData();
+	void loadStandId();
 	std::vector<Pose*> Saver::loadPoseBase();
 
 	bool saveImageIntoBase(std::string mails,  ci::Surface  image);

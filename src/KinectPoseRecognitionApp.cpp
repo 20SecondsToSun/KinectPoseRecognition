@@ -60,11 +60,12 @@ void KinectPoseRecognitionApp::setup()
 {
 	setWindowSize(1920, 1080);
 	setFrameRate(60);
-	//setFullScreen(true);
+	setFullScreen(true);
+	hideCursor();
 
 	#ifndef debug
-		setFullScreen(true);
-		hideCursor();
+		//setFullScreen(true);
+		//hideCursor();
 	#endif
 
 		
@@ -85,6 +86,7 @@ void KinectPoseRecognitionApp::setup()
 	state    = "ChooseMode";
 
 	saver().loadConfigData();
+	saver().loadStandId();
 
     #ifndef recording
 		bg  = *AssetManager::getInstance()->getTexture( "images/diz/bg.jpg" );		
@@ -274,9 +276,8 @@ void KinectPoseRecognitionApp::mouseUp( MouseEvent event )
 
 void KinectPoseRecognitionApp::keyDown( KeyEvent event )
 {	
-//	console()<< "  event.getChar() "<<event.getChar()<<endl;
-
-	console()<< "  event.getCode() "<<event.getCode()<<endl;
+//	console()<< "  event.getChar() "<<event.getChar()<<endl;//
+//	console()<< "  event.getCode() "<<event.getCode()<<endl;
 
 	if( event.getCode() == app::KeyEvent::KEY_ESCAPE ) 
 	{
@@ -377,7 +378,8 @@ void KinectPoseRecognitionApp::shutdown()
 	{
 		//ResultScreen::Instance()->shutdown();	
 		//IntroScreen::Instance()->shutdown();
-		//MainGameScreen::Instance()->shutdown();	
+		//MainGameScreen::Instance()->shutdown();
+
 		socialPopup().shutdown();
 	}
 	catch(...)

@@ -8,8 +8,8 @@
 #define kinectUsed
 //#define recording
 //#define calibration
-
-#define debug	
+//#define debug	
+#define testServer	
 
 #define alwayswin
 //#define paramsDraw	
@@ -36,7 +36,7 @@ namespace photoMakerParams
 
 namespace poseParams
 {
-	const float				  BOX_SCALE							= 250.f;
+	const float				  BOX_SCALE							= 240.f;
 	const int				  POSE_IN_GAME_TOTAL				= 1;
 	static const std::string  DATA_BASE_NAME					= "poses.json";
 	static const std::string  JSON_STORAGE_FOLDER				= "poses";

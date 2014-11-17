@@ -76,7 +76,7 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
-      <AdditionalIncludeDirectories>..\include;..\..\..\\include;..\..\..\\boost;..\blocks\Cinder-KCB\src;..\blocks\Cinder-KCB\lib;$(KINECT_TOOLKIT_DIR)inc;$(KINECTSDK10_DIR)\inc;..\src;..\blocks\Cinder-CanonSdk\include;..\blocks\Cinder-CanonSdk\src;..\blocks\Cinder-CanonSdk\lib\EDSDK\Header;..\blocks\Cinder-Curl\src;..\src\buttons;..\src\controllers\assets;..\src\controllers\camera;..\src\controllers\fonts;..\src\controllers\kinect;..\src\controllers\photomaker;..\src\controllers\saver;..\src\controllers\server;..\src\data;..\src\game\graphicScene;..\src\game;..\src\graphics;..\src\locations\engine;..\src\locations\popup;..\src\locations\screens;..\src\tools;..\src\touchKeyboard;..\src\locations\screens\help;..\src\social;..\blocks\Cinder-Awesomium\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\include;..\..\..\\include;..\..\..\\boost;..\blocks\Cinder-KCB\src;..\blocks\Cinder-KCB\lib;$(KINECT_TOOLKIT_DIR)inc;$(KINECTSDK10_DIR)\inc;..\src;..\blocks\Cinder-CanonSdk\include;..\blocks\Cinder-CanonSdk\src;..\blocks\Cinder-CanonSdk\lib\EDSDK\Header;..\blocks\Cinder-Curl\src;..\src\buttons;..\src\controllers\assets;..\src\controllers\camera;..\src\controllers\fonts;..\src\controllers\kinect;..\src\controllers\photomaker;..\src\controllers\saver;..\src\controllers\server;..\src\data;..\src\game\graphicScene;..\src\game;..\src\graphics;..\src\locations\engine;..\src\locations\popup;..\src\locations\screens;..\src\tools;..\src\touchKeyboard;..\src\locations\screens\help;..\src\social;..\blocks\Cinder-Awesomium\include;..\src\controllers\kinect\gestures;..\src\controllers\kinect\gestures\handsUpGesture</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;NOMINMAX;_WIN32_WINNT=0x0502;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <PrecompiledHeader>
@@ -164,6 +164,9 @@
     <ClInclude Include="..\src\controllers\assets\TextureManager.h" />
     <ClInclude Include="..\src\controllers\camera\CameraAdapter.h" />
     <ClInclude Include="..\src\controllers\fonts\FontStore.h" />
+    <ClInclude Include="..\src\controllers\kinect\gestures\handsUpGesture\HandsUpGesture.h" />
+    <ClInclude Include="..\src\controllers\kinect\gestures\KinectGestureBase.h" />
+    <ClInclude Include="..\src\controllers\kinect\gestures\KinectGestureSegment.h" />
     <ClInclude Include="..\src\controllers\kinect\KinectAdapter.h" />
     <ClInclude Include="..\src\controllers\kinect\KinectBase.h" />
     <ClInclude Include="..\src\controllers\photomaker\PhotoMaker.h" />

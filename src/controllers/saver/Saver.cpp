@@ -219,7 +219,7 @@ void Saver::loadConfigData()
 
 	try{
 		doc = JsonTree(loadFile(filepath));
-		Params::standID =  doc.getChild( "standID" ).getValue<int>() ;
+		//Params::standID =  doc.getChild( "standID" ).getValue<int>() ;
 		Params::isNetConnected =  doc.getChild( "netConnection" ).getValue<bool>() ;
 		Params::isFullSkelet =  doc.getChild( "fullskelet" ).getValue<bool>() ;
 		Params::isPointsDraw =  doc.getChild( "drawPoints" ).getValue<bool>() ;
@@ -241,10 +241,24 @@ void Saver::loadConfigData()
 		for( JsonTree::ConstIter data = datas.begin(); data != datas.end(); ++data )		
 			Params::weightJoints[i++] = data->getValue<float>();
 
-		console()<<"PARAMS :: "<<Params::standID<<" isNetConnected "<< Params::isNetConnected <<" computeMistakeAlgo "<<Params::computeMistakeAlgo<<std::endl;
+		console()<<"PARAMS :: "<<" isNetConnected "<< Params::isNetConnected <<" computeMistakeAlgo "<<Params::computeMistakeAlgo<<std::endl;
 	}
 	catch(...)
 	{
 
+	}
+}
+
+void Saver::loadStandId()
+{
+	fs::path filepath = getAppPath()/"data"/ fs::path( "standid.txt");
+	ifstream file (filepath.string());	
+
+	if (file.is_open())
+	{	
+		string buffer;	
+		getline (file, buffer);
+		Params::standID = atoi(buffer.c_str());
+		console()<<"STAND ID::  "<<Params::standID<<endl;
 	}
 }
