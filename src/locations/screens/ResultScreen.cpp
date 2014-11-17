@@ -2,6 +2,7 @@
 #pragma warning(disable: 4244)
 #include "ResultScreen.h"
 
+
 using namespace ci;
 using namespace ci::app;
 using namespace colorsParams;
@@ -101,10 +102,12 @@ void ResultScreen::init( LocationEngine* game)
 			PlayerData::playerData[i].storyCode = i;	
 		}
 	#endif*/	
-
+	
 	if(PlayerData::score != 0)
 	{
-		drawHandler = &ResultScreen::drawPhotoLoadingPreloader;
+		bool status = gameScoreSaver().saveGameStatusIntoFile(true);
+
+		drawHandler = &ResultScreen::drawPhotoLoadingPreloader; //TODO - operate if file error
 		state = INIT_STATE;
 		photoLoadingFromDirSignal = photoMaker().photoLoadEvent.connect(boost::bind(&ResultScreen::photoLoadedFromDirHandler, this));	
 		photoLoadingFromDirErrorSignal = photoMaker().photoLoadErrorEvent.connect(boost::bind(&ResultScreen::photoLoadeFromDirErrorHandler, this));	
@@ -112,6 +115,8 @@ void ResultScreen::init( LocationEngine* game)
 	}
 	else
 	{
+		bool status = gameScoreSaver().saveGameStatusIntoFile(false); //TODO - operate if file error
+
 		drawHandler = &ResultScreen::drawUpsetScreen;
 		state = SORRY_GO_HOME;	
 		comeBackSignal1 = comeBackBtn1->mouseUpEvent.connect(boost::bind(&ResultScreen::closeScreenHandler, this));
@@ -135,7 +140,8 @@ void ResultScreen::photoLoadedFromDirHandler()
 	bool isFBOCrashed = photoMaker().resizeFinalImages();
 
 	if (isFBOCrashed == false)
-		timeline().apply( &alphaAnimate, 0.0f, 0.2f, EaseOutCubic()).finishFn( bind( &ResultScreen::animationPhotoSavedFinished, this ) ).delay(0.3f);
+		timeline().apply( &alphaAnimate, 0.0f, 0.2f, EaseOutCubic())
+		.finishFn( bind( &ResultScreen::animationPhotoSavedFinished, this)).delay(0.3f);
 	else
 	{
 		photoLoadeFromDirErrorHandler();
@@ -172,7 +178,8 @@ void ResultScreen::animationPhotoSavedFinished()
 		_game->freezeLocation = true;
 		drawHandler = &ResultScreen::drawNetConnectionPreloader;
 		state = CHECKING_NET_CONNECTION;	
-		timeline().apply( &alphaAnimate, 0.0f, 1.0f, 0.2f, EaseOutCubic() ).finishFn( bind( &ResultScreen::animationShowChekConnection, this ) );		
+		timeline().apply( &alphaAnimate, 0.0f, 1.0f, 0.2f, EaseOutCubic())
+			.finishFn( bind( &ResultScreen::animationShowChekConnection, this));
 	}
 }
 
@@ -188,7 +195,8 @@ void ResultScreen::serverSignalConnectionCheckHandler()
 {
 	server().stopTimeout();
 	serverSignalConnectionCheck.disconnect();
-	timeline().apply( &alphaAnimate, 0.0f, 0.2f, EaseOutCubic() ).finishFn( bind( &ResultScreen::animationHideChekConnection, this ) );
+	timeline().apply( &alphaAnimate, 0.0f, 0.2f, EaseOutCubic())
+		.finishFn( bind( &ResultScreen::animationHideChekConnection, this));
 }
 
 void ResultScreen::animationHideChekConnection()
@@ -208,7 +216,8 @@ void ResultScreen::animationHideChekConnection()
 		_game->freezeLocation = true;	
 		state = PHOTO_LOADING_TO_SERVER;
 		drawHandler = &ResultScreen::drawServerPreloader;
-		timeline().apply( &alphaAnimate, 0.0f, 1.0f, 0.2f, EaseOutCubic() ).finishFn( bind( &ResultScreen::animationShowServerPhotoLoad, this ) );	
+		timeline().apply( &alphaAnimate, 0.0f, 1.0f, 0.2f, EaseOutCubic())
+			.finishFn( bind( &ResultScreen::animationShowServerPhotoLoad, this));	
 	}
 }
 
@@ -224,7 +233,8 @@ void ResultScreen::serverLoadingPhotoHandler()
 {
 	serverSignalLoadingCheck.disconnect();
 	server().stopTimeout();
-	timeline().apply( &alphaAnimate, 0.0f, 0.9f, EaseOutCubic() ).finishFn( bind( &ResultScreen::animationHideServerPhotoLoad, this ) );	
+	timeline().apply( &alphaAnimate, 0.0f, 0.9f, EaseOutCubic())
+		.finishFn( bind( &ResultScreen::animationHideServerPhotoLoad, this));	
 }
 
 void ResultScreen::animationHideServerPhotoLoad()
@@ -235,12 +245,12 @@ void ResultScreen::animationHideServerPhotoLoad()
 	
 	if (server().isPhotoLoaded)
 	{
-		state = LOADING_TO_SERVER_SUCCESS;		
-		qrCode.setData(server().getBuffer(), server().getLink());		
+		state = LOADING_TO_SERVER_SUCCESS;
+		qrCode.setData(server().getBuffer(), server().getLink());
 	}
 	else
 	{
-		state = LOADING_TO_SERVER_FAIL;			
+		state = LOADING_TO_SERVER_FAIL;
 	}
 	connectButtons();
 	comeBackTimerStart();	
@@ -380,7 +390,8 @@ void ResultScreen::closeScreenHandler()
 		disconnectListeners();
 		_game->freezeLocation = true;
 		isLeaveAnimation = true;
-		timeline().apply( &alphaFinAnimate, 0.0f, 1.0f, 0.9f, EaseOutCubic() ).finishFn( bind( &ResultScreen::animationLeaveLocationFinished1, this ) );
+		timeline().apply( &alphaFinAnimate, 0.0f, 1.0f, 0.9f, EaseOutCubic())
+			.finishFn( bind( &ResultScreen::animationLeaveLocationFinished1, this));
 	}
 }
 
@@ -391,7 +402,8 @@ void ResultScreen::backToStartHandler()
 		disconnectListeners();
 		_game->freezeLocation = true;
 		isLeaveAnimation = true;
-		timeline().apply( &alphaFinAnimate, 0.0f, 1.0f, 0.9f, EaseOutCubic() ).finishFn( bind( &ResultScreen::animationLeaveLocationFinished, this ) );
+		timeline().apply( &alphaFinAnimate, 0.0f, 1.0f, 0.9f, EaseOutCubic() )
+			.finishFn( bind( &ResultScreen::animationLeaveLocationFinished, this ));
 	}
 }
 

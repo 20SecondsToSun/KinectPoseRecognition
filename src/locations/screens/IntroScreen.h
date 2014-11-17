@@ -63,7 +63,7 @@ private:
 
 	ButtonTex *startInstructionBtn, *startGameBtn, *comeBackBtn;
 
-	ci::Anim<float> alphaAnimate, catAnimate, logoAnimate, textAnimateAlpha;	
+	ci::Anim<float> alphaAnimate, catAnimate, logoAnimate, textAnimateAlpha, paramBad;	
 	ci::Anim<ci::Vec2f> cat2AnimateVec, instructBtnAnimateVec;	
 	ci::Anim<ci::Vec2f> lapaTvAnimateVec, startBtnAnimateVec, textAnimateVec;
 

@@ -14,6 +14,7 @@ void CameraAdapter::loadResource()
 
 void CameraAdapter::setup()
 {
+	//console()<<"try setup -------------------->"<<endl;
 	isConnected = false;    
 	tryToTakePhoto = true;
 	isPhotoMakingInThread = false;

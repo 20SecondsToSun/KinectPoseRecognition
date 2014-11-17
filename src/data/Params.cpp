@@ -5,6 +5,12 @@ float	Params::boxMaxErrorY= 15.0f;
 float	Params::maxErrorBetweenJoints = 40.0f;
 float	Params::minErrorBetweenJoints = 10.0f;
 
+float	Params::maxUserDistance = 3.5f;
+float	Params::minUserDistance = 2.6f;
+float	Params::maxUserHeight = 320.0f;
+float	Params::minUserHeight = 240.0f;
+
+
 float	Params::percentForMatching = 0.75f;
 float 	Params::comeBackHomeTime = 40.0f;
 bool	Params::isNetConnected = true;
@@ -23,6 +29,8 @@ bool	Params::isPointsDraw = true;
 
 int	Params::computeMistakeAlgo = 1;
 int	Params::standID = -1;
+float	Params::etalonHeight = 240;
+
 
 float	Params::weightJoints[12];
 

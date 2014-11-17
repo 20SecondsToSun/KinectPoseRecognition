@@ -9,6 +9,7 @@
 #include "ButtonColor.h"
 #include "FontStore.h"
 #include "Params.h"
+#include "PlayerData.h"
 
 #include <boost/thread.hpp>
 #include <boost/functional/hash.hpp>
@@ -55,6 +56,7 @@ class PopupBase
 		void			update();
 		void			reset();	
 		void			show(int popuptype);
+		void			shutdown();
 		void			disconnectAll();	
 		bool			isDrawing;
 
@@ -72,6 +74,8 @@ class PopupBase
 		void	keyboardTouchSignalHandler();
 		void	hide();
 		int		type;
+
+		void	setPhotoPaths();
 
 		ci::Anim<ci::Vec2f>  bgPosition;
 		ci::Anim<ci::ColorA> bgColor;
@@ -131,6 +135,7 @@ class PopupBase
 		void								KeyDown( ci::app::KeyEvent event  );
 		void								MouseDown( ci::app::MouseEvent &event );
 		void								MouseUp( ci::app::MouseEvent &event );
+		
 		
 };
 

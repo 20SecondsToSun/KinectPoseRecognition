@@ -8,9 +8,20 @@
 #include <boost/thread.hpp>
 #include "Params.h"
 
-#define SERVER "92.63.102.99:82"
+//#define SERVER "92.63.102.99:82"
 #define SERVER_OK "OK"
 #define SERVER_ERROR "ERROR"
+
+namespace serverParams
+{
+	static const int	 SERVER_WAITING_TIME = 10;
+	const std::string    connectionTestURL	 =  "http://google.com";
+	const std::string    serverURL			 =  "http://kotopoza.ru/utils/upload/";
+	const std::string    shareSaveURL		 =  "http://kotopoza.ru/utils/save/";
+	const std::string    printerCountPlusURL =  "http://kotopoza.ru/utils/save/";	
+	const std::string    mailURL			 =  "http://kotopoza.ru/utils/send2mail";
+	const std::string    badTestURL			 =  "http://catpos.familyagency.ru/utils/upload1/";
+}
 
 class Server
 {

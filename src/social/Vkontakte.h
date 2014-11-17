@@ -23,7 +23,8 @@ namespace vkontakteParams
 {
 	const std::string ACCESS_TOKEN							= "access_token";
 	const std::string NULL_ALBUM_ID							= "-1";	
-	const std::string STATUS_DEFAULT						= "#Котопоза";
+	const std::string STATUS_DEFAULT						= "#Dreamies Лакомство Dreamies® – кот за них на все готов! www.dreamies.ru";
+	const std::string POSTING_WAITING_TEXT					= "Отправляем фотографию во ВКонтакте...";
 }
 
 class Vkontakte: public SocShare

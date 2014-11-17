@@ -47,6 +47,8 @@ class Utils
                               float ostart, 
                               float ostop);
 
+		static float clamp(float value, float max, float min);
+
 		static ci::Surface Utils::resizeScreenshot(ci::Surface screenshot, int32_t width, int32_t height);
 
 

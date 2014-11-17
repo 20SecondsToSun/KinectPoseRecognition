@@ -167,6 +167,7 @@
     <ClInclude Include="..\src\controllers\kinect\KinectAdapter.h" />
     <ClInclude Include="..\src\controllers\kinect\KinectBase.h" />
     <ClInclude Include="..\src\controllers\photomaker\PhotoMaker.h" />
+    <ClInclude Include="..\src\controllers\saver\GameScoreSaver.h" />
     <ClInclude Include="..\src\controllers\saver\Saver.h" />
     <ClInclude Include="..\src\controllers\server\Server.h" />
     <ClInclude Include="..\src\data\Params.h" />

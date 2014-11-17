@@ -3,13 +3,23 @@
 #include "cinder/app/AppNative.h"
 #include "cinder/gl/Texture.h"
 #include "cinder/Timer.h"
-#include "Utils.h"
 #include "KinectBase.h"
+#include "Utils.h"
 
 using namespace ci;
 using namespace ci::app;
 using namespace gl;
 using namespace std;
+
+typedef std::vector<ci::Vec3f> SkeletJoints;
+
+namespace HumanGrowth
+{
+	const float   MAX_USER_DISTANCE = 3.5f;
+	const float	  MIN_USER_DISTANCE = 2.6f;
+	const float   MAX_USER_HEIGHT   = 325.0f;
+	const float   MIN_USER_HEIGHT   = 240.0f;
+}
 
 class KinectAdapter: public KinectBase
 {
@@ -17,57 +27,57 @@ public:
 
 	void setup();
 	void draw();
+	void update();
 
 	static KinectAdapter* Instance()
 	{
 		return &KinectAdapterState;
 	}
 
-	int getSkeletsInFrame();
+	SkeletJoints getCurrentSkelet();
+
+	int  getSkeletsInFrame();
+
 	void drawSkeletJoints();
-
-	void update();
 	void updateSkeletonData();
-
+	
 	float distanceToSkelet();
+	float calculateHumanGrowsScaleTo180sm();
+	float getEtalonHeightInPixelsAccordingDepth();
+	float userHeightInPixels();
+	float userHeightRaw();
 
-	std::vector<ci::Vec3f> getCurrentSkelet()
-	{
-		return currentSkelet;
-	};		
+	bool allHumanPointsInScreenRect();
+	bool isHeapInRect( Rectf rect);
+	bool isHandsUp();
+	bool isDistanceOk();
 
-	double getSkeletHeight()
-	{
-		return skeletFullHeight;
-	}
-
-	double getSkeletWidth()
-	{
-		return skeletFullWidth;
-	}
-
-	ci::Surface16u getSilhouette();
+	Surface16u getSilhouette();
 
 	void sleep(int seconds);
 	void sleepKill();
-
-	double skeletFullHeight;
-	double skeletFullWidth;
 
 private:
 
 	static KinectAdapter KinectAdapterState;	
 
-	std::vector<ci::Vec3f> currentSkelet;		
-	void drawUserMask();		
-	Surface16u savePoseDepth;		
-	void setActiveJoints();		
+	std::vector<_NUI_SKELETON_POSITION_INDEX> jointToRecord, humanGrowthPoints;
+	SkeletJoints currentSkelet, rawCurrentSkelet;
+	Surface16u savePoseDepth;
 	int bufferDisconnect;
-	std::vector<_NUI_SKELETON_POSITION_INDEX> jointToRecord;
-
 	int sleepSeconds;
-
 	Timer sleepTimer;
+
+	int		SKELET_SIZE;
+	int		HEAD_INDEX;
+	int		ANKLE_RIGHT_INDEX;
+	int		ANKLE_LEFT_INDEX;
+	float   SCREEN_HEIGHT;
+	int     WRIST_RIGHT_INDEX;
+	int     WRIST_LEFT_INDEX;
+
+	void drawUserMask();
+	void setActiveJoints();
 };
 
 inline KinectAdapter&	kinect() { return *KinectAdapter::Instance(); };

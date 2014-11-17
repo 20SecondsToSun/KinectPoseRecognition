@@ -27,7 +27,7 @@ void MainGameScreen::setup()
 
 	/////////////////////////////////
 	Texture comeBackBtnTex   = *AssetManager::getInstance()->getTexture( "images/diz/toStart.png" );
-		
+
 	comeBackBtn = new ButtonTex(comeBackBtnTex,  "backtoStart");
 	comeBackBtn->setScreenField(Vec2f(0.0f, 958.0f));
 	comeBackBtn->setDownState(comeBackBtnTex);
@@ -40,7 +40,7 @@ void MainGameScreen::init( LocationEngine* game)
 	isLeaveAnimation = false;
 	deviceError = false;
 
-	comeBackBtnSignal	   = comeBackBtn->mouseDownEvent.connect(boost::bind(&MainGameScreen::gotoFirstScreen, this));
+	comeBackBtnSignal	   = comeBackBtn->mouseUpEvent.connect(boost::bind(&MainGameScreen::gotoFirstScreen, this));
 
 	cameraCanon().reset();
 	cameraConnectionSignal = cameraCanon().cameraConnectedEvent.connect(boost::bind(&MainGameScreen::cameraConnectedHandler, this));
@@ -57,7 +57,24 @@ void MainGameScreen::init( LocationEngine* game)
 		gotoResultScreen();
 	});	
 
-	photoFlashSignal	  = recognitionGame().photoFlashEvent.connect(boost::bind(&MainGameScreen::photoFlashHandler, this));	
+	gotoFirstScreenSignal = recognitionGame().gotoFirstScreenEvent.connect( [ & ]( )
+	{
+		gotoFirstScreen();
+	});	
+
+	photoFlashSignal = recognitionGame().photoFlashEvent.connect(boost::bind(&MainGameScreen::photoFlashHandler, this));
+
+	isCameraUpdating = false;
+
+	cameraStartUpdateSignal = recognitionGame().cameraStartUpdateEvent.connect( [ & ]( )
+	{
+		isCameraUpdating = true;
+	});	
+
+	cameraStopUpdateSignal = recognitionGame().cameraStopUpdateEvent.connect( [ & ]( )
+	{
+		isCameraUpdating = false;
+	});
 
 	gameControls().init();
 	hintScreen().init();
@@ -135,15 +152,16 @@ void MainGameScreen::animationLeaveLocationPrepare()
 
 void MainGameScreen::update() 
 {
-	cameraCanon().update();
+	if (isCameraUpdating || !cameraCanon().isConnected)
+		cameraCanon().update();
+
 	kinect().update();
 
 	if(!deviceError)
 		deviceError = !cameraCanon().isConnected || !kinect().isConnected();
-	
+
 	if(deviceError == false)	
 		recognitionGame().update();
-	//else
 }
 
 void MainGameScreen::draw() 
@@ -172,9 +190,9 @@ void MainGameScreen::drawDeviceError()
 
 		recognitionGame().stopAllTimersIfNeed();	
 		if(!_missedTimer.isStopped()) 
-				_missedTimer.stop();		
+			_missedTimer.stop();		
 	}
-	
+
 	if (kinect().isConnected() == false)
 	{
 		if(errorDeviceMessage.size() == 0)
@@ -188,7 +206,7 @@ void MainGameScreen::drawDeviceError()
 
 		recognitionGame().stopAllTimersIfNeed();
 		if(!_missedTimer.isStopped()) 
-				_missedTimer.stop();		
+			_missedTimer.stop();		
 	}
 
 	Texture errorTexure = Utils::getTextField(errorDeviceMessage, fonts().getFont("MaestroC", 114),  Color::white());	
@@ -197,61 +215,66 @@ void MainGameScreen::drawDeviceError()
 
 void MainGameScreen::drawGame() 
 {
-	cameraCanon().draw();
-
-	#ifdef debug
-		kinect().draw();
-	#endif // debug
-
+	if (isCameraUpdating)
+		cameraCanon().draw();
 
 	switch(recognitionGame().state)
 	{
-		case STEP_BACK_MESSAGE:
-			hintScreen().draw();
-			comeBackBtn->draw();
-		break;
-		
-		case HINT_MESSAGE:			
-			gameControls().draw();
-			hintScreen().draw();
+	case STEP_BACK_MESSAGE:
+		hintScreen().draw();
+		comeBackBtn->draw();
+		recognitionGame().drawCurrentPlayerJoints();
 		break;
 
-		case PRE_GAME_INTRO:
-		case COUNTER_STATE:
-			hintScreen().draw();		
+	case HINT_MESSAGE:			
+		gameControls().draw();
+		hintScreen().draw();
 		break;
 
-		case COUNTERS_ANIMATE:
-			gameControls().draw();
-			hintScreen().draw();
+	case PRE_GAME_INTRO:
+	case COUNTER_STATE:	
+		hintScreen().draw();		
 		break;
 
-		case MAIN_GAME:			
-			gameControls().draw();
-			hintScreen().draw();
+	case HANDS_UP_AWAITING:
+		hintScreen().draw();	
+		recognitionGame().drawCurrentPlayerJoints();
+		break;		
 
-			if (Params::isPointsDraw)
-				recognitionGame().drawJoints();
-			
+	case COUNTERS_ANIMATE:
+		gameControls().draw();
+		hintScreen().draw();
 		break;
 
-		case SHOW_GAME_RESULT:				
-			comicsScreen().draw();
-			gameControls().draw();
+	case MAIN_GAME:			
+		gameControls().draw();
+		hintScreen().draw();
+
+		if (Params::isPointsDraw)
+		{
+			recognitionGame().drawJoints();
+			recognitionGame().drawCurrentPlayerJoints();
+		}
+
 		break;
 
-		case MAKE_SCREENSHOOT:
-			comicsScreen().draw();
+	case SHOW_GAME_RESULT:				
+		comicsScreen().draw();
+		gameControls().draw();
 		break;
 
-		case PHOTO_MAKING_WAIT:		
-			gameControls().draw();
-			drawPhotoFlash();
+	case MAKE_SCREENSHOOT:
+		comicsScreen().draw();
 		break;
 
-		case WIN_ANIMATION_FINISH_WAIT:			
-			gameControls().draw();
-			drawPhotoFlash();
+	case PHOTO_MAKING_WAIT:		
+		gameControls().draw();
+		drawPhotoFlash();
+		break;
+
+	case WIN_ANIMATION_FINISH_WAIT:			
+		gameControls().draw();
+		drawPhotoFlash();
 		break;
 	}
 }
@@ -259,14 +282,14 @@ void MainGameScreen::drawGame()
 void MainGameScreen::drawPoseComics()
 {
 	gl::pushMatrices();
-		gl::translate(cameraCanon().getSurfaceTranslate());
-		gl::scale(-cameraCanon().scaleFactor, cameraCanon().scaleFactor);
-		gl::draw(recognitionGame().getCurrentScreenShot());
+	gl::translate(cameraCanon().getSurfaceTranslate());
+	gl::scale(-cameraCanon().scaleFactor, cameraCanon().scaleFactor);
+	gl::draw(recognitionGame().getCurrentScreenShot());
 	gl::popMatrices();
 
 	gl::pushMatrices();
-		gl::translate(getWindowWidth() - 360.0f, getWindowHeight() - 512.0f);		
-		gl::draw(recognitionGame().getPoseImage());
+	gl::translate(getWindowWidth() - 360.0f, getWindowHeight() - 512.0f);		
+	gl::draw(recognitionGame().getPoseImage());
 	gl::popMatrices();
 }
 
@@ -281,8 +304,6 @@ void MainGameScreen::drawFadeOutIfAllow()
 {
 	if (isLeaveAnimation)
 	{
-		//gl::color(ColorA(BLUE_FADE.r, BLUE_FADE.g, BLUE_FADE.b, alphaFinAnimate));	
-		//gl::drawSolidRect(getWindowBounds());
 		gl::color(ColorA(1.0f, 1.0f, 1.0f, alphaFinAnimate));
 		gl::draw(bg);
 		gl::color(Color::white());
@@ -311,5 +332,6 @@ void MainGameScreen::removeHandlers()
 	kinectMissPersonSignal.disconnect();
 	kinectFindPersonSignal.disconnect();
 	gotoResultScreenSignal.disconnect();
+	gotoFirstScreenSignal.disconnect();
 }
 #pragma warning(pop)

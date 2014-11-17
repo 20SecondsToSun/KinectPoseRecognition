@@ -111,6 +111,10 @@ bool CinderCanon::setup(PhotoHandler * photoHandler, int cameraIndex )
 	EdsSetObjectEventHandler(mCamera, kEdsObjectEvent_All, CinderCanon::handleObjectEvent, (EdsVoid*)this );
 	EdsSetPropertyEventHandler(mCamera, kEdsPropertyEvent_All, CinderCanon::handlePropertyEvent, (EdsVoid*)this );
 	EdsSetCameraStateEventHandler(mCamera, kEdsStateEvent_All, CinderCanon::handleStateEvent, (EdsVoid*)this );
+
+	EdsImageQuality quality = EdsImageQuality_S2JF;
+	err = EdsSetPropertyData(mCamera, kEdsPropID_ImageQuality, 0, sizeof(quality), &quality);
+	console()<<"image quality set: "<<quality<<"  "<<CanonErrorToString(err)<<"    "<<endl;
    
 	bCameraIsConnected = true;
 	bFrameNew = false;

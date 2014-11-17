@@ -6,6 +6,12 @@
    "maxError": 50,
    "drawPoints": true,
    "fullskelet": true,
+   "etalonHeight": 240, 
+    "maxUserDistance": 3.5,
+    "minUserDistance": 2.6, 
+	"maxUserHeight": 310.0,
+    "minUserHeight": 235.0, 
+     
    "percents" : [0.05, 0.05, 0.05, 0.05, 0.15, 0.05, 0.05, 0.15, 0.05, 0.15, 0.05, 0.15]
 }
 

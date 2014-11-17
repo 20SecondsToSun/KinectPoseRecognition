@@ -340,6 +340,16 @@ float Utils::map(float value,
     return ostart + (ostop - ostart) * ((value - istart) / (istop - istart));
 }
 
+float Utils::clamp(float value, float max, float min)
+{
+	if (value > max)
+		value =  max;
+	else if (value < min)
+		value =  min;
+
+	return value;
+}
+
 Surface Utils::resizeScreenshot(Surface screenshot, int32_t width, int32_t height)
 {
 	Surface screenshot_r = Surface( width, height, false ); 

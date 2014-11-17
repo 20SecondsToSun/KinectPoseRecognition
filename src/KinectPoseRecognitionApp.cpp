@@ -27,6 +27,7 @@ class KinectPoseRecognitionApp : public AppNative
 		void			setup();
 		void			keyDown( KeyEvent event );
 		void			mouseDown( MouseEvent event );
+		void			mouseUp( MouseEvent event );		
 		void			update();
 		void			draw();
 		void			shutdown();
@@ -59,12 +60,15 @@ void KinectPoseRecognitionApp::setup()
 {
 	setWindowSize(1920, 1080);
 	setFrameRate(60);
+	//setFullScreen(true);
 
 	#ifndef debug
 		setFullScreen(true);
 		hideCursor();
 	#endif
 
+		
+	fonts().loadFont( loadFile(getAssetPath("fonts/MyriadPro-Regular.ttf")), 55);
 	fonts().loadFont( loadFile(getAssetPath("fonts/Helvetica Neue Bold.ttf")), 46);
 	fonts().loadFont( loadFile(getAssetPath("fonts/Helvetica Neue Bold.ttf")), 26);
 	fonts().loadFont( loadFile(getAssetPath("fonts/Helvetica Neue Bold.ttf")), 66);	
@@ -255,6 +259,17 @@ void KinectPoseRecognitionApp::draw()
 void KinectPoseRecognitionApp::mouseDown( MouseEvent event )
 {
 	toucher().setPosition(event.getPos());
+
+	//#ifdef debug	
+		recognitionGame().testPercent100 = true;
+	//#endif
+}
+
+void KinectPoseRecognitionApp::mouseUp( MouseEvent event )
+{
+	// #ifdef debug	
+		recognitionGame().testPercent100 = false;
+	//#endif
 }
 
 void KinectPoseRecognitionApp::keyDown( KeyEvent event )
@@ -363,10 +378,11 @@ void KinectPoseRecognitionApp::shutdown()
 		//ResultScreen::Instance()->shutdown();	
 		//IntroScreen::Instance()->shutdown();
 		//MainGameScreen::Instance()->shutdown();	
+		socialPopup().shutdown();
 	}
 	catch(...)
 	{
-		console()<<"ResultScreen::Instance()->shutdown()error!!!!"<<endl;
+		console()<<"socialPopup shutdown error!!!!"<<endl;
 	}
 
 	#ifdef calibration

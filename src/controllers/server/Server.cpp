@@ -190,16 +190,16 @@ std::string   Server::sendVkSharePlus()
 	strings.insert(pair<string, string>( "action" , "cnt"));
 	strings.insert(pair<string, string>( "cnt" ,     "1"));
 	strings.insert(pair<string, string>( "type" ,  "vk"));
-	string request =  Curl::post( SERVER"/save.php", strings);
+	string request =  Curl::post( serverParams::shareSaveURL, strings);
 
 	JsonTree jTree;
 
 	try 
 	{
+		console()<<"Try to Vkontakte PLUS   "<<endl;
 		jTree = JsonTree(request);
 		console()<<"VKONTAKTE PLUS   "<< jTree.getChild("cnt").getValue()<<std::endl;
 		return SERVER_OK;
-
 	}
 	catch(...)
 	{
@@ -215,12 +215,13 @@ std::string   Server::sendFbSharePlus()
 	strings.insert(pair<string, string>( "action" , "cnt"));
 	strings.insert(pair<string, string>( "cnt" ,     "1"));
 	strings.insert(pair<string, string>( "type" ,  "fb"));
-	string request =  Curl::post( SERVER"/save.php", strings);
+	string request =  Curl::post( serverParams::shareSaveURL, strings);
 
 	JsonTree jTree;
 
 	try 
 	{
+		console()<<"Try to Facebook PLUS   "<<endl;
 		jTree = JsonTree(request);
 		console()<<"Facebook PLUS   "<< jTree.getChild("cnt").getValue()<<std::endl;
 		return SERVER_OK;
@@ -237,7 +238,7 @@ std::string Server::sendToServerPrintInfo()
 	std::map<string,string> strings;
 	strings.insert(pair<string, string>( "action" , "print_count"));
 	strings.insert(pair<string, string>( "cnt" ,  "1"));	
-	string request =  Curl::post( SERVER"/save.php", strings);
+	string request =  Curl::post( serverParams::printerCountPlusURL, strings);
 
 	JsonTree jTree;
 

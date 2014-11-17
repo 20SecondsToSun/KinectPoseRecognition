@@ -14,7 +14,7 @@
 #include "AssetsManager.h"
 #include "CameraAdapter.h"
 
-#include "GameControLScreen.h"
+#include "GameControlScreen.h"
 #include "HintScreen.h"
 
 using namespace ci;
@@ -86,7 +86,12 @@ class MainGameScreen : public Location
 		connection kinectMissPersonSignal;
 		connection kinectFindPersonSignal;
 		connection gotoResultScreenSignal;
+		connection gotoFirstScreenSignal;
 		connection photoFlashSignal;
+
+		connection cameraStartUpdateSignal;
+		connection cameraStopUpdateSignal;
+		bool isCameraUpdating;
 
 		void gotoFirstScreen();
 		bool isLeaveAnimation;

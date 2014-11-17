@@ -11,7 +11,7 @@
 
 #define debug	
 
-//#define alwayswin
+#define alwayswin
 //#define paramsDraw	
 //#define drawTimer
 
@@ -37,11 +37,9 @@ namespace photoMakerParams
 namespace poseParams
 {
 	const float				  BOX_SCALE							= 250.f;
-	const int				  POSE_IN_GAME_TOTAL				= 3;
+	const int				  POSE_IN_GAME_TOTAL				= 1;
 	static const std::string  DATA_BASE_NAME					= "poses.json";
 	static const std::string  JSON_STORAGE_FOLDER				= "poses";
-
-	const float MIN_DISTANCE_TO_SKELET = 1.3f;
 }
 
 namespace popupTypes
@@ -51,51 +49,49 @@ namespace popupTypes
 	static const int  EMAIL = 3;
 }
 
-namespace serverParams
-{
-	static const int	 SERVER_WAITING_TIME = 10;
-	const std::string    connectionTestURL	 =  "http://google.com";
-	const std::string    serverURL			 =  "http://kotopoza.ru/utils/upload/";
-	const std::string    mailURL			 =  "http://kotopoza.ru/utils/send2mail";
-	const std::string    badTestURL			 =  "http://catpos.familyagency.ru/utils/upload1/";
-}
-
 class Params
 {
-	public:	
+public:	
 
-		static float	boxMaxErrorX;
-		static float	boxMaxErrorY;
-		static float	maxErrorBetweenJoints;
-		static float	minErrorBetweenJoints;
-		static float	percentForMatching;
+	static float	boxMaxErrorX;
+	static float	boxMaxErrorY;
+	static float	maxErrorBetweenJoints;
+	static float	minErrorBetweenJoints;
+	static float	percentForMatching;
 
-		static float	weightJoints[12];
-	
-		static float	comeBackHomeTime;
-		static fs::path	getPhotosStorageDirectory();
-		static fs::path	getTempPhotoSavePath(int i);
-		static fs::path	getTempStorageDirectory();		
-		static fs::path	getFinalImageStoragePath();
-		static fs::path	getConfigStoragePath();
-		static fs::path	getBaseStoragePath();	
-		static fs::path	getPoseSavingPath();
+	static float	maxUserDistance;
+	static float	minUserDistance;
+	static float	maxUserHeight;
+	static float	minUserHeight;
 
-		static bool		isNetConnected;
-		static bool		photoFromDirError;
+	static float	weightJoints[12];
 
-		static bool		serverPhotoLoadError;
-		static bool		serverPhotoLoadTimeout;
+	static float	comeBackHomeTime;
+	static fs::path	getPhotosStorageDirectory();
+	static fs::path	getTempPhotoSavePath(int i);
+	static fs::path	getTempStorageDirectory();
+	static fs::path	getFinalImageStoragePath();
+	static fs::path	getConfigStoragePath();
+	static fs::path	getBaseStoragePath();
+	static fs::path	getPoseSavingPath();
 
-		static bool		serverConnectionCheckError;
-		static bool		serverConnectionCheckTimeout;
+	static bool		isNetConnected;
+	static bool		photoFromDirError;
 
-		static bool		serverEmailSendError;
-		static bool		serverEmailSendTimeout;
-		static bool		isFullSkelet;
-		static bool		isPointsDraw;
-		
-		static int		computeMistakeAlgo;
+	static bool		serverPhotoLoadError;
+	static bool		serverPhotoLoadTimeout;
 
-		static int		standID;
+	static bool		serverConnectionCheckError;
+	static bool		serverConnectionCheckTimeout;
+
+	static bool		serverEmailSendError;
+	static bool		serverEmailSendTimeout;
+	static bool		isFullSkelet;
+	static bool		isPointsDraw;
+
+	static int		computeMistakeAlgo;
+
+	static int		standID;
+
+	static float	etalonHeight;
 };

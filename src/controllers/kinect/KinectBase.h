@@ -4,10 +4,8 @@
 #include "cinder/Timeline.h"
 #include "cinder/gl/Texture.h"
 #include "cinder/Timer.h"
-#include "Utils.h"
 #include "Kinect.h"
 #include "Params.h"
-#include "Pose.h"
 
 using namespace ci;
 using namespace ci::app;
@@ -22,6 +20,8 @@ namespace kinectDefaults
 	//MsKinect::ImageResolution::NUI_IMAGE_RESOLUTION_1280x960
 	const float   MIN_DEPTH							= 0.8f;
 	const float	  MAX_DEPTH							= 3.0f;	
+	const float   MIN_DISTANCE_TO_SKELET = 1.5f;
+	const float   MAX_DISTANCE_TO_SKELET = 3.6f;	
 }
 
 class KinectBase

@@ -8,7 +8,7 @@
 #include "Playerdata.h"
 #include "KinectAdapter.h"
 #include "HintScreen.h"
-#include "GameControLScreen.h"
+#include "GameControlScreen.h"
 #include "ComicsScreen.h"
 
 namespace gameStates
@@ -18,6 +18,7 @@ namespace gameStates
 		STEP_BACK_MESSAGE,
 		HINT_MESSAGE,
 		PRE_GAME_INTRO,
+		HANDS_UP_AWAITING,
 		MAIN_GAME, 
 		COUNTERS_ANIMATE,
 		SHOW_GAME_RESULT,
@@ -29,6 +30,7 @@ namespace gameStates
 }
 
 using namespace ci;
+using namespace ci::gl;
 using namespace std;
 using namespace gameStates;
 
@@ -38,72 +40,85 @@ public:
 
 	static Game& getInstance() { static Game game; return game; };
 
-	static const int	STEP_BACK_TIME  = 2;	
-	static const int	PREGAME_TIME	= 2;
-	static const int	COUNTDOWN_TIME	= 3;
-	static const int	HINT_TIME		= 6;
-	static const int	RESULT_TIME		= 4;
+	static const int	STEP_BACK_TIME  = 10;
+	static const int    HANDS_UP_AWAITINTING_TIME = 15;
+	static const int    STEP_BACK_ENSURE_TIME = 2;
+
+	static const int	PREGAME_TIME		= 2;
+	
+	static const int	COUNTDOWN_TIME		= 3;
+	static const int	HINT_TIME			= 3;
+	static const int	RESULT_TIME			= 4;
 	static const int	COUNTERS_ANIM_TIME	= 2;
 
-	static const int	LEVEL_PASS_INC	= 4;
-	static const int	LEVEL_PASS_DEC	= 6;
+	static const int	LEVEL_PASS_INC		= 4;
+	static const int	LEVEL_PASS_DEC		= 6;
 
-	int				CURRENT_POSE_TIME;
-	int				CURRENT_MATCHING_PERCENT;
-
+	int CURRENT_POSE_TIME;
+	int CURRENT_MATCHING_PERCENT;
 	int state;
-	bool isGameRunning, isPoseDetecting, winAnimationFinished;
-	Timer  _preGameTimer, _onePoseTimer, _resultTimer, _stepBackTimer, _hintTimer, _countDownTimer, _countersAnimTimer;
+
+	bool isGameRunning, isPoseDetecting, winAnimationFinished, _onePoseTimerPause;
+	Timer  _preGameTimer, _onePoseTimer, _resultTimer, _stepBackTimer, _hintTimer;
+	Timer _handsUpAwaitingTimer, _stepBackEnsureTimer, _countDownTimer, _countersAnimTimer;
 
 	Pose* foundPose, currentPose;
 	vector<Pose*> poses;
 
-	int poseCode, level, levelCompletion;
-	float mathPercent;		
+	int poseNum, poseCode, level, levelCompletion;
+	float mathPercent, etalonHeight;	
+	float scaleAccordingUserHeight;
 
-	boost::signals2::signal<void(void)> gotoResultScreenEvent;	
+	boost::signals2::signal<void(void)> gotoResultScreenEvent;
+	boost::signals2::signal<void(void)> gotoFirstScreenEvent;	
 	boost::signals2::signal<void(void)> photoFlashEvent;
+	boost::signals2::signal<void(void)> cameraStartUpdateEvent;
+	boost::signals2::signal<void(void)> cameraStopUpdateEvent;
 
 	ci::signals::connection quickAnimationFinishedSignal;
-
-	int poseNum;
+	
+	bool testPercent100;	
+	string debugString;
 
 	void setup()
 	{
 		poses = saver().loadPoseBase();
 		poseNum = 0;
+		testPercent100 = false;
 	}
 
 	void initnew()
-	{
-		state = STEP_BACK_MESSAGE;
-		kinect().startTracking();			
-		PlayerData::initData();	
+	{		
+		kinect().startTracking();
+		PlayerData::initData();
 
 		level = 1;
-		poseCode = generatePoseCode();	
-		gameControls().setCurrentPose(poses[poseCode]);
-		CURRENT_POSE_TIME = poses[poseCode]->getPoseTime();
-		CURRENT_MATCHING_PERCENT = poses[poseCode]->getPercent();
+		scaleAccordingUserHeight = 1.0f;
+		initPoseData();
 
 		_stepBackTimer.start();
-	}
+		state = STEP_BACK_MESSAGE;
+	}	
 
 	void update()
 	{
 		switch(state)
 		{
 		case STEP_BACK_MESSAGE:
-			updateStepBackMessage();
+			updateStepBackMessage(); 
 			break;
 
 		case HINT_MESSAGE:
 			updateHintMessage();
-			break;			
+			break;
 
 		case PRE_GAME_INTRO:
 			updatePreGameIntro();
 			break;
+
+		case HANDS_UP_AWAITING:
+			updateHandsAwaiting();
+			break;			
 
 		case COUNTER_STATE:
 			updateCounterState();
@@ -113,7 +128,7 @@ public:
 			updateCountersAnimState();
 			break;
 
-		case MAIN_GAME:			
+		case MAIN_GAME:
 			updateMainGame();
 			break;
 
@@ -121,7 +136,7 @@ public:
 			updateGameResult();
 			break;
 
-		case PHOTO_MAKING_WAIT:		
+		case PHOTO_MAKING_WAIT:
 			updatePhotoMaking();
 			break;
 
@@ -129,49 +144,99 @@ public:
 			updateAnimationWait();
 			break;
 
-		case MAKE_SCREENSHOOT:			
+		case MAKE_SCREENSHOOT:
 			makeScreenShootUpdate();
 			break;
 		}
 	}
 
-	int generatePoseCode()
-	{
-		int code = poseNum++;			
-		if (poseNum > poses.size() - 1)
-			poseNum = 0;
-
-		return code;//level - 1; //TODO
-	}			
-
 	void updateStepBackMessage() 
 	{
-		updateGame();
+		kinect().updateSkeletonData();
 
-#ifdef debug
-		if(isTimerFinished(_stepBackTimer, STEP_BACK_TIME)) 
-#else
-		if(isTimerFinished(_stepBackTimer, STEP_BACK_TIME) && kinect().distanceToSkelet() > MIN_DISTANCE_TO_SKELET)
-#endif
+		if (allStpeBackConditionsGood())
+		{			
+			hintScreen().startHandsAwaiting();
+			_handsUpAwaitingTimer.start();
+			state = HANDS_UP_AWAITING;
+		}
+		else if(isTimerFinished(_stepBackTimer, STEP_BACK_TIME))
 		{
-			_preGameTimer.start();
-
-			hintScreen().poseNum = level;
-			hintScreen().startReadySate();
-			state = PRE_GAME_INTRO;
+			gotoFirstScreenEvent();
 		}
 	}
 
+	bool allStpeBackConditionsGood()
+	{
+#ifdef debug
+		return isTimerFinished(_stepBackEnsureTimer, STEP_BACK_ENSURE_TIME)
+			&& kinect().isDistanceOk()
+			&& kinect().allHumanPointsInScreenRect()
+			&& kinect().isHeapInRect(Rectf(300.0f, 0.0f, 1620.0f, 1920.0f); 
+#else
+		return isTimerFinished(_stepBackEnsureTimer, STEP_BACK_ENSURE_TIME) 
+			&& kinect().isDistanceOk() 
+			&& kinect().allHumanPointsInScreenRect()
+			&& kinect().isHeapInRect(Rectf(300.0f, 0.0f, 1620.0f, 1920.0f); 
+#endif
+	}
+
+	void updateHandsAwaiting() 
+	{
+		kinect().updateSkeletonData();
+
+		#ifdef debug
+			if(true)
+		#else
+			if (kinect().isDistanceOk() && kinect().isHandsUp())
+		#endif		
+		{
+			scaleAccordingUserHeight = 1.0f;
+
+			int etalonHeight    =  kinect().getEtalonHeightInPixelsAccordingDepth();
+			int userHeight      =  kinect().userHeightInPixels();
+			//float distance      =  kinect().distanceToSkelet();
+			//float userHeightRaw =  kinect().userHeightRaw();
+
+			if(etalonHeight)
+				scaleAccordingUserHeight = Utils::clamp(userHeight / etalonHeight, 1.0f, 0.6f);
+			else
+				scaleAccordingUserHeight = 1.0f;
+
+			hintScreen().poseNum = level;
+			hintScreen().startReadySate();
+
+			poses[poseCode]->calculateShifts(scaleAccordingUserHeight);
+			poses[poseCode]->scalePoints(scaleAccordingUserHeight);
+
+			gameControls().setPoseScale(scaleAccordingUserHeight);
+			gameControls().setPoseShift(poses[poseCode]->getPoseShift());
+
+			_preGameTimer.start();
+			state = PRE_GAME_INTRO;
+		}
+		else if (isTimerFinished(_handsUpAwaitingTimer, HANDS_UP_AWAITINTING_TIME))
+		{
+			gotoFirstScreenEvent();
+		}
+		else
+		{
+			//allHumanPointsInGame();
+			//float  userHeight = 0;//floor(currentPose.calculateUserHeight());
+			//debugString = " curHeight:  "+ to_string(userHeight) + " |||| distance: "+to_string( kinect().distanceToSkelet());
+		}
+	}
+	
 	void updatePreGameIntro() 
 	{
 		if (isTimerFinished(_preGameTimer, PREGAME_TIME))
-		{			
-			_countDownTimer.start();
+		{
+			_countDownTimer.start(); 
 
 			hintScreen().startCountDown();
 			state = COUNTER_STATE;
 		}
-	}
+	}	
 
 	void updateCounterState() 
 	{	
@@ -187,6 +252,8 @@ public:
 				_hintTimer.start();
 				hintScreen().startHint();
 				gameControls().show1();
+
+				cameraStartUpdateEvent();
 				state = HINT_MESSAGE;
 			}
 			else
@@ -194,12 +261,14 @@ public:
 				gameControls().show();
 				_countersAnimTimer.start();
 				hintScreen().fadeCounter();
+
+				cameraStartUpdateEvent();
 				state = COUNTERS_ANIMATE;
 			}
 		}
 		else
 		{
-			hintScreen().updateCountDown( COUNTDOWN_TIME-(int)_countDownTimer.getSeconds());
+			hintScreen().updateCountDown( COUNTDOWN_TIME - (int)_countDownTimer.getSeconds());
 		}
 	}
 
@@ -207,11 +276,12 @@ public:
 	{		
 		if (isTimerFinished(_countersAnimTimer, COUNTERS_ANIM_TIME))
 		{	
-			_onePoseTimer.start();	
+			_onePoseTimer.start();
 
 			isPoseDetecting = false;
 			isGameRunning   = true;
-			gameControls().quickAnimationSetProgress(1);
+			_onePoseTimerPause = false;
+			mathPercent = 0.0f;
 			state = MAIN_GAME;	
 		}
 		else
@@ -222,12 +292,18 @@ public:
 
 	void updateMainGame() 
 	{
-		if (isTimerFinished(_onePoseTimer, CURRENT_POSE_TIME))
+		if (isTimerFinished(_onePoseTimer, CURRENT_POSE_TIME) && !_onePoseTimerPause)
 		{
 			gameControls().setShowingTime(0);
 			stopPersonChecking();
 			isPoseDetecting = false;
-			gotoLevelCompleteScreen() ;
+			gotoLevelCompleteScreen();
+		}
+		else if (_onePoseTimerPause)
+		{
+			gameControls().setShowingTime(CURRENT_POSE_TIME);
+			gameControls().setDetentionPercent(mathPercent);
+			checkPersonPose();
 		}
 		else
 		{
@@ -251,21 +327,18 @@ public:
 	void makeScreenShootUpdate() 
 	{
 		if (level++ >= POSE_IN_GAME_TOTAL)
-		{						
+		{
 			state = NONE;
 			gotoResultScreenEvent();
 		}
 		else
 		{
-			poseCode = generatePoseCode();	
-
-			_preGameTimer.start();	
 			hintScreen().poseNum = level;
 			hintScreen().startReadySate();
-			gameControls().setCurrentPose(poses[poseCode]);
-			CURRENT_POSE_TIME = poses[poseCode]->getPoseTime();
-			CURRENT_MATCHING_PERCENT= poses[poseCode]->getPercent();
+			initPoseData();
+
 			state = PRE_GAME_INTRO;
+			_preGameTimer.start();
 		}
 	}
 
@@ -334,6 +407,29 @@ public:
 	//
 	///////////////////////////////////////////////////////////////////
 
+	void initPoseData()
+	{		
+		poseCode = generatePoseCode();
+
+		CURRENT_POSE_TIME = poses[poseCode]->getPoseTime();
+		CURRENT_MATCHING_PERCENT = poses[poseCode]->getPercent();
+		poses[poseCode]->calculateShifts(scaleAccordingUserHeight);
+		poses[poseCode]->scalePoints(scaleAccordingUserHeight);
+
+		gameControls().setCurrentPose(poses[poseCode]);
+		gameControls().setPoseScale(scaleAccordingUserHeight);
+		gameControls().setPoseShift(poses[poseCode]->getPoseShift());
+	}
+
+	int generatePoseCode()
+	{
+		int code = poseNum++;
+		if (poseNum > poses.size() - 1)
+			poseNum = 0;
+
+		return code;//level - 1; //TODO
+	}
+
 	void checkPersonPose() 
 	{
 		updateGame();
@@ -364,22 +460,36 @@ public:
 		{
 			matchTemplate();
 
-#ifdef alwayswin
-			mathPercent = 1;
-#endif
-			//mathPercent = 1;
+			if (testPercent100) 
+				mathPercent = 1;
 
-			if (mathPercent > Params::percentForMatching )
+			if (mathPercent > Params::percentForMatching)
 			{
 				levelCompletion += LEVEL_PASS_INC;
+
+				if (_onePoseTimerPause == false)
+				{
+					CURRENT_POSE_TIME -= (int)_onePoseTimer.getSeconds();
+
+					if (_onePoseTimer.isStopped() == false)
+						_onePoseTimer.stop();
+
+					_onePoseTimerPause = true;
+				}
 			}
 			else
 			{
-				if(levelCompletion - LEVEL_PASS_DEC >= 0 )
+				if (_onePoseTimer.isStopped() == true)
+					_onePoseTimer.start();
+
+				_onePoseTimerPause = false;
+
+				if(levelCompletion - LEVEL_PASS_DEC >= 0)
 					levelCompletion -= LEVEL_PASS_DEC;
 				else
 					levelCompletion = 0;
 			}
+
 			gameControls().showMatching((float)levelCompletion / CURRENT_MATCHING_PERCENT);
 		}	
 	}
@@ -389,7 +499,7 @@ public:
 		return floor(levelCompletion);
 	}
 
-	ci::gl::Texture getPoseImage()
+	Texture getPoseImage()
 	{
 		return poses[poseCode]->getComicsImage();
 	}
@@ -399,7 +509,7 @@ public:
 		return poses[poseCode]->draw();
 	}
 
-	ci::gl::Texture getPoseImageById(int id)
+	Texture getPoseImageById(int id)
 	{
 		return poses[id]->getComicsImage();
 	}
@@ -409,7 +519,7 @@ public:
 		return to_string(poses.size() + 1);
 	}
 
-	ci::Surface getCurrentScreenShot() 
+	Surface getCurrentScreenShot() 
 	{
 		return PlayerData::playerData[level].screenshot;
 	}	
@@ -418,17 +528,26 @@ public:
 	{
 		foundPose = NULL;
 
-		currentPose.setPoints(kinect().getCurrentSkelet());
-		currentPose.createNormalizePoints0();
-		currentPose.initColors();
+		SkeletJoints skelet = kinect().getCurrentSkelet();
 
-		if(!isPointsSizeEqual(*poses[poseCode], currentPose))
+		if (skelet.size() == 0)
 		{
 			mathPercent = 0.0f;
 			return;
 		}
 
-		computeMistakeWay1();
+		currentPose.setPoints(skelet);
+		currentPose.createNormalizePoints0();
+		currentPose.initColors();
+
+		if(isPointsSizeEqual(*poses[poseCode], currentPose))
+		{
+			computeMistakeWay1();
+		}
+		else
+		{
+			mathPercent = 0.0f;
+		}
 	}
 
 	void stopPersonChecking() 
@@ -459,8 +578,9 @@ public:
 			}
 			else
 			{
-				currentPose.setPointColor(j, ColorA(1.0f, 1.0f, 1.0f, 0.0f));					
-				onePartPercent = onePart * (1 - mistake / (Params::maxErrorBetweenJoints - Params::minErrorBetweenJoints));
+				float norma = (Params::maxErrorBetweenJoints - mistake) / (Params::maxErrorBetweenJoints - Params::minErrorBetweenJoints);
+				onePartPercent = onePart * (1 - norma);
+				currentPose.setPointColor(j, ColorA(0.0f, 0.0f, 1.0f, abs(onePartPercent*10)));
 			}
 
 			mathPercent += onePartPercent;
@@ -482,7 +602,7 @@ public:
 		Vec2f anchor1 = pose1.getAnchor();
 		Vec2f anchor2 = pose2.getAnchor();
 
-		return (abs(anchor1.x - anchor2.x) < Params::boxMaxErrorX && abs(anchor1.y -anchor2.y) < Params::boxMaxErrorY  );
+		return (abs(anchor1.x - anchor2.x) < Params::boxMaxErrorX && abs(anchor1.y - anchor2.y) < Params::boxMaxErrorY);
 	}
 
 	double calculateDistanceBetweenPoints(Vec3f vec1, Vec3f vec2)
@@ -504,12 +624,28 @@ public:
 
 	void drawJoints()
 	{
+		// compare pose points
+		gl::pushMatrices();
+		gl::translate( kinect().viewShiftX,  kinect().viewShiftY);
+		gl::scale( kinect().headScale,  kinect().headScale);
+		//poses[poseCode]->drawRawPoints();
+		//gl::color(Color::hex(0xF5F5DC));
+		poses[poseCode]->drawPoints();
+		gl::popMatrices();
+	}
+
+	void drawCurrentPlayerJoints()
+	{
+		if (kinect().getCurrentSkelet().size() == 0)
+			return;
+
+		// current player points
 		gl::pushMatrices();
 		gl::translate( kinect().viewShiftX,  kinect().viewShiftY);
 		gl::scale( kinect().headScale,  kinect().headScale);
 		currentPose.drawPoints();
-		poses[poseCode]->drawPoints();
 		gl::popMatrices();
+		Utils::textFieldDraw(debugString,  fonts().getFont("Helvetica Neue", 46), Vec2f(40.0f, 40.0f), Color(1.0f, 0.0f, 0.0f));
 	}
 
 	///////////////////////////////////////////////////////////////////
@@ -527,6 +663,8 @@ public:
 		if(!_countersAnimTimer.isStopped()) _countersAnimTimer.stop();
 		if(!_onePoseTimer.isStopped()) _onePoseTimer.stop();
 		if(!_resultTimer.isStopped()) _resultTimer.stop();
+		if(!_handsUpAwaitingTimer.isStopped()) _handsUpAwaitingTimer.stop();
+		if(!_stepBackEnsureTimer.isStopped()) _stepBackEnsureTimer.stop();
 	}
 
 	bool isTimerFinished(Timer timer, int endTime) 

@@ -113,6 +113,7 @@ void IntroScreen::gotoFirstScreen()
 {
 	if (state!= INIT && !_game->freezeLocation)
 	{
+		_game->freezeLocation = true;
 		nextState = INIT;
 		kinect().sleep(2);
 		initAnimateParam();
@@ -125,6 +126,7 @@ void IntroScreen::gotoInviteScreen()
 {
 	if (state!= SHOW_INVITE && !_game->freezeLocation)
 	{
+		_game->freezeLocation = true;
 		nextState = SHOW_INVITE;
 		inviteAnimateParam();
 		changeState();
@@ -147,7 +149,8 @@ void IntroScreen::mouseEvents(int type)
 	{
 		if(state == INIT)
 			gotoInviteScreen();
-		else comeBackTimerStart();
+		else 
+			comeBackTimerStart();
 	}
 }
 
@@ -159,7 +162,7 @@ void IntroScreen::keyEvents()
 	switch (_event.getChar())
 	{       
 	case 'z':
-		isPeopleInFrame = true;				
+		isPeopleInFrame = true;
 		break;
 
 	case 'x':
@@ -247,7 +250,6 @@ void IntroScreen::draw()
 	}
 }
 
-
 void IntroScreen::drawInitElements()
 {	
 	gl::draw(logo, Vec2f(150.0f, logoAnimate));
@@ -291,12 +293,17 @@ void IntroScreen::drawIstructionElements()
 void IntroScreen::changeState() 
 {
 	_game->freezeLocation = true;
-	timeline().apply(&alphaAnimate,  0.0f, 1.0f, 0.55f, EaseOutQuart() ).finishFn( bind( &IntroScreen::animationFinished, this));
+	timeline().apply(&paramBad,  0.0f, 1.0f, 0.55f, EaseOutQuart() ).finishFn( [ & ]( )
+	{
+		_game->freezeLocation = false;
+	});	
+
+	animationFinished();
 }
 
 void IntroScreen::animationFinished() 
 {
-	_game->freezeLocation = false;
+	
 
 	switch (nextState)
 	{
@@ -324,10 +331,10 @@ void IntroScreen::animationFinished()
 
 	case SHOW_INSTRUCTION:	
 		if (!startGameBtnSignal.connected())
-			startGameBtnSignal = startGameBtn->mouseDownEvent.connect(boost::bind(&IntroScreen::startGameBtnDown, this));
+			startGameBtnSignal = startGameBtn->mouseUpEvent.connect(boost::bind(&IntroScreen::startGameBtnDown, this));
 
 		if (!comeBackBtnSignal.connected())
-			comeBackBtnSignal  = comeBackBtn->mouseDownEvent.connect(boost::bind(&IntroScreen::gotoFirstScreen, this));
+			comeBackBtnSignal  = comeBackBtn->mouseUpEvent.connect(boost::bind(&IntroScreen::gotoFirstScreen, this));
 
 		bubbleAnimator().kill();
 		startInstructionBtnSignal.disconnect();
@@ -335,6 +342,7 @@ void IntroScreen::animationFinished()
 		break;
 
 	case START_GAME:
+		_game->freezeLocation = false;
 		_game->changeState(MainGameScreen::Instance());
 		break;
 	}

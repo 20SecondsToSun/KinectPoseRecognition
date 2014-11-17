@@ -344,6 +344,9 @@
     <ClInclude Include="..\blocks\Cinder-Awesomium\include\CinderAwesomium.h">
       <Filter>blocks\Cinder-Awesomium</Filter>
     </ClInclude>
+    <ClInclude Include="..\src\controllers\saver\GameScoreSaver.h">
+      <Filter>Source Files\controllers\saver</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Resources.rc">

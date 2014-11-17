@@ -39,6 +39,7 @@ public:
 		SHOW__COUNTDOWN,
 		SHOW_NUMS,
 		SHOW_READY,
+		HANDS_AWAITING,
 		FADE_NUMS,
 		PREVIEW_ONLY,
 		START_HINT,
@@ -125,6 +126,8 @@ public:
 			gl::popMatrices();
 			gl::color(Color::white());
 
+			float scaleFactor = 0.04f;
+
 			if (arrowScale.x > 1.15f &&  sign == 1)
 			{					
 				sign = -1;
@@ -136,11 +139,11 @@ public:
 
 			if (sign == 1)
 			{
-				arrowScale += Vec2f(0.05f, 0.05f);
+				arrowScale += Vec2f(scaleFactor, scaleFactor);
 			}
 			else if (sign == -1)
 			{
-				arrowScale -= Vec2f(0.05f, 0.05f);
+				arrowScale -= Vec2f(scaleFactor, scaleFactor);
 			}
 		}
 		else if (state == SHOW_READY)
@@ -169,6 +172,12 @@ public:
 				gl::popMatrices();
 			}
 		}
+		else if (state == HANDS_AWAITING)
+		{
+			gl::draw(bg);
+			Texture errorTexure = Utils::getTextField("œŒƒÕ»Ã»“≈ –” »", fonts().getFont("MaestroC", 114),  Color::white());	
+			gl::draw(errorTexure, Vec2f(0.5f*(1920.0f - errorTexure.getWidth()), 348.0f));
+		}
 		else if (state == SHOW_NUMS)
 		{
 			gl::color(ColorA(tint_r, tint_g, tint_b, 1.0f));
@@ -186,10 +195,10 @@ public:
 		}
 		else if (state == FADE_NUMS)
 		{
-			gl::color(ColorA(1.0f, 1.0f, 1.0f, 0));
-			gl::draw(bg_blue);
+			//gl::color(ColorA(1.0f, 1.0f, 1.0f, 0));
+			//gl::draw(bg_blue);
 
-			drawTitle();
+			//drawTitle();
 
 			gl::color(Color::white());
 			drawPreview(false);
@@ -278,6 +287,13 @@ public:
 		state = SHOW_READY;
 	}
 
+	void startHandsAwaiting()
+	{
+		state = HANDS_AWAITING;
+	}
+
+	
+
 	void startCountDown()
 	{	
 		timeline().apply( &readyTextAlpha, 1.0f, 0.0f, 0.2f, EaseInCubic() );
@@ -294,7 +310,7 @@ public:
 		countDownTexture = Utils::getTextField(to_string(time), &countDownFont, Color::white());
 	}
 
-	void fadeCounter( )
+	void fadeCounter()
 	{
 		state = FADE_NUMS;
 		timeline().apply( &alphaBg, 1.0f, 0.0f, 0.4f, EaseInCubic() ).finishFn( [ & ]( )
@@ -312,7 +328,7 @@ public:
 	}
 
 	void fadeHint()
-	{	
+	{
 		timeline().apply( &alphaHint, 1.0f, 0.0f, 0.4f, EaseInCubic() ).finishFn( [ & ]( )
 		{
 			state = PREVIEW_ONLY;

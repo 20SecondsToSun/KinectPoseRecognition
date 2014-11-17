@@ -8,17 +8,20 @@
 #include "cinder/gl/gl.h"
 #include "cinder/gl/Texture.h"
 #include "cinder/Text.h"
+#include "Pose.h"
 
 using namespace ci;
 using namespace gl;
 using namespace ci::app;
 using namespace std;
 
-class GameControLScreen
+class Pose;
+
+class GameControlScreen
 {
 	public:	
 
-		static GameControLScreen& getInstance() { static GameControLScreen game; return game; };
+		static GameControlScreen& getInstance() { static GameControlScreen game; return game; };
 
 		Anim<float> silhouetteAlpha, matchingPopupAlpha;
 		Anim<Vec2f> timerVec, plashkaVec;
@@ -31,8 +34,11 @@ class GameControLScreen
 		float quickAnimPosePercent, matchingProgress, palkaPosition;
 		int percentMatching, quickAnimTime, state, showingSeconds, startingTime;
 
-		Pose* currentPose;
 		Vec2f animationPosition;
+		Pose *currentPose;
+
+		float poseScale;
+		Vec2f poseShiftVec;
 	
 		static const int circlesNum = 3;
 
@@ -80,8 +86,13 @@ class GameControLScreen
 		{
 			if(currentPose)
 			{
+				float part = (1440 - 1080) * 0.5 * poseScale;
+
 				gl::pushMatrices();
-					gl::translate(Vec2f(0.0f, (1080.0f - 1440.0f) * 0.5f));
+					gl::translate( kinect().viewShiftX,  kinect().viewShiftY);
+					gl::translate(poseShiftVec * 3);
+					gl::scale(poseScale, poseScale);
+				
 					gl::color(ColorA(1.0f, 1.0f, 1.0f, silhouetteAlpha));
 					currentPose->draw();
 				gl::popMatrices();
@@ -281,8 +292,19 @@ class GameControLScreen
 			matchingPopupAlpha = (progressInt <= 0.01f ? 0.0f : 1.0f);
 			matchingProgress = progressInt;
 		}
+
+		void setPoseScale(float  _poseScale)
+		{
+			poseScale = _poseScale;
+		}
+
+		void setPoseShift(Vec2f  _poseShiftVec)
+		{
+			poseShiftVec = _poseShiftVec;
+		}
+
 };
 
-inline GameControLScreen&	gameControls() { return GameControLScreen::getInstance(); };
+inline GameControlScreen&	gameControls() { return GameControlScreen::getInstance(); };
 
 #pragma warning(pop)

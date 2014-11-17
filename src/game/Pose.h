@@ -9,15 +9,17 @@ using namespace ci::app;
 using namespace std;
 using namespace poseParams;
 
-struct boxStruct 
-{
-	double x, y, z, w, h, d;
-};
-
 class Pose 
 {
 	public :
-		boxStruct boundingBox;
+		
+		struct boxStruct 
+		{
+			double x, y, z, w, h, d;
+		}  boundingBox;
+
+		Vec2f leftFootVec, rightFootVec;
+		float middleX, middleY;
 
 		void	setName(std::string _name)
 		{ 
@@ -27,24 +29,74 @@ class Pose
 		void	setPoints(std::vector<ci::Vec3f> _rawPoints)
 		{ 
 			rawPoints = _rawPoints;
-			drawingPoints = _rawPoints;
-			//initColors();
-		};
+			drawingPoints = _rawPoints;	
+		}
 
 		void	setRawPoints(std::vector<ci::Vec3f> _rawPoints)
 		{ 
-			rawPoints = _rawPoints;
-			//initColors();
-		};
+			rawPoints = _rawPoints;		
+		}
 
-
-		void	setDrawPoints(std::vector<ci::Vec3f> _drawPoints)
+		void setDrawPoints(std::vector<ci::Vec3f> _drawPoints)
 		{ 
 			drawingPoints = _drawPoints;
-			//initColors();
-		};
+			
+		}
 
+		void	scalePoints(float _scale)
+		{
+			for (int i = 0; i < rawPoints.size(); i++)
+			{
+				normalizePoints[i].x = rawPoints[i].x *_scale;
+				normalizePoints[i].y = rawPoints[i].y *_scale;
 
+				normalizePoints[i].x += middleX;//(640 - 640*_scale)*0.5;
+				normalizePoints[i].y += middleY;//480 - 480*_scale;
+			}
+		}
+
+		
+		Vec2f getPoseShift()
+		{
+			return Vec2f(middleX, middleY);
+		}
+		
+		void calculateShifts(float _scale)
+		{
+			int leftFootIndex = normalizePoints.size() - 1;
+			float leftFootShiftX = normalizePoints[leftFootIndex].x - normalizePoints[leftFootIndex].x *_scale;
+			float leftFootShiftY = normalizePoints[leftFootIndex].y - normalizePoints[leftFootIndex].y *_scale;
+
+			int rightFootIndex = normalizePoints.size() - 3;
+			float rightFootShiftX = normalizePoints[rightFootIndex].x - normalizePoints[rightFootIndex].x *_scale;
+			float rightFootShiftY = normalizePoints[rightFootIndex].y - normalizePoints[rightFootIndex].y *_scale;
+
+			leftFootVec = Vec2f(leftFootShiftX, leftFootShiftY);
+			rightFootVec = Vec2f(rightFootShiftX, rightFootShiftY);
+
+			middleX = (leftFootVec.x + rightFootVec.x ) * 0.5;
+			middleY = ( leftFootVec.y > rightFootVec.y ) ? leftFootVec.y  : rightFootVec.y ;
+			console()<<" middleX::  "<< middleX<<"  middleY  "<<middleY<< endl;
+		}
+		
+		void	drawRawPoints()
+		{
+			for (size_t j = 0; j < rawPoints.size(); j++)
+			{
+				gl::pushMatrices();				
+				Vec2f vec =  Vec2f(rawPoints[j].x, rawPoints[j].y);
+
+				if (j == rawPoints.size() - 3)
+					gl::color(Color::hex(0x5820e3));
+
+				if (j == rawPoints.size() - 1)
+					gl::color(Color::hex(0xe32065));
+
+				gl::drawSolidCircle(vec, 7.0f);
+				gl::popMatrices();
+			}
+			gl::color(Color::white());
+		}
 
 		void createSkeletBoundingBox(double _width, double _height)
 		{
@@ -54,56 +106,10 @@ class Pose
 			boundingBox.y = 0;
 		}
 
-		void createSelfSkeletBoundingBox()
-		{
-			double skeletFullHeight = 0;
-			double skeletFullWidth = 0;
-			Vec3f sholderVec, hipCenterVec, elbowLeftVec, sholderLeftVec;
-
-			for (size_t i = 0, len = rawPoints.size(); i < len; i++)
-			{			
-				Vec3f jnt =   Vec3f(rawPoints[i].x, rawPoints[i].y, rawPoints[i].z);
-				
-				if (i == 0)
-					hipCenterVec  = jnt;
-				else if (i == 2)
-				{
-					sholderVec  = jnt;
-					//skeletFullHeight += hipCenterVec.distance(jnt);
-				}
-				else if (i == 3)
-				{
-					skeletFullHeight += sholderVec.distance(jnt);
-				}
-				else if (i == 4)
-				{
-					skeletFullWidth += sholderVec.distance(jnt);
-					sholderLeftVec = jnt;
-				}
-				else if (i == 5)
-				{
-					skeletFullWidth += sholderLeftVec.distance(jnt);
-					elbowLeftVec = jnt;
-				}
-				else if (i == 6)
-				{
-					skeletFullWidth += elbowLeftVec.distance(jnt);
-				}
-			}
-			skeletFullWidth *= 2;
-
-
-			console()<<"init width ::::::::::::: "<<skeletFullWidth<<endl;
-			boundingBox.w = skeletFullWidth;
-			boundingBox.h = skeletFullHeight;
-			boundingBox.x = 0;
-			boundingBox.y = 0;
-		}
-
 		void	setPointColor(int i, ColorA color)
 		{ 
 			colors[i] = color;
-		};
+		}
 
 		void	setRedColors()
 		{ 
@@ -112,7 +118,7 @@ class Pose
 			{
 				colors.push_back( ColorA(1.0f, 0.0f, 0.0f, 1.0f));
 			}			
-		};		
+		}	
 
 		void	initColors()
 		{ 
@@ -121,37 +127,37 @@ class Pose
 			{
 				colors.push_back( ColorA(0.0f, 0.0f, 1.0f, 1.0f));
 			}			
-		};		
+		}	
 		
 		std::string	getName()  
 		{
 			return name;
-		};
+		}
 
 		std::vector<ci::Vec3f>	getPoints()
 		{ 
 			return rawPoints; 
-		};
+		}
 
 		std::vector<ci::Vec3f>	getNormalizePoints()
 		{ 
 			return normalizePoints; 
-		};
+		}
 		
 		ci::Surface16u	getImage() 
 		{ 
 			return _image; 
-		};
+		}
 
 		ci::gl::Texture 	getImageTex() 
 		{
 			return _imageTex;
-		};	
+		}
 
 		void	setImage(ci::Surface16u val)  
 		{ 
 			_image = val; 
-		};
+		}
 
 		void setTime(int val)  
 		{
@@ -183,22 +189,15 @@ class Pose
 			return _comicsName;
 		}	
 
-
-
 		void	setImage(ci::gl::Texture val)  
 		{ 
 			_imageTex = val; 
-		};
+		}
 
 		void	draw()  
-		{ 
-			//gl::color(Color(1.0f, 0.0f, 0.0f));
+		{ 			
 			gl::draw(_imageTex);
-		//	drawPoints();
-			//drawBox()	;
-			//drawAnchor();
-
-		};
+		}
 
 		void	setComicsImage(ci::gl::Texture _comics)  
 		{
@@ -212,17 +211,16 @@ class Pose
 
 		void	drawPoints()
 		{
-
 			for (size_t j = 0; j < normalizePoints.size(); j++)
 			{
 				gl::pushMatrices();	
 				gl::color(colors[j]);
 				Vec2f vec =  Vec2f(normalizePoints[j].x, normalizePoints[j].y);
-				gl::drawSolidCircle(vec, 7.0f);
+				gl::drawSolidCircle(vec, 4.0f);
 				gl::popMatrices();
 				gl::color(Color::white());
 			}
-		};
+		}		
 
 		void	drawBox()
 		{
@@ -238,7 +236,6 @@ class Pose
 			//gl::color(Color(0.0f, 0.0f, 1.0f));		
 			gl::drawSolidCircle(anchorPoint, 3.0f, 16);
 		}
-
 
 		void	drawLabel() {};		
 
@@ -273,6 +270,21 @@ class Pose
 
 			anchorPoint = Vec2f(boundingBox.x, boundingBox.y+boundingBox.h);
 		}
+
+	/*	float calculateUserHeight()
+		{
+			if( rawPoints.size()<12) return 0.0f;
+			int leftFootIndex = normalizePoints.size() - 1;
+			float leftFootY = normalizePoints[leftFootIndex].y;
+
+			int rightFootIndex = normalizePoints.size() - 3;
+			float rightFootY = normalizePoints[rightFootIndex].y;
+
+			int headIndex = 1;
+			float headY = normalizePoints[headIndex].y;
+
+			return abs(headY - leftFootY);
+		}*/
 
 		void setBoundingBox(boxStruct _boundingBox)
 		{
@@ -360,7 +372,6 @@ class Pose
 		ci::gl::Texture comics;
 
 		std::string _comicsName;
-		int _timeForPose, _matchPercent;
-		int time;
+		int _timeForPose, _matchPercent, time;
 };
 #pragma warning(pop)

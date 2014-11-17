@@ -3,7 +3,7 @@
 #include <sys/stat.h>
 #include <fcntl.h>
 #include "Curl.h"
-#include "Params.h"
+#include "Server.h"
 
 using namespace std;
 

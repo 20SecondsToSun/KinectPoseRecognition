@@ -36,27 +36,30 @@ void	PopupBase::setup()
 	_facebookWindowHeight = 500;	
 	_facebookWindowWidth  = 700;
 
-	photoURLs.clear();
-
-	for (int i = 0; i < 3; i++)
-	{
-		string photo_url = "";
-		string path =  Params::getTempPhotoSavePath(i).string();	
-		
-		for (size_t i = 0; i < path.size(); i++)
-		{
-			photo_url.push_back( path[i]);
-			if (path[i] == '\\' ) photo_url.push_back( path[i]);
-		}	
-		console()<< "url::  "<<photo_url<<endl;
-		photoURLs.push_back(photo_url);		
-	}
-
-	//touchKeyboard().setup(Vec2f(360.0f, getWindowHeight() - 504.0f));
-	//touchKeyboard().initKeyboard();
-
 	drawHandler  = &PopupBase::drawDef;
 	updateHandler = &PopupBase::updateDef;
+}
+
+void PopupBase::setPhotoPaths()
+{
+	photoURLs.clear();
+
+	for (size_t  i = 0; i < POSE_IN_GAME_TOTAL; i++)
+	{
+		if (PlayerData::playerData[i].isSuccess)
+		{
+			string photo_url = "";
+			string path =  Params::getTempPhotoSavePath(i).string();	
+		
+			for (size_t i = 0; i < path.size(); i++)
+			{
+				photo_url.push_back( path[i]);
+				if (path[i] == '\\' ) photo_url.push_back( path[i]);
+			}	
+			console()<< "url::  "<<photo_url<<endl;
+			photoURLs.push_back(photo_url);		
+		}
+	}
 }
 
 void PopupBase::reset()
@@ -66,6 +69,7 @@ void PopupBase::reset()
 
 void PopupBase::show(int _type)
 {	
+	setPhotoPaths();
 	socialServerStatus  = WAITING_FOR_NETWORK;
 	type = _type;
 	screenShot = gl::Texture(ci::app::copyWindowSurface());	
@@ -90,7 +94,7 @@ void PopupBase::show(int _type)
 			boost::bind(&PopupBase::socialServerSignal, this) 
 		);		
 
-		postingWaitingText = "Отправляем фотографии во ВКонтакте..";
+		postingWaitingText = vkontakteParams::POSTING_WAITING_TEXT;
 
 		touchKeyboard().setPosition( Vec2f(360.0f, 1080.0f - 484.0f));
 
@@ -111,7 +115,7 @@ void PopupBase::show(int _type)
 			boost::bind(&PopupBase::socialServerSignal, this) 
 		);
 	
-		postingWaitingText = "Отправляем фотографии в Facebook..";
+		postingWaitingText = facebookParams::POSTING_WAITING_TEXT;
 
 		touchKeyboard().setPosition( Vec2f(360.0f, 1080.0f - 484.0f));
 
@@ -255,8 +259,6 @@ void PopupBase::MouseDown( MouseEvent &event )
 		MouseEvent mEvent = VirtualKeyboard::inititateMouseEvent(event.getPos() -_facebookOffset);
 		ph::awesomium::handleMouseDown( mWebViewPtr, mEvent );	
 	}
-
-	console()<< "  coord  :: "<< event.getPos()<<endl;
 }
 
 void PopupBase::MouseUp( MouseEvent &event )
@@ -296,9 +298,7 @@ void PopupBase::vkontakteUpdate()
 		string token = anchString.substr(0, anchString.find(delimiter));
 		social->access_token = token.substr(13);
 		socialServerStatus  = POSTING;
-
-		//social->postStatus( "#ТойотаНастроение тест");
-		social->postPhoto(photoURLs, "#Котопоза");
+		social->postPhoto(photoURLs, vkontakteParams::STATUS_DEFAULT);
 	}
 	else 
 	{
@@ -379,7 +379,7 @@ void PopupBase::facebookUpdate()
 		social->access_token		=  token.substr(13);				
 		socialServerStatus			= POSTING;		
 			
-		social->postPhoto(photoURLs, "#Котопоза");
+		social->postPhoto(photoURLs, facebookParams::STATUS_DEFAULT);
 		//social->postStatus( "#ТойотаНастроение");
 	}	
 	else 
@@ -510,7 +510,7 @@ void PopupBase::drawPreloader()
 void PopupBase::drawPreloaderAtCenter()
 {
 	gl::draw(*blue_bg);	
-	gl::Texture text= Utils::getTextField(postingWaitingText, fonts().getFont("Myriad Pro", 70), Color::white());
+	gl::Texture text= Utils::getTextField(postingWaitingText, fonts().getFont("Myriad Pro", 55), Color::white());
 	gl::draw(text, Vec2f(0.5f*(getWindowWidth() - text.getWidth()), 375.0f));
 
 	gl::pushMatrices();
@@ -534,3 +534,11 @@ void PopupBase::updateDef()
 void PopupBase::drawDef()
 {
 }
+
+void PopupBase::shutdown()
+{
+	// properly shutdown Awesomium on exit
+	if( mWebViewPtr ) mWebViewPtr->Destroy();
+	Awesomium::WebCore::Shutdown();
+}
+

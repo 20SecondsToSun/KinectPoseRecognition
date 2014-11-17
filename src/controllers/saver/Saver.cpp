@@ -144,9 +144,9 @@ bool Saver::saveImageIntoBase(string mails,  ci::Surface  image)
 	if (day.size() < 2)
 		day = "0"+ day;
 
-	string dateName = to_string(1900+tstruct.tm_year) + month+ day;
-	string dirname = "data\\photo\\" +dateName;
-	string fileName = dateName + ".csv";
+	string dateName = to_string(1900 + tstruct.tm_year) + month + day;
+	string dirname = "data\\photo\\" + to_string(Params::standID) + "." + dateName;
+	string fileName = to_string(Params::standID) + "." + dateName + ".csv";
 	fs::path dir_path = getAppPath()/dirname;
 	fs::path file_path = getAppPath()/dirname/fileName;
 
@@ -227,6 +227,13 @@ void Saver::loadConfigData()
 
 		Params::maxErrorBetweenJoints =  doc.getChild( "maxError" ).getValue<int>() ;
 		Params::minErrorBetweenJoints =  doc.getChild( "minError" ).getValue<int>() ;
+		Params::etalonHeight          =  doc.getChild( "etalonHeight" ).getValue<int>() ;
+
+
+		Params::maxUserDistance=  doc.getChild( "maxUserDistance" ).getValue<float>() ;
+		Params::minUserDistance =  doc.getChild( "minUserDistance" ).getValue<float>() ;
+		Params::maxUserHeight =  doc.getChild( "maxUserHeight" ).getValue<float>() ;
+		Params::minUserHeight  =  doc.getChild( "minUserHeight" ).getValue<float>() ;
 
 		JsonTree datas =JsonTree( doc.getChild( "percents" ));
 

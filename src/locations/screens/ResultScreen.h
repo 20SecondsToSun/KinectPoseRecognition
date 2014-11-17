@@ -18,6 +18,8 @@
 #include "TextureManager.h"
 #include "EmailForm.h"
 
+#include "GameScoreSaver.h"
+
 using namespace ci;
 using namespace ci::app;
 using namespace ci::signals;

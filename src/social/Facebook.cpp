@@ -139,6 +139,8 @@ string Facebook::postPhotosToFbAlbum()
 {
 	int success_upload = 0;
 
+	//textStatus
+
 	for (size_t i = 0, ilen = photosVector.size()  ; i < ilen; i++)
 	{
 		string fbRequest  =  Curl::postUploadFB(FACEBOOK_BASE_URL + facebookAlbumId+"/photos/", 
@@ -160,7 +162,7 @@ string Facebook::postPhotosToFbAlbum()
 		}		
 	}
 
-	if (success_upload>0) return FacebookPostOk;
+	if (success_upload > 0) return FacebookPostOk;
 
 	return FacebookPostPhotoError;
 }
