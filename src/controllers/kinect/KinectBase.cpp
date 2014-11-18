@@ -8,7 +8,7 @@ void KinectBase::setDevice()
 	deviceOptions.enableDepth(true);
 	deviceOptions.setDepthResolution(DEPTH_RESOLUTION);
 	deviceOptions.setColorResolution(COLOR_RESOLUTION);	
-	deviceOptions.setSkeletonSelectionMode(MsKinect::SkeletonSelectionMode::SkeletonSelectionModeClosest1);	
+	//deviceOptions.setSkeletonSelectionMode(MsKinect::SkeletonSelectionMode::SkeletonSelectionModeClosest1);	
 
 	deviceOptions.setSkeletonTransform(MsKinect::SkeletonTransform::TRANSFORM_SMOOTH);
 
@@ -18,7 +18,7 @@ void KinectBase::setDevice()
 		mFrame = frame;
 	} );
 
-	console()<<"SKELETON TRANSFORM!!!!!!!!!!!!!!!!  "<<deviceOptions.getSkeletonTransform()<<endl;	
+	_gestureEnable = false;
 }
 
 void KinectBase::kinectConnect()
@@ -53,6 +53,10 @@ void KinectBase::kinectConnect()
 	//	console() << ex.what() << endl;
 	//} catch ( MsKinect::Device::ExcUserTrackingEnable ex ) {
 	//	console() << ex.what() << endl;
+
+		/*
+		 
+		*/
 	}
 }
 

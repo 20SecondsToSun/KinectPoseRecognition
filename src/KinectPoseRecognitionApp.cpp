@@ -21,6 +21,8 @@ using namespace ci;
 using namespace ci::app;
 using namespace std;
 
+
+
 class KinectPoseRecognitionApp : public AppNative
 {
   public:	
@@ -49,7 +51,6 @@ class KinectPoseRecognitionApp : public AppNative
 		params::InterfaceGlRef	mParams;
 		void	changeState();
 
-
 		ButtonColor	  *plusBtn, *minusBtn, *closeBtn;
 		ci::signals::connection plusBtnSignal, minusBtnSignal, closeBtnSignal;
 
@@ -60,6 +61,7 @@ void KinectPoseRecognitionApp::setup()
 {
 	setWindowSize(1920, 1080);
 	setFrameRate(60);
+	
 	setFullScreen(true);
 	hideCursor();
 
@@ -68,7 +70,6 @@ void KinectPoseRecognitionApp::setup()
 		//hideCursor();
 	#endif
 
-		
 	fonts().loadFont( loadFile(getAssetPath("fonts/MyriadPro-Regular.ttf")), 55);
 	fonts().loadFont( loadFile(getAssetPath("fonts/Helvetica Neue Bold.ttf")), 46);
 	fonts().loadFont( loadFile(getAssetPath("fonts/Helvetica Neue Bold.ttf")), 26);
@@ -122,10 +123,10 @@ void KinectPoseRecognitionApp::setup()
 
 	#ifdef recording
 		setFullScreen(true);
-		helpTex1 = loadImage(getAppPath()/"data/poses/test/Cat0.png");		
-		helpTex2 = loadImage(getAppPath()/"data/poses/test/Cat1.png");		
-		helpTex3 = loadImage(getAppPath()/"data"/"poses"/"test"/"Cat2.png");	
-		helpTex4 = loadImage(getAppPath()/"data"/"poses"/"test"/"Cat3.png");		
+		helpTex1 = loadImage(getAppPath()/"data/poses/test/Cat.png");		
+		//helpTex2 = loadImage(getAppPath()/"data/poses/test/Cat1.png");		
+		//helpTex3 = loadImage(getAppPath()/"data"/"poses"/"test"/"Cat2.png");	
+		//helpTex4 = loadImage(getAppPath()/"data"/"poses"/"test"/"Cat3.png");		
 		helpForRec = NULL;
 		cameraCanon().setup();
 		cameraCanon().live();
@@ -184,7 +185,7 @@ void KinectPoseRecognitionApp::update()
 	 #ifdef recording	
 		kinect().update();
 		kinect().updateSkeletonData();
-		
+		cameraCanon().update();
 
 		 if (state == "RecordingPose")
 		{

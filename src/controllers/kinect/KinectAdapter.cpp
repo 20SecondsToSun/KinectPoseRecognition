@@ -93,7 +93,8 @@ void KinectAdapter::updateSkeletonData()
 
 	for ( const auto& skeleton : mFrame.getSkeletons() ) 
 	{
-		if (skeleton.size() == 0 ) continue;
+		if (skeleton.size() == 0 )
+			continue;
 
 		int notTrackedPointsCount = 0;
 		
@@ -105,15 +106,6 @@ void KinectAdapter::updateSkeletonData()
 				const MsKinect::Bone& bone = joint->second;
 
 				//if(NUI_SKELETON_POSITION_TRACKED != bone.getTrackingState())
-				//{
-				//	notTrackedPointsCount++;
-				//	if (notTrackedPointsCount > 4)
-				//	{
-				//		//currentSkelet.clear();
-				//		//break;
-				//	}
-				//}
-
 				Vec2f v0 = mDevice->mapSkeletonCoordToColor( bone.getPosition());
 				auto  z = skeleton.at( bone.getStartJoint()).getPosition().z;
 				currentSkelet.push_back( Vec3f(v0.x, v0.y, z));
@@ -125,28 +117,132 @@ void KinectAdapter::updateSkeletonData()
 			auto joint = skeleton.find(humanGrowthPoints[i]);
 			if ( joint != skeleton.end())
 			{
-				const MsKinect::Bone& bone = joint->second;
-
-				if(NUI_SKELETON_POSITION_TRACKED != bone.getTrackingState())
-				{
-					//rawCurrentSkelet.clear();
-					//break;					
-				}				
+				const MsKinect::Bone& bone = joint->second;		
 				rawCurrentSkelet.push_back( bone.getPosition());
 			}
 		}
-
 		if (_gestureEnable)
 		{
 			_handsUpGesture.update(skeleton);
 		}
-
 		break;
 	}
 
 	if(getSurface8u() && getDepthChannel16u() && currentSkelet.size()!=0 && mDevice->isCapturing())	
 		savePoseDepth = MsKinect::greenScreenUsers(getDepthChannel16u(), getSurface8u(), COLOR_RESOLUTION, DEPTH_RESOLUTION);	
 }
+
+void KinectAdapter::updateSkeletonData(Rectf trackZone)
+{	
+	if (!isTracking || !_isConnected) return;
+
+	vector<SkeletJoints> colorMapSkelets, rawDataSkelets;
+	vector<Vec3f> spinePositions;
+	vector<MsKinect::Skeleton> skeletons;
+
+	for ( const auto& skeleton : mFrame.getSkeletons() ) 
+	{
+		currentSkelet.clear();
+		rawCurrentSkelet.clear();
+
+		if (skeleton.size() == 0 )
+			continue;
+		
+		for (size_t i = 0, len = jointToRecord.size(); i < len; i++)
+		{
+			auto joint = skeleton.find(jointToRecord[i]);
+
+			if ( joint != skeleton.end())
+			{
+				const MsKinect::Bone& bone = joint->second;
+				Vec2f v0 = mDevice->mapSkeletonCoordToColor( bone.getPosition());
+				auto  z = skeleton.at( bone.getStartJoint()).getPosition().z;
+				currentSkelet.push_back( Vec3f(v0.x, v0.y, z));	
+			}
+		}
+
+		for (size_t i = 0, len = humanGrowthPoints.size(); i < len; i++)
+		{
+			auto joint = skeleton.find(humanGrowthPoints[i]);
+			if ( joint != skeleton.end())
+			{
+				const MsKinect::Bone& bone = joint->second;		
+				rawCurrentSkelet.push_back( bone.getPosition());
+
+				if (humanGrowthPoints[i] == NUI_SKELETON_POSITION_SPINE)
+				{
+					Vec2f v0 = mDevice->mapSkeletonCoordToColor( bone.getPosition());
+					auto  z = skeleton.at( bone.getStartJoint()).getPosition().z;
+					spinePositions.push_back(Vec3f(v0.x, v0.y, z));
+				}
+			}
+		}
+
+		colorMapSkelets.push_back(currentSkelet);
+		rawDataSkelets.push_back(rawCurrentSkelet);
+		skeletons.push_back(skeleton);
+	}
+
+	currentSkelet.clear();
+	rawCurrentSkelet.clear();
+	//
+
+	int setType = -1;
+
+	if (skeletons.size() == 2)
+	{
+		Vec2f spineVec2f0 =  headScale *Vec2f(spinePositions[0].x, spinePositions[0].y) + Vec2f(viewShiftX, viewShiftY);
+		Vec2f spineVec2f1 =  headScale * Vec2f(spinePositions[1].x, spinePositions[1].y) + Vec2f(viewShiftX, viewShiftY);
+
+		if (trackZone.contains(spineVec2f0) && trackZone.contains(spineVec2f1))
+		{
+			if (spinePositions[0].z > spinePositions[1].z)
+				setType = 1;
+			else
+				setType = 0;
+		}
+		else if (trackZone.contains(spineVec2f0))
+		{
+			setType = 0;
+		}
+		else if (trackZone.contains(spineVec2f1))
+		{
+			setType = 1;
+		}
+	}
+	else if (skeletons.size() == 1)
+	{
+		Vec2f spineVec2f =  headScale * Vec2f(spinePositions[0].x, spinePositions[0].y) + Vec2f(viewShiftX, viewShiftY);
+		if (trackZone.contains(spineVec2f))	
+		{
+			setType = 0;	
+		}
+	}
+
+	if (setType == 0)
+	{
+		currentSkelet = colorMapSkelets[0];
+		rawCurrentSkelet = rawDataSkelets[0];
+		if (_gestureEnable)	
+			_handsUpGesture.update( skeletons[0]);
+	}
+	else if (setType == 1)
+	{
+		currentSkelet = colorMapSkelets[1];
+		rawCurrentSkelet = rawDataSkelets[1];
+		if (_gestureEnable)	
+			_handsUpGesture.update( skeletons[1]);	
+	}
+	else
+	{
+		if (_gestureEnable)	
+			_handsUpGesture.reset();
+	}
+
+	if(getSurface8u() && getDepthChannel16u() && currentSkelet.size()!=0 && mDevice->isCapturing())	
+		savePoseDepth = MsKinect::greenScreenUsers(getDepthChannel16u(), getSurface8u(), COLOR_RESOLUTION, DEPTH_RESOLUTION);	
+}
+
 
 ci::Surface16u KinectAdapter::getSilhouette()
 {
@@ -190,6 +286,10 @@ bool KinectAdapter::allHumanPointsInScreenRect()
 		float rightFootY = headScale * rightFoot.y + viewShiftY;
 
 		// console()<<" leftFootY "<<leftFootY<<" rightFootY "<<rightFootY<<endl;
+		/*
+
+
+		*/
 
 		if (posHeadY > 0.0f && leftFootY <= SCREEN_HEIGHT && rightFootY <= SCREEN_HEIGHT)
 			return true;

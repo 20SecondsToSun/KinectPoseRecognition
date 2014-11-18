@@ -31,6 +31,8 @@ int	Params::computeMistakeAlgo = 1;
 int	Params::standID = -1;
 float	Params::etalonHeight = 240;
 
+ci::gl::Texture Params::_successComics;
+
 
 float	Params::weightJoints[12];
 
@@ -67,4 +69,14 @@ fs::path Params::getBaseStoragePath()
 fs::path Params::getPoseSavingPath()
 {
 	return getAppPath()/"data/poses/savingPose";
+}
+
+void	Params::saveBufferSuccessComics(ci::gl::Texture tex)
+{
+	_successComics = tex;
+}
+
+ci::gl::Texture Params::getBufferSuccessComics()
+{
+	return _successComics;
 }

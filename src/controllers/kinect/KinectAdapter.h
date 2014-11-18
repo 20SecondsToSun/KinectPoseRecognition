@@ -38,8 +38,6 @@ class KinectAdapter: public KinectBase
 {
 public:
 
-	
-
 	void setup();
 	void draw();
 
@@ -53,6 +51,7 @@ public:
 
 	void update();
 	void updateSkeletonData();
+	void updateSkeletonData(Rectf trackZone);
 
 	bool allHumanPointsInScreenRect();
 
@@ -67,8 +66,7 @@ public:
 	std::vector<ci::Vec3f> getCurrentSkelet()
 	{
 		return currentSkelet;
-	};	
-
+	};
 
 	bool isHandsUp();
 	bool isDistanceOk();

@@ -52,7 +52,10 @@ void ResultScreen::setup()
 	comeBackBtn1->setScreenField(Vec2f(1449.0f, 692.0f));
 	comeBackBtn1->setDownState(playMoreTex1);
 
-	nothingCatTex           = *AssetManager::getInstance()->getTexture("images/serverScreen/nothingCat.png");
+	nothingCatTex            = *AssetManager::getInstance()->getTexture("images/serverScreen/nothingCat.png");
+	ramkaTex				 = *AssetManager::getInstance()->getTexture("images/serverScreen/ramkaTex.png");
+	ramkaShadowTex			 = *AssetManager::getInstance()->getTexture("images/serverScreen/ramkaShadowTex.png");
+	savingPhotoTex			 = *AssetManager::getInstance()->getTexture("images/serverScreen/savingPhoto.png");
 
 	photoRamki().setup();
 	socialPopup().setup();
@@ -106,12 +109,13 @@ void ResultScreen::init( LocationEngine* game)
 	if(PlayerData::score != 0)
 	{
 		bool status = gameScoreSaver().saveGameStatusIntoFile(true);
-
-		drawHandler = &ResultScreen::drawPhotoLoadingPreloader; //TODO - operate if file error
-		state = INIT_STATE;
-		photoLoadingFromDirSignal = photoMaker().photoLoadEvent.connect(boost::bind(&ResultScreen::photoLoadedFromDirHandler, this));	
-		photoLoadingFromDirErrorSignal = photoMaker().photoLoadErrorEvent.connect(boost::bind(&ResultScreen::photoLoadeFromDirErrorHandler, this));	
-		timeline().apply( &alphaAnimate, 0.0f, 0.2f, 0.9f, EaseOutCubic() ).finishFn( bind( &ResultScreen::animationStartFinished, this ) );		
+		comicsPhoto = Params::getBufferSuccessComics();
+		comicsPhotoScale = 1289.0f / comicsPhoto.getWidth();
+		drawHandler = &ResultScreen::showResultComics; 
+		state = SHOW_RESULT_PHOTO;
+		savingPhotopositionY = 1100.0f;
+		timeline().apply( &savingPhotopositionY, 947.0f, 0.4f, EaseOutCubic()).delay(0.4f);
+		timeline().apply( &photoComicsPosition, Vec2f(0.0f, -1080.0f), Vec2f(0.0f, 0.0f), 0.4f, EaseOutCubic() ).finishFn( bind( &ResultScreen::startLoadingProcess, this ) );
 	}
 	else
 	{
@@ -123,6 +127,15 @@ void ResultScreen::init( LocationEngine* game)
 		backToStartSignal = backToStartBtn->mouseUpEvent.connect(boost::bind(&ResultScreen::backToStartHandler, this));
 		comeBackTimerStart();
 	}
+}
+
+void ResultScreen::startLoadingProcess()
+{
+	drawHandler = &ResultScreen::drawPhotoLoadingPreloader; //TODO - operate if file error
+	state = INIT_STATE;
+	photoLoadingFromDirSignal = photoMaker().photoLoadEvent.connect(boost::bind(&ResultScreen::photoLoadedFromDirHandler, this));	
+	photoLoadingFromDirErrorSignal = photoMaker().photoLoadErrorEvent.connect(boost::bind(&ResultScreen::photoLoadeFromDirErrorHandler, this));	
+	timeline().apply( &alphaAnimate, 0.0f, 0.2f, 0.9f, EaseOutCubic() ).finishFn( bind( &ResultScreen::animationStartFinished, this ) );
 }
 
 void ResultScreen::animationStartFinished()
@@ -544,30 +557,60 @@ void ResultScreen::drawFadeOutIfAllow()
 
 void ResultScreen::drawPhotoLoadingPreloader() 
 {
+	
 	//gl::color(ColorA(1, 1, 1, alphaAnimate));
 	//Utils::textFieldDraw("¬ыгружаю фотографии... "+ to_string(photoMaker().getElapsedSeconds()),  fonts().getFont("MaestroC", 114), Vec2f(510.f, 448.0f), ColorA(1.f, 1.f, 1.f, 1.f));
-	Utils::textFieldDraw("—охран€ю фотографию",  fonts().getFont("MaestroC", 114), Vec2f(510.f, 448.0f), ColorA(1.f, 1.f, 1.f, 1.f));
+	//Utils::textFieldDraw("—охран€ю фотографию",  fonts().getFont("MaestroC", 114), Vec2f(510.f, 448.0f), ColorA(1.f, 1.f, 1.f, 1.f));
+	showResultComics();
 }
 
 void ResultScreen::drawNetConnectionPreloader() 
 {
 	//gl::color(ColorA(1, 1, 1, alphaAnimate));
 	//Utils::textFieldDraw("ѕровер€ю соединение... "+ to_string(server().getTimeoutSeconds()),  fonts().getFont("MaestroC", 114), Vec2f(510.f, 448.0f), ColorA(1.f, 1.f, 1.f, 1.f));
-	Utils::textFieldDraw("—охран€ю фотографию",  fonts().getFont("MaestroC", 114), Vec2f(510.f, 448.0f), ColorA(1.f, 1.f, 1.f, 1.f));
-
+	//Utils::textFieldDraw("—охран€ю фотографию",  fonts().getFont("MaestroC", 114), Vec2f(510.f, 448.0f), ColorA(1.f, 1.f, 1.f, 1.f));
+	showResultComics();
 }
 
 void ResultScreen::drawServerPreloader() 
 {	
 	//gl::color(ColorA(1, 1, 1, alphaAnimate));	
 	//Utils::textFieldDraw("ќжидаю сервер... " + to_string(server().getTimeoutSeconds()),  fonts().getFont("MaestroC", 114), Vec2f(510.f, 448.0f), ColorA(1.f, 1.f, 1.f, 1.f));
-	Utils::textFieldDraw("—охран€ю фотографию",  fonts().getFont("MaestroC", 114), Vec2f(510.f, 448.0f), ColorA(1.f, 1.f, 1.f, 1.f));
+	//Utils::textFieldDraw("—охран€ю фотографию",  fonts().getFont("MaestroC", 114), Vec2f(510.f, 448.0f), ColorA(1.f, 1.f, 1.f, 1.f));
+	showResultComics();
+}
 
+
+void ResultScreen::showResultComics() 
+{
+	gl::pushMatrices();
+		gl::translate(photoComicsPosition);
+		gl::pushMatrices();
+		gl::translate(196.0f, 117.0f);
+		gl::draw(ramkaShadowTex);	
+		gl::popMatrices();
+
+		gl::pushMatrices();
+		gl::translate(311.0f, 123.0f);
+		gl::scale(comicsPhotoScale, comicsPhotoScale);
+		gl::draw(comicsPhoto);	
+		gl::popMatrices();	
+
+		gl::pushMatrices();
+		gl::translate(230.0f, 0.0f);
+		gl::draw(ramkaTex);
+		gl::popMatrices();
+	gl::popMatrices();
+
+	gl::pushMatrices();
+		gl::translate(688.0f, savingPhotopositionY);//947
+		gl::draw(savingPhotoTex);
+	gl::popMatrices();
 }
 
 void ResultScreen::drawUpsetScreen() 
 {
-	gl::draw(nothingCatTex, Vec2f(162.0f, 64.0f));	
+	gl::draw(nothingCatTex, Vec2f(252.0f, 42.0f));	
 	comeBackBtn1->draw();
 	backToStartBtn->draw();
 }

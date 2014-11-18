@@ -14,6 +14,7 @@
 #define alwayswin
 //#define paramsDraw	
 //#define drawTimer
+//#define recording
 
 namespace colorsParams
 {
@@ -75,6 +76,9 @@ public:
 	static fs::path	getBaseStoragePath();
 	static fs::path	getPoseSavingPath();
 
+	static void		saveBufferSuccessComics(ci::gl::Texture);
+	static ci::gl::Texture getBufferSuccessComics();
+
 	static bool		isNetConnected;
 	static bool		photoFromDirError;
 
@@ -94,4 +98,6 @@ public:
 	static int		standID;
 
 	static float	etalonHeight;
+
+	static ci::gl::Texture _successComics;
 };

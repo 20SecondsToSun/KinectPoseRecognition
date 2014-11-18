@@ -56,6 +56,7 @@ class ResultScreen : public Location
 
 		int		state;
 		enum states {	INIT_STATE,
+					SHOW_RESULT_PHOTO,
 					PHOTO_LOADING_TO_SERVER,
 					PHOTO_CREATE_COMICS, 
 					PHOTO_LOADING_FROM_DIRECTORY,
@@ -85,6 +86,7 @@ class ResultScreen : public Location
 		void	drawPhotoLoadingPreloader();
 		void	drawNetConnectionPreloader();
 		void	drawUpsetScreen();
+		void	showResultComics();
 		void	drawErrorScreen();
 		void	drawServerPreloader(); 
 		
@@ -111,6 +113,8 @@ class ResultScreen : public Location
 		void	initPopup(int);
 		void	closeSocialPopup();
 		void	closeEmailPopup();
+
+		void	startLoadingProcess();
 
 		ButtonTex   *facebookBtn;
 		ButtonTex   *vkontakteBtn;
@@ -143,14 +147,17 @@ class ResultScreen : public Location
 		connection serverSignalConnectionCheck;
 
 		Anim<float> alphaAnimate, alphaFinAnimate;
-		Anim<float> alphaSocialAnimate, alphaEmailAnimate;
+		Anim<float> alphaSocialAnimate, alphaEmailAnimate, savingPhotopositionY;
+		Anim<Vec2f> photoComicsPosition;
 
 		bool canShowResultImages, isButtonsInit, isLeaveAnimation;
 
+		float comicsPhotoScale;
+
 		QRcode qrCode;
 
-		Texture	postPhotoTextTex, emailtPhotoTextTex;
-		Texture	playMoreTex, nothingCatTex, bg;
+		Texture	postPhotoTextTex, emailtPhotoTextTex, comicsPhoto;
+		Texture	playMoreTex, nothingCatTex, bg, ramkaShadowTex, ramkaTex, savingPhotoTex;
 
 		void (ResultScreen::* drawHandler)();
 };

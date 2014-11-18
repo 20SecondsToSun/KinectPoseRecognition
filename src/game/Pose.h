@@ -76,7 +76,7 @@ class Pose
 
 			middleX = (leftFootVec.x + rightFootVec.x ) * 0.5;
 			middleY = ( leftFootVec.y > rightFootVec.y ) ? leftFootVec.y  : rightFootVec.y ;
-			console()<<" middleX::  "<< middleX<<"  middleY  "<<middleY<< endl;
+			//console()<<" middleX::  "<< middleX<<"  middleY  "<<middleY<< endl;
 		}
 		
 		void	drawRawPoints()

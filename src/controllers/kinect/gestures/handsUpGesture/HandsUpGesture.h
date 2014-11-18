@@ -15,14 +15,15 @@ namespace KinectGesture
 			auto wristLeft = skeleton.find(NUI_SKELETON_POSITION_WRIST_LEFT);
 			auto wristRight = skeleton.find(NUI_SKELETON_POSITION_WRIST_RIGHT);
 
-			auto spine = skeleton.find(NUI_SKELETON_POSITION_SPINE);
+			auto head = skeleton.find(NUI_SKELETON_POSITION_HEAD);	
 
-			if ( wristLeft != skeleton.end() && wristRight!= skeleton.end() && spine!= skeleton.end())
+			if ( wristLeft != skeleton.end() && wristRight!= skeleton.end() && head!= skeleton.end())
 			{
-				if (wristLeft->second.getPosition().y < spine->second.getPosition().y
-					&& wristRight->second.getPosition().y < spine->second.getPosition().y)
+				if ( wristLeft->second.getPosition().y < head->second.getPosition().y
+					 && wristRight->second.getPosition().y < head->second.getPosition().y)
 				{
-					//console()<<" succes 1"<<std::endl;
+					
+					//console()<<"DIST  "<<<<std::endl;
 					return Succeeded;
 				}
 			}
@@ -42,9 +43,9 @@ namespace KinectGesture
 			auto head = skeleton.find(NUI_SKELETON_POSITION_HEAD);
 
 			if ( wristLeft != skeleton.end() && wristRight!= skeleton.end() && head!= skeleton.end())
-			{
-				if (wristLeft->second.getPosition().y > head->second.getPosition().y
-					&& wristRight->second.getPosition().y > head->second.getPosition().y)
+			{				
+				if (abs(wristLeft->second.getPosition().y - head->second.getPosition().y) < 0.2f
+					&& abs(wristRight->second.getPosition().y - head->second.getPosition().y) < 0.2f)
 				{
 					//console()<<" succes 2"<<std::endl;
 					return Succeeded;
@@ -77,28 +78,34 @@ namespace KinectGesture
 				if (currentSegment < SEGMENTS_COUNT - 1)
 				{
 					currentSegment++;
-					//frameCount = 0;
+					frameCount = 0;
 				}
-				else
+				else if(frameCount > 10)
 				{
-					console()<<"RECOGNIZED!!!!!!!!!!!!!!!!!!!!!!!"<<std::endl;
+					//console()<<"RECOGNIZED!!!!!!!!!!!!!!!!!!!!!!!"<<frameCount<<std::endl;
 					gestureRecognizedEvent();
 					reset();
 				}	
 			}
-		/*	else if (result == Failed && frameCount == FRAMES_FOR_GESTURE)
+			else if (result == Failed && frameCount == FRAMES_FOR_GESTURE)
 			{
 				reset();
 			}
 			else
 			{
 				frameCount++;
-			}*/
+			}
+		}
+
+		void reset()
+		{
+			currentSegment = 0;
+			frameCount = 0;
 		}
 
 	private:
 
-		static const int FRAMES_FOR_GESTURE = 60;
+		static const int FRAMES_FOR_GESTURE = 80;
 		static const int SEGMENTS_COUNT = 2;
 
 		KinectGestureSegment* segments[SEGMENTS_COUNT];
@@ -106,10 +113,6 @@ namespace KinectGesture
 		int currentSegment;
 		int frameCount;
 
-		void reset()
-		{
-			currentSegment = 0;
-			frameCount = 0;
-		}
+		
 	};
 }
