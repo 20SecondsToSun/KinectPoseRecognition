@@ -141,7 +141,7 @@ bool PhotoMaker::resizeFinalImages()
 				PlayerData::setTranslation(i, Vec2f(36.5f, 128.5f));
 				PlayerData::setRotation(i, -2.0f);
 			}
-			else if (i == 1)
+			/*else if (i == 1)
 			{
 				displaySurface = Utils::resizeScreenshot(comicsImage, (int32_t)411, (int32_t)227);
 				PlayerData::setDisplayingTexture(i, gl::Texture(displaySurface));
@@ -154,7 +154,7 @@ bool PhotoMaker::resizeFinalImages()
 				PlayerData::setDisplayingTexture(i, gl::Texture(displaySurface));
 				PlayerData::setTranslation(i, Vec2f(40.0f, 86.5f));
 				PlayerData::setRotation(i, 1.0f);
-			}
+			}*/
 			writeImage( Params::getTempPhotoSavePath(i), comicsImage);
 			Vec2f offset = Vec2f(0.0f, (float)BIG_PHOTO_HEIGHT*offsetI);
 			finalImage.copyFrom(comicsImage, Area(0, 0, BIG_PHOTO_WIDTH, BIG_PHOTO_HEIGHT), offset);	

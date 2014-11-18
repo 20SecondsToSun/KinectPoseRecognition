@@ -58,6 +58,10 @@ void KinectBase::kinectConnect()
 		 
 		*/
 	}
+	catch(...)
+	{
+		console()<<"errrrr"<<endl;
+	}
 }
 
 bool KinectBase::isConnected()

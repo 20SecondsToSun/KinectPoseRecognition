@@ -21,7 +21,16 @@ using namespace ci;
 using namespace ci::app;
 using namespace std;
 
+/*
+	TODO
 
+	1. проверить дизайн qrcode
+	2. проверить не съехала ли кнопка закрыть в попапах
+	3. скэйлить стрелку правильно
+	4. добавить графику поднимите руки
+	5. кропить правильно итоговое изображение
+	6. проверить баг на закрытие системы
+*/
 
 class KinectPoseRecognitionApp : public AppNative
 {
@@ -62,8 +71,8 @@ void KinectPoseRecognitionApp::setup()
 	setWindowSize(1920, 1080);
 	setFrameRate(60);
 	
-	setFullScreen(true);
-	hideCursor();
+	//setFullScreen(true);
+	//hideCursor();
 
 	#ifndef debug
 		//setFullScreen(true);
@@ -91,8 +100,8 @@ void KinectPoseRecognitionApp::setup()
 
     #ifndef recording
 		bg  = *AssetManager::getInstance()->getTexture( "images/diz/bg.jpg" );		
-		IntroScreen::Instance()->setup();
-		MainGameScreen::Instance()->setup();
+		//IntroScreen::Instance()->setup();
+		//MainGameScreen::Instance()->setup();
 		ResultScreen::Instance()->setup();
 	#endif
 
@@ -139,7 +148,7 @@ void KinectPoseRecognitionApp::setup()
     #ifndef recording
 		recognitionGame().setup();
 		game.init(getWindow());
-		game.changeState(IntroScreen::Instance());
+		game.changeState(ResultScreen::Instance());
 	#endif
 
 	gl::enableAlphaBlending();
@@ -354,6 +363,7 @@ void KinectPoseRecognitionApp::keyDown( KeyEvent event )
 
 void KinectPoseRecognitionApp::shutdown()
 {	
+	return;
 	#ifdef kinectUsed
 	try
 	{
