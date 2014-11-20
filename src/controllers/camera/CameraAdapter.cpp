@@ -81,6 +81,8 @@ void CameraAdapter::calculateAspects()
 		viewShiftX =float( 0.5 * (getWindowWidth()  - viewWidth));
 		viewShiftY= float( 0.5 * (getWindowHeight() - viewHeight));
 
+		console()<<"scaleFactor    "<<mCamera.getLiveSurface().getWidth()<<"  "<<mCamera.getLiveSurface().getHeight()<<endl;
+
 		translateSurface = Vec2f(viewShiftX + mCamera.getLiveSurface().getWidth()*scaleFactor, viewShiftY);
 	}
 }
@@ -160,8 +162,8 @@ void CameraAdapter::draw()
 	gl::pushMatrices();	
 		if (mCamera.isLiveViewing())//tryToTakePhoto == false)	
 		{	
-			gl::translate(translateSurface);
-			gl::scale(-scaleFactor, scaleFactor);
+			gl::translate(1920, -100);
+			gl::scale(-1.8181818, 1.8181818);
 			gl::color(Color::white());
 			gl::draw( gl::Texture( mCamera.getLiveSurface() ));				
 			lastFrame = mCamera.getLiveSurface();			
@@ -169,11 +171,13 @@ void CameraAdapter::draw()
 		else 
 		{
 			gl::translate(translateSurface);
-			gl::scale(-scaleFactor, scaleFactor);
+			gl::scale(-1.8181818, 1.8181818);
 			gl::color(Color::white());
 			gl::draw(lastFrame);
 		}
-	gl::popMatrices();	
+	gl::popMatrices();
+	//if (mCamera.isLiveViewing())//tryToTakePhoto == false)	
+	//	gl::draw( gl::Texture( mCamera.getLiveSurface() ));	
 }
 
 Surface8u CameraAdapter::getSurface()
@@ -193,7 +197,9 @@ float CameraAdapter::getHeight()
 
 void CameraAdapter::shutdown()
 {
-	 mCamera.shutdown();
+	mCamera.endLiveView();
+	isConnected = false;
+	mCamera.shutdown();
 }
 
 void CameraAdapter::photoCameraError( EdsError err)
@@ -211,9 +217,11 @@ void CameraAdapter::photoTaken(EdsDirectoryItemRef directoryItem, EdsError error
 
 void CameraAdapter::photoDownloaded(const std::string & downloadPath, EdsError error)
 {
+	photoCameraReadyLiveView();
 	//console()<<" ==   downloadedImage  = "<<mCamera.getCannon().getFileName()<<std::endl;	
    userPhotoFileName = photoDownloadDirectory().string() +"\\"+ mCamera.getCannon().getFileName();
    userPhotoIsDownloaded = true;	
+   
 }
 
 // Delegate method to tell the canon where to download the full-res image.
@@ -257,6 +265,7 @@ void CameraAdapter::handleStateEvent(EdsUInt32 inEvent)
 {
 	if (kEdsStateEvent_Shutdown == inEvent)
 	{
+		console()<<"mCamera SHUTDOWN "<<endl;
 		mCamera.endLiveView();
 		isConnected = false;
 	}

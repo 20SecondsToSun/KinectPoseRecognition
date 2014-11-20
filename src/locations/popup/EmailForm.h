@@ -19,66 +19,66 @@
 
 class EmailForm
 {
-	public:
-		
-		void setup( );
-		void show();
-		void hide();
-		void draw();
-		void disconnectAll();
+public:
 
-		boost::signals2::signal<void(void)> closeEvent, errorSavingToBaseEvent;
-		std::vector<std::string> getEmails();
-		std::string EmailForm::getEmailsInString();
+	void setup( );
+	void show();
+	void hide();
+	void draw();
+	void disconnectAll();
 
-		static EmailForm& getInstance() { static EmailForm emailF; return emailF; };
+	boost::signals2::signal<void(void)> closeEvent, errorSavingToBaseEvent;
+	std::vector<std::string> getEmails();
+	std::string EmailForm::getEmailsInString();
 
-	private :
+	static EmailForm& getInstance() { static EmailForm emailF; return emailF; };
 
-		enum closePopupMode {DEFAULT, CLOSE_MAIL, SEND_MAIL, SENDING_READY, EMAIL_ERROR};
+private :
 
-		ci::signals::connection	keyboardTouchSignal;
-		ci::signals::connection	deleteAllLettersSignal;
-		ci::signals::connection	serverSignalLoadingEmailCheck;		
-		ci::signals::connection	addEmailSignal;
-		ci::signals::connection	closeBtnSignal, MouseUpCon;
+	enum closePopupMode {DEFAULT, CLOSE_MAIL, SEND_MAIL, SENDING_READY, EMAIL_ERROR};
 
-		ButtonTex				*closeEmailBtn;
-		ButtonTex				*deleteAllLettersBtn;
-		ButtonTex				*addEmailBtn;
+	ci::signals::connection	keyboardTouchSignal;
+	ci::signals::connection	deleteAllLettersSignal;
+	ci::signals::connection	serverSignalLoadingEmailCheck;		
+	ci::signals::connection	addEmailSignal;
+	ci::signals::connection	closeBtnSignal, MouseUpCon;
 
-		void keyboardTouchSignalHandler();		
-		void deleteAllLettersHandler();
-		void addEmailHandler();
-		void closeSignalHandler();
+	ButtonTex				*closeEmailBtn;
+	ButtonTex				*deleteAllLettersBtn;
+	ButtonTex				*addEmailBtn;
 
-		void drawEmailInput();
-		void drawAdditionEmails();
-	
-		ci::Anim<ci::Vec2f>  bgPosition;
-		ci::Anim<ci::ColorA> errorAlpha, bgColor;
-		ci::gl::Texture		*keyBoardMainBgTex, *emailLineTex;
-		ci::gl::Texture		addEmailTex, deleteAllTex, closeEmailTex;
-		ci::Font			emailInputFont, emailAddFont;	
-		
-		void initHandlers();		
-		void closedHandler();
+	void keyboardTouchSignalHandler();		
+	void deleteAllLettersHandler();
+	void addEmailHandler();
+	void closeSignalHandler();
 
-		void sendToEmailHandler();
-		bool savePhotoToLocalBase();
-		void serverLoadingEmailHandler();
-		void setSendingReadyHandlers();
-		
-		void addCurrentEmail(std::string _email);
+	void drawEmailInput();
+	void drawAdditionEmails();
 
-		std::string currentEmail;
-		std::vector<std::string> emailVector;
+	ci::Anim<ci::Vec2f>  bgPosition;
+	ci::Anim<ci::ColorA> errorAlpha, bgColor;
+	ci::gl::Texture		*keyBoardMainBgTex, *emailLineTex;
+	ci::gl::Texture		addEmailTex, deleteAllTex, closeEmailTex;
+	ci::Font			emailInputFont, emailAddFont;	
 
-		int mode;
+	void initHandlers();		
+	void closedHandler();
 
-		ci::gl::Texture *emailErr, *emailOk,  *preloader, *blue_bg, *red_bg;
+	void sendToEmailHandler();
+	bool savePhotoToLocalBase();
+	void serverLoadingEmailHandler();
+	void setSendingReadyHandlers();
 
-		void MouseDown( MouseEvent &event);
+	void addCurrentEmail(std::string _email);
+
+	std::string currentEmail;
+	std::vector<std::string> emailVector;
+
+	int mode;
+
+	ci::gl::Texture *emailErr, *emailOk,  *preloader, *blue_bg, *red_bg;
+
+	void MouseDown( MouseEvent &event);
 
 };
 inline EmailForm&	emailPopup() { return EmailForm::getInstance(); };

@@ -12,45 +12,43 @@ class Location;
 
 class LocationEngine
 {
-	public:
-		
+public:
 
-		void init(ci::app::WindowRef window, int width=640, int height=480, 
-					bool fullscreen=false);
+	void init(ci::app::WindowRef window, int width=640, int height=480, 
+		bool fullscreen=false);
 
-		void cleanup();
+	void cleanup();
+	void changeState(Location* state);
+	void pushState(Location* state);
+	void popState();
 
-		void changeState(Location* state);
-		void pushState(Location* state);
-		void popState();
+	void handleEvents();
+	void mouseDown( ci::app::MouseEvent &event );
+	void mouseUp( ci::app::MouseEvent &event );
+	void keyDown( ci::app::KeyEvent &event );
+	void update();
+	void draw();
 
-		void handleEvents();
-		void mouseDown( ci::app::MouseEvent &event );
-		void mouseUp( ci::app::MouseEvent &event );
-		void keyDown( ci::app::KeyEvent &event );
-		void update();
-		void draw();
+	bool running() { return m_running; }
+	void quit() { m_running = false; }
 
-		bool running() { return m_running; }
-		void quit() { m_running = false; }
-	
-		ci::app::MouseEvent	getMouseEvent(){ return mouseEvent; }
-		ci::app::KeyEvent	getKeyEvent(){ return keyEvent; }
+	ci::app::MouseEvent	getMouseEvent(){ return mouseEvent; }
+	ci::app::KeyEvent	getKeyEvent(){ return keyEvent; }
 
-		bool	freezeLocation;
-		int		mouseEventType;
+	bool	freezeLocation;
+	int		mouseEventType;
 
-	private:
-	
-		vector<Location*> states;
+private:
 
-		bool m_running;
-		bool m_fullscreen;
+	vector<Location*> states;
 
-		ci::app::WindowRef				mainWindow;
-		ci::signals::scoped_connection	l_MouseDown, l_MouseUp, l_KeyDown;//, mCbMouseDrag;
+	bool m_running;
+	bool m_fullscreen;
 
-		ci::app::MouseEvent				mouseEvent;
-		ci::app::KeyEvent				keyEvent;	
+	ci::app::WindowRef	mainWindow;
+	ci::signals::scoped_connection	l_MouseDown, l_MouseUp, l_KeyDown;//, mCbMouseDrag;
+
+	ci::app::MouseEvent mouseEvent;
+	ci::app::KeyEvent keyEvent;	
 };
 #endif

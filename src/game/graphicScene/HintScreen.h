@@ -20,11 +20,14 @@ public:
 	Anim<float> rotationComicsAnimate;
 
 	Anim<Vec2f>	 catVec, arrowVec, bubbleScale;
+	Anim<Vec2f>	 manHandsUpTexAnimateVec, handsUpTextTexAnimateVec;
+
 
 	Vec2f arrowScale;
 
 	Texture hint3, bg, catImage, bubbleImage, arrowImage, screenshot, readyTex, /*titleNum,*/ countDownTexture, levelNumTexture;
-	Texture /*iconsPreview,*/ failImage, bg_blue;
+	Texture /*iconsPreview,*/ failImage, bg_blue, manHandsUpTex, handsUpTextTex;
+	Texture counter1Tex, counter2Tex, counter3Tex, *counterPtr;
 
 	float tint_r, tint_g, tint_b;
 
@@ -58,19 +61,26 @@ public:
 
 	void setup()
 	{
-		hint3       = *AssetManager::getInstance()->getTexture( "images/diz/hint3.png" );
-		bg          = *AssetManager::getInstance()->getTexture( "images/diz/bg.jpg" );
-		catImage    = *AssetManager::getInstance()->getTexture( "images/diz/cat3.png" );
-		bubbleImage = *AssetManager::getInstance()->getTexture( "images/diz/bubble2.png" );
-		arrowImage  = *AssetManager::getInstance()->getTexture( "images/diz/arrow2.png" );
-		readyTex    = *AssetManager::getInstance()->getTexture( "images/diz/readyText.png" );
+		hint3       = *AssetManager::getInstance()->getTexture("images/diz/hint3.png");
+		bg          = *AssetManager::getInstance()->getTexture("images/diz/bg.jpg");
+		catImage    = *AssetManager::getInstance()->getTexture("images/diz/cat3.png");
+		bubbleImage = *AssetManager::getInstance()->getTexture("images/diz/bubble2.png");
+		arrowImage  = *AssetManager::getInstance()->getTexture("images/diz/arrow2.png");
+		readyTex    = *AssetManager::getInstance()->getTexture("images/diz/readyText.png");
 		//titleNum    = *AssetManager::getInstance()->getTexture( "images/diz/pozaTitle.png" );
 		//iconsPreview = *AssetManager::getInstance()->getTexture( "images/diz/preview.png" );
-		failImage    = *AssetManager::getInstance()->getTexture( "images/fail.jpg" );
-		bg_blue		 = *AssetManager::getInstance()->getTexture( "images/diz/bg.jpg" );
+		failImage    = *AssetManager::getInstance()->getTexture("images/fail.jpg");
+		bg_blue		 = *AssetManager::getInstance()->getTexture("images/diz/bg.jpg");
 
 		countDownFont= Font(loadFile(getAssetPath("fonts/maestroc.ttf")), 650);
 		levelNumFont = Font(loadFile(getAssetPath("fonts/maestroc.ttf")), 63);
+
+		manHandsUpTex    = *AssetManager::getInstance()->getTexture("images/diz/handsUpMan.png");
+		handsUpTextTex	 = *AssetManager::getInstance()->getTexture("images/diz/handsUpText.png");
+
+		counter1Tex  = *AssetManager::getInstance()->getTexture("images/diz/__1.png");
+		counter2Tex  = *AssetManager::getInstance()->getTexture("images/diz/__2.png");
+		counter3Tex  = *AssetManager::getInstance()->getTexture("images/diz/__3.png");
 
 		tint_r = 235.0f/255.0f;
 		tint_g = 237.0f/255.0f;
@@ -120,13 +130,13 @@ public:
 			gl::color(ColorA(1.0f, 1.0f, 1.0f, arrowAlpha));
 			gl::pushMatrices();
 			gl::translate(arrowVec);
-			gl::translate(-arrowImage.getWidth()*0.5f*arrowScale.x, -arrowImage.getHeight()*0.5f*arrowScale.x);
+			gl::translate(-arrowImage.getWidth()*0.5f*arrowScale.x, 0.0f);
 			gl::scale(arrowScale);
 			gl::draw(arrowImage);
 			gl::popMatrices();
 			gl::color(Color::white());
 
-			float scaleFactor = 0.04f;
+			float scaleFactor = 0.035f;
 
 			if (arrowScale.x > 1.15f &&  sign == 1)
 			{					
@@ -175,8 +185,15 @@ public:
 		else if (state == HANDS_AWAITING)
 		{
 			gl::draw(bg);
-			Texture errorTexure = Utils::getTextField("œŒƒÕ»Ã»“≈ –” »", fonts().getFont("MaestroC", 114),  Color::white());	
-			gl::draw(errorTexure, Vec2f(0.5f*(1920.0f - errorTexure.getWidth()), 348.0f));
+			//Texture errorTexure = Utils::getTextField("œŒƒÕ»Ã»“≈ –” »", fonts().getFont("MaestroC", 114),  Color::white());	
+			//gl::draw(errorTexure, Vec2f(0.5f*(1920.0f - errorTexure.getWidth()), 348.0f));
+			gl::color(ColorA(1.0f, 1.0f, 1.0f, alphaHint));
+			gl::draw(manHandsUpTex, manHandsUpTexAnimateVec);
+			gl::draw(handsUpTextTex, handsUpTextTexAnimateVec);
+			gl::color(Color::white());
+			//manHandsUpTex ;
+			//handsUpTextTex;
+
 		}
 		else if (state == SHOW_NUMS)
 		{
@@ -187,7 +204,8 @@ public:
 			gl::draw(readyTex, Vec2f(472.0f, 416.0f));
 
 			gl::color(ColorA(1.0f, 1.0f, 1.0f, startCounterAlpha));
-			gl::draw(countDownTexture, Vec2f(780.0f, 152.0f));
+			//gl::draw(countDownTexture, Vec2f(780.0f, 152.0f));
+			gl::draw(*counterPtr, Vec2f(894.0f, 248.0f));
 			gl::color(Color::white());
 
 			//drawTitle();
@@ -260,39 +278,41 @@ public:
 		arrowScale = Vec2f(1.0f, 1.0f);
 		sign = 1;
 
-		arrowVec = Vec2f(901.0f, 552.0f);
-		timeline().apply( &arrowVec,  Vec2f(901.0f, 672.0f), 0.7f, EaseOutCubic() );
+		arrowVec = Vec2f(901.0f, 442.0f);
+		timeline().apply( &arrowVec,  Vec2f(901.0f, 472.0f), 0.7f, EaseOutCubic() );
 	}
 
 	void startReadySate()
 	{
-		screenshot = gl::Texture(copyWindowSurface());
+		//screenshot = gl::Texture(copyWindowSurface());
+		timeline().apply( &alphaBg, 0.0f, 1.0f, 0.7f, EaseInCubic());
+		//if (poseNum == 1)
+		//{
+		//	timeline().apply( &alphaBg, 0.0f, 1.0f, 0.7f, EaseInCubic() );
+		//	//levelNumTexture = Utils::getTextField(to_string(poseNum), &levelNumFont, Color::black());
+		//	
+		//}
+		//else
+		//{
+		//	previewVec[poseNum-2].screenshot = screenshot;
+		//	timeline().apply( &scaleComicsAnimate,    Vec2f(1.0f, 1.0f), previewVec[poseNum-2].scale, 0.4f, EaseInCubic());
+		//	timeline().apply( &positionComicsAnimate, Vec2f(0.0f, 0.0f), previewVec[poseNum-2].position, 0.4f, EaseInCubic());
+		//	timeline().apply( &rotationComicsAnimate, 0.0f             , previewVec[poseNum-2].rotation, 0.4f, EaseInCubic());
 
-		if (poseNum == 1)
-		{
-			timeline().apply( &alphaBg, 0.0f, 1.0f, 0.7f, EaseInCubic() );
-			levelNumTexture = Utils::getTextField(to_string(poseNum), &levelNumFont, Color::black());
-		}
-		else
-		{
-			previewVec[poseNum-2].screenshot = screenshot;
-			timeline().apply( &scaleComicsAnimate,    Vec2f(1.0f, 1.0f), previewVec[poseNum-2].scale, 0.4f, EaseInCubic());
-			timeline().apply( &positionComicsAnimate, Vec2f(0.0f, 0.0f), previewVec[poseNum-2].position, 0.4f, EaseInCubic());
-			timeline().apply( &rotationComicsAnimate, 0.0f             , previewVec[poseNum-2].rotation, 0.4f, EaseInCubic());
-
-			alphaBg = 1.0f;
-			levelNumTexture = Utils::getTextField(to_string(poseNum), &levelNumFont, Color::black());
-		}
-
+		//	alphaBg = 1.0f;
+		//	//levelNumTexture = Utils::getTextField(to_string(poseNum), &levelNumFont, Color::black());
+		//}
 		state = SHOW_READY;
 	}
 
 	void startHandsAwaiting()
 	{
 		state = HANDS_AWAITING;
-	}
-
 	
+		timeline().apply( &alphaHint, 0.0f, 1.0f, 0.4f, EaseInCubic() );
+		timeline().apply( &manHandsUpTexAnimateVec, Vec2f(378.0f, 27.0f), Vec2f(378.0f, 127.0f), 0.4f, EaseOutCubic() );
+		timeline().apply( &handsUpTextTexAnimateVec, Vec2f(1190.0f, 328.0f), Vec2f(990.0f, 328.0f), 0.4f, EaseOutCubic() );
+	}
 
 	void startCountDown()
 	{	
@@ -301,13 +321,25 @@ public:
 		startCounterAlpha = 0.0f;
 		timeline().apply( &startCounterAlpha, 0.0f, 1.0f, 0.4f, EaseInCubic() ).delay(0.1f);
 
-		countDownTexture = Utils::getTextField("3", &countDownFont, Color::white());
+		//countDownTexture = Utils::getTextField("3", &countDownFont, Color::white());
+		counterPtr	= &counter3Tex;
 		state = SHOW_NUMS;
 	}
 
 	void updateCountDown(int time)
-	{		
-		countDownTexture = Utils::getTextField(to_string(time), &countDownFont, Color::white());
+	{
+		if (time == 1)
+		{
+			counterPtr	= &counter1Tex;
+		}
+		else if (time == 2)
+		{
+			counterPtr	= &counter2Tex;
+		}
+		else if (time == 3)
+		{
+			counterPtr	= &counter3Tex;
+		}
 	}
 
 	void fadeCounter()

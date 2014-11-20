@@ -19,21 +19,19 @@ class QRcode
 		void		initAnim();
 		void        drawError();
 
-		bool isReady;		
-
+		bool isReady;
 
 		bool		isError;
 		void		setData(std::string str, std::string link);
 private:
-		ci::Font						qrCodeFont ;
-		ci::Anim<ci::Vec2f>				startQRCodeHolderXY;
-		ci::Anim<float>					alphaAnimate;	
-		ci::gl::Texture					qrCodeFon, qrCodeTextTexture, qrCodeTexture, *errorTexture;	
+		ci::Font			qrCodeFont ;
+		ci::Anim<ci::Vec2f>	startQRCodeHolderXY;
+		ci::Anim<float>		alphaAnimate;	
+		ci::gl::Texture		qrCodeFon, qrCodeTextTexture, qrCodeTexture, *errorTexture;	
 	
-		std::string				url;
-		std::string				stringQrcode;
-
-		gl::Texture				loadImageFromString(std::string value);
+		std::string		url;
+		std::string		stringQrcode;
+		gl::Texture		loadImageFromString(std::string value);
 
 		void setTextureString(std::string str);
 		void setLink(std::string link);

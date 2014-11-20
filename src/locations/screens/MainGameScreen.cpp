@@ -27,7 +27,6 @@ void MainGameScreen::setup()
 
 	/////////////////////////////////
 	Texture comeBackBtnTex   = *AssetManager::getInstance()->getTexture( "images/diz/toStart.png" );
-
 	comeBackBtn = new ButtonTex(comeBackBtnTex,  "backtoStart");
 	comeBackBtn->setScreenField(Vec2f(0.0f, 958.0f));
 	comeBackBtn->setDownState(comeBackBtnTex);
@@ -43,6 +42,8 @@ void MainGameScreen::init( LocationEngine* game)
 	comeBackBtnSignal	   = comeBackBtn->mouseUpEvent.connect(boost::bind(&MainGameScreen::gotoFirstScreen, this));
 
 	cameraCanon().reset();
+	cameraCanon().live();
+
 	cameraConnectionSignal = cameraCanon().cameraConnectedEvent.connect(boost::bind(&MainGameScreen::cameraConnectedHandler, this));
 
 	kinectMissPersonSignal = kinect().kinectMissPersonEvent.connect(boost::bind(&MainGameScreen::kinectMissPersonHandler, this));	
@@ -69,11 +70,19 @@ void MainGameScreen::init( LocationEngine* game)
 	cameraStartUpdateSignal = recognitionGame().cameraStartUpdateEvent.connect( [ & ]( )
 	{
 		isCameraUpdating = true;
+		if(cameraCanon().isConnected)
+			cameraCanon().update();		
 	});	
 
 	cameraStopUpdateSignal = recognitionGame().cameraStopUpdateEvent.connect( [ & ]( )
 	{
 		isCameraUpdating = false;
+	});
+
+	fboError = false;
+	errorFBOSignal = comicsScreen().errorFBO.connect( [ & ]( )
+	{
+		fboError = true;
 	});
 
 	gameControls().init();
@@ -160,7 +169,7 @@ void MainGameScreen::update()
 	if(!deviceError)
 		deviceError = !cameraCanon().isConnected || !kinect().isConnected();
 
-	if(deviceError == false)	
+	if(deviceError == false && fboError == false)	
 		recognitionGame().update();
 }
 
@@ -171,6 +180,10 @@ void MainGameScreen::draw()
 	if(deviceError == false)	
 	{
 		drawGame();
+	}
+	else if  (fboError)
+	{
+
 	}
 	else
 	{	
@@ -223,7 +236,8 @@ void MainGameScreen::drawGame()
 	case STEP_BACK_MESSAGE:
 		hintScreen().draw();
 		comeBackBtn->draw();
-		recognitionGame().drawCurrentPlayerJoints();
+		if (Params::isPointsDraw)
+			recognitionGame().drawCurrentPlayerJoints();
 		break;
 
 	case HINT_MESSAGE:			
@@ -238,7 +252,8 @@ void MainGameScreen::drawGame()
 
 	case HANDS_UP_AWAITING:
 		hintScreen().draw();	
-		recognitionGame().drawCurrentPlayerJoints();
+		if (Params::isPointsDraw)
+			recognitionGame().drawCurrentPlayerJoints();
 		break;		
 
 	case COUNTERS_ANIMATE:
@@ -255,10 +270,9 @@ void MainGameScreen::drawGame()
 			recognitionGame().drawJoints();
 			recognitionGame().drawCurrentPlayerJoints();
 		}
-
 		break;
 
-	case SHOW_GAME_RESULT:				
+	case SHOW_GAME_RESULT:
 		comicsScreen().draw();
 		gameControls().draw();
 		break;
@@ -267,12 +281,12 @@ void MainGameScreen::drawGame()
 		comicsScreen().draw();
 		break;
 
-	case PHOTO_MAKING_WAIT:		
+	case PHOTO_MAKING_WAIT:	
 		gameControls().draw();
 		drawPhotoFlash();
 		break;
 
-	case WIN_ANIMATION_FINISH_WAIT:			
+	case WIN_ANIMATION_FINISH_WAIT:
 		gameControls().draw();
 		drawPhotoFlash();
 		break;
@@ -326,6 +340,7 @@ void MainGameScreen::removeHandlers()
 {
 	comeBackBtnSignal.disconnect();
 	photoFlashSignal.disconnect();
+	errorFBOSignal.disconnect();
 
 	cameraConnectionSignal.disconnect();
 	kinectConnectionSignal.disconnect();

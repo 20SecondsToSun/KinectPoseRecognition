@@ -58,16 +58,19 @@ std::vector<Pose*> Saver::loadPoseBase()
 				int percent =  pose->getChild( "percent" ).getValue<int>();
 				newPose->setPercent(percent);
 
-				gl::Texture tex;
+				gl::Texture tex, maskTex;
 				try{
 					tex = loadImage(basePath /(name +".png"));			
 				}
 				catch(...)
 				{
 					continue;
-				}		
+				}	
+
+				
 
 				newPose->setImage(tex);
+				
 
 				name =  pose->getChild( "comics" ).getValue<string>();
 				try{
@@ -78,7 +81,16 @@ std::vector<Pose*> Saver::loadPoseBase()
 					continue;
 				}	
 
+				try{
+					maskTex = loadImage(basePath /(name +"_mask.png"));			
+				}
+				catch(...)
+				{
+					continue;
+				}		
+
 				newPose->setComicsImage(tex);
+				newPose->setComicsMaskImage(maskTex);				
 
 				posesVector.push_back(newPose);
 			}	
@@ -241,7 +253,7 @@ void Saver::loadConfigData()
 		for( JsonTree::ConstIter data = datas.begin(); data != datas.end(); ++data )		
 			Params::weightJoints[i++] = data->getValue<float>();
 
-		console()<<"PARAMS :: "<<" isNetConnected "<< Params::isNetConnected <<" computeMistakeAlgo "<<Params::computeMistakeAlgo<<std::endl;
+		console()<<"PARAMS :: "<<" isNetConnected "<< Params::isNetConnected <<" isPointsDraw "<<Params::isPointsDraw<<std::endl;
 	}
 	catch(...)
 	{
@@ -260,5 +272,24 @@ void Saver::loadStandId()
 		getline (file, buffer);
 		Params::standID = atoi(buffer.c_str());
 		console()<<"STAND ID::  "<<Params::standID<<endl;
+	}
+}
+
+void Saver::loadNetConnectionConfig()
+{
+	fs::path filepath = getAppPath()/"data"/ fs::path( "connection.txt");
+	ifstream file (filepath.string());	
+
+	if (file.is_open())
+	{	
+		string buffer;	
+		getline (file, buffer);
+
+		if(atoi(buffer.c_str()))		
+			Params::isNetConnected = true;
+		else
+			Params::isNetConnected = false;
+		
+		console()<<"Connection::  "<<Params::isNetConnected<<endl;
 	}
 }

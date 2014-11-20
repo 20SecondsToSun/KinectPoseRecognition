@@ -11,8 +11,7 @@ ResultScreen ResultScreen::ResultScreenState;
 
 void ResultScreen::setup()
 {
-	Font *btnFont = fonts().getFont("Helvetica Neue", 46);
-	
+	Font *btnFont = fonts().getFont("Helvetica Neue", 46);	
 
 	bg  = *AssetManager::getInstance()->getTexture( "images/diz/bg.jpg" );
 
@@ -28,7 +27,7 @@ void ResultScreen::setup()
 	comeBackBtn->setDownState(backBtnTex);
 
 	Texture comeBackBtnTex   = *AssetManager::getInstance()->getTexture( "images/diz/toStart.png" );
-		
+
 	backToStartBtn = new ButtonTex(comeBackBtnTex,  "backtoStart");
 	backToStartBtn->setScreenField(Vec2f(0.0f, 958.0f));
 	backToStartBtn->setDownState(comeBackBtnTex);
@@ -58,19 +57,19 @@ void ResultScreen::setup()
 	ramkaTex				 = *AssetManager::getInstance()->getTexture("images/serverScreen/ramkaTex.png");
 	ramkaShadowTex			 = *AssetManager::getInstance()->getTexture("images/serverScreen/ramkaShadowTex.png");
 	savingPhotoTex			 = *AssetManager::getInstance()->getTexture("images/serverScreen/savingPhoto.png");
-	
+
 	//photoRamki().setup();
 	socialPopup().setup();
 	emailPopup().setup();
-	
+	photoMaker().setup();
 	qrCode.setup();	
-	
+
 	touchKeyboard().setup(Vec2f(360.0f, getWindowHeight() - 504.0f));
 	touchKeyboard().initKeyboard();
 }
 
 void ResultScreen::init( LocationEngine* game)
-{
+{	
 	_game = game;	
 
 	_game->freezeLocation = false;
@@ -89,37 +88,40 @@ void ResultScreen::init( LocationEngine* game)
 	scalePhotoRamkaAnimateVec = 1;
 	posPhotoRamkaAnimate = Vec2f(0.0f, 0.0f);
 
-	PlayerData::score = 1;
+	//PlayerData::score = 1;
+	//PlayerData::playerData[0].pathHiRes = "level1.jpg";
+
+	/*	#ifdef debug
+	PlayerData::score = 3;
 	PlayerData::playerData[0].pathHiRes = "level1.jpg";
+	PlayerData::playerData[1].pathHiRes = "level2.jpg";
+	PlayerData::playerData[2].pathHiRes = "level3.jpg";
 
-/*	#ifdef debug
-		PlayerData::score = 3;
-		PlayerData::playerData[0].pathHiRes = "level1.jpg";
-		PlayerData::playerData[1].pathHiRes = "level2.jpg";
-		PlayerData::playerData[2].pathHiRes = "level3.jpg";
+	if (Params::photoFromDirError)
+	PlayerData::playerData[0].pathHiRes = "IMG_00.jpg";
 
-		if (Params::photoFromDirError)
-			PlayerData::playerData[0].pathHiRes = "IMG_00.jpg";
+	for (size_t  i = 0; i < POSE_IN_GAME_TOTAL; i++)
+	{
+	PlayerData::playerData[i].isSuccess = false;	
+	PlayerData::playerData[i].storyCode = 0;	
+	}
 
-		for (size_t  i = 0; i < POSE_IN_GAME_TOTAL; i++)
-		{
-			PlayerData::playerData[i].isSuccess = false;	
-			PlayerData::playerData[i].storyCode = 0;	
-		}
-
-		for (size_t  i = 0; i < PlayerData::score; i++)
-		{
-			PlayerData::playerData[i].isSuccess = true;	
-			PlayerData::playerData[i].storyCode = i;	
-		}
+	for (size_t  i = 0; i < PlayerData::score; i++)
+	{
+	PlayerData::playerData[i].isSuccess = true;	
+	PlayerData::playerData[i].storyCode = i;	
+	}
 	#endif*/	
-	
+
 	if(PlayerData::score != 0)
 	{
 		bool status = gameScoreSaver().saveGameStatusIntoFile(true);
-		//comicsPhoto = Params::getBufferSuccessComics();
-		//if(comicsPhoto.getWidth())
-		///	comicsPhotoScale = 1289.0f / comicsPhoto.getWidth();
+		if(status == false)
+			drawErrorStatus();
+
+		comicsPhoto = Params::getBufferSuccessComics();
+		if(comicsPhoto.getWidth())
+			comicsPhotoScale = 1249.0f / comicsPhoto.getWidth();
 		drawHandler = &ResultScreen::showResultComics; 
 		state = SHOW_RESULT_PHOTO;
 		savingPhotopositionY = 1100.0f;
@@ -129,6 +131,8 @@ void ResultScreen::init( LocationEngine* game)
 	else
 	{
 		bool status = gameScoreSaver().saveGameStatusIntoFile(false); //TODO - operate if file error
+		if(status == false)
+			drawErrorStatus();
 
 		drawHandler = &ResultScreen::drawUpsetScreen;
 		state = SORRY_GO_HOME;	
@@ -136,6 +140,15 @@ void ResultScreen::init( LocationEngine* game)
 		backToStartSignal = backToStartBtn->mouseUpEvent.connect(boost::bind(&ResultScreen::backToStartHandler, this));
 		comeBackTimerStart();
 	}
+}
+
+void ResultScreen::drawErrorStatus()
+{
+	drawHandler = &ResultScreen::drawErrorScreen;
+	state = ERROR_STATE;
+	comeBackSignal = comeBackBtn->mouseUpEvent.connect(boost::bind(&ResultScreen::closeScreenHandler, this));
+	backToStartSignal = backToStartBtn->mouseUpEvent.connect(boost::bind(&ResultScreen::backToStartHandler, this));
+	comeBackTimerStart();
 }
 
 void ResultScreen::startLoadingProcess()
@@ -189,7 +202,7 @@ void ResultScreen::animationPhotoSavedFinished()
 	{
 		state = NET_OFF_LOCATION_READY;	
 		resultPhotoRamkaStateInit();
-		
+
 		_game->freezeLocation = false;	
 		connectButtons();
 		comeBackTimerStart();	
@@ -217,10 +230,9 @@ void ResultScreen::animationShowChekConnection()
 {
 	serverSignalConnectionCheck = server().serverCheckConnectionEvent.connect(
 		boost::bind(&ResultScreen::serverSignalConnectionCheckHandler, this)
-	);
+		);
 	server().checkConnection();
 }
-
 
 void ResultScreen::serverSignalConnectionCheckHandler()
 {
@@ -235,7 +247,7 @@ void ResultScreen::animationHideChekConnection()
 	if(server().isConnected == false)
 	{
 		resultPhotoRamkaStateInit();
-		
+
 		_game->freezeLocation = false;	
 		state = NET_OFF_LOCATION_READY;	
 		connectButtons();
@@ -255,7 +267,7 @@ void ResultScreen::animationHideChekConnection()
 void ResultScreen::animationShowServerPhotoLoad()
 {	
 	serverSignalLoadingCheck = server().serverLoadingPhotoEvent.connect( 
-			boost::bind(&ResultScreen::serverLoadingPhotoHandler, this) 
+		boost::bind(&ResultScreen::serverLoadingPhotoHandler, this) 
 		);
 	server().sendPhoto(Params::getFinalImageStoragePath());
 }
@@ -272,7 +284,7 @@ void ResultScreen::animationHideServerPhotoLoad()
 {
 	_game->freezeLocation = false;	
 	resultPhotoRamkaStateInit();
-	
+
 	if (server().isPhotoLoaded)
 	{
 		state = LOADING_TO_SERVER_SUCCESS;
@@ -318,10 +330,10 @@ void ResultScreen::connectButtons()
 
 
 	if (alphaSocialAnimate <= 0.0f)
-	timeline().apply( &alphaSocialAnimate, 1.0f, 0.9f, EaseOutCubic() );
+		timeline().apply( &alphaSocialAnimate, 1.0f, 0.9f, EaseOutCubic() );
 
 	if (alphaEmailAnimate <= 0.0f)
-	timeline().apply( &alphaEmailAnimate, 1.0f, 0.9f, EaseOutCubic() ).delay(0.4f);
+		timeline().apply( &alphaEmailAnimate, 1.0f, 0.9f, EaseOutCubic() ).delay(0.4f);
 
 	console()<<"BUTTONS INIT ............. "<<endl;	
 }
@@ -396,7 +408,7 @@ void ResultScreen::errorSavingEmailHandler()
 	closeEmailPopupSignal.disconnect();	
 	errorSavingEmailPopupSignal.disconnect();	
 	emailPopup().disconnectAll();
-	
+
 	comeBackSignal = comeBackBtn->mouseUpEvent.connect(boost::bind(&ResultScreen::closeScreenHandler, this));
 	backToStartSignal = backToStartBtn->mouseUpEvent.connect(boost::bind(&ResultScreen::backToStartHandler, this));
 
@@ -467,20 +479,20 @@ void ResultScreen::update()
 		backToStartHandler();
 		return;
 	}
-	
+
 	switch (state)
 	{
-		case PHOTO_LOADING_FROM_DIRECTORY:
-			photoMaker().loadFinalImages();			
+	case PHOTO_LOADING_FROM_DIRECTORY:
+		photoMaker().loadFinalImages();			
 		break;
 
-		case PHOTO_LOADING_TO_SERVER:
-			if (server().timerIsRunning() && server().getTimeoutSeconds()<= 0)
-				serverTimeoutHandler();
+	case PHOTO_LOADING_TO_SERVER:
+		if (server().timerIsRunning() && server().getTimeoutSeconds()<= 0)
+			serverTimeoutHandler();
 		break;	
 
-		case POPUP_MODE:
-			socialPopup().update();
+	case POPUP_MODE:
+		socialPopup().update();
 		break;
 	}
 }
@@ -500,13 +512,13 @@ void ResultScreen::draw()
 
 	drawFadeOutIfAllow();
 
-	#ifdef drawTimer
-		if (!returnTimer.isStopped())
-		{	
-			string debugString = to_string(getSecondsToComeBack());
-			Utils::textFieldDraw(debugString,  fonts().getFont("Helvetica Neue", 46), Vec2f(40.f, 40.0f), ColorA(1.f, 0.f, 0.f, 1.f));		
-		}
-	#endif
+#ifdef drawTimer
+	if (!returnTimer.isStopped())
+	{	
+		string debugString = to_string(getSecondsToComeBack());
+		Utils::textFieldDraw(debugString,  fonts().getFont("Helvetica Neue", 46), Vec2f(40.f, 40.0f), ColorA(1.f, 0.f, 0.f, 1.f));		
+	}
+#endif
 
 	gl::disableAlphaBlending();	
 }
@@ -549,19 +561,15 @@ void ResultScreen::drawButtonsIfAllow()
 			mailShift = Vec2f(-895.0f, 0.0f);
 			mailBtn->setScreenField(Vec2f(229.0f, 845.0f));
 		}
-	
+
 		gl::pushMatrices();
-			gl::translate(mailShift);
-			gl::color(ColorA(1.0f, 1.0f, 1.0f, alphaEmailAnimate));
-			gl::draw(emailtPhotoTextTex, Vec2f(1124.0f, 746.0f));			
+		gl::translate(mailShift);
+		gl::color(ColorA(1.0f, 1.0f, 1.0f, alphaEmailAnimate));
+		gl::draw(emailtPhotoTextTex, Vec2f(1124.0f, 746.0f));			
 		gl::popMatrices();
 
-		mailBtn->draw();
-
-		gl::color(Color::white());
-
+		mailBtn->draw();	
 		comeBackBtn->draw();
-
 		backToStartBtn->draw();
 	}
 }
@@ -580,25 +588,16 @@ void ResultScreen::drawFadeOutIfAllow()
 
 void ResultScreen::drawPhotoLoadingPreloader() 
 {	
-	//gl::color(ColorA(1, 1, 1, alphaAnimate));
-	//Utils::textFieldDraw("¬ыгружаю фотографии... "+ to_string(photoMaker().getElapsedSeconds()),  fonts().getFont("MaestroC", 114), Vec2f(510.f, 448.0f), ColorA(1.f, 1.f, 1.f, 1.f));
-	//Utils::textFieldDraw("—охран€ю фотографию",  fonts().getFont("MaestroC", 114), Vec2f(510.f, 448.0f), ColorA(1.f, 1.f, 1.f, 1.f));
 	showResultComics();
 }
 
 void ResultScreen::drawNetConnectionPreloader() 
 {
-	//gl::color(ColorA(1, 1, 1, alphaAnimate));
-	//Utils::textFieldDraw("ѕровер€ю соединение... "+ to_string(server().getTimeoutSeconds()),  fonts().getFont("MaestroC", 114), Vec2f(510.f, 448.0f), ColorA(1.f, 1.f, 1.f, 1.f));
-	//Utils::textFieldDraw("—охран€ю фотографию",  fonts().getFont("MaestroC", 114), Vec2f(510.f, 448.0f), ColorA(1.f, 1.f, 1.f, 1.f));
 	showResultComics();
 }
 
 void ResultScreen::drawServerPreloader() 
 {	
-	//gl::color(ColorA(1, 1, 1, alphaAnimate));	
-	//Utils::textFieldDraw("ќжидаю сервер... " + to_string(server().getTimeoutSeconds()),  fonts().getFont("MaestroC", 114), Vec2f(510.f, 448.0f), ColorA(1.f, 1.f, 1.f, 1.f));
-	//Utils::textFieldDraw("—охран€ю фотографию",  fonts().getFont("MaestroC", 114), Vec2f(510.f, 448.0f), ColorA(1.f, 1.f, 1.f, 1.f));
 	showResultComics();
 }
 
@@ -607,31 +606,25 @@ void ResultScreen::showResultComics()
 	drawPhotoRamka();
 
 	gl::pushMatrices();
-		gl::translate(688.0f, savingPhotopositionY);//947
-		gl::draw(savingPhotoTex);
+	gl::translate(688.0f, savingPhotopositionY);
+	gl::draw(savingPhotoTex);
 	gl::popMatrices();
 }
 
 void ResultScreen::drawPhotoRamka() 
 {
 	gl::pushMatrices();
-		gl::translate(photoComicsPosition);
-		gl::pushMatrices();
-		gl::translate(196.0f, 117.0f);
-		gl::draw(ramkaShadowTex);	
-		gl::popMatrices();
-
-		gl::pushMatrices();
-		gl::translate(311.0f, 123.0f);
-		//gl::scale(comicsPhotoScale, comicsPhotoScale);
-		//gl::draw(comicsPhoto);	
-		gl::popMatrices();	
-
-		gl::pushMatrices();
-		gl::translate(230.0f, 0.0f);
-		gl::translate(0.0f, -82.0f);
-		gl::draw(ramkaTex);
-		gl::popMatrices();
+	gl::translate(photoComicsPosition);		
+	gl::draw(ramkaShadowTex, Vec2f(196.0f, 117.0f));				
+	gl::draw(ramkaTex, Vec2f(230.0f, -88.0f));
+	gl::pushMatrices();
+	gl::rotate(-1);
+	gl::translate(96.0f, 209.0f);
+	gl::translate(230.0f, -88.0f);
+	gl::translate(-6.0f, 28.0f);
+	gl::scale(comicsPhotoScale, comicsPhotoScale);
+	gl::draw(comicsPhoto);	
+	gl::popMatrices();
 	gl::popMatrices();
 }
 
@@ -661,16 +654,17 @@ void ResultScreen::disconnectListeners()
 
 	serverSignalConnectionCheck.disconnect();
 	serverSignalLoadingCheck.disconnect();
-	serverSignalLoadingEmailCheck.disconnect();
-	server().abortLoading();	
+	serverSignalLoadingEmailCheck.disconnect();	
+	server().abortLoading();
 
-	photoLoadingFromDirSignal.disconnect();	
-	photoLoadingFromDirErrorSignal.disconnect();
+	photoLoadingFromDirSignal.disconnect();
+	photoLoadingFromDirErrorSignal.disconnect();	
 
 	closeSocialPopupSignal.disconnect();
-	closeEmailPopupSignal.disconnect();
+	closeEmailPopupSignal.disconnect();	
 	errorSavingEmailPopupSignal.disconnect();
-	sendToMailSignal.disconnect();	
+	sendToMailSignal.disconnect();
+
 	emailPopup().disconnectAll();
 	socialPopup().disconnectAll();
 

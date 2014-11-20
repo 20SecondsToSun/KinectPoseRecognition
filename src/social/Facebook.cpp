@@ -16,18 +16,18 @@ void Facebook::facebookPostThread()
 
 	switch (type)
 	{
-		case TEXT_STATUS:
-			status = postTextFB();
+	case TEXT_STATUS:
+		status = postTextFB();
 		break;
 
-		case PHOTO_STATUS:
-			status =  postPhotoFB();
+	case PHOTO_STATUS:
+		status =  postPhotoFB();
 		break;
 
-		default:
+	default:
 		break;
 	}
-	
+
 	if (status == FacebookPostOk )
 	{		
 		logOut();
@@ -67,7 +67,7 @@ string Facebook::postTextFB()
 		}
 		catch(...)
 		{
-			
+
 		}
 	}
 
@@ -78,7 +78,7 @@ string Facebook::postPhotoFB()
 {
 	string fbRequest =  Curl::get(FACEBOOK_ALBUMS_URL+"/?access_token="+ access_token);	
 	facebookAlbumId = NULL_ALBUM_ID;
-	
+
 	try 
 	{
 		JsonTree jTree = JsonTree(fbRequest);
@@ -121,7 +121,7 @@ string Facebook::postPhotoFB()
 					return postPhotosToFbAlbum();
 				}
 			}
-			
+
 			return FacebookAlbumAccessError;
 		}
 		catch(...)
@@ -139,13 +139,11 @@ string Facebook::postPhotosToFbAlbum()
 {
 	int success_upload = 0;
 
-	//textStatus
-
 	for (size_t i = 0, ilen = photosVector.size()  ; i < ilen; i++)
 	{
 		string fbRequest  =  Curl::postUploadFB(FACEBOOK_BASE_URL + facebookAlbumId+"/photos/", 
-												access_token, photosVector[i],
-												Utils::cp1251_to_utf8(textStatus.c_str()));	
+			access_token, photosVector[i],
+			Utils::cp1251_to_utf8(textStatus.c_str()));	
 		try 
 		{
 			JsonTree jTree = JsonTree(fbRequest);

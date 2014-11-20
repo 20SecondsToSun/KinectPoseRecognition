@@ -424,6 +424,10 @@ void KinectAdapter::draw()
 	drawSkeletJoints();	
 #endif
 
+
+	//drawUserMask();
+
+
 #ifdef debug	
 	//drawKinectCameraColorSurface();
 #endif
@@ -443,7 +447,7 @@ void KinectAdapter::drawSkeletJoints()
 void KinectAdapter::drawUserMask()
 {
 	if(savePoseDepth)
-	{		
+	{	
 		gl::color(Color::white());
 		gl::enableAlphaBlending();
 

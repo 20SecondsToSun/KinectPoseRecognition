@@ -22,18 +22,9 @@
 #include "Vkontakte.h"
 #include "Facebook.h"
 
-
-//#define   SERVER_STATUS_NONE 1
-//#define   SERVER_STATUS_POSTING	2
-//#define   SERVER_STATUS_POST_READY	3
-//#define   SERVER_STATUS_POST_ERROR	4
-//#define   SERVER_STATUS_USER_REJECT 5
-
-
 #define   POPUP_ANIMATION_STATE 1
 #define   POPUP_READY_STATE		2
 #define   POPUP_INIT_STATE		3
-
 
 namespace socialServerStatuses
 {
@@ -44,99 +35,98 @@ namespace socialServerStatuses
 	const int   POST_ERROR = 4;
 	const int   USER_REJECT= 5;
 }
-	
+using namespace ci;
+using namespace ci::gl;
+using namespace std;
+
 class PopupBase
 {
-	public:	
-		// singleton implementation
-		static PopupBase& getInstance() { static PopupBase popup; return popup; };
+public:	
+	static PopupBase& getInstance() { static PopupBase popup; return popup; };
 
-		void			setup();
-		void			draw();
-		void			update();
-		void			reset();	
-		void			show(int popuptype);
-		void			shutdown();
-		void			disconnectAll();	
-		bool			isDrawing;
+	void setup();
+	void draw();
+	void update();
+	void reset();	
+	void show(int popuptype);
+	void shutdown();
+	void disconnectAll();	
+	bool isDrawing;
 
-		ci::gl::Texture		screenShot;
+	Texture screenShot;
 
-		boost::signals2::signal<void(void )> closeEvent;
-		ci::signals::connection	closeBtnSignal, keyboardTouchSignal;
+	boost::signals2::signal<void(void )> closeEvent;
+	ci::signals::connection	closeBtnSignal, keyboardTouchSignal;
 
-		ButtonTex			*closeBtn;
+	ButtonTex *closeBtn;
 
-	private:
+private:
 
-		void	closedHandler();	
-		void	initHandlers();
-		void	keyboardTouchSignalHandler();
-		void	hide();
-		int		type;
+	void	closedHandler();	
+	void	initHandlers();
+	void	keyboardTouchSignalHandler();
+	void	hide();
+	int		type;
 
-		void	setPhotoPaths();
+	void	setPhotoPaths();
 
-		ci::Anim<ci::Vec2f>  bgPosition;
-		ci::Anim<ci::ColorA> bgColor;
-		ci::gl::Texture		*keyBoardMainBgTex, *preloader, *blue_bg, *red_bg;	
-		ci::gl::Texture     *facebookOkTextTexture,*facebookErrTextTexture,*vkontakteOkTextTexture,*vkontakteErrTextTexture;
+	Anim<Vec2f>  bgPosition;
+	Anim<ColorA> bgColor;
+	Texture *keyBoardMainBgTex, *preloader, *blue_bg, *red_bg;	
+	Texture *facebookOkTextTexture,*facebookErrTextTexture;
+	Texture *vkontakteOkTextTexture,*vkontakteErrTextTexture;
 
-		SocShare *social;
+	SocShare *social;
 
-		static Awesomium::WebCore*			mWebCorePtr;
-		static Awesomium::WebView*			mWebViewPtr;
-		static Awesomium::WebSession*		session;
-		ci::gl::Texture						mWebTexture;
+	static Awesomium::WebCore *mWebCorePtr;
+	static Awesomium::WebView *mWebViewPtr;
+	static Awesomium::WebSession *session;
+	Texture mWebTexture;
 
-		ci::signals::connection				socialServerSignalCon;
+	ci::signals::connection socialServerSignalCon;
 
-		int									socialServerStatus;
-		int popupAnimationState;
+	int	socialServerStatus;
+	int popupAnimationState;
 
-		void	socialServerSignal();
-		bool isTryFocusInLoginTextField;
+	void socialServerSignal();
+	bool isTryFocusInLoginTextField;
 
-		std::string postingWaitingText;
+	string postingWaitingText;
 
-		int									_facebookWindowHeight, _facebookWindowWidth;
+	int _facebookWindowHeight, _facebookWindowWidth;
 
-		ci::Vec2f							_vkontakteOffset;
-		ci::Vec2f							_facebookOffset;
+	Vec2f _vkontakteOffset;
+	Vec2f _facebookOffset;
 
-		Area								facebookPopupAvailableArea, vkontaktePopupAvailableArea;
+	Area facebookPopupAvailableArea, vkontaktePopupAvailableArea;
 
-		std::vector<std::string>			photoURLs;
+	vector<string> photoURLs;
 
+	void (PopupBase::* drawHandler)();
+	void (PopupBase::* updateHandler)();
 
-		void (PopupBase::* drawHandler)();
-		void (PopupBase::* updateHandler)();
+	void vkontakteDraw();
+	void vkontakteUpdate();
+	void facebookDraw();
+	void facebookUpdate();
 
-		void vkontakteDraw();
-		void vkontakteUpdate();
-		void facebookDraw();
-		void facebookUpdate();
+	void drawDef();
+	void updateDef();
+	void drawKeyboard();
+	void drawcloseBtn();
+	void drawPreloader();
+	void drawPreloaderAtCenter();
 
-		void drawDef();
-		void updateDef();
-		void drawKeyboard();
-		void drawcloseBtn();
-		void drawPreloader();
-		void drawPreloaderAtCenter();
+	void drawFacebookPosted();
+	void drawFacebookError();
 
-		void drawFacebookPosted();
-		void drawFacebookError();
+	void drawVkontaktePosted();
+	void drawVkontakteError();
 
-		void drawVkontaktePosted();
-		void drawVkontakteError();
-
-		ci::signals::connection				KeyDownCon, MouseDownCon, MouseUpCon;
-
-		void								KeyDown( ci::app::KeyEvent event  );
-		void								MouseDown( ci::app::MouseEvent &event );
-		void								MouseUp( ci::app::MouseEvent &event );
-		
-		
+	ci::signals::connection	KeyDownCon, MouseDownCon, MouseUpCon;
+	void KeyDown( ci::app::KeyEvent event);
+	void MouseDown( ci::app::MouseEvent &event);
+	void MouseUp( ci::app::MouseEvent &event);
 };
 
 inline PopupBase&	socialPopup() { return PopupBase::getInstance(); };

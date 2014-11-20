@@ -39,7 +39,8 @@ public:
 		return &IntroScreenState;
 	}
 
-private:	
+private:
+	static const int KINECT_SLEEP_SECONDS = 2; // if we're at the first screen - not to recognize immediately
 
 	enum states {INIT, 
 		SHOW_INVITE,  

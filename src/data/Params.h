@@ -8,10 +8,10 @@
 #define kinectUsed
 //#define recording
 //#define calibration
-//#define debug	
-#define testServer	
+#define debug	
+//#define testServer	
 
-#define alwayswin
+//#define alwayswin
 //#define paramsDraw	
 //#define drawTimer
 //#define recording
@@ -74,7 +74,7 @@ public:
 	static fs::path	getFinalImageStoragePath();
 	static fs::path	getConfigStoragePath();
 	static fs::path	getBaseStoragePath();
-	static fs::path	getPoseSavingPath();
+	static fs::path	getPoseSavingPath();	
 
 	static void		saveBufferSuccessComics(ci::gl::Texture);
 	static ci::gl::Texture getBufferSuccessComics();

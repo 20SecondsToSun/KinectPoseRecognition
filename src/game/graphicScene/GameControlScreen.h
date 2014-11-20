@@ -55,8 +55,8 @@ class GameControlScreen
 			sidePlashka   =  *AssetManager::getInstance()->getTexture( "images/diz/sidePlashka.jpg");
 			matchingPopup =  *AssetManager::getInstance()->getTexture( "images/diz/poseAlreadyBubble.png");
 			palka         =  *AssetManager::getInstance()->getTexture( "images/diz/kolbasa.png");
-			timer_bubble   =  *AssetManager::getInstance()->getTexture( "images/diz/time_bubble.png");
-			popka		   =  *AssetManager::getInstance()->getTexture( "images/diz/popka.jpg");
+			timer_bubble  =  *AssetManager::getInstance()->getTexture( "images/diz/time_bubble.png");
+			popka		  =  *AssetManager::getInstance()->getTexture( "images/diz/popka.jpg");
 
 			timerVec        = Vec2f(1458.0f, 1080.0f);
 			plashkaVec      = Vec2f(1920.0f, 0.0f);
@@ -112,7 +112,7 @@ class GameControlScreen
 				gl::Texture percent = Utils::getTextField(to_string(percentMatching), &percentFont,  Color::white());
 				gl::color(Color::hex(0xc42f39));
 				gl::translate(0.0f, -200.0f );
-				gl::draw(percent);
+				//gl::draw(percent);
 			gl::popMatrices();
 
 			gl::color(Color::white());
@@ -134,23 +134,23 @@ class GameControlScreen
 					gl::color(ColorA(1.0f, 1.0f, 1.0f, matchingPopupAlpha));
 					gl::translate(Vec2f(1267.0f, 53.0f));
 					gl::draw(matchingPopup);
-					gl::translate(253.0f - 13.0f, 357.0f);
+					gl::translate(253.0f - 13.0f, 347.0f);
 					int numActiveCircles = circlesNum * matchingProgress;
 					for (int i = 0; i < circlesNum; i++)
 					{
 						gl::pushMatrices();
-							if ( i + 1 <= numActiveCircles)
-							{
-								gl::translate(13.0f + 68.0f*i, 0.0f);
-								gl::color(ColorA(196.0f/255.0f, 47.0f/255.0f, 57.0f/255.0f, matchingPopupAlpha));
-								gl::drawSolidCircle(Vec2f(0.0f, 0.0f), 24.0f, 20);
-							}
-							else
-							{
-								gl::translate(13.0f + 68.0f*i, 0.0f);
-								gl::color(ColorA(223.0f/255.0f, 223.0f/255.0f, 223.0f/255.0f, matchingPopupAlpha));
-								gl::drawSolidCircle(Vec2f(0.0f, 0.0f), 13.0f, 20);
-							}
+						if ( i + 1 <= numActiveCircles)
+						{
+							gl::translate(13.0f + 68.0f*i, 0.0f);
+							gl::color(ColorA(196.0f/255.0f, 47.0f/255.0f, 57.0f/255.0f, matchingPopupAlpha));
+							gl::drawSolidCircle(Vec2f(0.0f, 0.0f), 24.0f, 40);
+						}
+						else
+						{
+							gl::translate(13.0f + 68.0f*i, 0.0f);
+							gl::color(ColorA(223.0f/255.0f, 223.0f/255.0f, 223.0f/255.0f, matchingPopupAlpha));
+							gl::drawSolidCircle(Vec2f(0.0f, 0.0f), 13.0f, 40);
+						}
 						gl::popMatrices();
 					}
 				gl::popMatrices();
@@ -196,13 +196,13 @@ class GameControlScreen
 
 		void initStartAnimation1()
 		{
-			timeline().apply( &plashkaVec, Vec2f(1920.0f, 0.0f), Vec2f(1831.0f , 0.0f), 1.2f, EaseOutCubic() );
+			timeline().apply( &plashkaVec, Vec2f(1920.0f, 0.0f), Vec2f(1831.0f , 0.0f), 1.2f, EaseOutCubic());
 		}
 
 		void quickAnimation(int timeToQuickAnimate)
 		{
 			if (state == QUICK_ANIMATION) return;
-			state  = QUICK_ANIMATION;
+				state  = QUICK_ANIMATION;
 		}
 
 		void quickAnimationSetProgress(float percent)
@@ -298,7 +298,6 @@ class GameControlScreen
 		{
 			poseShiftVec = _poseShiftVec;
 		}
-
 };
 
 inline GameControlScreen&	gameControls() { return GameControlScreen::getInstance(); };

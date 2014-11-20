@@ -18,7 +18,7 @@ class Pose
 			double x, y, z, w, h, d;
 		}  boundingBox;
 
-		Vec2f leftFootVec, rightFootVec;
+		Vec2f leftFootVec, rightFootVec, middlePoint;
 		float middleX, middleY;
 
 		void	setName(std::string _name)
@@ -60,6 +60,11 @@ class Pose
 		{
 			return Vec2f(middleX, middleY);
 		}
+
+		Vec2f getMidlePoint()
+		{
+			return middlePoint;
+		}
 		
 		void calculateShifts(float _scale)
 		{
@@ -76,6 +81,10 @@ class Pose
 
 			middleX = (leftFootVec.x + rightFootVec.x ) * 0.5;
 			middleY = ( leftFootVec.y > rightFootVec.y ) ? leftFootVec.y  : rightFootVec.y ;
+			//console()<<" middleX::  "<< middleX<<"  middleY  "<<middleY<< endl;
+
+			float middle = ( normalizePoints[leftFootIndex].y >  normalizePoints[rightFootIndex].y ) ? normalizePoints[leftFootIndex].y  :  normalizePoints[rightFootIndex].y ;
+			middlePoint = Vec2f((normalizePoints[leftFootIndex].x + normalizePoints[rightFootIndex].x)*0.5, middle);
 			//console()<<" middleX::  "<< middleX<<"  middleY  "<<middleY<< endl;
 		}
 		
@@ -207,7 +216,18 @@ class Pose
 		ci::gl::Texture		getComicsImage()  
 		{
 			return comics;
-		}		
+		}
+
+		void	setComicsMaskImage(ci::gl::Texture _comicsMask)  
+		{
+			comicsMask = _comicsMask;
+		}
+
+		ci::gl::Texture		getComicsMaskImage()  
+		{
+			return comicsMask;
+		}
+		
 
 		void	drawPoints()
 		{
@@ -369,7 +389,7 @@ class Pose
 		int32_t tiltDegrees;
 		ci::Vec2f anchorPoint;
 
-		ci::gl::Texture comics;
+		ci::gl::Texture comics, comicsMask;
 
 		std::string _comicsName;
 		int _timeForPose, _matchPercent, time;

@@ -233,10 +233,9 @@ void PopupBase::disconnectAll()
 	closeBtnSignal.disconnect();
 	keyboardTouchSignal.disconnect();
 
-
-	MouseUpCon.disconnect( );
+	MouseUpCon.disconnect();
 	MouseDownCon.disconnect();
-	KeyDownCon.disconnect();
+	KeyDownCon.disconnect();	
 
 	isDrawing = false;	
 }
@@ -516,7 +515,7 @@ void PopupBase::drawPreloaderAtCenter()
 	gl::pushMatrices();
 		gl::color(bgColor);
 		gl::translate(bgPosition);
-		gl::translate(950.0f, 974.0f+250.0f);
+		gl::translate(950.0f, 974.0f + 250.0f);
 		gl::pushModelView();	
 		gl::scale( 0.5f, 0.5f );
 		gl::rotate( 180.0f * float( getElapsedSeconds() ) );
@@ -537,8 +536,14 @@ void PopupBase::drawDef()
 
 void PopupBase::shutdown()
 {
-	// properly shutdown Awesomium on exit
-	if( mWebViewPtr ) mWebViewPtr->Destroy();
-	Awesomium::WebCore::Shutdown();
+	 try{
+		// properly shutdown Awesomium on exit
+		if( mWebViewPtr ) mWebViewPtr->Destroy();
+		Awesomium::WebCore::Shutdown();
+		 console()<<"Awesomium TERMINATE OK"<<endl;
+	 }
+	 catch(...)
+	 {
+		 console()<<"Awesomium TERMINATE ERROR"<<endl;
+	 }
 }
-

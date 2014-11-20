@@ -16,6 +16,7 @@ public:
 
 	void savePoseIntoBase(Pose* pose);
 	void loadConfigData();
+	void loadNetConnectionConfig();
 	void loadStandId();
 	std::vector<Pose*> Saver::loadPoseBase();
 

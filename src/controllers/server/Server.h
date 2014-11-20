@@ -14,12 +14,13 @@
 
 namespace serverParams
 {
+	const std::string	 SERVER_URL			 = "http://kotopoza.ru"; //"http://catpos.familyagency.ru";
 	static const int	 SERVER_WAITING_TIME = 10;
-	const std::string    connectionTestURL	 =  "http://google.com";
-	const std::string    serverURL			 =  "http://kotopoza.ru/utils/upload/";
-	const std::string    shareSaveURL		 =  "http://kotopoza.ru/utils/socnt/";
-	const std::string    printerCountPlusURL =  "http://kotopoza.ru/utils/save/";	
-	const std::string    mailURL			 =  "http://kotopoza.ru/utils/send2mail";
+	const std::string    connectionTestURL	 = "http://google.com";
+	const std::string    serverURL			 =  SERVER_URL + "/utils/upload/";
+	const std::string    shareSaveURL		 =  SERVER_URL + "/utils/socnt/";
+	const std::string    printerCountPlusURL =  SERVER_URL + "/utils/save/";	
+	const std::string    mailURL			 =  SERVER_URL + "/utils/send2mail";
 	const std::string    badTestURL			 =  "http://catpos.familyagency.ru/utils/upload1/";
 }
 
@@ -55,7 +56,7 @@ class Server
 	private:
 
 		std::shared_ptr<boost::thread>				sendPhotoThread;
-		void										sendPhotoThreadHandler( );		
+		void										sendPhotoThreadHandler( );
 	
 		std::shared_ptr<boost::thread>				checkConnectionThread;
 		void										checkConnectionThreadHandler();

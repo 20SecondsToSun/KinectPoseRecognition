@@ -50,5 +50,6 @@ void Location::comeBackTimerStart()
 
 void Location::comeBackTimerStop()
 {
-	returnTimer.stop();
+	if(!returnTimer.isStopped())
+		returnTimer.stop();
 }

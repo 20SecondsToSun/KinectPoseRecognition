@@ -12,7 +12,7 @@ float	Params::minUserHeight = 240.0f;
 
 
 float	Params::percentForMatching = 0.75f;
-float 	Params::comeBackHomeTime = 40.0f;
+float 	Params::comeBackHomeTime = 60.0f;
 bool	Params::isNetConnected = true;
 bool	Params::photoFromDirError = false;
 
@@ -62,8 +62,8 @@ fs::path Params::getConfigStoragePath()
 }
 
 fs::path Params::getBaseStoragePath()
-{
-	return getAppPath()/"data"/poseParams::JSON_STORAGE_FOLDER;
+{	
+	return getAssetPath(poseParams::JSON_STORAGE_FOLDER);
 }
 
 fs::path Params::getPoseSavingPath()

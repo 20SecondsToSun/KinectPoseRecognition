@@ -16,6 +16,7 @@ void   Server::sendPhoto(fs::path _path)
 	serverWaitingTimer.start();	
 	photoPath =_path;
 	sendPhotoThread = std::shared_ptr< boost::thread>( new  boost::thread( bind( &Server::sendPhotoThreadHandler, this ) ) );
+	//sendPhotoThreadHandler();
 }
 
 void Server::sendPhotoThreadHandler()
@@ -24,9 +25,8 @@ void Server::sendPhotoThreadHandler()
 	DataSourceRef urlRequest =	loadFile( photoPath);
 	string loadingString =  toBase64(Buffer(urlRequest)) + to_string(photoParams::BIG_PHOTO_HEIGHT) +"," + to_string(Params::standID);
 
-	ci::app::console()<<"................."<<endl;
-	ci::app::console()<<loadingString<<endl;
-	ci::app::console()<<"................."<<endl;
+	ci::app::console()<<".................serverParams::serverURL.........  "<<serverParams::serverURL<<endl;
+	
 	string status;			
 
 	#ifdef testServer	
@@ -49,6 +49,7 @@ void Server::sendPhotoThreadHandler()
 		JsonTree jTree;
 		try 
 		{
+			ci::app::console()<<status<<endl;
 			jTree = JsonTree(status);
 			bool success = jTree.getChild("success").getValue<bool>();
 		
@@ -115,7 +116,7 @@ void Server::abortLoading()
 	else if (isMailSending)
 	{
 		isMailSending = false;
-		//sendToMailThread->join();
+		//sendToMailThread->join();!!!
 	}
 }
 
@@ -123,6 +124,7 @@ void Server::checkConnection( )
 {	
 	serverWaitingTimer.start();	
 	checkConnectionThread = std::shared_ptr<boost::thread>( new boost::thread( bind( &Server::checkConnectionThreadHandler, this ) ) );	
+	//checkConnectionThreadHandler();
 }
 
 void Server::checkConnectionThreadHandler( )
@@ -149,6 +151,7 @@ void Server::sendToMail(string mails)
 {
 	serverWaitingTimer.start();	
 	sendToMailThread = std::shared_ptr<boost::thread>( new boost::thread( bind( &Server::sendToMailThreadHandler, this, mails ) ) );	
+	//sendToMailThreadHandler(mails);
 }
 
 void Server::sendToMailThreadHandler(string allEmails)

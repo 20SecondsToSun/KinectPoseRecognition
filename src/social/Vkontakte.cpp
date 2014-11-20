@@ -11,20 +11,20 @@ void   Vkontakte::post()
 void   Vkontakte::vkontaktePostThread()
 {
 	ci::ThreadSetup threadSetup; // instantiate this if you're talking to Cinder from a secondary thread	
-	
+
 	string status;
 
 	switch (type)
 	{
-		case TEXT_STATUS:
-			status = postTextVK();			
+	case TEXT_STATUS:
+		status = postTextVK();			
 		break;
 
-		case PHOTO_STATUS:
-			status =  postPhotoVK();			
+	case PHOTO_STATUS:
+		status =  postPhotoVK();			
 		break;
 
-		default:
+	default:
 		break;
 	}
 
@@ -67,7 +67,7 @@ string Vkontakte::postTextVK()
 		}
 		catch(...)
 		{
-			
+
 		}
 	}
 
@@ -129,7 +129,7 @@ string Vkontakte::postPhotoVK()
 		}
 		catch(...)
 		{
-			
+
 		}
 	}
 
@@ -158,13 +158,12 @@ string Vkontakte::vkontaktePostLoadPhotoPath(string upload_url, string path)
 	{
 		return  UploadVkontakteServerError;	
 	}
-	
+
 	vkRequest =  Curl::post( SAVE_WALL_PHOTO_URL, strings);
 	string photo_id="";
 
 	try
 	{
-		//console()<<" vk reques------------------>   "<<vkRequest<<std::endl;
 		jTree = JsonTree(vkRequest);
 
 		if (jTree.hasChild( "response[0]" ) )	
@@ -177,7 +176,7 @@ string Vkontakte::vkontaktePostLoadPhotoPath(string upload_url, string path)
 	{
 		return SaveWallPhotoVkontakteServerError;
 	}
-	
+
 	return photo_id;
 }
 

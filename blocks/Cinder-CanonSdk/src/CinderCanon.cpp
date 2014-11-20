@@ -551,5 +551,6 @@ void CinderCanon::shutdown()
 	console() << "Cinder-Canon :: try to shutdown " << "." << endl;      
     EdsError err = EdsCloseSession( mCamera );
 	console() << "Cinder-Canon :: answer shutdown " <<  CanonErrorToString(err) << "." << endl;      
-    EdsTerminateSDK();
+    err = EdsTerminateSDK();
+	console() << "EdsTerminateSDK " <<CanonErrorToString(err)<<endl;   
 }

@@ -7,6 +7,13 @@ int PlayerData::photosWithoutError;
 ci::Surface PlayerData::finalImageSurface;
 ci::Vec2f PlayerData::translation;
 
+PlayerData::FragmentOptions PlayerData::fragmentOptions;
+gl::Texture PlayerData::kinectTex;
+gl::Texture PlayerData::poseMaskTexture;
+ci::Vec2f PlayerData::finalShift;
+ci::Vec2f PlayerData::finalShift1;
+
+
 void PlayerData::setup()
 {	
 	/*setTranslation(0, Vec2f(36.5f, 128.5f));
@@ -80,4 +87,26 @@ void  PlayerData::setDefaultTexture(int i, ci::gl::Texture tex)
 ci::gl::Texture PlayerData::getDefaultTexture(int i)
 {
 	return playerData[i].defaultTexture;
+}
+
+void PlayerData::setFragmentScaleOptions(int fboWidth, int fboHeight, float poseScale, ci::Vec2f poseShiftVec)
+{
+	fragmentOptions.fboWidth = fboWidth;
+	fragmentOptions.fboHeight = fboHeight;
+	fragmentOptions.poseShiftVec = poseShiftVec;
+}
+
+int PlayerData::getFragmentWidth()
+{
+	return fragmentOptions.fboWidth;
+}
+
+int PlayerData::getFragmentHeight()
+{
+	return fragmentOptions.fboHeight;
+}
+
+ci::Vec2f PlayerData::getFragmentShiftVec()
+{
+	return fragmentOptions.poseShiftVec;
 }

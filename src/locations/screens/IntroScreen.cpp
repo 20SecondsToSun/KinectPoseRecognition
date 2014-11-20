@@ -19,10 +19,7 @@ void IntroScreen::setup()
 
 	instructionImage  = *AssetManager::getInstance()->getTexture( "images/diz/instr.png" );
 
-	bg  = *AssetManager::getInstance()->getTexture( "images/diz/bg.jpg" );		
-
-	bubbleAnimator().setup();
-	catAnimator().setup();	
+	bg  = *AssetManager::getInstance()->getTexture( "images/diz/bg.jpg" );	
 
 	Font *btnFont = fonts().getFont("Helvetica Neue", 46);
 
@@ -49,6 +46,9 @@ void IntroScreen::setup()
 	comeBackBtn = new ButtonTex(comeBackBtnTex,  "backtoStart");
 	comeBackBtn->setScreenField(Vec2f(0.0f, 958.0f));
 	comeBackBtn->setDownState(comeBackBtnTex);
+
+	bubbleAnimator().setup();
+	catAnimator().setup();	
 }
 
 void IntroScreen::init( LocationEngine* game)
@@ -59,7 +59,7 @@ void IntroScreen::init( LocationEngine* game)
 	_game->freezeLocation = false;
 	isPeopleInFrame = false;	
 
-	kinect().sleep(2);
+	kinect().sleep(KINECT_SLEEP_SECONDS);
 	initAnimateParam();
 
 	deviceError = false;
@@ -157,7 +157,6 @@ void IntroScreen::mouseEvents(int type)
 void IntroScreen::keyEvents()
 {
 	KeyEvent _event = _game->getKeyEvent();
-
 }
 
 void IntroScreen::update() 
@@ -185,11 +184,10 @@ void IntroScreen::update()
 #ifdef drawTimer
 		debugString = "";
 #endif
-
 		break;
 
 	case SHOW_INVITE:			
-		if (isComeBackTimerKinectFired())			
+		if (isComeBackTimerKinectFired())
 			gotoFirstScreen();
 
 		bubbleAnimator().update();
@@ -197,7 +195,6 @@ void IntroScreen::update()
 #ifdef drawTimer
 		debugString = to_string(getSecondsToComeBack());	
 #endif
-
 		break;
 
 	case SHOW_INSTRUCTION:			
@@ -207,7 +204,6 @@ void IntroScreen::update()
 #ifdef drawTimer
 		debugString = to_string(getSecondsToComeBack());	
 #endif
-
 		break;
 	}	
 }
@@ -274,7 +270,6 @@ void IntroScreen::drawIstructionElements()
 	gl::draw(text1, textAnimateVec);
 
 	gl::color(Color::white());
-
 	comeBackBtn->draw();
 }
 
@@ -291,8 +286,6 @@ void IntroScreen::changeState()
 
 void IntroScreen::animationFinished() 
 {
-	
-
 	switch (nextState)
 	{
 	case INIT:
@@ -306,7 +299,8 @@ void IntroScreen::animationFinished()
 
 	case SHOW_INVITE:	
 		if (!startInstructionBtnSignal.connected())
-			startInstructionBtnSignal = startInstructionBtn->mouseUpEvent.connect(boost::bind(&IntroScreen::startInstructionBtnDown, this));
+			startInstructionBtnSignal = startInstructionBtn->mouseUpEvent.
+			connect(boost::bind(&IntroScreen::startInstructionBtnDown, this));
 
 		startGameBtnSignal.disconnect();
 		comeBackBtnSignal.disconnect();
@@ -319,10 +313,12 @@ void IntroScreen::animationFinished()
 
 	case SHOW_INSTRUCTION:	
 		if (!startGameBtnSignal.connected())
-			startGameBtnSignal = startGameBtn->mouseUpEvent.connect(boost::bind(&IntroScreen::startGameBtnDown, this));
+			startGameBtnSignal = startGameBtn->mouseUpEvent.
+			connect(boost::bind(&IntroScreen::startGameBtnDown, this));
 
 		if (!comeBackBtnSignal.connected())
-			comeBackBtnSignal  = comeBackBtn->mouseUpEvent.connect(boost::bind(&IntroScreen::gotoFirstScreen, this));
+			comeBackBtnSignal  = comeBackBtn->mouseUpEvent.
+			connect(boost::bind(&IntroScreen::gotoFirstScreen, this));
 
 		bubbleAnimator().kill();
 		startInstructionBtnSignal.disconnect();

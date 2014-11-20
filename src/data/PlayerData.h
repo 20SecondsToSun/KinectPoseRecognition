@@ -25,6 +25,16 @@ class PlayerData
 			float degree;
 		};
 
+		struct FragmentOptions
+		{
+			int fboWidth;
+			int fboHeight;
+			float poseScale;
+			ci::Vec2f poseShiftVec;
+			gl::Texture mask;
+		};
+		static FragmentOptions fragmentOptions;
+
 		static OnePlayerPoseData playerData[POSE_IN_GAME_TOTAL];
 		static int score;
 		static int photosWithoutError;
@@ -45,6 +55,18 @@ class PlayerData
 
 		static void  setDefaultTexture(int i, ci::gl::Texture tex);
 		static ci::gl::Texture getDefaultTexture(int i);
+
+		static void setFragmentScaleOptions(int fboWidth, int fboHeight, float poseScale, ci::Vec2f poseShiftVec);
+
+		static int getFragmentWidth();
+		static int getFragmentHeight();
+		static ci::Vec2f getFragmentShiftVec();	
+
+		static gl::Texture kinectTex;
+		static gl::Texture poseMaskTexture;
+
+		static ci::Vec2f finalShift;
+		static ci::Vec2f finalShift1;
 
 	private :
 		static ci::Vec2f translation;

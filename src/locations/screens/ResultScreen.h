@@ -29,143 +29,144 @@ using namespace std;
 class PhotoRamki;
 class ResultScreen : public Location
 {
-	public:
-		void setup();
-		void init( LocationEngine* game);
-		void cleanup();
-		void pause(){};
-		void resume(){};
-		void shutdown();
+public:
+	void setup();
+	void init( LocationEngine* game);
+	void cleanup();
+	void pause(){};
+	void resume(){};
+	void shutdown();
 
-		void handleEvents(){};
-		void mouseEvents(int type);
-		void keyEvents(){};
-		void update();
-		void draw();
+	void handleEvents(){};
+	void mouseEvents(int type);
+	void keyEvents(){};
+	void update();
+	void draw();
 
-		static ResultScreen* Instance() {
-			return &ResultScreenState;
-		}	
+	static ResultScreen* Instance() {
+		return &ResultScreenState;
+	}	
 
-	protected:
-		ResultScreen() { };
+protected:
+	ResultScreen() { };
 
-	private:
-		LocationEngine* _game;
-		static ResultScreen ResultScreenState;
+private:
+	LocationEngine* _game;
+	static ResultScreen ResultScreenState;
 
-		int		state;
-		enum states {	INIT_STATE,
-					SHOW_RESULT_PHOTO,
-					PHOTO_LOADING_TO_SERVER,
-					PHOTO_CREATE_COMICS, 
-					PHOTO_LOADING_FROM_DIRECTORY,
-					SERVER_EMAIL_ERROR,
-					SERVER_INTERNET_ERROR,
-					SORRY_GO_HOME,
-					NET_OFF_LOCATION_READY,
-					CHECKING_NET_CONNECTION,
-					LOADING_TO_SERVER_SUCCESS,
-					SAVING_LOCALY_SUCCESS,
-					LOADING_TO_SERVER_FAIL,
-					POPUP_MODE,			
-					ERROR_STATE,
-					POPUP_EMAIL,
-					DEFAULT_STATE
-				};
+	int		state;
+	enum states {	INIT_STATE,
+		SHOW_RESULT_PHOTO,
+		PHOTO_LOADING_TO_SERVER,
+		PHOTO_CREATE_COMICS, 
+		PHOTO_LOADING_FROM_DIRECTORY,
+		SERVER_EMAIL_ERROR,
+		SERVER_INTERNET_ERROR,
+		SORRY_GO_HOME,
+		NET_OFF_LOCATION_READY,
+		CHECKING_NET_CONNECTION,
+		LOADING_TO_SERVER_SUCCESS,
+		SAVING_LOCALY_SUCCESS,
+		LOADING_TO_SERVER_FAIL,
+		POPUP_MODE,			
+		ERROR_STATE,
+		POPUP_EMAIL,
+		DEFAULT_STATE
+	};
 
-		void	animationLeaveLocationFinished();
-		void	animationLeaveLocationFinished1();
-		void	animationPhotoSavedFinished();
-		void	animationStartFinished();
-		void	animationShowChekConnection();
-		void	animationHideChekConnection();
-		void	animationShowServerPhotoLoad();
-		void    animationHideServerPhotoLoad();
-	
-		void	drawPhotoLoadingPreloader();
-		void	drawNetConnectionPreloader();
-		void	drawUpsetScreen();
-		void	showResultComics();
-		void	drawErrorScreen();
-		void	drawServerPreloader(); 
-		void	drawPhotoRamka();
-		
-		void	drawEmailPopup();
-		void	drawSocialPopup();
-		void	drawNothing();
-		void	drawResultImagesIfAllow();
-		void	drawQRCodeIfAllow();
-		void	drawButtonsIfAllow();
-		void	drawFadeOutIfAllow();
+	void	animationLeaveLocationFinished();
+	void	animationLeaveLocationFinished1();
+	void	animationPhotoSavedFinished();
+	void	animationStartFinished();
+	void	animationShowChekConnection();
+	void	animationHideChekConnection();
+	void	animationShowServerPhotoLoad();
+	void    animationHideServerPhotoLoad();
 
-		void	photoLoadedFromDirHandler();
-		void	photoLoadeFromDirErrorHandler();
-		void	serverSignalConnectionCheckHandler();
-		void	serverLoadingPhotoHandler();	
-		void	serverLoadingEmailHandler();
-		void	serverTimeoutHandler();
-		void    errorSavingEmailHandler();
+	void	drawPhotoLoadingPreloader();
+	void	drawNetConnectionPreloader();
+	void	drawUpsetScreen();
+	void	showResultComics();
+	void	drawErrorScreen();
+	void	drawServerPreloader(); 
+	void	drawPhotoRamka();
 
-		void	connectButtons();
-		void	disconnectButtons();
-		void	disconnectListeners();
+	void	drawEmailPopup();
+	void	drawSocialPopup();
+	void	drawNothing();
+	void	drawResultImagesIfAllow();
+	void	drawQRCodeIfAllow();
+	void	drawButtonsIfAllow();
+	void	drawFadeOutIfAllow();
 
-		void	initPopup(int);
-		void	closeSocialPopup();
-		void	closeEmailPopup();
+	void    drawErrorStatus();
 
-		void	startLoadingProcess();
+	void	photoLoadedFromDirHandler();
+	void	photoLoadeFromDirErrorHandler();
+	void	serverSignalConnectionCheckHandler();
+	void	serverLoadingPhotoHandler();	
+	void	serverLoadingEmailHandler();
+	void	serverTimeoutHandler();
+	void    errorSavingEmailHandler();
 
-		void	resultPhotoRamkaStateInit();
+	void	connectButtons();
+	void	disconnectButtons();
+	void	disconnectListeners();
 
-		ButtonTex   *facebookBtn;
-		ButtonTex   *vkontakteBtn;
-		ButtonTex	*comeBackBtn, *comeBackBtn1;	
-		ButtonTex	*mailBtn;	
-		ButtonTex	*backToStartBtn;
+	void	initPopup(int);
+	void	closeSocialPopup();
+	void	closeEmailPopup();
 
-		void	facebookBtnHandler();
-		void	vkBtnHandler();
-		void	openEmailBtnHandler();
-		void	closeScreenHandler();
-		void    backToStartHandler();
-		void	sendToEmailBtnHandler();
-	
-		connection serverSignalLoadingCheck;
-		connection serverSignalLoadingEmailCheck;
-		connection photoLoadingFromDirSignal;
-		connection photoLoadingFromDirErrorSignal;
-		connection closeEmailPopupSignal;
-		connection closeSocialPopupSignal;
-		connection errorSavingEmailPopupSignal;
-		connection backToStartSignal;
+	void	startLoadingProcess();
 
-		connection	comeBackSignal, comeBackSignal1;
-		connection	fbSignal;
-		connection vkSignal;
-		connection mailSignal;
-		connection serverTimeoutCheck;
-		connection sendToMailSignal;
-		connection serverSignalConnectionCheck;
+	void	resultPhotoRamkaStateInit();
 
-		
-		Anim<float> scalePhotoRamkaAnimateVec;
-		Anim<Vec2f> posPhotoRamkaAnimate;
-		Anim<float> alphaAnimate, alphaFinAnimate;
-		Anim<float> alphaSocialAnimate, alphaEmailAnimate, savingPhotopositionY;
-		Anim<Vec2f> photoComicsPosition;
+	ButtonTex   *facebookBtn;
+	ButtonTex   *vkontakteBtn;
+	ButtonTex	*comeBackBtn, *comeBackBtn1;	
+	ButtonTex	*mailBtn;	
+	ButtonTex	*backToStartBtn;
 
-		bool canShowResultImages, isButtonsInit, isLeaveAnimation;
+	void	facebookBtnHandler();
+	void	vkBtnHandler();
+	void	openEmailBtnHandler();
+	void	closeScreenHandler();
+	void    backToStartHandler();
+	void	sendToEmailBtnHandler();
 
-		float comicsPhotoScale;
+	connection serverSignalLoadingCheck;
+	connection serverSignalLoadingEmailCheck;
+	connection photoLoadingFromDirSignal;
+	connection photoLoadingFromDirErrorSignal;
+	connection closeEmailPopupSignal;
+	connection closeSocialPopupSignal;
+	connection errorSavingEmailPopupSignal;
+	connection backToStartSignal;
 
-		QRcode qrCode;
+	connection	comeBackSignal, comeBackSignal1;
+	connection	fbSignal;
+	connection vkSignal;
+	connection mailSignal;
+	connection serverTimeoutCheck;
+	connection sendToMailSignal;
+	connection serverSignalConnectionCheck;
 
-		Texture	postPhotoTextTex, emailtPhotoTextTex, comicsPhoto;
-		Texture	playMoreTex, nothingCatTex, bg, ramkaShadowTex, ramkaTex, savingPhotoTex;
+	Anim<float> scalePhotoRamkaAnimateVec;
+	Anim<Vec2f> posPhotoRamkaAnimate;
+	Anim<float> alphaAnimate, alphaFinAnimate;
+	Anim<float> alphaSocialAnimate, alphaEmailAnimate, savingPhotopositionY;
+	Anim<Vec2f> photoComicsPosition;
 
-		void (ResultScreen::* drawHandler)();
+	bool canShowResultImages, isButtonsInit, isLeaveAnimation;
+
+	float comicsPhotoScale;
+
+	QRcode qrCode;
+
+	Texture	postPhotoTextTex, emailtPhotoTextTex, comicsPhoto;
+	Texture	playMoreTex, nothingCatTex, bg, ramkaShadowTex, ramkaTex, savingPhotoTex;
+
+	void (ResultScreen::* drawHandler)();
 };
 
 //class PhotoRamki 

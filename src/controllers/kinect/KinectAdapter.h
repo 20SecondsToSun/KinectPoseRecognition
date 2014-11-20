@@ -82,14 +82,14 @@ public:
 	ci::signals::connection _handsUpGestureSignal;
 
 	bool isHeapInRect( Rectf rect);
-
+	void drawUserMask();
 private:
 
 	static KinectAdapter KinectAdapterState;	
 
 	SkeletJoints currentSkelet, rawCurrentSkelet;		
 
-	void drawUserMask();
+	
 	void setActiveJoints();
 
 	Surface16u savePoseDepth;

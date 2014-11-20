@@ -30,32 +30,32 @@
 
 class SocShare
 {
-	public:
+public:
 
-		virtual void								post() = 0;		
-		virtual const char *						getAuthUrl() = 0;
-		virtual void								logOut() = 0;
+	virtual void								post() = 0;		
+	virtual const char *						getAuthUrl() = 0;
+	virtual void								logOut() = 0;
 
-		void										clear_token();
-		
-		void										postStatus(std::string textStatus = "") ;
-		void										postPhoto(std::string path, std::string textStatus = "");		
-		void										postPhoto(std::vector<std::string> path, std::string textStatus);
-		void										setLoginPassword(std::string _login, std::string _password);	
+	void										clear_token();
 
-		std::string									access_token;			
-		std::string									getResponse();
-		std::string									response;
+	void										postStatus(std::string textStatus = "") ;
+	void										postPhoto(std::string path, std::string textStatus = "");		
+	void										postPhoto(std::vector<std::string> path, std::string textStatus);
+	void										setLoginPassword(std::string _login, std::string _password);	
 
-		boost::signals2::signal<void(void)>			serverHandler;		
+	std::string									access_token;			
+	std::string									getResponse();
+	std::string									response;
 
-		std::string									getLastError();
+	boost::signals2::signal<void(void)>			serverHandler;		
 
-	protected:
+	std::string									getLastError();
 
-		int											type;
-		std::vector<std::string>					photosVector;
-		std::string									login, password, textStatus;
-		virtual std::string							getDefaultStatus() = 0;	
-		std::string									lastError;
+protected:
+
+	int											type;
+	std::vector<std::string>					photosVector;
+	std::string									login, password, textStatus;
+	virtual std::string							getDefaultStatus() = 0;	
+	std::string									lastError;
 };

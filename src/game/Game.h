@@ -41,8 +41,8 @@ public:
 
 	static Game& getInstance() { static Game game; return game; };
 
-	static const int	STEP_BACK_TIME  = 10;
-	static const int    HANDS_UP_AWAITINTING_TIME = 15;
+	static const int	STEP_BACK_TIME  = 40;
+	static const int    HANDS_UP_AWAITINTING_TIME = 40;
 	static const int    STEP_BACK_ENSURE_TIME = 2;
 
 	static const int	PREGAME_TIME		= 2;
@@ -148,7 +148,7 @@ public:
 			break;
 
 		case MAIN_GAME:
-			districtKinectRectf = Rectf( 200, 0 , 1700, 1080);
+			districtKinectRectf = Rectf( 250, 0 , 1000, 1080);
 			updateMainGame();
 			break;
 
@@ -217,6 +217,7 @@ public:
 		}
 		else if (isHandsUp)
 		{
+			_handsUpAwaitingTimer.stop();
 			scaleAccordingUserHeight = 1.0f;
 
 			float etalonHeight    =  kinect().getEtalonHeightInPixelsAccordingDepth();
@@ -228,7 +229,9 @@ public:
 				scaleAccordingUserHeight = 1.0f;
 
 			debugString = "SCALE: " + to_string(scaleAccordingUserHeight) +"\nuserHeight: "+ to_string((int)userHeight)+"\netalonHeight: "+ to_string((int)etalonHeight);
-			//scaleAccordingUserHeight = 0.8f;
+			
+			//scaleAccordingUserHeight = 0.6f;
+
 			hintScreen().poseNum = level;
 			hintScreen().startReadySate();
 
@@ -272,20 +275,19 @@ public:
 
 			if (level == 1)
 			{
+				cameraStartUpdateEvent();
 				_hintTimer.start();
 				hintScreen().startHint();
 				gameControls().show1();
-
-				cameraStartUpdateEvent();
+				
 				state = HINT_MESSAGE;
 			}
 			else
 			{	
+				cameraStartUpdateEvent();
 				gameControls().show();
 				_countersAnimTimer.start();
 				hintScreen().fadeCounter();
-
-				cameraStartUpdateEvent();
 				state = COUNTERS_ANIMATE;
 			}
 		}
@@ -412,11 +414,14 @@ public:
 		{
 			comicsScreen().comicsTexture = PlayerData::playerData[level-1].screenshot;
 			comicsScreen().poseTexture   = getPoseImage();
+			comicsScreen().poseMaskTexture   = poses[poseCode]->getComicsMaskImage();		
+			comicsScreen().setMiddlePoint(poses[poseCode]->getMidlePoint());
 			comicsScreen().setPoseScale(scaleAccordingUserHeight);
 			comicsScreen().setPoseShift(poses[poseCode]->getPoseShift());
-			comicsScreen().show();
+			bool status = comicsScreen().show();
 			//state = SHOW_GAME_RESULT;	
 			state = NONE;
+			if(status)
 			gotoResultScreenEvent();
 		}
 		else
@@ -471,6 +476,9 @@ public:
 			isPoseDetecting		 = true;
 			isGameRunning		 = false;
 			winAnimationFinished = false;	
+
+			if (kinect().getSilhouette())
+				comicsScreen().kinectHumanMaskTexture = gl::Texture(kinect().getSilhouette());
 
 			levelCompletion = 0;
 
@@ -646,7 +654,7 @@ public:
 		PlayerData::score++;
 		PlayerData::playerData[level-1].isFocusError  = _focusError;
 		PlayerData::playerData[level-1].isSuccess	  = true;
-		PlayerData::playerData[level-1].pathHiRes	  =  pathToHiRes;
+		PlayerData::playerData[level-1].pathHiRes	  = pathToHiRes;
 		PlayerData::playerData[level-1].screenshot	  = cameraCanon().getSurface();
 		PlayerData::playerData[level-1].storyCode	  = poseCode;
 

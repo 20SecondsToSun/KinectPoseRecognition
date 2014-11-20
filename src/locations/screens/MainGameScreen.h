@@ -88,6 +88,9 @@ class MainGameScreen : public Location
 		connection gotoResultScreenSignal;
 		connection gotoFirstScreenSignal;
 		connection photoFlashSignal;
+		connection errorFBOSignal;
+		
+	
 
 		connection cameraStartUpdateSignal;
 		connection cameraStopUpdateSignal;
@@ -96,6 +99,7 @@ class MainGameScreen : public Location
 		void gotoFirstScreen();
 		bool isLeaveAnimation;
 		bool deviceError;
+		bool fboError;
 		
 		Timer _missedTimer;
 		ButtonTex *comeBackBtn;

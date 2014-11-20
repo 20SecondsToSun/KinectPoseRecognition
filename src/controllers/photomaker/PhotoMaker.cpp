@@ -6,6 +6,11 @@ using namespace std;
 using namespace  poseParams;
 using namespace  photoParams;
 
+void PhotoMaker::setup()
+{
+		maskShader	 = gl::GlslProg(loadAsset("shaders/mask_vert.glsl"), loadAsset("shaders/mask_frag.glsl")); 
+}
+
 void PhotoMaker::loadFinalImages()
 {	
 	startTimer();
@@ -78,12 +83,14 @@ bool PhotoMaker::resizeFinalImages()
 	Vec2f  trans;//
 	try
 	{
-		trans = Vec2f(0.0f, cameraCanon().translateSurface.y);
+		trans = Vec2f( 0, cameraCanon().translateSurface.y);
 	}
 	catch(...)
 	{
 		trans = Vec2f(0.0f, 0.0f);
 	}	
+
+	console()<<"TRANS::::::::::::::  "<<trans<<endl;
 
 	int finalImageHeight =  BIG_PHOTO_HEIGHT*PlayerData::score;
 	Surface finalImage = Surface(BIG_PHOTO_WIDTH, finalImageHeight, true);
@@ -107,7 +114,7 @@ bool PhotoMaker::resizeFinalImages()
 
 			Surface photoFromCameraSurface = Surface(photoFromCameraTex);
 
-			Surface cadrSurface = Surface(getWindowWidth(),  getWindowHeight(), true);
+			/*Surface cadrSurface = Surface(getWindowWidth(),  getWindowHeight(), true);
 
 			if (!PlayerData::playerData[i].isFocusError)
 			{
@@ -116,13 +123,59 @@ bool PhotoMaker::resizeFinalImages()
 			else
 			{
 				cadrSurface = Surface(photoFromCameraTex);
+			}*/
+			Surface cadrSurface;// = Surface(getWindowWidth(),  getWindowHeight(), true);
+			mFboFirst = gl::Fbo(getWindowWidth(),  1080);
+			try
+			{
+				drawToFBOFirstCadr(photoFromCameraSurface);
+			}
+			catch(...)
+			{
+				fboCrashed = true;
+				break;
 			}
 
-			cadrSurface = Utils::resizeScreenshot(cadrSurface, (int32_t)BIG_PHOTO_WIDTH, (int32_t)BIG_PHOTO_HEIGHT);
+			cadrSurface = Surface(mFboFirst.getTexture());
+
+			//writeImage( Params::getTempPhotoSavePath(1), cadrSurface);///!!
+
+
+			int fboWidth = PlayerData::getFragmentWidth();
+			int fboHeight = PlayerData::getFragmentHeight();
+			Vec2f poseShiftVec = PlayerData::getFragmentShiftVec();
+
+			mFbo1 = gl::Fbo(fboWidth, fboHeight);
+			
+			try
+			{
+				drawToFBOFragmentScale(poseShiftVec, cadrSurface);
+			}
+			catch(...)
+			{
+				fboCrashed = true;
+				break;
+			}
+
+			Surface cadrSurfaceFragment = Surface(mFbo1.getTexture());
+
+			cadrSurfaceFragment = Utils::resizeScreenshot(cadrSurfaceFragment, (int32_t)BIG_PHOTO_WIDTH, (int32_t)BIG_PHOTO_HEIGHT);
+
+			mFboPoseMaskTexture1= gl::Fbo( BIG_PHOTO_WIDTH, BIG_PHOTO_HEIGHT);
+			try
+			{				
+				drawToFBOposeMaskTexture1(cadrSurfaceFragment);
+				finalMask = mFboPoseMaskTexture1.getTexture();
+			}
+			catch(...)
+			{
+				fboCrashed = true;
+				break;
+			}
 
 			try
 			{
-				drawToFBO(cadrSurface, recognitionGame().getPoseImageById(PlayerData::playerData[i].storyCode));
+				drawToFBO(cadrSurfaceFragment, recognitionGame().getPoseImageById(PlayerData::playerData[i].storyCode));
 			}
 			catch(...)
 			{
@@ -132,7 +185,7 @@ bool PhotoMaker::resizeFinalImages()
 
 			Surface comicsImage = Surface(mFbo.getTexture());
 
-			Surface displaySurface;
+			/*Surface displaySurface;
 
 			if (i == 0)
 			{
@@ -141,7 +194,7 @@ bool PhotoMaker::resizeFinalImages()
 				PlayerData::setTranslation(i, Vec2f(36.5f, 128.5f));
 				PlayerData::setRotation(i, -2.0f);
 			}
-			/*else if (i == 1)
+			else if (i == 1)
 			{
 				displaySurface = Utils::resizeScreenshot(comicsImage, (int32_t)411, (int32_t)227);
 				PlayerData::setDisplayingTexture(i, gl::Texture(displaySurface));
@@ -158,7 +211,7 @@ bool PhotoMaker::resizeFinalImages()
 			writeImage( Params::getTempPhotoSavePath(i), comicsImage);
 			Vec2f offset = Vec2f(0.0f, (float)BIG_PHOTO_HEIGHT*offsetI);
 			finalImage.copyFrom(comicsImage, Area(0, 0, BIG_PHOTO_WIDTH, BIG_PHOTO_HEIGHT), offset);	
-			offsetI ++;
+			offsetI++;
 		}
 	}
 
@@ -183,15 +236,91 @@ void PhotoMaker::drawToFBO(Surface img, ci::gl::Texture comicsImage)
 	gl::setMatricesWindow( mFbo.getSize(), false);
 	gl::clear( Color::black());
 	gl::enableAlphaBlending();  
-	gl::translate((float)BIG_PHOTO_WIDTH, 0.0f);
-	gl::scale(-1.0f, 1.0f);
+
 	gl::draw( img );		
 	gl::popMatrices();
 
 	gl::pushMatrices();
 	gl::setMatricesWindow( mFbo.getSize(), false);
+//	
+	/*maskShader.bind();
+	maskShader.uniform ( "tex", 0 );
+	maskShader.uniform ( "mask", 1 );
+		
+	finalMask.bind(0);
+	PlayerData::kinectTex.bind(1);
+	gl::drawSolidRect (finalMask.getBounds());
+
+	PlayerData::kinectTex.unbind();
+	finalMask.unbind();
+	maskShader.unbind();
+
+
+	gl::draw(PlayerData::kinectTex);*/
 	gl::scale((float)BIG_PHOTO_WIDTH/getWindowWidth(), (float)BIG_PHOTO_WIDTH/getWindowWidth());
 	gl::draw(comicsImage);
+	gl::popMatrices();
+
+	gl::setViewport(saveView);
+}
+
+void PhotoMaker::drawToFBOFragmentScale(Vec2f poseShiftVec, Surface comicsTexture)
+{
+	gl::SaveFramebufferBinding bindingSaver;
+	mFbo1.bindFramebuffer();
+	Area saveView = getViewport();
+	gl::setViewport(mFbo1.getBounds());
+
+	gl::pushMatrices();
+	gl::setMatricesWindow( mFbo1.getSize(), false);
+	gl::clear( Color::black());	
+		gl::pushMatrices();
+			//gl::translate(-poseShiftVec * 3);
+			gl::translate(PlayerData::finalShift);
+			gl::draw(comicsTexture);
+		gl::popMatrices();
+	gl::popMatrices();
+
+	gl::setViewport(saveView);
+}
+
+
+void PhotoMaker::drawToFBOposeMaskTexture1(Surface img)
+{
+	gl::SaveFramebufferBinding bindingSaver;
+	mFboPoseMaskTexture1.bindFramebuffer();
+
+	Area saveView = getViewport();
+	gl::setViewport(mFboPoseMaskTexture1.getBounds());
+
+	gl::pushMatrices();
+		gl::setMatricesWindow( mFboPoseMaskTexture1.getSize(), false);
+		gl::clear( Color::black());
+
+		gl::draw(img);
+		gl::scale((float)BIG_PHOTO_WIDTH/getWindowWidth(), (float)BIG_PHOTO_WIDTH/getWindowWidth());
+		gl::draw(PlayerData::poseMaskTexture);
+
+	gl::popMatrices();
+
+	gl::setViewport(saveView);
+}
+
+void PhotoMaker::drawToFBOFirstCadr(Surface photo)
+{
+	gl::SaveFramebufferBinding bindingSaver;
+	mFboFirst.bindFramebuffer();
+	Area saveView = getViewport();
+	gl::setViewport(mFboFirst.getBounds());
+
+	gl::pushMatrices();
+	gl::setMatricesWindow( mFboFirst.getSize(), false);
+	gl::clear( Color::black());	
+		gl::pushMatrices();
+			gl::translate(1920, -100);	
+			gl::scale(-1, 1);
+			gl::draw(photo);
+		gl::popMatrices();
 	gl::popMatrices();
 
 	gl::setViewport(saveView);
