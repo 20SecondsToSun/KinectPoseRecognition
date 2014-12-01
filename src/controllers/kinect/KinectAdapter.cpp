@@ -97,7 +97,7 @@ void KinectAdapter::updateSkeletonData()
 			continue;
 
 		int notTrackedPointsCount = 0;
-		
+
 		for (size_t i = 0, len = jointToRecord.size(); i < len; i++)
 		{
 			auto joint = skeleton.find(jointToRecord[i]);
@@ -147,7 +147,7 @@ void KinectAdapter::updateSkeletonData(Rectf trackZone)
 
 		if (skeleton.size() == 0 )
 			continue;
-		
+
 		for (size_t i = 0, len = jointToRecord.size(); i < len; i++)
 		{
 			auto joint = skeleton.find(jointToRecord[i]);
@@ -265,10 +265,6 @@ int KinectAdapter::getSkeletsInFrame()
 		peopleInFrame = MsKinect::calcNumUsersFromDepth(getDepthChannel16u());
 	}
 
-	/*#ifdef debug
-	peopleInFrame = 1; 
-	#endif*/
-
 	return peopleInFrame;
 }
 
@@ -284,12 +280,6 @@ bool KinectAdapter::allHumanPointsInScreenRect()
 
 		float leftFootY = headScale * leftFoot.y + viewShiftY;
 		float rightFootY = headScale * rightFoot.y + viewShiftY;
-
-		// console()<<" leftFootY "<<leftFootY<<" rightFootY "<<rightFootY<<endl;
-		/*
-
-
-		*/
 
 		if (posHeadY > 0.0f && leftFootY <= SCREEN_HEIGHT && rightFootY <= SCREEN_HEIGHT)
 			return true;
@@ -331,7 +321,7 @@ float KinectAdapter::getEtalonHeightInPixelsAccordingDepth()
 		float etalonHeightAccordingDepth;
 
 		_distance = Utils::clamp(_distance, MAX_USER_DISTANCE, MIN_USER_DISTANCE);
-		
+
 		if (del)
 		{
 			etalonHeightAccordingDepth = ((x1 * y2 - x2 * y1) + (x2 - x1) * _distance) / del;
@@ -356,42 +346,25 @@ float KinectAdapter::userHeightInPixels()
 		float headY = currentSkelet[HEAD_INDEX].y;
 		return abs(headY - leftFootY);
 	}
-	
+
 	return 0.0f;
 }
 
 float KinectAdapter::userHeightRaw()
 {
+	float _height = 0.0f;
+
 	if (rawCurrentSkelet.size() == humanGrowthPoints.size())
-	{
-		float _height = 0.0f;
+	{		
 		_height += rawCurrentSkelet[3].distance(rawCurrentSkelet[2]);
 		_height += rawCurrentSkelet[2].distance(rawCurrentSkelet[1]);
 		_height += rawCurrentSkelet[2].distance(rawCurrentSkelet[0]);
 		_height += rawCurrentSkelet[0].distance(rawCurrentSkelet[4]);
 		_height += rawCurrentSkelet[4].distance(rawCurrentSkelet[5]);
 		_height += rawCurrentSkelet[5].distance(rawCurrentSkelet[6]);
-		//_height += rawCurrentSkelet[6].distance(rawCurrentSkelet[7]);
-
-		return _height;
-
-	//3-2
-	//2-1
-	//1-0
-	//0-4
-	//4-5
-	//5-6
-	//6-7
-
-		//float leftFootY = rawCurrentSkelet[ANKLE_LEFT_INDEX].y;	
-		//float rightFootY = rawCurrentSkelet[ANKLE_RIGHT_INDEX].y;	
-		//float headY = rawCurrentSkelet[HEAD_INDEX].y;
-
-		//return rawCurrentSkelet[0].distance(rawCurrentSkelet[1]);
-		//return abs(headY - leftFootY);
 	}
-	
-	return 0.0f;
+
+	return _height;
 }
 
 float KinectAdapter::distanceToSkelet()
@@ -412,25 +385,7 @@ float KinectAdapter::distanceToSkelet()
 
 void KinectAdapter::draw()
 {
-	gl::color(Color::white());	
-
-#ifdef recording	
-	//gl::color(ColorA(1,1,1,0.5));
-
-	// drawKinectCameraColorSurface();
-	//gl::color(ColorA(1,1,1, 1));
-
-	drawUserMask();
-	drawSkeletJoints();	
-#endif
-
-
-	//drawUserMask();
-
-
-#ifdef debug	
-	//drawKinectCameraColorSurface();
-#endif
+	gl::color(Color::white());
 }
 
 void KinectAdapter::drawSkeletJoints()
@@ -438,9 +393,6 @@ void KinectAdapter::drawSkeletJoints()
 	gl::pushMatrices();
 	gl::translate(viewShiftX, viewShiftY);
 	gl::scale(headScale, headScale);
-	//currentPose.drawPoints();
-	//currentPose.drawBox();
-	//currentPose.drawAnchor();
 	gl::popMatrices();
 }
 
@@ -454,7 +406,6 @@ void KinectAdapter::drawUserMask()
 		gl::pushMatrices();
 		gl::translate(viewShiftX, viewShiftY);
 		gl::scale(headScale, headScale);
-		//gl::draw(Texture(getSurface8u()));
 		gl::draw(Texture(savePoseDepth));
 		gl::popMatrices();
 	}
@@ -470,7 +421,7 @@ bool KinectAdapter::isHandsUp()
 		Vec3f headPosition = skelet[HEAD_INDEX];
 		Vec3f rightHand = skelet[WRIST_RIGHT_INDEX];
 		Vec3f leftHand = skelet[WRIST_LEFT_INDEX];
-	
+
 		if (leftHand.y < headPosition.y || rightHand.y < headPosition.y)
 			return true;
 	}

@@ -51,7 +51,7 @@ public:
 	void show(int popuptype);
 	void shutdown();
 	void disconnectAll();	
-	bool isDrawing;
+	bool isDrawing, animBegin;
 
 	Texture screenShot;
 
@@ -69,10 +69,11 @@ private:
 	int		type;
 
 	void	setPhotoPaths();
-
+	
 	Anim<Vec2f>  bgPosition;
+	Anim<float>  popupAnimationPos;
 	Anim<ColorA> bgColor;
-	Texture *keyBoardMainBgTex, *preloader, *blue_bg, *red_bg;	
+	Texture *preloader, *blue_bg, *red_bg;	
 	Texture *facebookOkTextTexture,*facebookErrTextTexture;
 	Texture *vkontakteOkTextTexture,*vkontakteErrTextTexture;
 

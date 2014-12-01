@@ -60,7 +60,7 @@ void QRcode::draw()
 				gl::color(ColorA(1.0f, 1.0f, 1.0f, alphaAnimate));
 				gl::draw(qrCodeTextTexture, Vec2f(0.5f*(plashkaTex.getWidth() - qrCodeTextTexture.getWidth()), 345.0f));	
 			}	
-		}			
+		}
 	}
 
 	gl::popMatrices();

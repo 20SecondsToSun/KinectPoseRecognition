@@ -8,9 +8,11 @@
 #include "cinder/Base64.h"
 #include "cinder/Text.h"
 #include "cinder/ip/Resize.h"
+#include "cinder/gl/Fbo.h"
 
 using namespace std;
 using namespace ci;
+using namespace ci::gl;
 using namespace ci::app;
 
 class Utils
@@ -54,4 +56,9 @@ class Utils
 
 		static gl::Texture  getTextField(std::string text,ci::Font* font,  ci::ColorA color);
 		std::string  getCorrectSecondsText(int seconds);
+
+		static void  drawGraphicsToFBO(Fbo fbo, const function<void ()>& graphicsFunc);
+
+		static void clearFBO(Fbo fbo);
+		static void printVideoMemoryInfo();
 };

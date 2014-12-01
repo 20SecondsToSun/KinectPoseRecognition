@@ -59,8 +59,6 @@ void TextureManager::clear()
 	mSurfaces.clear();
 }
 
-
-
 gl::Texture TextureManager::load(const string &url, gl::Texture::Format fmt)
 {
 	// check if texture is in TextureList
@@ -206,6 +204,7 @@ bool TextureManager::isLoaded(const string &url)
 
 void TextureManager::garbageCollect()
 {
+	console()<<"GARBAGE COLLECT::::::::::::::::::   "<<mTextures.size()<<endl;
 	for(std::map<std::size_t, ph::Texture>::iterator itr=mTextures.begin();itr!=mTextures.end();)
 	{
 		// Cinder hack added to 'gl::Texture':

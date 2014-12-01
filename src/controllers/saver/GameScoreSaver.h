@@ -17,7 +17,7 @@ public:
 		bool isSave = false;
 
 		fs::path dir_path = getAppPath() / "data\\";
-		fs::path file_path = dir_path/ ("gameStatus" + to_string(Params::standID) + ".csv");
+		fs::path file_path = dir_path / ("gameStatus" + to_string(Params::standID) + ".csv");
 
 		if(fs::is_directory(dir_path) || fs::create_directory(dir_path))
 		{

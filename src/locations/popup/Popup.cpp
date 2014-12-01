@@ -19,7 +19,7 @@ void	PopupBase::setup()
 	facebookErrTextTexture  = AssetManager::getInstance()->getTexture("images/social/fb_err.png" );
 	vkontakteOkTextTexture  = AssetManager::getInstance()->getTexture("images/social/vk_ok.png" );
 	vkontakteErrTextTexture = AssetManager::getInstance()->getTexture("images/social/vk_err.png" );
-	keyBoardMainBgTex       = AssetManager::getInstance()->getTexture(  "keyboard/06_podl.jpg" );	
+	   	
 	preloader = AssetManager::getInstance()->getTexture("images/social/preloader.png" );
 	blue_bg   = AssetManager::getInstance()->getTexture("images/social/blue_bg.png" );
 	red_bg    = AssetManager::getInstance()->getTexture("images/social/red_bg.png" );
@@ -31,7 +31,7 @@ void	PopupBase::setup()
 
 	_vkontakteOffset			= Vec2f(0.0f, 1080.0f - 1754.0f + 674.0f);
 	vkontaktePopupAvailableArea = Area(0,  110, getWindowWidth(), 550);
-	facebookPopupAvailableArea  = Area(0, 50, getWindowWidth(), 550);
+	facebookPopupAvailableArea  = Area(757, 50, getWindowWidth(), 550);
 
 	_facebookWindowHeight = 500;	
 	_facebookWindowWidth  = 700;
@@ -77,6 +77,10 @@ void PopupBase::show(int _type)
 
 	isTryFocusInLoginTextField = false;	
 	isDrawing  = true;	
+
+	animBegin = false;
+
+	popupAnimationPos = - 600.0f;
 
 	//touchKeyboard().setPosition( Vec2f(360.0f, getWindowHeight() - 504.0f));
 
@@ -191,12 +195,12 @@ void PopupBase::keyboardTouchSignalHandler()
 	}
 	else if ( touchKeyboard().isMailCode())
 	{
-		string lastCode =  touchKeyboard().getLastCode();
+		string lastCode =  touchKeyboard().getDisplayCode();
 
 		for (size_t i = 0; i < lastCode.size(); i++)
 		{
 			char chr = lastCode[i];		
-			chr = tolower(chr);
+			chr = tolower(chr);			
 			KeyEvent key(getWindow(),1,chr,chr, 1,chr);
 			ph::awesomium::handleKeyDown( mWebViewPtr, key );
 		}		
@@ -206,12 +210,19 @@ void PopupBase::keyboardTouchSignalHandler()
 		KeyEvent key = VirtualKeyboard::imitate_ENTER_KEY_EVENT();
 		ph::awesomium::handleKeyDown( mWebViewPtr, key );		
 	}
+	else if ( touchKeyboard().isShiftCode())
+	{
+	}
 	else
 	{
+		
 		string lastCode =  touchKeyboard().getLastCode();
-		char chr = lastCode[0];			
+		//WebString w = WebString::ToUTF8(lastCode.c_str(),1);
+		
+	//	console()<<"here:::::::::::  "<<lastCode<<endl;
+		char chr =  lastCode[0];			
 		KeyEvent key(getWindow(),1,chr,chr, 1,chr);
-		ph::awesomium::handleKeyDown( mWebViewPtr, key );
+		ph::awesomium::handleKeyDown( mWebViewPtr, key, true,  chr);
 	}
 }
 
@@ -220,6 +231,7 @@ void PopupBase::hide()
 	disconnectAll();
 	timeline().apply( &bgPosition,Vec2f(0.0f, 0.0f), 0.6f, EaseInQuart()).finishFn( bind( &PopupBase::closedHandler, this ) );		
 	timeline().apply( &bgColor, ColorA(1.0f, 1.0f, 1.0f, 0.1f), 0.5f, EaseInQuart()).delay(0.4f);
+	timeline().apply( &popupAnimationPos, -600.0f, 0.9f, EaseInQuart());
 }
 
 void	PopupBase::closedHandler()
@@ -342,10 +354,15 @@ void PopupBase::vkontakteDraw()
 
 	if( mWebTexture  && !mWebViewPtr->IsLoading() && socialServerStatus != USER_REJECT)
 	{
+		if (animBegin == false)
+		{	
+			animBegin = true;
+			timeline().apply( &popupAnimationPos, -600.0f, 0.0f, 0.4f, EaseOutQuart());
+		}
 		gl::pushMatrices();			
-			gl::translate(bgPosition);
-			gl::translate(0.0f, 674.0f);		
-			gl::translate(0.5f*(getWindowWidth() - mWebTexture.getWidth()), 0.0f);
+			//gl::translate(bgPosition);
+			//gl::translate(0.0f, 674.0f);		
+			gl::translate(0.5f*(getWindowWidth() - mWebTexture.getWidth()), popupAnimationPos);
 			gl::color(bgColor);
 			gl::draw( mWebTexture );
 		gl::popMatrices();
@@ -427,15 +444,20 @@ void PopupBase::facebookDraw()
 
 	if( mWebTexture  && !mWebViewPtr->IsLoading() && socialServerStatus != USER_REJECT)
 	{
+		if (animBegin == false)
+		{	
+			animBegin = true;
+			timeline().apply( &popupAnimationPos, -600.0f, 0.0f, 0.4f, EaseOutQuart());
+		}
+
 		gl::pushMatrices();			
-			gl::translate(bgPosition);
-			gl::translate(0.0f, 674.0f);		
+			gl::translate(0.0f, popupAnimationPos);
 			gl::color( Color::hex(0x4e4e4e) );
 			gl::drawSolidRect(Rectf(0.0f, 0.0f, getWindowWidth(), _facebookWindowHeight + 40.0f));	
 			gl::translate(0.5f*(getWindowWidth() - mWebTexture.getWidth()), 20.0f);
 			gl::color(bgColor);			
 			gl::draw( mWebTexture );
-		gl::popMatrices();		
+		gl::popMatrices();
 	}
 	else
 	{
@@ -472,9 +494,12 @@ void PopupBase::drawVkontakteError()
 void PopupBase::drawKeyboard()
 {
 	gl::pushMatrices();
+		gl::color(Color::hex(0x0f9bd1));
+		gl::drawSolidRect(getWindowBounds());
 		gl::translate(bgPosition);
 		gl::color(bgColor);
-		gl::draw(*keyBoardMainBgTex);
+		//gl::draw(*keyBoardMainBgTex);
+
 		gl::translate(0.0f, 674.0f);
 		touchKeyboard().draw();		
 	gl::popMatrices();

@@ -158,7 +158,7 @@ void CinderCanon::takePicture(PhotoHandler * photoHandler)
     
     SingletonPhotoHandler = photoHandler;
     
-    console() << "Cinder-Canon :: Attempting to take picture" << endl;
+   // console() << "Cinder-Canon :: Attempting to take picture" << endl;
     EdsError err;
 
  	EdsInt32 saveTarget = kEdsSaveTo_Host;
@@ -169,7 +169,7 @@ void CinderCanon::takePicture(PhotoHandler * photoHandler)
 
 	err = sendCommand( mCamera, kEdsCameraCommand_TakePicture, 0 );
 
-	 console() << "Cinder-Canon ::kEdsCameraCommand_TakePicture " << CanonErrorToString(err)<<endl;
+	// console() << "Cinder-Canon ::kEdsCameraCommand_TakePicture " << CanonErrorToString(err)<<endl;
 	 
 	 if(err != EDS_ERR_OK) 
 	 {
@@ -500,13 +500,13 @@ EdsError EDSCALLBACK CinderCanon::handleStateEvent(
                                                  ,EdsVoid* inContext
                                                  )
 {
-	console()<<"Cinder-Canon: handleStateEvent "<< CanonEventToString(inEvent)<<std::endl;
+	//console()<<"Cinder-Canon: handleStateEvent "<< CanonEventToString(inEvent)<<std::endl;
 
 	switch(inEvent) {
             // Connection with camera lost (maybe power off?)
-		case kEdsStateEvent_Shutdown: {
+		case kEdsStateEvent_Shutdown:
+		{
 //			shutdown();
-			console()<<"CAMERA SHUTDOWN!!!!!!!!!!!!"<<endl<<getElapsedSeconds()<<endl;
 			if (SingletonPhotoHandler)         
 			{
 				SingletonPhotoHandler->handleStateEvent(inEvent);
@@ -514,8 +514,8 @@ EdsError EDSCALLBACK CinderCanon::handleStateEvent(
 			break;
 		}
 
-		case kEdsStateEvent_WillSoonShutDown: {
-			console()<<"WILL SOOOOOOOOON OFFFFFFFFFFFFFFFFFFFFFFF!!!!!!!!!!!!"<<endl<<getElapsedSeconds()<<endl;
+		case kEdsStateEvent_WillSoonShutDown: 
+		{
 			if (SingletonPhotoHandler)         
 			{
 				SingletonPhotoHandler->handleStateEvent(inEvent);
@@ -537,7 +537,7 @@ EdsError CinderCanon::sendCommand( EdsCameraRef inCameraRef, EdsUInt32 inCommand
     
     if(err != EDS_ERR_OK)
 	{
-		console() << "Cinder-Canon :: error while sending command " <<  CanonErrorToString(err) << "." << endl;
+		//console() << "Cinder-Canon :: error while sending command " <<  CanonErrorToString(err) << "." << endl;
 		if(err == EDS_ERR_DEVICE_BUSY) {
 			//return false;
 		}
@@ -548,7 +548,6 @@ EdsError CinderCanon::sendCommand( EdsCameraRef inCameraRef, EdsUInt32 inCommand
 
 void CinderCanon::shutdown()
 { 
-	console() << "Cinder-Canon :: try to shutdown " << "." << endl;      
     EdsError err = EdsCloseSession( mCamera );
 	console() << "Cinder-Canon :: answer shutdown " <<  CanonErrorToString(err) << "." << endl;      
     err = EdsTerminateSDK();

@@ -4,6 +4,7 @@
 #include <ctype.h>
 #include <boost/algorithm/string.hpp>
 
+
 using namespace ci;
 using namespace ci::app;
 using namespace std;
@@ -11,17 +12,19 @@ using namespace mndl::curl;
 
 void EmailForm::setup()
 {	
-	keyBoardMainBgTex = AssetManager::getInstance()->getTexture(  "keyboard/06_podl.jpg" );
 	emailLineTex = AssetManager::getInstance()->getTexture( "keyboard/emailLine.png"  );
 	closeEmailTex = gl::Texture( loadImage( loadAsset("keyboard/closeEmail.png"  )));
 	deleteAllTex  = gl::Texture( loadImage(getAssetPath("keyboard/deleteAll.png"  )));
-	addEmailTex   = gl::Texture( loadImage( loadAsset( "keyboard/addEmail.png"  )));
-
+	addEmailTex   = gl::Texture( loadImage( loadAsset( "keyboard/addEmail.png"  )));	
+	topEmail      =  gl::Texture( loadImage( loadAsset("keyboard/plaemail.jpg" )));	
+	
 	emailOk   = AssetManager::getInstance()->getTexture("images/social/email_ok.png" );
 	emailErr  = AssetManager::getInstance()->getTexture("images/social/email_err.png" );	
 	preloader = AssetManager::getInstance()->getTexture("images/social/preloader.png" );
 	blue_bg   = AssetManager::getInstance()->getTexture("images/social/blue_bg.png" );
 	red_bg    = AssetManager::getInstance()->getTexture("images/social/red_bg.png" );	
+	
+	
 
 	emailInputFont			= *fonts().getFont("Myriad Pro", 70);
 	emailAddFont			= *fonts().getFont("Myriad Pro", 26);
@@ -37,6 +40,7 @@ void EmailForm::setup()
 	closeEmailBtn= new ButtonTex(closeEmailTex, "closeEmail");
 	closeEmailBtn->setScreenField( Vec2f(1778.0f, 88.0f));	
 	closeEmailBtn->setDownState(closeEmailTex);
+	setlocale(LC_ALL, ""); 
 }
 
 void EmailForm::show()
@@ -46,19 +50,23 @@ void EmailForm::show()
 	currentEmail = "";
 	emailVector.clear();
 
+	touchKeyboard().alwaysCapsLock(true);
+
 	touchKeyboard().setPosition( Vec2f(360.0f, getWindowHeight() - 504.0f));
 
 	bgPosition =  Vec2f(0.0f, 0.0f);
 	timeline().apply( &bgPosition, Vec2f(0.0f, 0.0f), Vec2f(0.0f,  getWindowHeight() - 1754.0f), 0.6f, EaseOutQuart()).delay(0.4f).finishFn( bind( &EmailForm::initHandlers, this ) );
 	timeline().apply( &bgColor, ColorA(1.0f, 1.0f, 1.0f, 0.0f), ColorA(1.0f, 1.0f, 1.0f, 0.98f), 0.5f, EaseOutQuart());
+	timeline().apply( &topEmailPos,-503.0f, 0.0f, 0.9f, EaseOutQuart());
+	timeline().apply( &keyBoardPos,1000.0f, 0.0f, 0.9f, EaseOutQuart());	
 }
 
 void EmailForm::initHandlers()
 {
 	keyboardTouchSignal = touchKeyboard().keyboardTouchSignal.connect(boost::bind(&EmailForm::keyboardTouchSignalHandler, this));
-	closeBtnSignal =  closeEmailBtn->mouseDownEvent.connect(boost::bind(&EmailForm::closeSignalHandler, this));
+	closeBtnSignal = closeEmailBtn->mouseDownEvent.connect(boost::bind(&EmailForm::closeSignalHandler, this));
 	deleteAllLettersSignal = deleteAllLettersBtn->mouseDownEvent.connect(boost::bind(&EmailForm::deleteAllLettersHandler, this));
-	addEmailSignal		=  addEmailBtn->mouseDownEvent.connect(boost::bind(&EmailForm::addEmailHandler, this));	
+	addEmailSignal =  addEmailBtn->mouseDownEvent.connect(boost::bind(&EmailForm::addEmailHandler, this));
 }
 
 void EmailForm::MouseDown( MouseEvent &event)
@@ -84,11 +92,27 @@ void EmailForm::closeSignalHandler()
 
 void EmailForm::keyboardTouchSignalHandler()
 {
-	string lastCode = touchKeyboard().getLastCode();		
+	string lastCode = touchKeyboard().getLastCode();	
+	string displayCode = touchKeyboard().getDisplayCode();
 
 	if (touchKeyboard().isBackCode())
 	{
-		currentEmail = currentEmail.substr(0, currentEmail.size() - 1);	
+		if(!codesVec.empty())
+			codesVec.pop_back();
+
+		currentEmail.clear();
+
+		for (int i = 0; i < codesVec.size(); i++)
+		{
+			char letter = codesVec[i][0];
+			letter = toupper(letter);
+			codesVec[i][0] = letter;
+
+			string ch =  Utils::cp1251_to_utf8(codesVec[i].c_str());
+			currentEmail +=ch; 
+		}
+		boost::to_upper(currentEmail);
+		//currentEmail = currentEmail.substr(0, currentEmail.size() - 1);	
 		return;
 	}
 
@@ -100,12 +124,14 @@ void EmailForm::keyboardTouchSignalHandler()
 
 		if(currentEmail[currentEmail.size() - 1] =='@')
 		{
-			currentEmail = currentEmail + lastCode;
+			currentEmail = currentEmail + displayCode;
+			codesVec.push_back(lastCode);
 			boost::to_upper(currentEmail);
 		}
 		else
 		{
-			currentEmail = currentEmail + "@" + lastCode;
+			currentEmail = currentEmail + "@" + displayCode;
+			codesVec.push_back(lastCode);
 			boost::to_upper(currentEmail);
 		}
 		return;
@@ -126,8 +152,13 @@ void EmailForm::keyboardTouchSignalHandler()
 		sendToEmailHandler();
 		return;
 	}
+	else if ( touchKeyboard().isShiftCode())
+	{
+		return;
+	}
 
-	currentEmail = currentEmail + lastCode;
+	currentEmail = currentEmail + displayCode;
+	codesVec.push_back(lastCode);
 	boost::to_upper(currentEmail);
 }
 
@@ -223,7 +254,11 @@ void EmailForm::disconnectAll()
 void EmailForm::hide()
 {
 	disconnectAll();
-	timeline().apply( &bgPosition,Vec2f(0.0f, 0.0f), 0.6f, EaseInQuart()).finishFn( bind( &EmailForm::closedHandler, this));
+	timeline().apply( &bgPosition,Vec2f(0.0f, 0.0f), 0.7f, EaseInQuart()).finishFn( bind( &EmailForm::closedHandler, this));
+
+	timeline().apply( &topEmailPos, -503.0f, 0.6f, EaseInQuart());
+	timeline().apply( &keyBoardPos, 1080.0f, 0.7f, EaseInQuart());
+
 	timeline().apply( &bgColor, ColorA(1.0f, 1.0f, 1.0f, 0.1f), 0.5f, EaseInQuart()).delay(0.4f);
 }
 
@@ -235,6 +270,7 @@ void EmailForm::closedHandler()
 void EmailForm::deleteAllLettersHandler()
 {
 	currentEmail = "";	
+	codesVec.clear();
 }
 
 void EmailForm::addEmailHandler()
@@ -347,42 +383,61 @@ void EmailForm::draw()
 		gl::draw(*blue_bg);
 		gl::draw(*emailOk, Vec2f((getWindowWidth() - 711.0f)*0.5f, (getWindowHeight() - 460.0f)*0.5f ));	
 		return;
-	}
+	}	
+	
+	gl::color(Color::hex(0x0f9bd1));	
+	gl::drawSolidRect(getWindowBounds());
+	gl::color(Color::white());
 
 	gl::pushMatrices();
-	gl::translate(bgPosition);
-	gl::color(bgColor);
-	gl::draw(*keyBoardMainBgTex);
-	gl::translate(0.0f, 1754.0f - 1080.0f);
+	gl::translate(0, topEmailPos);
+	gl::draw(topEmail);
 	drawEmailInput();
 	drawAdditionEmails();
-	gl::popMatrices();
-
-	gl::pushMatrices();
-	gl::translate(0.0f, 674.0f);
-	gl::translate(bgPosition);
-	touchKeyboard().draw();
-	gl::popMatrices();	
-
-	gl::pushMatrices();
-	gl::translate(bgPosition);
-	gl::translate(Vec2f(0.0f, 674.0f));
-	gl::color(ColorA(1.0f, 1.0f, 1.0f, 1.0f));
-	addEmailBtn->draw();
-
-	gl::color(Color::white());
-	gl::pushMatrices();
-	gl::translate(Vec2f(393.0f, 206.0f));
-	gl::draw(*emailLineTex);
-	gl::popMatrices();
-
-	gl::color(ColorA(1.0f, 1.0f, 1.0f, 1.0f));
+	addEmailBtn->draw();	
+	gl::draw(*emailLineTex, Vec2f(393.0f, 206.0f));
 
 	if (currentEmail != "")
 		deleteAllLettersBtn->draw();
 
 	closeEmailBtn->draw();
 	gl::popMatrices();
+
+	gl::pushMatrices();
+	gl::color(Color::white());
+	//gl::translate(0.0f, 674.0f);
+	gl::translate(0.0f, keyBoardPos);
+	touchKeyboard().draw();
+	gl::popMatrices();	
+
+	//gl::translate(bgPosition);	
+	//gl::color(bgColor);
+	////gl::draw(*keyBoardMainBgTex);
+	//gl::translate(0.0f, 1754.0f - 1080.0f);
+	//
+	//
+	//gl::popMatrices();
+
+	
+
+	//gl::pushMatrices();
+	//gl::translate(bgPosition);
+	//gl::translate(Vec2f(0.0f, 674.0f));
+	//gl::color(ColorA(1.0f, 1.0f, 1.0f, 1.0f));
+	//
+
+	//gl::color(Color::white());
+	//gl::pushMatrices();
+	//gl::translate(Vec2f(393.0f, 206.0f));
+	//gl::draw(*emailLineTex);
+	//gl::popMatrices();
+
+	//gl::color(Color::white());
+
+	
+
+	//
+	//gl::popMatrices();
 
 	if (mode == EMAIL_ERROR)
 	{

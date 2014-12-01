@@ -7,7 +7,7 @@
 #include "cinder/Timeline.h"
 #include "cinder/Json.h"
 
-#include "Popup.h"
+#include "Server.h"
 #include "Curl.h"
 #include "Params.h"
 #include "Utils.h"
@@ -54,11 +54,12 @@ private :
 
 	void drawEmailInput();
 	void drawAdditionEmails();
-
+	
 	ci::Anim<ci::Vec2f>  bgPosition;
+	ci::Anim<float>  topEmailPos, keyBoardPos;
 	ci::Anim<ci::ColorA> errorAlpha, bgColor;
-	ci::gl::Texture		*keyBoardMainBgTex, *emailLineTex;
-	ci::gl::Texture		addEmailTex, deleteAllTex, closeEmailTex;
+	ci::gl::Texture		 *emailLineTex;
+	ci::gl::Texture		addEmailTex, deleteAllTex, closeEmailTex,topEmail;
 	ci::Font			emailInputFont, emailAddFont;	
 
 	void initHandlers();		
@@ -72,8 +73,8 @@ private :
 	void addCurrentEmail(std::string _email);
 
 	std::string currentEmail;
-	std::vector<std::string> emailVector;
-
+	std::vector<std::string> emailVector, codesVec;
+	
 	int mode;
 
 	ci::gl::Texture *emailErr, *emailOk,  *preloader, *blue_bg, *red_bg;

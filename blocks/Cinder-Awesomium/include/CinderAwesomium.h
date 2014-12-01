@@ -28,6 +28,9 @@ class InvalidBufferException : public ci::Exception {
 // Translates a Cinder virtual key code to an Awesomium key code
 int getWebKeyFromKeyEvent( ci::app::KeyEvent event );
 
+int getKeyCodeRussian(int letter );
+
+
 // Conversion functions
 ci::Surface toSurface( Awesomium::BitmapSurface* surface );
 
@@ -53,14 +56,14 @@ inline bool isDirty( Awesomium::WebView* webview )
 	return surface->is_dirty();
 }
 
-Awesomium::WebKeyboardEvent toKeyEvent( ci::app::KeyEvent event, Awesomium::WebKeyboardEvent::Type type );
+Awesomium::WebKeyboardEvent toKeyEvent( ci::app::KeyEvent event, Awesomium::WebKeyboardEvent::Type type , bool isImmitate = false, char letter = ' ');
 
-Awesomium::WebKeyboardEvent toKeyChar( ci::app::KeyEvent event );
+Awesomium::WebKeyboardEvent toKeyChar( ci::app::KeyEvent event ,  bool isImmitate = false, char letter = ' ');
 
 // Utility functions that take care of event handling
 
 //! sends a Cinder KeyDown event to the WebView and handles Cut, Copy and Paste
-inline void handleKeyDown( Awesomium::WebView *view, ci::app::KeyEvent event )
+inline void handleKeyDown( Awesomium::WebView *view, ci::app::KeyEvent event , bool isImmitate = false, char letter = ' ')
 {
 	// handle cut, copy, paste (as suggested by Simon Geilfus - thanks mate)
 	if( event.isAccelDown() )
@@ -75,8 +78,8 @@ inline void handleKeyDown( Awesomium::WebView *view, ci::app::KeyEvent event )
 
 	// other keys
 	view->Focus();
-	view->InjectKeyboardEvent( toKeyEvent( event, Awesomium::WebKeyboardEvent::kTypeKeyDown ) );
-	view->InjectKeyboardEvent( toKeyChar( event ) );
+	view->InjectKeyboardEvent( toKeyEvent( event, Awesomium::WebKeyboardEvent::kTypeKeyDown , isImmitate, letter ) );
+	view->InjectKeyboardEvent( toKeyChar( event , isImmitate, letter) );
 }
 
 //! sends a Cinder KeyUp event to the WebView

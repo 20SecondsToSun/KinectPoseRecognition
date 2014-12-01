@@ -14,7 +14,7 @@
 
 namespace serverParams
 {
-	const std::string	 SERVER_URL			 = "http://kotopoza.ru"; //"http://catpos.familyagency.ru";
+	const std::string	 SERVER_URL			 = "http://kotopoza.ru"; //"http://catpos.familyagency.ru";//
 	static const int	 SERVER_WAITING_TIME = 10;
 	const std::string    connectionTestURL	 = "http://google.com";
 	const std::string    serverURL			 =  SERVER_URL + "/utils/upload/";

@@ -15,8 +15,14 @@ void   Server::sendPhoto(fs::path _path)
 {
 	serverWaitingTimer.start();	
 	photoPath =_path;
+#ifndef debug
 	sendPhotoThread = std::shared_ptr< boost::thread>( new  boost::thread( bind( &Server::sendPhotoThreadHandler, this ) ) );
-	//sendPhotoThreadHandler();
+#else
+	 isPhotoLoaded = false;	
+	 isPhotoSendingToServer = false;
+	 serverLoadingPhotoEvent();	
+#endif
+	
 }
 
 void Server::sendPhotoThreadHandler()

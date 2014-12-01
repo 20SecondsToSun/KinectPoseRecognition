@@ -15,84 +15,82 @@ using namespace std;
 
 class CameraAdapter :public canon::PhotoHandler 
 {
-	public:	
-		void loadResource();
-		void setup();
-		
-		void draw();	
-		void update();
-		void reset();
-		void reconnect();
+public:	
+	void loadResource();
+	void setup();
 
-		string getpathToDownloadedPhoto();
-		string getpathToErrorPhoto();
+	void draw();	
+	void update();
+	void reset();
+	void reconnect();
 
-		bool checkIfDownloaded();
-		bool checkIfError();
+	string getpathToDownloadedPhoto();
+	string getpathToErrorPhoto();
 
+	bool checkIfDownloaded();
+	bool checkIfError();
 
-		float getWidth();
-		float getHeight();
-		void  shutdown();
+	float getWidth();
+	float getHeight();
+	void  shutdown();
 
-		void live();
-		void liveOff();		
+	void live();
+	void liveOff();		
 
-		void takePhoto();
+	void takePhoto();
 
-		 // Delegate callbacks from canon::PhotoHandler
-		void photoTaken(EdsDirectoryItemRef directoryItem, EdsError error);
-		void photoDownloaded(const std::string & downloadPath, EdsError error);
-		void photoCameraError( EdsError err);
-		void handleStateEvent(EdsUInt32 inEvent);
+	// Delegate callbacks from canon::PhotoHandler
+	void photoTaken(EdsDirectoryItemRef directoryItem, EdsError error);
+	void photoDownloaded(const std::string & downloadPath, EdsError error);
+	void photoCameraError( EdsError err);
+	void handleStateEvent(EdsUInt32 inEvent);
 
-		bool tryToTakePhoto, userPhotoIsDownloaded;
-		string photoCameraErrorMsg;
+	bool tryToTakePhoto, userPhotoIsDownloaded;
+	string photoCameraErrorMsg;
 
-		static CameraAdapter* Instance() 
-		{
-			return &CameraAdapterState;
-		}	
+	static CameraAdapter* Instance() 
+	{
+		return &CameraAdapterState;
+	}	
 
-		bool		isConnected;
+	bool		isConnected;
 
-		boost::signals2::signal<void(void)>		cameraConnectedEvent;
+	boost::signals2::signal<void(void)>		cameraConnectedEvent;
 
-		ci::Surface8u		getSurface();
+	ci::Surface8u		getSurface();
 
-		ci::Vec2f			getSurfaceTranslate();
-		float				scaleFactor;
-		ci::Vec2f			translateSurface;
-	
-	protected:
-		CameraAdapter() { }
-	
-	private:
-		static CameraAdapter		CameraAdapterState;
+	ci::Vec2f			getSurfaceTranslate();
+	float				scaleFactor;
+	ci::Vec2f			translateSurface;
 
-		fs::path                    mPhotoDownloadFolder;
+protected:
+	CameraAdapter() { }
 
-		Timer restartLiveViewTimer, reconnectTimer;
-		
-		string  userPhotoFileName, pathToDownloadedPhoto;	
+private:
+	static CameraAdapter		CameraAdapterState;
 
-		Surface8u lastFrame;
-		
-		 fs::path photoDownloadDirectory();
-		 std::string photoCameraReadyLiveView();
+	fs::path                    mPhotoDownloadFolder;
 
-		 double			viewShiftX, viewShiftY;
-		 bool			isAspectsCompute;
+	Timer restartLiveViewTimer, reconnectTimer;
 
-		 void			takePhotoThread();
-		 std::shared_ptr<boost::thread>				tkphThread;
+	string  userPhotoFileName, pathToDownloadedPhoto;	
 
+	Surface8u lastFrame;
 
-		 CanonCamera  mCamera;	
+	fs::path photoDownloadDirectory();
+	std::string photoCameraReadyLiveView();
 
-		 void calculateAspects();
+	double			viewShiftX, viewShiftY;
+	bool			isAspectsCompute;
 
-		 bool	isPhotoMakingInThread;
-		
+	void			takePhotoThread();
+	std::shared_ptr<boost::thread>				tkphThread;
+
+	CanonCamera  mCamera;	
+
+	void calculateAspects();
+
+	bool	isPhotoMakingInThread;
+
 };
 inline CameraAdapter&	cameraCanon() { return *CameraAdapter::Instance(); };

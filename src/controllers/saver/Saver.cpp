@@ -58,39 +58,50 @@ std::vector<Pose*> Saver::loadPoseBase()
 				int percent =  pose->getChild( "percent" ).getValue<int>();
 				newPose->setPercent(percent);
 
-				gl::Texture tex, maskTex;
-				try{
-					tex = loadImage(basePath /(name +".png"));			
+				gl::Texture tex, maskTex;	
+
+				string poseImage =  pose->getChild("poseImage").getValue<string>();
+				try
+				{
+					tex = loadImage(basePath / poseImage);
 				}
 				catch(...)
 				{
 					continue;
-				}	
-
-				
-
+				}
 				newPose->setImage(tex);
-				
 
-				name =  pose->getChild( "comics" ).getValue<string>();
-				try{
-					tex = loadImage(basePath / (name +".png"));			
+
+				string comics =  pose->getChild( "comics" ).getValue<string>();
+				try
+				{
+					tex = loadImage(basePath / comics);			
 				}
 				catch(...)
 				{
 					continue;
-				}	
-
-				try{
-					maskTex = loadImage(basePath /(name +"_mask.png"));			
 				}
-				catch(...)
-				{
-					continue;
-				}		
-
 				newPose->setComicsImage(tex);
-				newPose->setComicsMaskImage(maskTex);				
+
+				if (pose->hasChild("comicsMask"))
+				{
+					string comicsMask =  pose->getChild( "comicsMask" ).getValue<string>();
+					try
+					{
+						maskTex = loadImage(basePath /comicsMask);
+					}
+					catch(...)
+					{
+						continue;
+					}	
+					newPose->setComicsMaskImage(maskTex);
+					newPose->hasMaskImage(true);
+				
+				}
+				else
+				{
+					newPose->hasMaskImage(false);
+				}
 
 				posesVector.push_back(newPose);
 			}	
@@ -226,34 +237,30 @@ int Saver::getImagesInDir(fs::path dir_path)
 void Saver::loadConfigData()
 {
 	fs::path filepath = Params::getConfigStoragePath();
-
 	JsonTree doc;
 
-	try{
+	try
+	{
 		doc = JsonTree(loadFile(filepath));
-		//Params::standID =  doc.getChild( "standID" ).getValue<int>() ;
-		Params::isNetConnected =  doc.getChild( "netConnection" ).getValue<bool>() ;
-		Params::isFullSkelet =  doc.getChild( "fullskelet" ).getValue<bool>() ;
-		Params::isPointsDraw =  doc.getChild( "drawPoints" ).getValue<bool>() ;
-		Params::computeMistakeAlgo =  doc.getChild( "algo" ).getValue<int>() ;
+		Params::isNetConnected =  doc.getChild( "netConnection" ).getValue<bool>();
+		Params::isFullSkelet =  doc.getChild( "fullskelet" ).getValue<bool>();
+		Params::isPointsDraw =  doc.getChild( "drawPoints" ).getValue<bool>();
+		Params::computeMistakeAlgo =  doc.getChild( "algo" ).getValue<int>();
 
-		Params::maxErrorBetweenJoints =  doc.getChild( "maxError" ).getValue<int>() ;
-		Params::minErrorBetweenJoints =  doc.getChild( "minError" ).getValue<int>() ;
-		Params::etalonHeight          =  doc.getChild( "etalonHeight" ).getValue<int>() ;
+		Params::maxErrorBetweenJoints =  doc.getChild( "maxError" ).getValue<int>();
+		Params::minErrorBetweenJoints =  doc.getChild( "minError" ).getValue<int>();
+		Params::etalonHeight          =  doc.getChild( "etalonHeight" ).getValue<int>();
 
-
-		Params::maxUserDistance=  doc.getChild( "maxUserDistance" ).getValue<float>() ;
-		Params::minUserDistance =  doc.getChild( "minUserDistance" ).getValue<float>() ;
-		Params::maxUserHeight =  doc.getChild( "maxUserHeight" ).getValue<float>() ;
-		Params::minUserHeight  =  doc.getChild( "minUserHeight" ).getValue<float>() ;
+		Params::maxUserDistance=  doc.getChild( "maxUserDistance" ).getValue<float>();
+		Params::minUserDistance =  doc.getChild( "minUserDistance" ).getValue<float>();
+		Params::maxUserHeight =  doc.getChild( "maxUserHeight" ).getValue<float>();
+		Params::minUserHeight  =  doc.getChild( "minUserHeight" ).getValue<float>();
 
 		JsonTree datas =JsonTree( doc.getChild( "percents" ));
 
 		int i = 0;
 		for( JsonTree::ConstIter data = datas.begin(); data != datas.end(); ++data )		
 			Params::weightJoints[i++] = data->getValue<float>();
-
-		console()<<"PARAMS :: "<<" isNetConnected "<< Params::isNetConnected <<" isPointsDraw "<<Params::isPointsDraw<<std::endl;
 	}
 	catch(...)
 	{
@@ -271,7 +278,6 @@ void Saver::loadStandId()
 		string buffer;	
 		getline (file, buffer);
 		Params::standID = atoi(buffer.c_str());
-		console()<<"STAND ID::  "<<Params::standID<<endl;
 	}
 }
 
@@ -288,8 +294,6 @@ void Saver::loadNetConnectionConfig()
 		if(atoi(buffer.c_str()))		
 			Params::isNetConnected = true;
 		else
-			Params::isNetConnected = false;
-		
-		console()<<"Connection::  "<<Params::isNetConnected<<endl;
+			Params::isNetConnected = false;		
 	}
 }

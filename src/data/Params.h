@@ -5,10 +5,14 @@
 #include "Utils.h"
 #include "FontStore.h"
 
+
+
 #define kinectUsed
 //#define recording
 //#define calibration
-#define debug	
+//#define debug	
+//#define nocamera
+
 //#define testServer	
 
 //#define alwayswin
@@ -41,6 +45,7 @@ namespace poseParams
 	const int				  POSE_IN_GAME_TOTAL				= 1;
 	static const std::string  DATA_BASE_NAME					= "poses.json";
 	static const std::string  JSON_STORAGE_FOLDER				= "poses";
+
 }
 
 namespace popupTypes

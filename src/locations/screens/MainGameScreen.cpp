@@ -13,7 +13,7 @@ MainGameScreen MainGameScreen::MainGameScreenState;
 
 void MainGameScreen::setup()
 {
-	bg  = *AssetManager::getInstance()->getTexture( "images/diz/bg.jpg" );
+	bg  = *AssetManager::getInstance()->getTexture("images/diz/bg.jpg");
 
 	cameraCanon().setup();
 	cameraCanon().live();
@@ -26,7 +26,7 @@ void MainGameScreen::setup()
 	comicsScreen().setup();
 
 	/////////////////////////////////
-	Texture comeBackBtnTex   = *AssetManager::getInstance()->getTexture( "images/diz/toStart.png" );
+	Texture comeBackBtnTex   = *AssetManager::getInstance()->getTexture("images/diz/toStart.png");
 	comeBackBtn = new ButtonTex(comeBackBtnTex,  "backtoStart");
 	comeBackBtn->setScreenField(Vec2f(0.0f, 958.0f));
 	comeBackBtn->setDownState(comeBackBtnTex);
@@ -39,14 +39,14 @@ void MainGameScreen::init( LocationEngine* game)
 	isLeaveAnimation = false;
 	deviceError = false;
 
-	comeBackBtnSignal	   = comeBackBtn->mouseUpEvent.connect(boost::bind(&MainGameScreen::gotoFirstScreen, this));
+	comeBackBtnSignal = comeBackBtn->mouseUpEvent.connect(boost::bind(&MainGameScreen::gotoFirstScreen, this));
 
 	cameraCanon().reset();
 	cameraCanon().live();
 
 	cameraConnectionSignal = cameraCanon().cameraConnectedEvent.connect(boost::bind(&MainGameScreen::cameraConnectedHandler, this));
 
-	kinectMissPersonSignal = kinect().kinectMissPersonEvent.connect(boost::bind(&MainGameScreen::kinectMissPersonHandler, this));	
+	kinectMissPersonSignal = kinect().kinectMissPersonEvent.connect(boost::bind(&MainGameScreen::kinectMissPersonHandler, this));
 	kinectConnectionSignal = kinect().kinectConnectedEvent.connect(boost::bind(&MainGameScreen::gotoFirstScreen, this));
 	kinectFindPersonSignal = kinect().kinectFindPersonEvent.connect( [ & ]( )
 	{
@@ -70,17 +70,16 @@ void MainGameScreen::init( LocationEngine* game)
 	cameraStartUpdateSignal = recognitionGame().cameraStartUpdateEvent.connect( [ & ]( )
 	{
 		isCameraUpdating = true;
-		if(cameraCanon().isConnected)
-			cameraCanon().update();		
+		cameraCanon().update();	
 	});	
 
-	cameraStopUpdateSignal = recognitionGame().cameraStopUpdateEvent.connect( [ & ]( )
+	cameraStopUpdateSignal = recognitionGame().cameraStopUpdateEvent.connect( [ & ]()
 	{
 		isCameraUpdating = false;
 	});
 
 	fboError = false;
-	errorFBOSignal = comicsScreen().errorFBO.connect( [ & ]( )
+	errorFBOSignal = comicsScreen().errorFBO.connect( [ & ]()
 	{
 		fboError = true;
 	});
@@ -88,6 +87,8 @@ void MainGameScreen::init( LocationEngine* game)
 	gameControls().init();
 	hintScreen().init();
 	recognitionGame().initnew();
+
+	Utils::printVideoMemoryInfo();
 }
 
 void MainGameScreen::cameraConnectedHandler() 
@@ -96,8 +97,12 @@ void MainGameScreen::cameraConnectedHandler()
 }
 
 void MainGameScreen::gotoFirstScreen() 
-{	
+{
+#ifndef nocamera
 	if(!isLeaveAnimation && cameraCanon().isConnected && kinect().isConnected())
+#else
+	if(!isLeaveAnimation && kinect().isConnected())
+#endif	
 	{
 		animationLeaveLocationPrepare();
 		alphaFinAnimate = 0.0f;
@@ -167,7 +172,11 @@ void MainGameScreen::update()
 	kinect().update();
 
 	if(!deviceError)
+#ifndef nocamera
 		deviceError = !cameraCanon().isConnected || !kinect().isConnected();
+#else
+		deviceError = !kinect().isConnected();
+#endif
 
 	if(deviceError == false && fboError == false)	
 		recognitionGame().update();
@@ -177,13 +186,14 @@ void MainGameScreen::draw()
 {
 	gl::enableAlphaBlending();		
 
-	if(deviceError == false)	
+	if(deviceError == false && fboError == false)	
 	{
 		drawGame();
 	}
 	else if  (fboError)
 	{
-
+		drawError();
+		comeBackBtn->draw();
 	}
 	else
 	{	
@@ -195,7 +205,7 @@ void MainGameScreen::draw()
 
 void MainGameScreen::drawDeviceError() 
 {	
-	string errorDeviceMessage ="";
+	string errorDeviceMessage = "";
 
 	if (cameraCanon().isConnected == false)
 	{
@@ -203,7 +213,7 @@ void MainGameScreen::drawDeviceError()
 
 		recognitionGame().stopAllTimersIfNeed();	
 		if(!_missedTimer.isStopped()) 
-			_missedTimer.stop();		
+			_missedTimer.stop();
 	}
 
 	if (kinect().isConnected() == false)
@@ -223,7 +233,7 @@ void MainGameScreen::drawDeviceError()
 	}
 
 	Texture errorTexure = Utils::getTextField(errorDeviceMessage, fonts().getFont("MaestroC", 114),  Color::white());	
-	gl::draw(errorTexure, Vec2f(0.5f*(1920.0f - errorTexure.getWidth()), 348.0f));
+	gl::draw(errorTexure, Vec2f(0.5f * (1920.0f - errorTexure.getWidth()), 348.0f));
 }
 
 void MainGameScreen::drawGame() 
@@ -273,12 +283,12 @@ void MainGameScreen::drawGame()
 		break;
 
 	case SHOW_GAME_RESULT:
-		comicsScreen().draw();
+		//comicsScreen().draw();
 		gameControls().draw();
 		break;
 
 	case MAKE_SCREENSHOOT:
-		comicsScreen().draw();
+		//comicsScreen().draw();
 		break;
 
 	case PHOTO_MAKING_WAIT:	
@@ -293,18 +303,9 @@ void MainGameScreen::drawGame()
 	}
 }
 
-void MainGameScreen::drawPoseComics()
+void MainGameScreen::drawError()
 {
-	gl::pushMatrices();
-	gl::translate(cameraCanon().getSurfaceTranslate());
-	gl::scale(-cameraCanon().scaleFactor, cameraCanon().scaleFactor);
-	gl::draw(recognitionGame().getCurrentScreenShot());
-	gl::popMatrices();
-
-	gl::pushMatrices();
-	gl::translate(getWindowWidth() - 360.0f, getWindowHeight() - 512.0f);		
-	gl::draw(recognitionGame().getPoseImage());
-	gl::popMatrices();
+	Utils::textFieldDraw("Что-то пошло не так...\nЕсли ситуация повторится,\nперезапустите программу",  fonts().getFont("MaestroC", 114), Vec2f(510.f, 348.0f), Color::white());
 }
 
 void MainGameScreen::drawPhotoFlash()
@@ -325,7 +326,7 @@ void MainGameScreen::drawFadeOutIfAllow()
 }
 
 void MainGameScreen::cleanup()
-{	
+{
 	removeTimers();
 	removeHandlers();
 }
@@ -348,5 +349,7 @@ void MainGameScreen::removeHandlers()
 	kinectFindPersonSignal.disconnect();
 	gotoResultScreenSignal.disconnect();
 	gotoFirstScreenSignal.disconnect();
+	cameraStartUpdateSignal.disconnect();
+	cameraStopUpdateSignal.disconnect();
 }
 #pragma warning(pop)

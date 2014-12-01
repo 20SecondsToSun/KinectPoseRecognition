@@ -63,14 +63,12 @@ class MainGameScreen : public Location
 		
 		void drawGame();
 		void drawPreReadyCounterBox();
-		void drawPoseSilhouette();
-		
-		void drawPoseComics();
-		
+		void drawPoseSilhouette();		
 		void drawCameraLostImage();
 		void drawPhotoFlash();
 		void drawFadeOutIfAllow();
 		void drawDeviceError();
+		void drawError();
 
 		void animationLeaveLocationPrepare();
 		void animationFinished();
@@ -89,11 +87,9 @@ class MainGameScreen : public Location
 		connection gotoFirstScreenSignal;
 		connection photoFlashSignal;
 		connection errorFBOSignal;
-		
-	
-
 		connection cameraStartUpdateSignal;
 		connection cameraStopUpdateSignal;
+
 		bool isCameraUpdating;
 
 		void gotoFirstScreen();

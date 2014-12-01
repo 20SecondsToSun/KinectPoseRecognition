@@ -1,8 +1,8 @@
 {
    "poses" : [
       {
-         "comics" : "dreamies",
-         "data" : [
+         "comics" : "dreamies.png",
+		 "data" : [
             {
                "x" : 178.0,
                "y" : 151.0,
@@ -64,7 +64,8 @@
                "z" : 2.687187433242798
             }
          ],
-         "name" : "Cat",
+         "poseImage" : "pose1.png",	
+		 "name" : "pose",		
          "percent" : 80,
          "tilt" : -2,
          "time" : 20

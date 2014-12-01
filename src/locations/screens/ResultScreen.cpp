@@ -2,7 +2,6 @@
 #pragma warning(disable: 4244)
 #include "ResultScreen.h"
 
-
 using namespace ci;
 using namespace ci::app;
 using namespace colorsParams;
@@ -48,7 +47,7 @@ void ResultScreen::setup()
 	emailtPhotoTextTex     = *AssetManager::getInstance()->getTexture("images/serverScreen/sendEmailText.png");	
 	playMoreTex            = *AssetManager::getInstance()->getTexture("images/serverScreen/playMore.png");
 
-	Texture playMoreTex1            = *AssetManager::getInstance()->getTexture("images/serverScreen/OneMore.png");
+	Texture playMoreTex1   = *AssetManager::getInstance()->getTexture("images/serverScreen/OneMore.png");
 	comeBackBtn1 = new ButtonTex(playMoreTex1,  "BACK");
 	comeBackBtn1->setScreenField(Vec2f(1449.0f, 692.0f));
 	comeBackBtn1->setDownState(playMoreTex1);
@@ -82,14 +81,12 @@ void ResultScreen::init( LocationEngine* game)
 	server().reset();	
 
 	alphaSocialAnimate = 0.0f;
-	alphaEmailAnimate = 0.0f;
-	alphaFinAnimate = 0.0f;
+	alphaEmailAnimate  = 0.0f;
+	alphaFinAnimate    = 0.0f;
 
 	scalePhotoRamkaAnimateVec = 1;
-	posPhotoRamkaAnimate = Vec2f(0.0f, 0.0f);
+	posPhotoRamkaAnimate = Vec2f::zero();
 
-	//PlayerData::score = 1;
-	//PlayerData::playerData[0].pathHiRes = "level1.jpg";
 
 	/*	#ifdef debug
 	PlayerData::score = 3;
@@ -113,6 +110,16 @@ void ResultScreen::init( LocationEngine* game)
 	}
 	#endif*/	
 
+	/*drawHandler = &ResultScreen::drawSocialPopup;
+	state = POPUP_MODE;	
+
+	socialPopup().show(popupTypes::FACEBOOK);	*/
+	/*drawHandler = &ResultScreen::drawEmailPopup;
+	state = POPUP_EMAIL;	
+
+	emailPopup().show();*/
+	
+
 	if(PlayerData::score != 0)
 	{
 		bool status = gameScoreSaver().saveGameStatusIntoFile(true);
@@ -122,6 +129,8 @@ void ResultScreen::init( LocationEngine* game)
 		comicsPhoto = Params::getBufferSuccessComics();
 		if(comicsPhoto.getWidth())
 			comicsPhotoScale = 1249.0f / comicsPhoto.getWidth();
+		comicsPhotoScale = 1;
+
 		drawHandler = &ResultScreen::showResultComics; 
 		state = SHOW_RESULT_PHOTO;
 		savingPhotopositionY = 1100.0f;
@@ -431,8 +440,9 @@ void ResultScreen::closeScreenHandler()
 		disconnectListeners();
 		_game->freezeLocation = true;
 		isLeaveAnimation = true;
-		timeline().apply( &alphaFinAnimate, 0.0f, 1.0f, 0.9f, EaseOutCubic())
-			.finishFn( bind( &ResultScreen::animationLeaveLocationFinished1, this));
+		//timeline().apply( &alphaFinAnimate, 0.0f, 1.0f, 0.9f, EaseOutCubic())
+		//	.finishFn( bind( &ResultScreen::animationLeaveLocationFinished1, this));
+		animationLeaveLocationFinished1();
 	}
 }
 
@@ -443,8 +453,9 @@ void ResultScreen::backToStartHandler()
 		disconnectListeners();
 		_game->freezeLocation = true;
 		isLeaveAnimation = true;
-		timeline().apply( &alphaFinAnimate, 0.0f, 1.0f, 0.9f, EaseOutCubic() )
-			.finishFn( bind( &ResultScreen::animationLeaveLocationFinished, this ));
+		animationLeaveLocationFinished();
+		//timeline().apply( &alphaFinAnimate, 0.0f, 1.0f, 0.9f, EaseOutCubic() )
+		//	.finishFn( bind( &ResultScreen::animationLeaveLocationFinished, this ));
 	}
 }
 
@@ -527,7 +538,7 @@ void ResultScreen::drawResultImagesIfAllow()
 {
 	if(canShowResultImages)	
 	{
-		gl::pushMatrices();		
+		gl::pushMatrices();
 		gl::scale(scalePhotoRamkaAnimateVec, scalePhotoRamkaAnimateVec);//0.69f, 0.69f);
 		gl::translate(posPhotoRamkaAnimate);	
 		drawPhotoRamka();
@@ -614,8 +625,8 @@ void ResultScreen::showResultComics()
 void ResultScreen::drawPhotoRamka() 
 {
 	gl::pushMatrices();
-	gl::translate(photoComicsPosition);		
-	gl::draw(ramkaShadowTex, Vec2f(196.0f, 117.0f));				
+	gl::translate(photoComicsPosition);
+	gl::draw(ramkaShadowTex, Vec2f(196.0f, 117.0f));
 	gl::draw(ramkaTex, Vec2f(230.0f, -88.0f));
 	gl::pushMatrices();
 	gl::rotate(-1);
@@ -630,7 +641,7 @@ void ResultScreen::drawPhotoRamka()
 
 void ResultScreen::drawUpsetScreen() 
 {
-	gl::draw(nothingCatTex, Vec2f(252.0f, 42.0f));	
+	gl::draw(nothingCatTex, Vec2f(252.0f, 42.0f));
 	comeBackBtn1->draw();
 	backToStartBtn->draw();
 }

@@ -21,6 +21,7 @@ using namespace ci;
 using namespace ci::app;
 using namespace std;
 
+
 /*
 TODO
 
@@ -297,14 +298,14 @@ void KinectPoseRecognitionApp::mouseDown( MouseEvent event )
 	toucher().setPosition(event.getPos());
 
 	//#ifdef debug	
-	recognitionGame().testPercent100 = true;
+	//recognitionGame().testPercent100 = true;
 	//#endif
 }
 
 void KinectPoseRecognitionApp::mouseUp( MouseEvent event )
 {
 	// #ifdef debug	
-	recognitionGame().testPercent100 = false;
+	//recognitionGame().testPercent100 = false;
 	//#endif
 }
 
@@ -428,6 +429,8 @@ void KinectPoseRecognitionApp::shutdown()
 	minusBtnSignal.disconnect();
 	plusBtnSignal.disconnect();
 #endif
+
+	_CrtDumpMemoryLeaks();
 }
 
 #pragma warning(pop)

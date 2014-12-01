@@ -17,8 +17,6 @@ void IntroScreen::setup()
 	lapaTv			  = *AssetManager::getInstance()->getTexture( "images/diz/lapa.png" );
 	text1			  = *AssetManager::getInstance()->getTexture( "images/diz/nextText.png" );	
 
-	instructionImage  = *AssetManager::getInstance()->getTexture( "images/diz/instr.png" );
-
 	bg  = *AssetManager::getInstance()->getTexture( "images/diz/bg.jpg" );	
 
 	Font *btnFont = fonts().getFont("Helvetica Neue", 46);
@@ -295,6 +293,8 @@ void IntroScreen::animationFinished()
 		bubbleAnimator().kill();
 
 		drawHandler = &IntroScreen::drawInitElements;
+
+		Utils::printVideoMemoryInfo();
 		break;
 
 	case SHOW_INVITE:	

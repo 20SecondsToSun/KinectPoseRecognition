@@ -81,7 +81,7 @@ Texture* AssetManager::getTexture( string url, bool loadInThread ){
 			catch(...)
 			{
                 try { 
-                 console()<<"ERROR LOAD TEXTURE ..  "<<std::endl;
+                 console()<<"ERROR LOAD TEXTURE ..  "<<url<<std::endl;
 					 // try to load from URL
                    mTextureAssets[url] = Texture( loadImage( loadUrl( Url( url ) ) ) ); 
                 }

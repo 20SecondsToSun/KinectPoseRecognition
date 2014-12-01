@@ -24,54 +24,54 @@ gl::Texture Utils::loadImageFromString(std::string value)
 
 int Utils::spc_email_isvalid(const char *address)
 {
-	  int        count = 0;
-	  const char *c, *domain;
-	  static char *rfc822_specials = "()<>@,;:\\\"[]";
+	int        count = 0;
+	const char *c, *domain;
+	static char *rfc822_specials = "()<>@,;:\\\"[]";
 
-	  /* first we validate the name portion (name@domain) */
-	  for (c = address;  *c;  c++) {
+	/* first we validate the name portion (name@domain) */
+	for (c = address;  *c;  c++) {
 		if (*c == '\"' && (c == address || *(c - 1) == '.' || *(c - 1) == 
 			'\"')) {
-		  while (*++c) {
-			if (*c == '\"') break;
-			if (*c == '\\' && (*++c == ' ')) continue;
-			if (*c <= ' ' || *c >= 127) return 0;
-		  }
-		  if (!*c++) return 0;
-		  if (*c == '@') break;
-		  if (*c != '.') return 0;
-		  continue;
+				while (*++c) {
+					if (*c == '\"') break;
+					if (*c == '\\' && (*++c == ' ')) continue;
+					if (*c <= ' ' || *c >= 127) return 0;
+				}
+				if (!*c++) return 0;
+				if (*c == '@') break;
+				if (*c != '.') return 0;
+				continue;
 		}
 		if (*c == '@') break;
 		if (*c <= ' ' || *c >= 127) return 0;
 		if (strchr(rfc822_specials, *c)) return 0;
-	  }
-	  if (c == address || *(c - 1) == '.') return 0;
+	}
+	if (c == address || *(c - 1) == '.') return 0;
 
-	  /* next we validate the domain portion (name@domain) */
-	  if (!*(domain = ++c)) return 0;
-	  do {
+	/* next we validate the domain portion (name@domain) */
+	if (!*(domain = ++c)) return 0;
+	do {
 		if (*c == '.') {
-		  if (c == domain || *(c - 1) == '.') return 0;
-		  count++;
+			if (c == domain || *(c - 1) == '.') return 0;
+			count++;
 		}
 		if (*c <= ' ' || *c >= 127) return 0;
 		if (strchr(rfc822_specials, *c)) return 0;
-	  } while (*++c);
-	
-	  
+	} while (*++c);
 
-	 if (address[strlen(address)-1] == '.') return 0;
+
+
+	if (address[strlen(address)-1] == '.') return 0;
 	// console()<<"LAST CHARTACTER  "<<address[strlen(address)-1]<<std::endl;
 
-	  return (count >= 1);
+	return (count >= 1);
 }
 
 bool Utils::isValidEmail(string _email)
 {
 	const char * mail = _email.c_str();
 	return ( spc_email_isvalid(mail) == 1);
-	
+
 }
 bool Utils::isValidTel(string tel)
 {	
@@ -92,7 +92,7 @@ string Utils::cp1251_to_utf8(const char *str)
 
 
 	result_u = MultiByteToWideChar(1251,	0,	str,-1,	0,	0);
-	
+
 	if (!result_u)
 		return 0;
 
@@ -169,39 +169,39 @@ string Utils::Utf8_to_cp1251(const char *str)
 
 int Utils::StringToWString(std::wstring &ws, const std::string &s)
 {
-    std::wstring wsTmp(s.begin(), s.end());
+	std::wstring wsTmp(s.begin(), s.end());
 
-    ws = wsTmp;
+	ws = wsTmp;
 
-    return 0;
+	return 0;
 }
 
 LPWSTR Utils::ConvertToLPWSTR( const std::wstring& s )
 {
-  LPWSTR ws = new wchar_t[s.size()+1];
-  copy( s.begin(), s.end(), ws );
-  ws[s.size()] = 0;
-  return ws;
+	LPWSTR ws = new wchar_t[s.size()+1];
+	copy( s.begin(), s.end(), ws );
+	ws[s.size()] = 0;
+	return ws;
 }
 
 
 
 std::wstring Utils::s2ws(const std::string& s)
 {
-    int len;
-    int slength = (int)s.length() + 1;
-    len = MultiByteToWideChar(CP_ACP, 0, s.c_str(), slength, 0, 0); 
-    wchar_t* buf = new wchar_t[len];
-    MultiByteToWideChar(CP_ACP, 0, s.c_str(), slength, buf, len);
-    std::wstring r(buf);
-    delete[] buf;
-    return r;
+	int len;
+	int slength = (int)s.length() + 1;
+	len = MultiByteToWideChar(CP_ACP, 0, s.c_str(), slength, 0, 0); 
+	wchar_t* buf = new wchar_t[len];
+	MultiByteToWideChar(CP_ACP, 0, s.c_str(), slength, buf, len);
+	std::wstring r(buf);
+	delete[] buf;
+	return r;
 }
 
 std::string Utils::twiceSymbol(std::string __string, char __symbol)
 {
 	string twiceString = "";
-		for (size_t  i = 0; i < __string.size(); i++)
+	for (size_t  i = 0; i < __string.size(); i++)
 	{
 		twiceString.push_back( __string[i]);
 		if (__string[i] == __symbol ) twiceString.push_back( __string[i]);
@@ -216,17 +216,17 @@ bool Utils::readFlag(std::string path)
 	ifstream myfile;		
 	vector<string> cam;
 	myfile.open( getAssetPath(path).c_str(), ifstream::in);
-	
+
 	if (myfile.is_open())
 	{
-			while ( myfile.good() )
-			{
-				getline (myfile,line);
-				cam.push_back(line);						
-			}
-			myfile.close();	
+		while ( myfile.good() )
+		{
+			getline (myfile,line);
+			cam.push_back(line);						
+		}
+		myfile.close();	
 
-		 return ::atoi(cam[0].c_str()) == 1;
+		return ::atoi(cam[0].c_str()) == 1;
 	}
 
 	return false;
@@ -234,26 +234,26 @@ bool Utils::readFlag(std::string path)
 
 
 std::string Utils::urlDecode(std::string SRC) 
+{
+	std::string ret;
+	char ch;
+	size_t  i, ii;
+	for ( i=0; i<SRC.length(); i++) 
 	{
-		std::string ret;
-		char ch;
-		size_t  i, ii;
-		for ( i=0; i<SRC.length(); i++) 
+		if (int(SRC[i])==37)
 		{
-			if (int(SRC[i])==37)
-			{
-				sscanf(SRC.substr(i+1,2).c_str(), "%x", &ii);
-				ch=static_cast<char>(ii);
-				ret+=ch;
-				i=i+2;
-			} 
-			else
-			{
-				ret+=SRC[i];
-			}
+			sscanf(SRC.substr(i+1,2).c_str(), "%x", &ii);
+			ch=static_cast<char>(ii);
+			ret+=ch;
+			i=i+2;
+		} 
+		else
+		{
+			ret+=SRC[i];
 		}
-		return (ret);
 	}
+	return (ret);
+}
 
 void Utils::writeCrashLog(std::string path)
 {
@@ -263,17 +263,17 @@ void Utils::writeCrashLog(std::string path)
 	myfile.open( getAssetPath(path).c_str(), ifstream::in);
 
 	int value = 0;
-	
+
 	if (myfile.is_open())
 	{
-			while ( myfile.good() )
-			{
-				getline (myfile,line);
-				cam.push_back(line);						
-			}
-			myfile.close();	
+		while ( myfile.good() )
+		{
+			getline (myfile,line);
+			cam.push_back(line);						
+		}
+		myfile.close();	
 
-		 value = ::atoi(cam[0].c_str());
+		value = ::atoi(cam[0].c_str());
 	}
 
 	value++;
@@ -284,7 +284,7 @@ void Utils::writeCrashLog(std::string path)
 		myfile1 << value;		
 		myfile.close();
 	}
-	 
+
 
 }
 
@@ -301,7 +301,7 @@ void Utils::textFieldDraw(std::string text,ci::Font* font, Vec2f coords, ColorA 
 	gl::popMatrices();
 	gl::color(ColorA(1, 1, 1, 1));
 
-	
+
 	/*
 	// create a text box (rectangular text area)
 	TextBox mTextBox = TextBox(400,500);
@@ -333,11 +333,11 @@ gl::Texture  Utils::getTextField(std::string text,ci::Font* font, ColorA color)
 }
 
 float Utils::map(float value, 
-                              float istart, 
-                              float istop, 
-                              float ostart, 
-                              float ostop) {
-    return ostart + (ostop - ostart) * ((value - istart) / (istop - istart));
+				 float istart, 
+				 float istop, 
+				 float ostart, 
+				 float ostop) {
+					 return ostart + (ostop - ostart) * ((value - istart) / (istop - istart));
 }
 
 float Utils::clamp(float value, float max, float min)
@@ -354,45 +354,79 @@ Surface Utils::resizeScreenshot(Surface screenshot, int32_t width, int32_t heigh
 {
 	Surface screenshot_r = Surface( width, height, false ); 
 	ci::ip::resize( screenshot, screenshot.getBounds(), &screenshot_r, screenshot_r.getBounds(), FilterBox() );
+
 	return screenshot_r;
 }
 
-
-
 std::string  Utils::getCorrectSecondsText(int seconds)
 {
-		string secText  = to_string(seconds);
-		string memo = "яейсмд";
-		if(secText == "1")
+	string secText  = to_string(seconds);
+	string memo = "яейсмд";
+	if(secText == "1")
+	{
+		memo = "яейсмдю";
+	}
+	else if(secText == "2" || secText == "3"|| secText == "4")
+	{
+		memo = "яейсмдш";
+	}
+	else if(secText.size() == 2)
+	{
+		if(secText[0] == '1')
 		{
-			memo = "яейсмдю";
+			memo = "яейсмд";
 		}
-		else if(secText == "2" || secText == "3"|| secText == "4")
+		else
 		{
-			memo = "яейсмдш";
-		}
-		else if(secText.size() == 2)
-		{
-			if(secText[0] == '1')
+			if(secText[1] == '1')
+			{
+				memo = "яейсмдю";
+			}
+			else if(secText[1] == '0' || secText[1] >= '5')
 			{
 				memo = "яейсмд";
 			}
 			else
 			{
-				if(secText[1] == '1')
-				{
-					memo = "яейсмдю";
-				}
-				else if(secText[1] == '0' || secText[1] >= '5')
-				{
-					memo = "яейсмд";
-				}
-				else
-				{
-					memo = "яейсмдш";
-				}
-			}				
-		}	
+				memo = "яейсмдш";
+			}
+		}				
+	}	
 
 	return memo;
 }
+
+void  Utils::drawGraphicsToFBO(Fbo fbo, const function<void ()>& graphicsFunc )
+{
+	gl::SaveFramebufferBinding bindingSaver;
+	fbo.bindFramebuffer();
+
+	Area saveView = getViewport();
+	gl::setViewport(fbo.getBounds());
+
+	gl::pushMatrices();
+	gl::setMatricesWindow(fbo.getSize(), false);
+	graphicsFunc();
+	gl::popMatrices();
+	gl::setViewport(saveView);
+}
+
+void Utils::clearFBO(Fbo fbo)
+{		
+	if(!fbo || !fbo.getTexture())
+		return;
+
+	GLuint depthTextureId = fbo.getDepthTexture().getId();
+	fbo.reset();	
+	if (depthTextureId > 0)
+		glDeleteTextures(1, &depthTextureId);	
+}
+
+void Utils::printVideoMemoryInfo()
+{
+	GLint v[2] = { 0,0 };
+	glGetIntegerv(0x9047, &v[0]);
+	glGetIntegerv(0x9049, &v[1]);
+	console()<< "Size: " << v[0] << " KB, Available: " << v[1] << " KB" << std::endl;
+}
+

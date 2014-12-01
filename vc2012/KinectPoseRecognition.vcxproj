@@ -50,7 +50,7 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>..\include;..\..\..\\include;..\..\..\\boost;..\src;..\src\1dollar;..\blocks\Cinder-KCB\src;..\blocks\Cinder-KCB\lib;$(KINECT_TOOLKIT_DIR)inc;$(KINECTSDK10_DIR)\inc</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\include;..\..\..\\include;..\..\..\\boost;..\src;..\blocks\Cinder-KCB\src;..\blocks\Cinder-KCB\lib;$(KINECT_TOOLKIT_DIR)inc;$(KINECTSDK10_DIR)\inc;..\blocks\Cinder-CanonSdk\include;..\blocks\Cinder-CanonSdk\src;..\blocks\Cinder-CanonSdk\lib\EDSDK\Header;..\blocks\Cinder-Curl\src;..\src\buttons;..\src\controllers\assets;..\src\controllers\camera;..\src\controllers\fonts;..\src\controllers\kinect;..\src\controllers\photomaker;..\src\controllers\saver;..\src\controllers\server;..\src\data;..\src\game;..\src\game\graphicScene;..\src\graphics;..\src\locations\engine;..\src\locations\screens;..\src\social;..\src\touchKeyboard;..\src\controllers\kinect\gestures;..\src\controllers\kinect\gestures\handsUpGesture;..\src\tools;..\src\locations\screens\help;..\src\locations\popup</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;NOMINMAX;_WIN32_WINNT=0x0502;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MinimalRebuild>true</MinimalRebuild>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
@@ -64,8 +64,8 @@
       <AdditionalIncludeDirectories>"..\..\..\\include";..\include</AdditionalIncludeDirectories>
     </ResourceCompile>
     <Link>
-      <AdditionalDependencies>cinder-$(PlatformToolset)_d.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>"..\..\..\\lib\msw\$(PlatformTarget)"</AdditionalLibraryDirectories>
+      <AdditionalDependencies>cinder-$(PlatformToolset).lib;Kinect10.lib;KinectCommonBridge.lib;FaceTrackLib.lib;OpenGL32.lib;..\blocks\Cinder-CanonSdk\lib\EDSDK\Library\EDSDK.lib;..\blocks\Cinder-Curl\lib\msw\libcurl.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>..\..\..\\lib\msw\$(PlatformTarget);$(KINECT_TOOLKIT_DIR)Lib\x86;$(KINECTSDK10_DIR)\lib\x86;..\blocks\Cinder-KCB\lib\$(PlatformTarget)\lib\$(Configuration)\$(PlatformToolset);..\blocks\Cinder-CanonSdk\lib\EDSDK\Library\;..\blocks\Cinder-Curl\lib\msw\</AdditionalLibraryDirectories>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <SubSystem>Windows</SubSystem>
       <RandomizedBaseAddress>false</RandomizedBaseAddress>
@@ -76,7 +76,7 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
-      <AdditionalIncludeDirectories>..\include;..\..\..\\include;..\..\..\\boost;..\blocks\Cinder-KCB\src;..\blocks\Cinder-KCB\lib;$(KINECT_TOOLKIT_DIR)inc;$(KINECTSDK10_DIR)\inc;..\src;..\blocks\Cinder-CanonSdk\include;..\blocks\Cinder-CanonSdk\src;..\blocks\Cinder-CanonSdk\lib\EDSDK\Header;..\blocks\Cinder-Curl\src;..\src\buttons;..\src\controllers\assets;..\src\controllers\camera;..\src\controllers\fonts;..\src\controllers\kinect;..\src\controllers\photomaker;..\src\controllers\saver;..\src\controllers\server;..\src\data;..\src\game\graphicScene;..\src\game;..\src\graphics;..\src\locations\engine;..\src\locations\popup;..\src\locations\screens;..\src\tools;..\src\touchKeyboard;..\src\locations\screens\help;..\src\social;..\blocks\Cinder-Awesomium\include;..\src\controllers\kinect\gestures;..\src\controllers\kinect\gestures\handsUpGesture</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\include;..\..\..\\include;..\..\..\\boost;..\blocks\Cinder-KCB\src;..\blocks\Cinder-KCB\lib;$(KINECT_TOOLKIT_DIR)inc;$(KINECTSDK10_DIR)\inc;..\src;..\blocks\Cinder-CanonSdk\include;..\blocks\Cinder-CanonSdk\src;..\blocks\Cinder-CanonSdk\lib\EDSDK\Header;..\blocks\Cinder-Curl\src;..\src\buttons;..\src\controllers\assets;..\src\controllers\camera;..\src\controllers\fonts;..\src\controllers\kinect;..\src\controllers\photomaker;..\src\controllers\saver;..\src\controllers\server;..\src\data;..\src\game\graphicScene;..\src\game;..\src\graphics;..\src\locations\engine;..\src\locations\popup;..\src\locations\screens;..\src\tools;..\src\touchKeyboard;..\src\locations\screens\help;..\src\social;..\blocks\Cinder-Awesomium\include;..\src\controllers\kinect\gestures;..\src\controllers\kinect\gestures\handsUpGesture;c:\Program Files (x86)\Visual Leak Detector\include\</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;NOMINMAX;_WIN32_WINNT=0x0502;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <PrecompiledHeader>

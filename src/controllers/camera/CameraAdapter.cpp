@@ -6,7 +6,7 @@ void CameraAdapter::loadResource()
 {
 	mPhotoDownloadFolder = Params::getPhotosStorageDirectory();
 
-    if (!fs::exists(mPhotoDownloadFolder))
+	if (!fs::exists(mPhotoDownloadFolder))
 	{
 		fs::create_directories(mPhotoDownloadFolder);
 	}
@@ -14,7 +14,6 @@ void CameraAdapter::loadResource()
 
 void CameraAdapter::setup()
 {
-	//console()<<"try setup -------------------->"<<endl;
 	isConnected = false;    
 	tryToTakePhoto = true;
 	isPhotoMakingInThread = false;
@@ -22,13 +21,13 @@ void CameraAdapter::setup()
 	photoCameraErrorMsg = "NONE";
 	isAspectsCompute = false;
 
-    isConnected = mCamera.setup(this);
+	isConnected = mCamera.setup(this);
 
 	if (isConnected)
 	{
-	   mCamera.startLiveView();
-	   calculateAspects();
-	   cameraConnectedEvent();
+		mCamera.startLiveView();
+		calculateAspects();
+		cameraConnectedEvent();
 	}
 }
 
@@ -46,7 +45,8 @@ void CameraAdapter::update()
 		mCamera.update();	
 
 		if (!restartLiveViewTimer.isStopped()  && (int)restartLiveViewTimer.getSeconds() == 2)
-		{		
+		{	
+			console()<<"restartLiveViewTimer"<<endl;
 			photoCameraReadyLiveView();		
 		}
 	}
@@ -69,7 +69,7 @@ void CameraAdapter::calculateAspects()
 		{
 			viewHeight = getWindowHeight();
 			viewWidth = int(viewHeight * aspect);	
-			scaleFactor = viewHeight/ mCamera.getLiveSurface().getHeight();
+			scaleFactor = viewHeight / mCamera.getLiveSurface().getHeight();
 		}
 		else 
 		{ 
@@ -77,7 +77,7 @@ void CameraAdapter::calculateAspects()
 			viewHeight = int(viewWidth / aspect);	
 			scaleFactor  = viewWidth / mCamera.getLiveSurface().getWidth();
 		}
-	
+
 		viewShiftX =float( 0.5 * (getWindowWidth()  - viewWidth));
 		viewShiftY= float( 0.5 * (getWindowHeight() - viewHeight));
 
@@ -106,7 +106,7 @@ void CameraAdapter::takePhoto()
 
 void CameraAdapter::takePhotoThread()
 {	
-    mCamera.takePicture(this);
+	mCamera.takePicture(this);
 	isPhotoMakingInThread = false;
 }
 
@@ -160,21 +160,21 @@ void CameraAdapter::draw()
 	if (!isConnected ) return;
 
 	gl::pushMatrices();	
-		if (mCamera.isLiveViewing())//tryToTakePhoto == false)	
-		{	
-			gl::translate(1920, -100);
-			gl::scale(-1.8181818, 1.8181818);
-			gl::color(Color::white());
-			gl::draw( gl::Texture( mCamera.getLiveSurface() ));				
-			lastFrame = mCamera.getLiveSurface();			
-		}
-		else 
-		{
-			gl::translate(translateSurface);
-			gl::scale(-1.8181818, 1.8181818);
-			gl::color(Color::white());
-			gl::draw(lastFrame);
-		}
+	if (mCamera.isLiveViewing())//tryToTakePhoto == false)	
+	{	
+		gl::translate(1920, -100);
+		gl::scale(-1.8181818, 1.8181818);
+		gl::color(Color::white());
+		gl::draw( gl::Texture( mCamera.getLiveSurface()));				
+		lastFrame = mCamera.getLiveSurface();			
+	}
+	else 
+	{
+		gl::translate(translateSurface);
+		gl::scale(-1.8181818, 1.8181818);
+		gl::color(Color::white());
+		gl::draw(lastFrame);
+	}
 	gl::popMatrices();
 	//if (mCamera.isLiveViewing())//tryToTakePhoto == false)	
 	//	gl::draw( gl::Texture( mCamera.getLiveSurface() ));	
@@ -206,28 +206,27 @@ void CameraAdapter::photoCameraError( EdsError err)
 {
 	//string temp = (c_str, strnlen(c_str, max_length));
 	photoCameraErrorMsg = CanonErrorToString(err);
-	console()<<" ==   photoCameraError  = "<<CanonErrorToString(err)<<std::endl;
+	//console()<<" ==   photoCameraError  = "<<CanonErrorToString(err)<<std::endl;
 }
 
 void CameraAdapter::photoTaken(EdsDirectoryItemRef directoryItem, EdsError error)
 {
-	console()<<" ==   photoTaken  = "<<std::endl;
-    mCamera.downloadImage(directoryItem, this);
+	//console()<<" ==   photoTaken  = "<<std::endl;
+	mCamera.downloadImage(directoryItem, this);
 }
 
 void CameraAdapter::photoDownloaded(const std::string & downloadPath, EdsError error)
 {
 	photoCameraReadyLiveView();
 	//console()<<" ==   downloadedImage  = "<<mCamera.getCannon().getFileName()<<std::endl;	
-   userPhotoFileName = photoDownloadDirectory().string() +"\\"+ mCamera.getCannon().getFileName();
-   userPhotoIsDownloaded = true;	
-   
+	userPhotoFileName = photoDownloadDirectory().string() +"\\"+ mCamera.getCannon().getFileName();
+	userPhotoIsDownloaded = true;
 }
 
 // Delegate method to tell the canon where to download the full-res image.
 fs::path CameraAdapter::photoDownloadDirectory()
 {
-    return getAppPath()/"data"/"hiResPhotos";////mPhotoDownloadFolder.generic_string();
+	return getAppPath()/"data"/"hiResPhotos";////mPhotoDownloadFolder.generic_string();
 }
 
 // Delegate method when camera ready
@@ -256,8 +255,8 @@ std::string CameraAdapter::photoCameraReadyLiveView()
 		restartLiveViewTimer.stop();
 	}
 	//console()<<"isBusy? "<<mCamera.isBusy()<<std::endl;
-	
-	console()<<"START LIVE VIEW??  "<< CanonErrorToString(err)<<std::endl;
+
+	//console()<<"START LIVE VIEW??  "<< CanonErrorToString(err)<<std::endl;
 
 	return "START";
 }
@@ -265,13 +264,13 @@ void CameraAdapter::handleStateEvent(EdsUInt32 inEvent)
 {
 	if (kEdsStateEvent_Shutdown == inEvent)
 	{
-		console()<<"mCamera SHUTDOWN "<<endl;
+		//console()<<"mCamera SHUTDOWN "<<endl;
 		mCamera.endLiveView();
 		isConnected = false;
 	}
 	else if (kEdsStateEvent_WillSoonShutDown == inEvent)
 	{
-		console()<<"mCamera.isBusy() "<<mCamera.isBusy()<<endl;
+		//console()<<"mCamera.isBusy() "<<mCamera.isBusy()<<endl;
 		mCamera.extendShutDownTimer();
 	}
 }
