@@ -16,6 +16,7 @@ void IntroScreen::setup()
 
 	lapaTv			  = *AssetManager::getInstance()->getTexture( "images/diz/lapa.png" );
 	text1			  = *AssetManager::getInstance()->getTexture( "images/diz/nextText.png" );	
+	discl			  = *AssetManager::getInstance()->getTexture( "images/diz/predup.png" );	
 
 	bg  = *AssetManager::getInstance()->getTexture( "images/diz/bg.jpg" );	
 
@@ -253,6 +254,8 @@ void IntroScreen::drawInviteElements()
 	startInstructionBtn->draw();
 	gl::draw(paws, Vec2f(435.0f, 429.0f));
 	gl::popMatrices();
+
+	gl::draw(discl, Vec2f(0.0f, 1080.0f - discl.getHeight()));	
 }
 
 void IntroScreen::drawIstructionElements() 

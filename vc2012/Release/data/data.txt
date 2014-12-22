@@ -1,5 +1,5 @@
 {
-   "standID" : 1,
+   "userID" : "dfsgdf",
    "netConnection": true,
    "algo": 1,
    "minError": 24,

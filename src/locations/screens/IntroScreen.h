@@ -60,7 +60,7 @@ private:
 
 	bool deviceError;
 
-	Texture logo, text1, cat2, btnFon, paws,  lapaTv, bg;
+	Texture logo, text1, cat2, btnFon, paws,  lapaTv, bg, discl;
 
 	ButtonTex *startInstructionBtn, *startGameBtn, *comeBackBtn;
 
