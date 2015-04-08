@@ -370,11 +370,17 @@ void Game::gotoLevelCompleteScreen()
 		comicsScreen().setMiddlePoint(poses[poseCode]->getMidlePoint());
 		comicsScreen().setPoseScale(scaleAccordingUserHeight);
 		comicsScreen().setPoseShift(poses[poseCode]->getPoseShift());
-		bool ifImageCreated = comicsScreen().createResultComics(level - 1);
 
-		state = SHOW_GAME_RESULT;// PRE_GAME_INTRO;// NONE;
-		//if (ifImageCreated)
-		//	gotoResultScreenEvent();
+		try
+		{
+			comicsScreen().createResultComics(level - 1);
+			state = SHOW_GAME_RESULT;
+		}
+		catch (...)
+		{
+			state = NONE;
+			gotoResultScreenEvent();
+		}
 	}
 	else
 	{		

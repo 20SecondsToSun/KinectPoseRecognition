@@ -87,44 +87,44 @@ void HintScreen::setup()
 
 void HintScreen::draw()
 {
-	if (state == SHOW_STEP_BACK)
+	switch (state)
 	{
+	case SHOW_STEP_BACK:
 		drawStepBackGraphics();
-	}
-	else if (state == SHOW_READY)
-	{
+		break;
+
+	case SHOW_READY:
 		drawAreYoureReadyGraphics();
-	}
-	else if (state == HANDS_AWAITING)
-	{
+		break;
+
+	case HANDS_AWAITING:
 		drawHandsUpGraphics();
-	}
-	else if (state == SHOW_NUMS)
-	{
+		break;
+
+	case SHOW_NUMS:
 		drawCountDownTimer();
-	}
-	else if (state == FADE_NUMS)
-	{
+		break;
+
+	case FADE_NUMS:
 		gl::color(ColorA(1.0f, 1.0f, 1.0f, 0));
 		gl::draw(bg_blue);
 		drawTitle();
+		gl::color(Color::white());
+		drawPreview(false);
+		break;
 
+	case PREVIEW_ONLY:
 		gl::color(Color::white());
 		drawPreview(false);
-	}
-	else if (state == PREVIEW_ONLY)
-	{
-		gl::color(Color::white());
-		drawPreview(false);
-	}
-	else if (state == START_HINT)
-	{
-		gl::color(Color::white());
-		drawPreview(false);
+		break;
 
+	case START_HINT:
+		gl::color(Color::white());
+		drawPreview(false);
 		gl::color(ColorA(1.0f, 1.0f, 1.0f, hintAlpha));
 		gl::draw(hint3, Vec2f(1267.0f, 53.0f));
-	}
+		break;
+	}	
 }
 
 void HintScreen::drawStepBackGraphics()

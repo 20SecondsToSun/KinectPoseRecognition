@@ -5,20 +5,7 @@
 #include "Utils.h"
 #include "FontStore.h"
 
-
-
 #define kinectUsed
-//#define recording
-//#define calibration
-//#define debug	
-//#define nocamera
-
-//#define testServer	
-
-//#define alwayswin
-//#define paramsDraw	
-//#define drawTimer
-//#define recording
 
 namespace colorsParams
 {
@@ -80,9 +67,6 @@ public:
 	static fs::path	getConfigStoragePath();
 	static fs::path	getBaseStoragePath();
 	static fs::path	getPoseSavingPath();	
-
-	//static void		saveBufferSuccessComics(const ci::gl::Texture&, int index);
-	//static std::vector<ci::gl::Texture> getBufferSuccessComics();
 
 	static bool		isNetConnected;
 	static bool		photoFromDirError;

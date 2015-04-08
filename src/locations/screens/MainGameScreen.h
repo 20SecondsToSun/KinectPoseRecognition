@@ -87,7 +87,6 @@ class MainGameScreen : public Location
 		connection gotoResultScreenSignal;
 		connection gotoFirstScreenSignal;
 		connection photoFlashSignal;
-		connection errorFBOSignal;
 		connection cameraStartUpdateSignal;
 		connection cameraStopUpdateSignal;
 

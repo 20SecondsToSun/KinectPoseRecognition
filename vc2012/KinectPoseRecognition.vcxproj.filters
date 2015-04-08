@@ -222,6 +222,12 @@
     <ClCompile Include="..\src\game\Game.cpp">
       <Filter>Source Files\game</Filter>
     </ClCompile>
+    <ClCompile Include="..\src\game\graphicScene\ComicsScreen.cpp">
+      <Filter>Source Files\game\graphicScene</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\game\graphicScene\GameControlScreen.cpp">
+      <Filter>Source Files\game\graphicScene</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\include\Resources.h">

@@ -137,6 +137,8 @@
     <ClCompile Include="..\src\data\Params.cpp" />
     <ClCompile Include="..\src\data\PlayerData.cpp" />
     <ClCompile Include="..\src\game\Game.cpp" />
+    <ClCompile Include="..\src\game\graphicScene\ComicsScreen.cpp" />
+    <ClCompile Include="..\src\game\graphicScene\GameControlScreen.cpp" />
     <ClCompile Include="..\src\game\graphicScene\HintScreen.cpp" />
     <ClCompile Include="..\src\graphics\QRcode.cpp" />
     <ClCompile Include="..\src\KinectPoseRecognitionApp.cpp" />

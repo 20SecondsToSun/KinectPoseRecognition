@@ -74,13 +74,7 @@ void MainGameScreen::init( LocationEngine* game)
 	cameraStopUpdateSignal = recognitionGame().cameraStopUpdateEvent.connect( [ & ]()
 	{
 		isCameraUpdating = false;
-	});
-
-	fboError = false;
-	errorFBOSignal = comicsScreen().errorFBO.connect( [ & ]()
-	{
-		fboError = true;
-	});
+	});	
 
 	gameControls().init();
 	hintScreen().init();
@@ -338,9 +332,7 @@ void MainGameScreen::removeTimers()
 void MainGameScreen::removeHandlers()
 {
 	comeBackBtnSignal.disconnect();
-	photoFlashSignal.disconnect();
-	errorFBOSignal.disconnect();
-
+	photoFlashSignal.disconnect();	
 	cameraConnectionSignal.disconnect();
 	kinectConnectionSignal.disconnect();
 	kinectMissPersonSignal.disconnect();
