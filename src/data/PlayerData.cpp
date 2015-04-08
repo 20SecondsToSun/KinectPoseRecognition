@@ -24,6 +24,15 @@ void PlayerData::initData()
 	}
 }
 
+int PlayerData::getPlayerScore()
+{
+	int total = 0;
+	for (int i = 0; i < POSE_IN_GAME_TOTAL; i++)
+		if (playerData[i].isSuccess)
+			total++;
+	return total;
+}
+
 std::string PlayerData::getTexPath(int i)
 {	
 	return playerData[i].pathHiRes;

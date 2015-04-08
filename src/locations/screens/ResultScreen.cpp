@@ -17,12 +17,12 @@ void ResultScreen::setup()
 	Texture emailBtnTex   = *AssetManager::getInstance()->getTexture("images/serverScreen/mailBtn_off.png");
 	Texture emailBtnTexDown   = *AssetManager::getInstance()->getTexture("images/serverScreen/mailBtn_on.png");	
 	mailBtn = new ButtonTex(emailBtnTex,  "E-mail");
-	mailBtn->setScreenField(Vec2f(1109.0f, 845.0f));
+	mailBtn->setScreenField(Vec2f(621.0f, 738.0f));
 	mailBtn->setDownState(emailBtnTexDown);
 
-	Texture backBtnTex   = *AssetManager::getInstance()->getTexture("images/serverScreen/playMore.png");
+	Texture backBtnTex = *AssetManager::getInstance()->getTexture("images/serverScreen/playMore.png");
 	comeBackBtn = new ButtonTex(backBtnTex,  "BACK");
-	comeBackBtn->setScreenField(Vec2f(1606.0f, 737.0f));
+	comeBackBtn->setScreenField(Vec2f(1538.0f, 723.0f));
 	comeBackBtn->setDownState(backBtnTex);
 
 	Texture comeBackBtnTex   = *AssetManager::getInstance()->getTexture( "images/diz/toStart.png" );
@@ -31,16 +31,16 @@ void ResultScreen::setup()
 	backToStartBtn->setScreenField(Vec2f(0.0f, 958.0f));
 	backToStartBtn->setDownState(comeBackBtnTex);
 
-	Texture facebookBtnTex   = *AssetManager::getInstance()->getTexture("images/serverScreen/fb_off.png");
-	Texture facebookBtnTexDown   = *AssetManager::getInstance()->getTexture("images/serverScreen/fb_on.png");	
+	Texture facebookBtnTex = *AssetManager::getInstance()->getTexture("images/serverScreen/fb_off.png");
+	Texture facebookBtnTexDown = *AssetManager::getInstance()->getTexture("images/serverScreen/fb_on.png");	
 	facebookBtn = new ButtonTex(facebookBtnTex,  "Facebook");
-	facebookBtn->setScreenField(Vec2f(209.0f, 845.0f));
+	facebookBtn->setScreenField(Vec2f(143.0f, 738.0f));
 	facebookBtn->setDownState(facebookBtnTexDown);
 
 	Texture vkontakteBtnTex   = *AssetManager::getInstance()->getTexture("images/serverScreen/vk_off.png");
 	Texture vkontakteBtnTexDown   = *AssetManager::getInstance()->getTexture("images/serverScreen/vk_on.png");	
 	vkontakteBtn = new ButtonTex(vkontakteBtnTex,  "Vkontakte");
-	vkontakteBtn->setScreenField(Vec2f(632.0f, 845.0f));
+	vkontakteBtn->setScreenField(Vec2f(143.0f, 889.0f));
 	vkontakteBtn->setDownState(vkontakteBtnTexDown);
 
 	postPhotoTextTex       = *AssetManager::getInstance()->getTexture("images/serverScreen/postPhotoText.png");
@@ -49,7 +49,7 @@ void ResultScreen::setup()
 
 	Texture playMoreTex1   = *AssetManager::getInstance()->getTexture("images/serverScreen/OneMore.png");
 	comeBackBtn1 = new ButtonTex(playMoreTex1,  "BACK");
-	comeBackBtn1->setScreenField(Vec2f(1449.0f, 692.0f));
+	comeBackBtn1->setScreenField(Vec2f(1538.0f, 723.0f));
 	comeBackBtn1->setDownState(playMoreTex1);
 
 	nothingCatTex            = *AssetManager::getInstance()->getTexture("images/serverScreen/nothingCat.png");
@@ -75,10 +75,10 @@ void ResultScreen::init( LocationEngine* game)
 	canShowResultImages = false;
 	isButtonsInit = false;
 	isLeaveAnimation	= false;	
-
+	
 	qrCode.reset();
 	socialPopup().reset();
-	server().reset();	
+	server().reset();		
 
 	alphaSocialAnimate = 0.0f;
 	alphaEmailAnimate  = 0.0f;
@@ -87,54 +87,73 @@ void ResultScreen::init( LocationEngine* game)
 	scalePhotoRamkaAnimateVec = 1;
 	posPhotoRamkaAnimate = Vec2f::zero();
 
+	//{//debug
 
-	/*	#ifdef debug
-	PlayerData::score = 3;
-	PlayerData::playerData[0].pathHiRes = "level1.jpg";
-	PlayerData::playerData[1].pathHiRes = "level2.jpg";
-	PlayerData::playerData[2].pathHiRes = "level3.jpg";
+	//	auto failImage = *AssetManager::getInstance()->getTexture("images/diz/mimo.png");
+	//	Params::saveBufferSuccessComics(failImage, 0);
+	//	Params::saveBufferSuccessComics(failImage, 1);
 
-	if (Params::photoFromDirError)
-	PlayerData::playerData[0].pathHiRes = "IMG_00.jpg";
+	//	PlayerData::photosWithoutError = 2;
+	//	PlayerData::score = 2;
+	//	PlayerData::playerData[0].pathHiRes = "c:\\projects\\cinder_0.8.6_vc2012\\apps\\KinectPoseRecognition\\vc2012\\Release\\data\\temp\\IMG_0001.jpg";
+	//	PlayerData::playerData[1].pathHiRes = "c:\\projects\\cinder_0.8.6_vc2012\\apps\\KinectPoseRecognition\\vc2012\\Release\\data\\temp\\IMG_0001.jpg";
+	//	//PlayerData::playerData[2].pathHiRes = "level3.jpg";
 
-	for (size_t  i = 0; i < POSE_IN_GAME_TOTAL; i++)
-	{
-	PlayerData::playerData[i].isSuccess = false;	
-	PlayerData::playerData[i].storyCode = 0;	
-	}
+	//	if (Params::photoFromDirError)
+	//		PlayerData::playerData[0].pathHiRes = "IMG_00.jpg";
 
-	for (size_t  i = 0; i < PlayerData::score; i++)
-	{
-	PlayerData::playerData[i].isSuccess = true;	
-	PlayerData::playerData[i].storyCode = i;	
-	}
-	#endif*/	
+	//	for (int i = 0; i < POSE_IN_GAME_TOTAL; i++)
+	//	{
+	//		PlayerData::playerData[i].isSuccess = false;
+	//		PlayerData::playerData[i].storyCode = 0;
+	//	}
 
-	/*drawHandler = &ResultScreen::drawSocialPopup;
-	state = POPUP_MODE;	
+	//	for (int i = 0; i < PlayerData::score; i++)
+	//	{
+	//		PlayerData::playerData[i].isSuccess = true;
+	//		PlayerData::playerData[i].storyCode = i;
+	//	}
 
-	socialPopup().show(popupTypes::FACEBOOK);	*/
-	/*drawHandler = &ResultScreen::drawEmailPopup;
-	state = POPUP_EMAIL;	
+	//	float poseScale = 1.0f;
+	//	Vec2f poseShiftVec = Vec2f::zero();
+	//	int fboWidth = (int)(1920.0f * poseScale);
+	//	int fboHeight = (int)(1080.0f * poseScale);
 
-	emailPopup().show();*/
-	
+	//	PlayerData::setFragmentScaleOptions(fboWidth, fboHeight, poseScale, poseShiftVec);
 
+
+	//	/*drawHandler = &ResultScreen::drawSocialPopup;
+	//	state = POPUP_MODE;
+
+	//	socialPopup().show(popupTypes::FACEBOOK);	*/
+	//	/*drawHandler = &ResultScreen::drawEmailPopup;
+	//	state = POPUP_EMAIL;
+
+	//	emailPopup().show();*/
+	//}
+	//
+	console() << "------------------------------------::::   " << endl;
 	if(PlayerData::score != 0)
 	{
-		bool status = gameScoreSaver().saveGameStatusIntoFile(true);
-		if(status == false)
+		if (!gameScoreSaver().saveGameStatusIntoFile(true))
 			drawErrorStatus();
 
-		comicsPhoto = Params::getBufferSuccessComics();
-		if(comicsPhoto.getWidth())
-			comicsPhotoScale = 1249.0f / comicsPhoto.getWidth();
-		comicsPhotoScale = 1;
+		comicsPhotoVec[0] = comicsScreen().getSuccessComics(0);
+		comicsPhotoVec[1] = comicsScreen().getSuccessComics(1);
+		
+		//texs++;
+		//comicsPhotoVec[1] = *texs;
+		console() << "geeeeeeeeeeeeeeeet::::   " << comicsPhotoVec[0] << endl;
+		comicsPhotoScale[0] = 693.0f / comicsPhotoVec[0].getWidth();
+		comicsPhotoScale[1] = 693.0f / comicsPhotoVec[1].getWidth();
 
+		console() << "scale 0 ::::   " << comicsPhotoScale[0] << endl;
+		console() << "scale 1 ::::   " << comicsPhotoScale[1] << endl;
+		
 		drawHandler = &ResultScreen::showResultComics; 
 		state = SHOW_RESULT_PHOTO;
 		savingPhotopositionY = 1100.0f;
-		timeline().apply( &savingPhotopositionY, 947.0f, 0.4f, EaseOutCubic()).delay(0.4f);
+		timeline().apply( &savingPhotopositionY, 827.0f, 0.4f, EaseOutCubic()).delay(0.4f);
 		timeline().apply( &photoComicsPosition, Vec2f(0.0f, -1080.0f), Vec2f(0.0f, 0.0f), 0.4f, EaseOutCubic() ).finishFn( bind( &ResultScreen::startLoadingProcess, this ) );
 	}
 	else
@@ -231,8 +250,8 @@ void ResultScreen::resultPhotoRamkaStateInit()
 {
 	//photoRamki().initAnimationParams();	
 	canShowResultImages = true;			
-	timeline().apply( &scalePhotoRamkaAnimateVec, 1.0f, 0.71f, 0.5f);
-	timeline().apply( &posPhotoRamkaAnimate, Vec2f(10.0f, 82.0f), 0.5f);
+	timeline().apply( &scalePhotoRamkaAnimateVec, 1.0f, 1.0f, 0.5f);
+	timeline().apply( &posPhotoRamkaAnimate, Vec2f(0.0f, 0.0f), 0.5f);
 }
 
 void ResultScreen::animationShowChekConnection()
@@ -336,7 +355,6 @@ void ResultScreen::connectButtons()
 	backToStartSignal = backToStartBtn->mouseUpEvent.connect(boost::bind(&ResultScreen::backToStartHandler, this));
 
 	isButtonsInit = true;
-
 
 	if (alphaSocialAnimate <= 0.0f)
 		timeline().apply( &alphaSocialAnimate, 1.0f, 0.9f, EaseOutCubic() );
@@ -557,26 +575,26 @@ void ResultScreen::drawButtonsIfAllow()
 {
 	if(isButtonsInit)
 	{
-		Vec2f mailShift = Vec2f(0.0f, 0.0f);
+		Vec2f mailShift = Vec2f::zero();
 		if(server().isConnected)
 		{	
 			gl::color(ColorA(1.0f, 1.0f, 1.0f, alphaSocialAnimate));
-			gl::draw(postPhotoTextTex, Vec2f(229.0f, 746.0f));
+			gl::draw(postPhotoTextTex, Vec2f(160.0f, 591.0f));
 			facebookBtn->draw();
 			vkontakteBtn->draw();
 			gl::color(Color::white());
-			mailBtn->setScreenField(Vec2f(1109.0f, 845.0f));
+			mailBtn->setScreenField(Vec2f(621.0f, 738.0f));
 		}
 		else
 		{
-			mailShift = Vec2f(-895.0f, 0.0f);
-			mailBtn->setScreenField(Vec2f(229.0f, 845.0f));
+			mailShift = Vec2f(-395.0f, 0.0f);
+			mailBtn->setScreenField(Vec2f(229.0f, 738.0f));
 		}
 
 		gl::pushMatrices();
 		gl::translate(mailShift);
 		gl::color(ColorA(1.0f, 1.0f, 1.0f, alphaEmailAnimate));
-		gl::draw(emailtPhotoTextTex, Vec2f(1124.0f, 746.0f));			
+		gl::draw(emailtPhotoTextTex, Vec2f(635.0f, 591.0f));			
 		gl::popMatrices();
 
 		mailBtn->draw();	
@@ -617,7 +635,7 @@ void ResultScreen::showResultComics()
 	drawPhotoRamka();
 
 	gl::pushMatrices();
-	gl::translate(688.0f, savingPhotopositionY);
+	gl::translate(0.5f*(getWindowWidth() - savingPhotoTex.getWidth()), savingPhotopositionY);
 	gl::draw(savingPhotoTex);
 	gl::popMatrices();
 }
@@ -626,16 +644,31 @@ void ResultScreen::drawPhotoRamka()
 {
 	gl::pushMatrices();
 	gl::translate(photoComicsPosition);
-	gl::draw(ramkaShadowTex, Vec2f(196.0f, 117.0f));
-	gl::draw(ramkaTex, Vec2f(230.0f, -88.0f));
-	gl::pushMatrices();
-	gl::rotate(-1);
-	gl::translate(96.0f, 209.0f);
-	gl::translate(230.0f, -88.0f);
-	gl::translate(-6.0f, 28.0f);
-	gl::scale(comicsPhotoScale, comicsPhotoScale);
-	gl::draw(comicsPhoto);	
-	gl::popMatrices();
+	gl::draw(ramkaShadowTex, Vec2f(116.0f, 106.0f));	
+	//PHOTO1
+	if (comicsPhotoVec[0])
+	{
+		gl::pushMatrices();
+		gl::rotate(-1);
+		gl::translate(176.0f, 122.0f);
+		gl::scale(comicsPhotoScale[0], comicsPhotoScale[0]);
+		gl::draw(comicsPhotoVec[0]);
+		gl::popMatrices();
+	}
+	//PHOTO2
+	if (comicsPhotoVec[1])
+	{
+		gl::pushMatrices();
+		gl::rotate(-1);
+		gl::translate(1176.0f, 122.0f);
+		gl::translate(-150.0f, 49.0f);
+		gl::scale(comicsPhotoScale[1], comicsPhotoScale[1]);
+
+		gl::draw(comicsPhotoVec[1]);
+		gl::popMatrices();
+	}
+
+	gl::draw(ramkaTex, Vec2f(134.0f, 0.0f));
 	gl::popMatrices();
 }
 
@@ -646,7 +679,7 @@ void ResultScreen::drawUpsetScreen()
 	backToStartBtn->draw();
 }
 
-void ResultScreen::drawErrorScreen() 
+void ResultScreen::drawErrorScreen()
 {
 	Utils::textFieldDraw("Что-то пошло не так...\nЕсли ситуация повторится,\nперезапустите программу",  fonts().getFont("MaestroC", 114), Vec2f(510.f, 348.0f), Color::white());
 	comeBackBtn->draw();

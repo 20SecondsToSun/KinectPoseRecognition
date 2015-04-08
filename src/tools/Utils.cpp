@@ -77,7 +77,7 @@ bool Utils::isValidTel(string tel)
 {	
 	if (tel.size()==0) return false;
 	if (tel.size()<10) return false;
-	for (auto i = 0; i < tel.size(); i++)
+	for (size_t i = 0; i < tel.size(); i++)
 	{
 		if (!isdigit(tel[i])) return false;
 	}

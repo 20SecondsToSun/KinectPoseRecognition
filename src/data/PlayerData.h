@@ -36,7 +36,9 @@ class PlayerData
 		static int score;
 		static int photosWithoutError;
 
+
 		static void initData();	
+		static int getPlayerScore();
 
 		static std::string getTexPath(int i);
 	

@@ -5,6 +5,7 @@
 #include "cinder/gl/gl.h"
 #include "cinder/gl/Texture.h"
 #include "cinder/gl/Fbo.h"
+#include "CameraAdapter.h"
 
 using namespace ci;
 using namespace gl;
@@ -19,14 +20,22 @@ public:
 	boost::signals2::signal<void(void)> errorFBO;
 
 	void setup()
-	{	
-		mainFbo   = gl::Fbo(1249, 703);
-		cameraImageScale = 1.8181818;
+	{			
+		cameraImageScale = 1.8181818f;
 		scaleToFit = 1249.0f / 1920.0f;
+		failImage  = *AssetManager::getInstance()->getTexture("images/diz/mimo.png");
+	}
+	
+	void createResultComicsFail(int index)
+	{
+		_successComics[index] = failImage;
 	}
 
-	bool createResultComics()
+	bool createResultComics(int index)
 	{
+		mainFbo = gl::Fbo(1249, 703);
+		currentSuccessIndex = index;
+
 		calculateFinalOffset();
 
 		fboWidth  = (int)(1920.0f * poseScale);
@@ -43,8 +52,11 @@ public:
 		}		
 
 		PlayerData::setFragmentScaleOptions(fboWidth, fboHeight, poseScale, poseShiftVec);		
-		PlayerData::finalShift = finalShift;
-		Params::saveBufferSuccessComics(mainFbo.getTexture());
+		PlayerData::finalShift = finalShift;	
+		
+		_successComics[index] = mainFbo.getTexture();
+
+		Utils::clearFBO(mainFbo);	
 	
 #ifdef debug
 		Utils::printVideoMemoryInfo();	
@@ -84,43 +96,81 @@ public:
 				gl::scale(scaleToFit, scaleToFit);
 				gl::draw(comicsImage);
 			gl::popMatrices();
-		});
+		});		
 	}
 
-	void setPoseScale(float  _poseScale)
+	void setPoseScale(float _poseScale)
 	{
 		poseScale = _poseScale;
 	}
 
-	void setPoseShift(Vec2f  _poseShiftVec)
+	void setPoseShift(const Vec2f& _poseShiftVec)
 	{
 		poseShiftVec = _poseShiftVec;
 	}
 
-	void setMiddlePoint(Vec2f  _poseShiftVec)
+	void setMiddlePoint(const Vec2f& _poseShiftVec)
 	{
 		middleVec = _poseShiftVec;
 	}	
 
-	void setCameraImage(Texture tex)
+	void setCameraImage(const Texture& tex)
 	{
 		cameraImage = tex;
 	}
 
-	void setComicsImage(Texture tex)
+	void setComicsImage(const Texture& tex)
 	{
 		comicsImage = tex;
 	}
 
-private:
+	void setGuess(bool guess)
+	{
+		this-> guess = guess;
+	}	
 
+	Texture getCurrentComics()
+	{
+		if (guess)
+			return _successComics[currentSuccessIndex];
+
+		return failImage;
+	}
+
+	void draw()
+	{
+		if (guess)
+		{
+			auto tex = mainFbo.getTexture();
+			float scale = 1920.0f / tex.getWidth();
+			gl::pushMatrices();
+			gl::scale(scale, scale);
+			gl::draw(tex);
+			gl::popMatrices();
+		}
+		else
+		{
+			gl::draw(failImage);
+		}
+	}
+
+	ci::gl::Texture getSuccessComics(int index)
+	{
+		return _successComics[index];
+	}
+
+private:
+	bool guess;
 	Fbo mainFbo;	
 	int fboWidth, fboHeight;
+	int currentSuccessIndex;
 	float poseScale,  cameraImageScale;
 	float scaleToFit;
 
 	Vec2f poseShiftVec, middleVec, finalShift;
-	Texture cameraImage, comicsImage;	
+	Texture cameraImage, comicsImage, failImage;
+
+	ci::gl::Texture _successComics[2];	
 };
 
-inline ComicsScreen&	comicsScreen() { return ComicsScreen::getInstance(); };
+inline ComicsScreen& comicsScreen() { return ComicsScreen::getInstance(); };

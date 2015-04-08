@@ -27,6 +27,8 @@ private:
 	float mainScale;
 	void clearFBO(Fbo fbo);
 
+	ci::gl::Texture getValidTexture(int index);
+
 public:
 	static PhotoMaker& getInstance() { static PhotoMaker pht; return pht; };
 

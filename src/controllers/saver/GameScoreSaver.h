@@ -116,7 +116,7 @@ private:
 
 		if (file.is_open())
 		{
-			for (int i = 0; i < dayGamesStrings.size(); i++)
+			for (size_t i = 0; i < dayGamesStrings.size(); i++)
 				file<<dayGamesStrings[i]<<endl;
 
 			file.close();

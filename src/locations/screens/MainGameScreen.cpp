@@ -17,10 +17,8 @@ void MainGameScreen::setup()
 
 	cameraCanon().setup();
 	cameraCanon().live();
-
 	kinect().setup();
 	recognitionGame().setup();
-
 	gameControls().setup();
 	hintScreen().setup();
 	comicsScreen().setup();
@@ -283,12 +281,12 @@ void MainGameScreen::drawGame()
 		break;
 
 	case SHOW_GAME_RESULT:
-		//comicsScreen().draw();
-		gameControls().draw();
+		comicsScreen().draw();
+		//gameControls().draw();
 		break;
 
 	case MAKE_SCREENSHOOT:
-		//comicsScreen().draw();
+		comicsScreen().draw();
 		break;
 
 	case PHOTO_MAKING_WAIT:	

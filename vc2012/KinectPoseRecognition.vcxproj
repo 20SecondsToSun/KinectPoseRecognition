@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project DefaultTargets="Build" ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|Win32">
       <Configuration>Debug</Configuration>
@@ -50,21 +50,24 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>..\include;..\..\..\\include;..\..\..\\boost;..\src;..\blocks\Cinder-KCB\src;..\blocks\Cinder-KCB\lib;$(KINECT_TOOLKIT_DIR)inc;$(KINECTSDK10_DIR)\inc;..\blocks\Cinder-CanonSdk\include;..\blocks\Cinder-CanonSdk\src;..\blocks\Cinder-CanonSdk\lib\EDSDK\Header;..\blocks\Cinder-Curl\src;..\src\buttons;..\src\controllers\assets;..\src\controllers\camera;..\src\controllers\fonts;..\src\controllers\kinect;..\src\controllers\photomaker;..\src\controllers\saver;..\src\controllers\server;..\src\data;..\src\game;..\src\game\graphicScene;..\src\graphics;..\src\locations\engine;..\src\locations\screens;..\src\social;..\src\touchKeyboard;..\src\controllers\kinect\gestures;..\src\controllers\kinect\gestures\handsUpGesture;..\src\tools;..\src\locations\screens\help;..\src\locations\popup</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\include;..\..\..\\include;..\..\..\\boost;..\src;..\blocks\Cinder-KCB\src;..\blocks\Cinder-KCB\lib;$(KINECT_TOOLKIT_DIR)inc;$(KINECTSDK10_DIR)\inc;..\blocks\Cinder-CanonSdk\include;..\blocks\Cinder-CanonSdk\src;..\blocks\Cinder-CanonSdk\lib\EDSDK\Header;..\blocks\Cinder-Curl\src;..\src\buttons;..\src\controllers\assets;..\src\controllers\camera;..\src\controllers\fonts;..\src\controllers\kinect;..\src\controllers\photomaker;..\src\controllers\saver;..\src\controllers\server;..\src\data;..\src\game;..\src\game\graphicScene;..\src\graphics;..\src\locations\engine;..\src\locations\screens;..\src\social;..\src\touchKeyboard;..\src\controllers\kinect\gestures;..\src\controllers\kinect\gestures\handsUpGesture;..\src\tools;..\src\locations\screens\help;..\src\locations\popup;C:\Program Files\Microsoft SDKs\Kinect\v1.7\inc;..\blocks\Cinder-Awesomium\include</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;NOMINMAX;_WIN32_WINNT=0x0502;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MinimalRebuild>true</MinimalRebuild>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
-      <PrecompiledHeader />
+      <PrecompiledHeader>Use</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <ForcedIncludeFiles>StdAfx.h;%(ForcedIncludeFiles)</ForcedIncludeFiles>
+      <DisableSpecificWarnings>4996;4244;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+      <AdditionalOptions>/Zm160 %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <ResourceCompile>
       <AdditionalIncludeDirectories>"..\..\..\\include";..\include</AdditionalIncludeDirectories>
     </ResourceCompile>
     <Link>
-      <AdditionalDependencies>cinder-$(PlatformToolset).lib;Kinect10.lib;KinectCommonBridge.lib;FaceTrackLib.lib;OpenGL32.lib;..\blocks\Cinder-CanonSdk\lib\EDSDK\Library\EDSDK.lib;..\blocks\Cinder-Curl\lib\msw\libcurl.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>cinder-$(PlatformToolset).lib;KinectCommonBridge.lib;OpenGL32.lib;..\blocks\Cinder-Awesomium\build\lib\msw\awesomium.lib;..\blocks\Cinder-CanonSdk\lib\EDSDK\Library\EDSDK.lib;..\blocks\Cinder-Curl\lib\msw\libcurl.lib;..\blocks\Cinder-KCB\lib\FaceTrackLib.lib;..\blocks\Cinder-KCB\lib\Kinect10.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>..\..\..\\lib\msw\$(PlatformTarget);$(KINECT_TOOLKIT_DIR)Lib\x86;$(KINECTSDK10_DIR)\lib\x86;..\blocks\Cinder-KCB\lib\$(PlatformTarget)\lib\$(Configuration)\$(PlatformToolset);..\blocks\Cinder-CanonSdk\lib\EDSDK\Library\;..\blocks\Cinder-Curl\lib\msw\</AdditionalLibraryDirectories>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <SubSystem>Windows</SubSystem>
@@ -76,16 +79,18 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
-      <AdditionalIncludeDirectories>..\include;..\..\..\\include;..\..\..\\boost;..\blocks\Cinder-KCB\src;..\blocks\Cinder-KCB\lib;$(KINECT_TOOLKIT_DIR)inc;$(KINECTSDK10_DIR)\inc;..\src;..\blocks\Cinder-CanonSdk\include;..\blocks\Cinder-CanonSdk\src;..\blocks\Cinder-CanonSdk\lib\EDSDK\Header;..\blocks\Cinder-Curl\src;..\src\buttons;..\src\controllers\assets;..\src\controllers\camera;..\src\controllers\fonts;..\src\controllers\kinect;..\src\controllers\photomaker;..\src\controllers\saver;..\src\controllers\server;..\src\data;..\src\game\graphicScene;..\src\game;..\src\graphics;..\src\locations\engine;..\src\locations\popup;..\src\locations\screens;..\src\tools;..\src\touchKeyboard;..\src\locations\screens\help;..\src\social;..\blocks\Cinder-Awesomium\include;..\src\controllers\kinect\gestures;..\src\controllers\kinect\gestures\handsUpGesture;c:\Program Files (x86)\Visual Leak Detector\include\</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\include;..\..\..\\include;..\..\..\\boost;..\blocks\Cinder-KCB\src;..\blocks\Cinder-KCB\lib;$(KINECT_TOOLKIT_DIR)inc;$(KINECTSDK10_DIR)\inc;..\src;..\blocks\Cinder-CanonSdk\include;..\blocks\Cinder-CanonSdk\src;..\blocks\Cinder-CanonSdk\lib\EDSDK\Header;..\blocks\Cinder-Curl\src;..\src\buttons;..\src\controllers\assets;..\src\controllers\camera;..\src\controllers\fonts;..\src\controllers\kinect;..\src\controllers\photomaker;..\src\controllers\saver;..\src\controllers\server;..\src\data;..\src\game\graphicScene;..\src\game;..\src\graphics;..\src\locations\engine;..\src\locations\popup;..\src\locations\screens;..\src\tools;..\src\touchKeyboard;..\src\locations\screens\help;..\src\social;..\blocks\Cinder-Awesomium\include;..\src\controllers\kinect\gestures;..\src\controllers\kinect\gestures\handsUpGesture;C:\Program Files\Microsoft SDKs\Kinect\v1.7\inc</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;NOMINMAX;_WIN32_WINNT=0x0502;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
-      <PrecompiledHeader>
-      </PrecompiledHeader>
+      <PrecompiledHeader>Use</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <MinimalRebuild>false</MinimalRebuild>
-      <PrecompiledHeaderFile />
+      <PrecompiledHeaderFile>stdafx.h</PrecompiledHeaderFile>
+      <ForcedIncludeFiles>StdAfx.h;%(ForcedIncludeFiles)</ForcedIncludeFiles>
+      <AdditionalOptions>/Zm161 %(AdditionalOptions)</AdditionalOptions>
+      <DisableSpecificWarnings>4996;4244;%(DisableSpecificWarnings)</DisableSpecificWarnings>
     </ClCompile>
     <ProjectReference>
       <LinkLibraryDependencies>true</LinkLibraryDependencies>
@@ -94,7 +99,7 @@
       <AdditionalIncludeDirectories>"..\..\..\\include";..\include</AdditionalIncludeDirectories>
     </ResourceCompile>
     <Link>
-      <AdditionalDependencies>cinder-$(PlatformToolset).lib;Kinect10.lib;KinectCommonBridge.lib;FaceTrackLib.lib;OpenGL32.lib;..\blocks\Cinder-Awesomium\build\lib\msw\awesomium.lib;..\blocks\Cinder-CanonSdk\lib\EDSDK\Library\EDSDK.lib;..\blocks\Cinder-Curl\lib\msw\libcurl.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>cinder-$(PlatformToolset).lib;KinectCommonBridge.lib;OpenGL32.lib;..\blocks\Cinder-Awesomium\build\lib\msw\awesomium.lib;..\blocks\Cinder-CanonSdk\lib\EDSDK\Library\EDSDK.lib;..\blocks\Cinder-Curl\lib\msw\libcurl.lib;..\blocks\Cinder-KCB\lib\FaceTrackLib.lib;..\blocks\Cinder-KCB\lib\Kinect10.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <GenerateDebugInformation>false</GenerateDebugInformation>
       <GenerateMapFile>true</GenerateMapFile>
       <SubSystem>Windows</SubSystem>
@@ -131,6 +136,8 @@
     <ClCompile Include="..\src\controllers\server\Server.cpp" />
     <ClCompile Include="..\src\data\Params.cpp" />
     <ClCompile Include="..\src\data\PlayerData.cpp" />
+    <ClCompile Include="..\src\game\Game.cpp" />
+    <ClCompile Include="..\src\game\graphicScene\HintScreen.cpp" />
     <ClCompile Include="..\src\graphics\QRcode.cpp" />
     <ClCompile Include="..\src\KinectPoseRecognitionApp.cpp" />
     <ClCompile Include="..\src\locations\engine\Location.cpp" />
@@ -143,6 +150,10 @@
     <ClCompile Include="..\src\social\Facebook.cpp" />
     <ClCompile Include="..\src\social\SocialShare.cpp" />
     <ClCompile Include="..\src\social\Vkontakte.cpp" />
+    <ClCompile Include="..\src\srdafx.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
+    </ClCompile>
     <ClCompile Include="..\src\tools\Utils.cpp" />
     <ClCompile Include="..\src\touchKeyboard\VirtualKeyboard.cpp" />
   </ItemGroup>
@@ -194,6 +205,7 @@
     <ClInclude Include="..\src\social\Facebook.h" />
     <ClInclude Include="..\src\social\SocialShare.h" />
     <ClInclude Include="..\src\social\Vkontakte.h" />
+    <ClInclude Include="..\src\stdafx.h" />
     <ClInclude Include="..\src\tools\Utils.h" />
     <ClInclude Include="..\src\touchKeyboard\VirtualKeyboard.h" />
   </ItemGroup>

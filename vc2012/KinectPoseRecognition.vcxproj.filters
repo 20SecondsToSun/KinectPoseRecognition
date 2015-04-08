@@ -213,6 +213,15 @@
     <ClCompile Include="..\blocks\Cinder-Awesomium\src\CinderAwesomium.cpp">
       <Filter>blocks\Cinder-Awesomium</Filter>
     </ClCompile>
+    <ClCompile Include="..\src\srdafx.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\game\graphicScene\HintScreen.cpp">
+      <Filter>Source Files\game\graphicScene</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\game\Game.cpp">
+      <Filter>Source Files\game</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\include\Resources.h">
@@ -361,6 +370,9 @@
     </ClInclude>
     <ClInclude Include="..\src\controllers\kinect\gestures\KinectGestureSegment.h">
       <Filter>Source Files\controllers\kinect\gestures</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\stdafx.h">
+      <Filter>Source Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

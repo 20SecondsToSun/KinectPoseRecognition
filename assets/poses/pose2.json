@@ -1,7 +1,7 @@
 {
    "poses" : [
       {
-         "comics" : "dreamies.png",
+         "comics" : "derrick2.png",
 		 "data" : [
             {
                "x" : 178.0,
@@ -64,8 +64,8 @@
                "z" : 2.687187433242798
             }
          ],
-         "poseImage" : "pose1.png",	
-		 "name" : "pose",		
+         "poseImage" : "pose2.png",	
+		 "name" : "pose2",		
          "percent" : 80,
          "tilt" : -2,
          "time" : 50

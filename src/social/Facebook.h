@@ -23,7 +23,7 @@ namespace facebookParams
 	const std::string NULL_ALBUM_ID							= "-1";
 	const std::string ALBUM_NAME_DEFAULT				    = "Dreamies";
 	const std::string STATUS_DEFAULT						= "#Dreamies Лакомство Dreamies® – кот за них на все готов! www.dreamies.ru";
-	const std::string POSTING_WAITING_TEXT					= "Отправляем фотографию в Facebook..";
+	const std::string POSTING_WAITING_TEXT					= "Отправляем фотографии в Facebook..";
 }
 
 class Facebook: public SocShare

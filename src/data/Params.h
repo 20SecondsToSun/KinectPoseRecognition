@@ -42,7 +42,7 @@ namespace photoMakerParams
 namespace poseParams
 {
 	const float				  BOX_SCALE							= 240.f;
-	const int				  POSE_IN_GAME_TOTAL				= 1;
+	const int				  POSE_IN_GAME_TOTAL				= 2;
 	static const std::string  DATA_BASE_NAME					= "poses.json";
 	static const std::string  JSON_STORAGE_FOLDER				= "poses";
 
@@ -81,8 +81,8 @@ public:
 	static fs::path	getBaseStoragePath();
 	static fs::path	getPoseSavingPath();	
 
-	static void		saveBufferSuccessComics(ci::gl::Texture);
-	static ci::gl::Texture getBufferSuccessComics();
+	//static void		saveBufferSuccessComics(const ci::gl::Texture&, int index);
+	//static std::vector<ci::gl::Texture> getBufferSuccessComics();
 
 	static bool		isNetConnected;
 	static bool		photoFromDirError;
@@ -103,6 +103,5 @@ public:
 	static int		standID;
 
 	static float	etalonHeight;
-
-	static ci::gl::Texture _successComics;
+	
 };

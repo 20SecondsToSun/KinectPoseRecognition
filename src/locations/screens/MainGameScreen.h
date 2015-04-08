@@ -26,6 +26,7 @@ using namespace std;
 class MainGameScreen : public Location
 {
 	public:
+		static const int GAMES_COUNT = 2;
 
 		void setup();
 		void init( LocationEngine* game);

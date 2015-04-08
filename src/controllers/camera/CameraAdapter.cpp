@@ -162,8 +162,8 @@ void CameraAdapter::draw()
 	gl::pushMatrices();	
 	if (mCamera.isLiveViewing())//tryToTakePhoto == false)	
 	{	
-		gl::translate(1920, -100);
-		gl::scale(-1.8181818, 1.8181818);
+		gl::translate(1920.0f, -100.0f);
+		gl::scale(-1.8181818f, 1.8181818f);
 		gl::color(Color::white());
 		gl::draw( gl::Texture( mCamera.getLiveSurface()));				
 		lastFrame = mCamera.getLiveSurface();			
@@ -171,7 +171,7 @@ void CameraAdapter::draw()
 	else 
 	{
 		gl::translate(translateSurface);
-		gl::scale(-1.8181818, 1.8181818);
+		gl::scale(-1.8181818f, 1.8181818f);
 		gl::color(Color::white());
 		gl::draw(lastFrame);
 	}

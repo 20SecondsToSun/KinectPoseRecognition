@@ -189,19 +189,22 @@ bool Saver::saveImageIntoBase(string mails,  ci::Surface  image)
 			isSave = false;
 	}
 	else
-	{		
+	{
 		if(fs::create_directory(dir_path))
-		{			
+		{	
 			if (checkFile(file_path, saveString))
 			{
-				image_path = getAppPath()/dirname/(to_string(getImagesInDir(dir_path))+".jpg");
+				image_path = getAppPath()/dirname/(to_string(getImagesInDir(dir_path))+".jpg");			
 				writeImage( image_path, image);
 			}
 			else
 				isSave = false;
 		}
-		else		
+		else
+		{
 			isSave = false;
+		}
+			
 	}
 
 	return isSave;

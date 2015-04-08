@@ -134,27 +134,27 @@ public :
 		}
 	}	
 
-	std::string	getName()  
+	std::string	getName()  const
 	{
 		return name;
 	}
 
-	std::vector<ci::Vec3f>	getPoints()
+	std::vector<ci::Vec3f>	getPoints() const
 	{ 
 		return rawPoints; 
 	}
 
-	std::vector<ci::Vec3f>	getNormalizePoints()
+	std::vector<ci::Vec3f>	getNormalizePoints() const
 	{ 
 		return normalizePoints; 
 	}
 
-	ci::Surface16u	getImage() 
+	ci::Surface16u	getImage() const
 	{ 
 		return _image; 
 	}
 
-	ci::gl::Texture  getImageTex() 
+	ci::gl::Texture  getImageTex()  const
 	{
 		return _imageTex;
 	}
@@ -169,7 +169,7 @@ public :
 		_timeForPose = val;
 	}
 
-	int getTime()  
+	int getTime() const
 	{
 		return _timeForPose;
 	}
@@ -179,7 +179,7 @@ public :
 		_matchPercent = val;
 	}
 
-	int getPercent()  
+	int getPercent() const
 	{
 		return _matchPercent;
 	}		
@@ -189,7 +189,7 @@ public :
 		_comicsName = val;
 	}			
 
-	std::string getComicsName()  
+	std::string getComicsName() const
 	{
 		return _comicsName;
 	}	
@@ -252,18 +252,17 @@ public :
 
 	void drawLabel() {};
 
-	ci::Vec2f getAnchor()
+	ci::Vec2f getAnchor() const
 	{
 		return anchorPoint;
 	}
 
-	void	createBoundingBox()
+	void createBoundingBox()
 	{
 		double min_x = FLT_MAX, min_y = FLT_MAX, max_x = FLT_MIN, max_y = FLT_MIN, min_z = FLT_MAX, max_z = FLT_MIN;
 
 		for (size_t i = 0; i < rawPoints.size(); i++)
 		{
-
 			Vec3f v = rawPoints[i];
 			if(v.x < min_x) min_x = v.x;
 			if(v.x > max_x) max_x = v.x;

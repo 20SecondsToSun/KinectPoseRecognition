@@ -13,6 +13,7 @@ $RECYCLE.BIN/
 *.msi
 *.msm
 *.msp
+*.obj
 
 # =========================
 # Operating System Files
@@ -20,6 +21,32 @@ $RECYCLE.BIN/
 
 # OSX
 # =========================
+
+*.tlog
+*.log
+*.obj
+*.sdf
+*.opensdf
+*.lastbuildstate
+*.map
+*.dll
+*.pdb
+*.exe
+*.idb
+*.pak
+*.pch
+*.ilk
+*.codeanalysis
+*.codeanalysisast
+
+ipch/
+hiResPhotos/
+soc
+cookies.txt
+photo/
+*.csv
+temp/
+savingPose/
 
 .DS_Store
 .AppleDouble

@@ -31,10 +31,11 @@ TODO
 9. кнопку закрыть в попапах сделать побольше
 
 */
-
+//#define recording
 class KinectPoseRecognitionApp : public AppNative
 {
 public:	
+
 	void	setup();
 	void	keyDown( KeyEvent event );
 	void	mouseDown( MouseEvent event );
@@ -70,12 +71,12 @@ void KinectPoseRecognitionApp::setup()
 {
 	setWindowSize(1920, 1080);
 	setFrameRate(60);	
-
+//setFullScreen(true);
 #ifndef debug
-	setFullScreen(true);
+	//setFullScreen(true);
 	hideCursor();
 #else
-	//setFullScreen(true);
+	
 	//hideCursor();
 #endif
 
@@ -134,8 +135,9 @@ void KinectPoseRecognitionApp::setup()
 
 
 #ifdef recording
-	setFullScreen(true);
-	helpTex1 = loadImage(getAppPath()/"data/poses/test/Cat.png");		
+	//setFullScreen(true);
+	helpTex1 = *AssetManager::getInstance()->getTexture("poses/derrick2.png");
+	//getAppPath()/"data/poses/test/Cat.png");		
 	//helpTex2 = loadImage(getAppPath()/"data/poses/test/Cat1.png");		
 	//helpTex3 = loadImage(getAppPath()/"data"/"poses"/"test"/"Cat2.png");	
 	//helpTex4 = loadImage(getAppPath()/"data"/"poses"/"test"/"Cat3.png");		
@@ -215,6 +217,7 @@ void KinectPoseRecognitionApp::update()
 			kinect().stopTracking();
 			saveTimer.stop();
 			state = "SaveOrNot";
+			writeImage(Params::getPoseSavingPath() / "screen.png", copyWindowSurface());
 		}	
 	}	
 #else
@@ -235,6 +238,7 @@ void KinectPoseRecognitionApp::draw()
 
 #ifdef recording
 	cameraCanon().draw();
+	gl::draw(helpTex1);
 	kinect().draw();
 
 	ColorA colorZhint = ColorA(1, 1, 1, 1);
@@ -291,6 +295,9 @@ void KinectPoseRecognitionApp::draw()
 #endif
 
 	toucher().draw();
+	gl::color(Color(1, 0, 0));
+	gl::drawSolidRect(Rectf(0, 1080, 1920, 1600));
+	gl::color(Color::white());
 }
 
 void KinectPoseRecognitionApp::mouseDown( MouseEvent event )
@@ -298,14 +305,14 @@ void KinectPoseRecognitionApp::mouseDown( MouseEvent event )
 	toucher().setPosition(event.getPos());
 
 	//#ifdef debug	
-	//recognitionGame().testPercent100 = true;
+	recognitionGame().testPercent100 = true;
 	//#endif
 }
 
 void KinectPoseRecognitionApp::mouseUp( MouseEvent event )
 {
 	// #ifdef debug	
-	//recognitionGame().testPercent100 = false;
+	recognitionGame().testPercent100 = false;
 	//#endif
 }
 
@@ -410,6 +417,7 @@ void KinectPoseRecognitionApp::shutdown()
 	}
 
 #ifndef calibration
+#ifndef recording
 	try
 	{
 		ResultScreen::Instance()->shutdown();	
@@ -422,6 +430,7 @@ void KinectPoseRecognitionApp::shutdown()
 	{
 		console()<<"socialPopup shutdown error!!!!"<<endl;
 	}
+#endif
 #endif
 
 #ifdef calibration

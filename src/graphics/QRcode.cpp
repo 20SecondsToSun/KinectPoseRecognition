@@ -5,7 +5,7 @@ void QRcode::setup()
 	plashkaTex             = *AssetManager::getInstance()->getTexture("images/serverScreen/plashka.png");
 	loadPhotoText          = *AssetManager::getInstance()->getTexture("images/serverScreen/loadPhotoText.png");
 
-	startQRCodeHolderXY = Vec2f(1284.0f, 109.0f);	
+	startQRCodeHolderXY = Vec2f(1036.0f, 591.0f);	
 }
 
 void QRcode::reset()
@@ -35,7 +35,7 @@ void QRcode::draw()
 			gl::color(ColorA(1.0f, 1.0f, 1.0f, alphaAnimate));
 			gl::draw(loadPhotoText);
 	
-			gl::translate(Vec2f(26.0f, 108.0f));				
+			gl::translate(Vec2f(0.0f, 148.0f));				
 			gl::draw(plashkaTex);
 				
 			TextLayout simple;
@@ -48,8 +48,8 @@ void QRcode::draw()
 			if(qrCodeTexture)
 			{					
 				gl::pushMatrices();			
-				gl::translate(0.5f*(plashkaTex.getWidth() - 285.0f), 47.0f);
-				qrCodeTexture = Utils::resizeScreenshot(Surface(qrCodeTexture), (int32_t)285, (int32_t)285);	
+				gl::translate(0.5f*(plashkaTex.getWidth() - 185.0f), 30.0f);
+				qrCodeTexture = Utils::resizeScreenshot(Surface(qrCodeTexture), (int32_t)185, (int32_t)185);	
 				gl::color(ColorA(1.0f, 1.0f, 1.0f, alphaAnimate));
 				gl::draw(qrCodeTexture);
 				gl::popMatrices();
@@ -58,7 +58,7 @@ void QRcode::draw()
 			if(qrCodeTextTexture)
 			{
 				gl::color(ColorA(1.0f, 1.0f, 1.0f, alphaAnimate));
-				gl::draw(qrCodeTextTexture, Vec2f(0.5f*(plashkaTex.getWidth() - qrCodeTextTexture.getWidth()), 345.0f));	
+				gl::draw(qrCodeTextTexture, Vec2f(0.5f * (plashkaTex.getWidth() - qrCodeTextTexture.getWidth()), 220.0f));	
 			}	
 		}
 	}
